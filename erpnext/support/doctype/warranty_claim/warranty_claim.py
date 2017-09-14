@@ -67,3 +67,32 @@ def make_maintenance_visit(source_name, target_doc=None):
 			map_child_doc(source_doc, target_doc, table_map, source_doc)
 
 		return target_doc
+
+def get_warranty_docs(doctype=None, txt=None, filters=None, limit_start=0, limit_page_length=20, party=None):
+	user = frappe.session.user
+	contact = frappe.db.sql("""select customer from tabContact where user=%s""", user, as_dict=1)
+	warranty_docs = []
+	if contact:
+		warranty_docs = frappe.db.sql("""select *
+			from `tabWarranty Claim`
+			where customer=%s
+			order by modified desc
+			limit {0}, {1}""".format(limit_start, limit_page_length), contact[0].customer, as_dict=True, update={"doctype": "Warranty Claim"})
+	return warranty_docs
+
+def get_list_context(context=None):
+	user = frappe.session.user
+	if user != "Guest":
+		from erpnext.controllers.website_list_for_contact import get_list_context
+		list_context = get_list_context(context)
+		context.update({
+			"doctype": "Warranty Claim",
+			"pathname": "warranty-and-repair"
+		})
+		list_context.update({
+			"title": _("Warranty Claim Details"),
+			"get_list": get_warranty_docs,
+			"row_template": "warranty_management/templates/includes/warranty_claim_row.html",
+			"no_breadcrumbs": True,
+		})
+		return list_context
