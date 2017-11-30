@@ -109,7 +109,7 @@ class SalesOrder(SellingController):
 				for d in self.get("items"):
 					if not d.delivery_date:
 						d.delivery_date = self.delivery_date
-					
+
 					if getdate(self.transaction_date) > getdate(d.delivery_date):
 						frappe.msgprint(_("Expected Delivery Date should be after Sales Order Date"),
 							indicator='orange', title=_('Warning'))
@@ -467,7 +467,7 @@ def make_delivery_note(source_name, target_doc=None):
 		target.ignore_pricing_rule = 1
 		target.run_method("set_missing_values")
 		target.run_method("calculate_taxes_and_totals")
-		
+
 		# set company address
 		target.update(get_company_address(target.company))
 		if target.company_address:
@@ -761,20 +761,24 @@ def make_production_orders(items, sales_order, company, project=None):
 	out = []
 
 	for i in items:
-		production_order = frappe.get_doc(dict(
-			doctype='Production Order',
-			production_item=i['item_code'],
-			bom_no=i['bom'],
-			qty=i['pending_qty'],
-			company=company,
-			sales_order=sales_order,
-			sales_order_item=i['sales_order_item'],
-			project=project,
-			fg_warehouse=i['warehouse']
-		)).insert()
-		production_order.set_production_order_operations()
-		production_order.save()
-		out.append(production_order)
+		try:
+			production_order = frappe.get_doc(dict(
+				doctype='Production Order',
+				production_item=i['item_code'],
+				bom_no=i['bom'],
+				qty=i['pending_qty'],
+				company=company,
+				sales_order=sales_order,
+				sales_order_item=i['sales_order_item'],
+				project=project,
+				fg_warehouse=i['warehouse']
+			)).insert()
+		except KeyError:
+			continue
+		else:
+			production_order.set_production_order_operations()
+			production_order.save()
+			out.append(production_order)
 
 	return [p.name for p in out]
 
