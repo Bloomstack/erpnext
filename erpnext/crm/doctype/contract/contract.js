@@ -1,10 +1,21 @@
 // Copyright (c) 2018, Frappe Technologies Pvt. Ltd. and contributors
 // For license information, please see license.txt
 
-cur_frm.add_fetch("contract", "terms", "contract_terms");
+cur_frm.add_fetch("contract_template", "contract_terms", "contract_terms");
+cur_frm.add_fetch("contract_template", "requires_fulfilment", "requires_fulfilment");
+cur_frm.add_fetch("contract_template", "fulfilment_terms", "fulfilment_terms");
 
-frappe.ui.form.on('Contract', {
-	refresh: function(frm) {
+// Add fulfilment terms from contract template into contract
+frappe.ui.form.on("Contract", {
+	contract_template: function (frm) {
+		frappe.model.with_doc("Contract Template", frm.doc.contract_template, function () {
+			var tabletransfer = frappe.model.get_doc("Contract Template", frm.doc.contract_template);
 
+			$.each(tabletransfer.fulfilment_terms, function (index, row) {
+				d = frm.add_child("fulfilment_terms");
+				d.requirement = row.requirement;
+				frm.refresh_field("fulfilment_terms");
+			});
+		});
 	}
 });
