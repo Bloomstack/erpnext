@@ -3,7 +3,6 @@
 
 cur_frm.add_fetch("contract_template", "contract_terms", "contract_terms");
 cur_frm.add_fetch("contract_template", "requires_fulfilment", "requires_fulfilment");
-cur_frm.add_fetch("contract_template", "fulfilment_terms", "fulfilment_terms");
 
 // Add fulfilment terms from contract template into contract
 frappe.ui.form.on("Contract", {
