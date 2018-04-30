@@ -14,20 +14,44 @@ from frappe.utils import getdate, nowdate, now_datetime
 class Contract(Document):
 	def validate(self):
 		self.validate_dates()
-		self.update_status()
+		self.update_contract_status()
+		self.update_fulfilment_status()
 
 	def on_update_after_submit(self):
-		self.update_status()
+		self.update_contract_status()
 
 	def validate_dates(self):
-		if self.end_date < self.start_date:
+		if self.end_date and self.end_date < self.start_date:
 			frappe.throw("End Date cannot be before Start Date!")
 
-	def update_status(self):
+	def update_contract_status(self):
 		if self.is_signed:
 			self.status = get_status(self.start_date, self.end_date)
 		else:
 			self.status = "Unsigned"
+
+	def update_fulfilment_status(self):
+		self.fulfilment_status = ""
+
+		if self.requires_fulfilment:
+			fulfilled_terms = self.get_fulfilled_terms()
+
+			if not fulfilled_terms:
+				self.fulfilment_status = "Unfulfilled"
+			elif fulfilled_terms < len(self.fulfilment_terms):
+				self.fulfilment_status = "Partially Unfulfilled"
+			elif fulfilled_terms == len(self.fulfilment_terms):
+				self.fulfilment_status = "Fulfilled"
+
+			if self.fulfilment_deadline:
+				now_date = getdate(nowdate())
+				deadline_date = getdate(self.fulfilment_deadline)
+
+				if now_date > deadline_date:
+					self.fulfilment_status = "Lapsed"
+
+	def get_fulfilled_terms(self):
+		return len([term for term in self.fulfilment_terms if term.fulfilled])
 
 	def has_website_permission(self, doc, ptype, user, verbose=False):
 		"""
@@ -45,10 +69,11 @@ def get_status(start_date, end_date):
 	if not end_date:
 		return "Active"
 
+	start_date = getdate(start_date)
+	end_date = getdate(end_date)
 	now_date = getdate(nowdate())
-	status = "Active" if start_date < now_date < end_date else "Inactive"
 
-	return status
+	return "Active" if start_date < now_date < end_date else "Inactive"
 
 
 def update_status_for_contracts():
@@ -96,14 +121,14 @@ def get_contract_list(doctype, txt, filters, limit_start, limit_page_length=20, 
 	return get_list(doctype, txt, filters, limit_start, limit_page_length, ignore_permissions=ignore_permissions)
 
 
-# TODO: Placeholder for digitally signing contracts,
-# when we make a corresponding workflow
 @frappe.whitelist()
 def accept_contract_terms(dn, signee):
 	contract = frappe.get_doc("Contract", dn)
+
 	contract.is_signed = True
 	contract.signee = signee
 	contract.signed_on = now_datetime()
 	contract.flags.ignore_permissions = True
+
 	contract.save()
 	frappe.db.commit()

@@ -1,0 +1,117 @@
+{% extends "templates/web.html" %}
+
+{% block breadcrumbs %}
+	{% include "templates/includes/breadcrumbs.html" %}
+{% endblock %}
+
+{% block title %}
+	{{ doc.name }}
+{% endblock %}
+
+{% block header %}
+	<h1>{{ doc.name }}</h1>
+
+	<script>
+		frappe.ready(function () {
+			$("#agree-contract").on("click", function () {
+				frappe.call({
+					method: "erpnext.crm.doctype.contract.contract.accept_contract_terms",
+					args: {
+						dn: $("#contract-terms").data('doc-name'),
+						signee: $('#contract-signee').val(),
+					},
+					freeze: true,
+					freeze_message: __("Saving..."),
+					callback: function (r) {
+						if (!r.exe) {
+							window.location.reload();
+						}
+					}
+				})
+			});
+			$("#contract-terms").bind("scroll", function (e) {
+				var elem = $(e.currentTarget);
+				if (elem[0].scrollHeight - elem.scrollTop() < elem.outerHeight()) {
+					$("#agree-contract").removeClass("disabled");
+				}
+			});
+		});
+	</script>
+{% endblock %}
+
+{% block header_actions %}
+	<a class='btn btn-xs btn-default' href='/printview?doctype={{ doc.doctype }}&name={{ doc.name }}&format={{ print_format }}' target="_blank" rel="noopener noreferrer">{{ _("Print") }}</a>
+{% endblock %}
+
+{% block page_content %}
+	<div id="contract-terms" data-doc-name="{{ doc.name }}">
+		<p>{{ doc.contract_terms }}</p>
+	</div>
+
+	{% if not doc.is_signed %}
+		<div class="row" style="margin-top: 1em;">
+			You must scroll (and read) to the bottom of the EULA to enable the "I Agree" button.
+		</div>
+
+		<div class="row" style="margin-top: 2em;">
+			<form class="col-sm-12" style="text-align: right;">
+				<div style="display: inline-block; text-align: left;">
+					<label for="contract-signee" style="display: block; font-size: 0.8em;">Your Name:</label>
+					<input id="contract-signee" class="required" type="text" required>
+				</div>
+				<button id="agree-contract" class="btn btn-primary btn-sm disabled">I Agree</button>
+			</form>
+		</div>
+	{% else %}
+		<div class="row" style="margin-top: 1em;">
+			This contract was signed by <strong>{{ doc.signee }}</strong> on <strong>{{ frappe.format_date(doc.signed_on) }}</strong>.
+		</div>
+	{% endif %}
+
+	<style>
+		#agree-contract.btn-primary {
+			font-size: 1.2em;
+			padding: 0.1em 1em;
+			margin: 0.9em 0em;
+		}
+
+		#agree-contract.btn-primary.disabled {
+			background-color: #292929;
+			border-color: #292929;
+		}
+
+		#contract-signee.required {
+			box-shadow: 0px 0px 10px 1px rgba(255, 0, 0, 0.37);
+			border: 1px solid #f00;
+		}
+
+		#contract-signee {
+			border-radius: 4px;
+			border: 1px solid darkgrey;
+		}
+
+		#contract-terms {
+			overflow: auto;
+			height: 50vh;
+			width: auto;
+			border: 1px solid #c1c1c1;
+			padding: 1.5em;
+		}
+
+		a.btn-default, button.btn-default {
+			color: #ffffff;
+			font-family: oswald;
+			border-radius: .1em;
+			background-color: #292929;
+			font-size: 1em;
+			border: none;
+			padding: .3em 1em;
+			margin: .3em 0;
+		}
+
+		a.btn-default:hover, button.btn-default:hover {
+			background-color: #292929;
+			color: #ffffff;
+		}
+	</style>
+{% endblock %}
