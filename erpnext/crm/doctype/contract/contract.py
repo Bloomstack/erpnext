@@ -8,7 +8,7 @@ import frappe
 from awesome_cart.compat.customer import get_current_customer
 from frappe import _
 from frappe.model.document import Document
-from frappe.utils import getdate, nowdate
+from frappe.utils import getdate, nowdate, now_datetime
 
 
 class Contract(Document):
@@ -98,6 +98,12 @@ def get_contract_list(doctype, txt, filters, limit_start, limit_page_length=20, 
 
 # TODO: Placeholder for digitally signing contracts,
 # when we make a corresponding workflow
-# @frappe.whitelist()
-# def accept_contract_terms(**args):
-# 	pass
+@frappe.whitelist()
+def accept_contract_terms(dn, signee):
+	contract = frappe.get_doc("Contract", dn)
+	contract.is_signed = True
+	contract.signee = signee
+	contract.signed_on = now_datetime()
+	contract.flags.ignore_permissions = True
+	contract.save()
+	frappe.db.commit()

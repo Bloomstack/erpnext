@@ -110,7 +110,7 @@ website_route_rules = [
 		}
 	},
 	{"from_route": "/contracts", "to_route": "Contract"},
-	{"from_route": "/contracts/<path:name>", "to_route": "contract",
+	{"from_route": "/contracts/<path:name>", "to_route": "contractd",
 		"defaults": {
 			"doctype": "Contract",
 			"parents": [{"label": _("Contracts"), "route": "contracts"}]
