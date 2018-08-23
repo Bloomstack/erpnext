@@ -119,7 +119,8 @@ def process_route(name, optimize):
 		doc.delivery_stops[order].idx = idx + 1
 		# Google Maps returns the "legs" in the optimized order, so we loop through it
 		duration += directions.get("legs")[idx].get("duration").get("value")
-		doc.delivery_stops[order].estimated_arrival = departure_datetime + datetime.timedelta(seconds=duration)
+		arrival_datetime = get_rounded_time(departure_datetime + datetime.timedelta(seconds=duration))
+		doc.delivery_stops[order].estimated_arrival = arrival_datetime
 
 	doc.save()
 	frappe.db.commit()
@@ -134,6 +135,16 @@ def optimize_route(name):
 def get_arrival_times(name):
 	process_route(name, optimize=False)
 
+
+def get_rounded_time(arrival_datetime):
+	discard = datetime.timedelta(minutes=arrival_datetime.minute % 10,
+                             seconds=arrival_datetime.second,
+                             microseconds=arrival_datetime.microsecond)
+	arrival_datetime -= discard
+	if discard >= datetime.timedelta(minutes=5):
+		arrival_datetime += datetime.timedelta(minutes=10)
+
+	return arrival_datetime
 
 @frappe.whitelist()
 def notify_customers(docname, date, driver, vehicle, sender_email, delivery_notification):
