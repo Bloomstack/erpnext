@@ -10,10 +10,6 @@ from frappe.model.document import Document
 from frappe.utils.user import get_user_fullname
 from frappe.utils import getdate, cstr, get_datetime
 from frappe.contacts.doctype.address.address import get_address_display
-from frappe.integrations.doctype.google_maps_settings.google_maps_settings import round_timedelta
-from frappe.integrations.doctype.google_maps_settings.google_maps_settings import format_address
-
-import googlemaps
 
 class DeliveryTrip(Document):
 	pass
