@@ -39,7 +39,7 @@ class DeliveryTrip(Document):
 			"vehicle_no": self.vehicle,
 			"vehicle_type": "Regular",
 			"lr_no": self.name,
-			"lr_date": self.date
+			"lr_date": self.departure_time
 		}
 
 		for delivery_note in delivery_notes:
