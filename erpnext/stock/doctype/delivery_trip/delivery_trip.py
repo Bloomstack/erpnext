@@ -32,6 +32,9 @@ class DeliveryTrip(Document):
 
 		delivery_notes = list(set([stop.delivery_note for stop in self.delivery_stops if stop.delivery_note]))
 
+		if not delivery_notes:
+			return
+
 		update_fields = {
 			"transporter": self.driver,
 			"transporter_name": self.driver_name,
