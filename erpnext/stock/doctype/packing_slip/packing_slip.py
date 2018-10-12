@@ -23,7 +23,7 @@ class PackingSlip(Document):
 		self.validate_delivery_note()
 		self.validate_items_mandatory()
 		self.validate_case_nos()
-		self.validate_qty()
+		# self.validate_qty()
 
 		from erpnext.utilities.transaction_base import validate_uom_is_integer
 		validate_uom_is_integer(self, "stock_uom", "qty")
@@ -98,19 +98,32 @@ class PackingSlip(Document):
 
 		condition = ""
 		if rows:
-			condition = " and item_code in (%s)" % (", ".join(["%s"]*len(rows)))
+			condition = " and dni.item_code in (%s)" % (", ".join(["%s"]*len(rows)))
 
 		# gets item code, qty per item code, latest packed qty per item code and stock uom
-		res = frappe.db.sql("""select item_code, sum(qty) as qty,
-			(select sum(psi.qty * (abs(ps.to_case_no - ps.from_case_no) + 1))
-				from `tabPacking Slip` ps, `tabPacking Slip Item` psi
-				where ps.name = psi.parent and ps.docstatus = 1
-				and ps.delivery_note = dni.parent and psi.item_code=dni.item_code) as packed_qty,
-			stock_uom, item_name, description, dni.batch_no {custom_fields}
-			from `tabDelivery Note Item` dni
-			where parent=%s {condition}
-			group by item_code""".format(condition=condition, custom_fields=custom_fields),
-			tuple([self.delivery_note] + rows), as_dict=1)
+		res = frappe.db.sql("""
+			SELECT dni.item_code, dni.qty AS qty,
+				(
+				SELECT
+					packing_slip_item.qty * (abs(packing_slip.to_case_no - packing_slip.from_case_no) + 1)
+				FROM
+					`tabPacking Slip` packing_slip
+						LEFT JOIN `tabPacking Slip Item` packing_slip_item ON packing_slip.name = packing_slip_item.parent
+				WHERE
+					packing_slip.docstatus = 1
+						AND packing_slip.delivery_note = dni.parent
+						AND packing_slip_item.item_code = dni.item_code
+				) AS packed_qty,
+				dni.stock_uom, dni.item_name, dni.description, dni.batch_no {custom_fields}
+			FROM
+				`tabDelivery Note Item` dni
+					LEFT JOIN `tabItem` item ON dni.item_code = item.item_code
+			WHERE
+				dni.parent=%s
+					AND item.is_stock_item = 1
+					{condition}
+			""".format(condition=condition, custom_fields=custom_fields),
+					tuple([self.delivery_note] + rows), as_dict=1)
 
 		ps_item_qty = dict([[d.item_code, d.qty] for d in self.get("items")])
 		no_of_cases = cint(self.to_case_no) - cint(self.from_case_no) + 1
