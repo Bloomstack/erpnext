@@ -73,13 +73,13 @@ cur_frm.cscript.validate_calculate_item_details = function(doc) {
 // Also check for 0 qty
 cur_frm.cscript.validate_duplicate_items = function(doc, ps_detail) {
 	for(var i=0; i<ps_detail.length; i++) {
-		for(var j=0; j<ps_detail.length; j++) {
-			if(i!=j && ps_detail[i].item_code && ps_detail[i].item_code==ps_detail[j].item_code) {
-				frappe.msgprint(__("You have entered duplicate items. Please rectify and try again."));
-				frappe.validated = false;
-				return;
-			}
-		}
+		// for(var j=0; j<ps_detail.length; j++) {
+		// 	if(i!=j && ps_detail[i].item_code && ps_detail[i].item_code==ps_detail[j].item_code) {
+		// 		frappe.msgprint(__("You have entered duplicate items. Please rectify and try again."));
+		// 		frappe.validated = false;
+		// 		return;
+		// 	}
+		// }
 		if(flt(ps_detail[i].qty)<=0) {
 			frappe.msgprint(__("Invalid quantity specified for item {0}. Quantity should be greater than 0.", [ps_detail[i].item_code]));
 			frappe.validated = false;
