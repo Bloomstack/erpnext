@@ -333,16 +333,21 @@ class StockController(AccountsController):
 
 		for d in self.get('items'):
 			qa_required = False
-			if (inspection_required_fieldname and not d.quality_inspection and
-				frappe.db.get_value("Item", d.item_code, inspection_required_fieldname)):
-				qa_required = True
-			elif self.doctype == "Stock Entry" and not d.quality_inspection and d.t_warehouse:
-				qa_required = True
+
+			if not d.quality_inspection:
+				if inspection_required_fieldname and frappe.db.get_value("Item", d.item_code, inspection_required_fieldname):
+					qa_required = True
+				elif self.doctype == "Stock Entry" and d.t_warehouse:
+					qa_required = True
+			else:
+				# Check if Quality Inspection is Submitted
+				if frappe.db.get_value("Quality Inspection", d.quality_inspection, "docstatus") != 1:
+					qa_required = True
 
 			if qa_required:
-				frappe.msgprint(_("Quality Inspection required for Item {0}").format(d.item_code))
-				if self.docstatus==1:
-					raise QualityInspectionRequiredError
+				frappe.msgprint(_("A submitted Quality Inspection is required for Item {0}").format(d.item_code))
+				if self.docstatus == 1:
+					raise frappe.ValidationError
 			elif self.docstatus == 1:
 				if d.quality_inspection:
 					qa_doc = frappe.get_doc("Quality Inspection", d.quality_inspection)
@@ -350,7 +355,6 @@ class StockController(AccountsController):
 					if qa_failed:
 						frappe.throw(_("Row {0}: Quality Inspection rejected for item {1}")
 							.format(d.idx, d.item_code), QualityInspectionRejectedError)
-
 
 	def update_blanket_order(self):
 		blanket_orders = list(set([d.blanket_order for d in self.items if d.blanket_order]))
