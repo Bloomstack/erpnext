@@ -331,15 +331,19 @@ class StockController(AccountsController):
 
 		for d in self.get('items'):
 			raise_exception = False
-			if (inspection_required_fieldname and not d.quality_inspection and
-				frappe.db.get_value("Item", d.item_code, inspection_required_fieldname)):
-				raise_exception = True
-			elif self.doctype == "Stock Entry" and not d.quality_inspection and d.t_warehouse:
-				raise_exception = True
+			if not d.quality_inspection:
+				if inspection_required_fieldname and frappe.db.get_value("Item", d.item_code, inspection_required_fieldname):
+					raise_exception = True
+				elif self.doctype == "Stock Entry" and d.t_warehouse:
+					raise_exception = True
+			else:
+				# Check if Quality Inspection is Submitted
+				if frappe.db.get_value("Quality Inspection", d.quality_inspection, "docstatus") != 1:
+					raise_exception = True
 
 			if raise_exception:
-				frappe.msgprint(_("Quality Inspection required for Item {0}").format(d.item_code))
-				if self.docstatus==1:
+				frappe.msgprint(_("A submitted Quality Inspection is required for Item {0}").format(d.item_code))
+				if self.docstatus == 1:
 					raise frappe.ValidationError
 
 	def update_blanket_order(self):
