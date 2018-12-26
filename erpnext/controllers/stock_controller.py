@@ -419,3 +419,48 @@ def get_voucherwise_gl_entries(future_stock_vouchers, posting_date):
 				gl_entries.setdefault((d.voucher_type, d.voucher_no), []).append(d)
 
 	return gl_entries
+
+@frappe.whitelist()
+def create_quality_inspections(dt, dn):
+	doc = frappe.get_doc(dt, dn)
+
+	inspection_required_fieldname = None
+	if dt in ["Purchase Receipt", "Purchase Invoice"]:
+		inspection_required_fieldname = "inspection_required_before_purchase"
+	elif dt in ["Delivery Note", "Sales Invoice"]:
+		inspection_required_fieldname = "inspection_required_before_delivery"
+
+	skip_inspection_conditions = [
+		dt != "Stock Entry" and not inspection_required_fieldname,
+		dt == "Stock Entry" and not doc.inspection_required,
+		dt in ["Sales Invoice", "Purchase Invoice"] and not doc.update_stock
+	]
+
+	if any(skip_inspection_conditions):
+		return
+
+	new_quality_inspections = []
+	for item in doc.items:
+		if not item.quality_inspection:
+			if ((inspection_required_fieldname and frappe.db.get_value("Item", item.item_code, inspection_required_fieldname)) or
+				(dt == "Stock Entry" and item.t_warehouse)):
+				qi = frappe.new_doc("Quality Inspection")
+				qi.update({
+					"inspection_type": "Incoming" if dt in ["Purchase Receipt", "Purchase Invoice"] else "Outgoing",
+					"reference_type": dt,
+					"reference_name": dn,
+					"item_code": item.item_code,
+					"description": item.description,
+					"item_serial_no": item.serial_no.split("\n")[0] if item.serial_no else None,
+					"batch_no": item.batch_no,
+					"sample_size": 0,
+					"inspected_by": frappe.session.user
+				})
+				qi.insert()
+				item.quality_inspection = qi.name
+				new_quality_inspections.append(qi.name)
+
+	doc.save()
+	new_quality_inspections = [frappe.utils.get_link_to_form("Quality Inspection", qi) for qi in new_quality_inspections]
+
+	return new_quality_inspections

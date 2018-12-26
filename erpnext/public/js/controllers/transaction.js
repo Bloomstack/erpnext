@@ -224,6 +224,28 @@ erpnext.TransactionController = erpnext.taxes_and_totals.extend({
 				}
 			}
 		});
+
+		if (this.frm.doc.docstatus == 0) {
+			this.frm.add_custom_button(__("Quality Inspection"), () => {
+				frappe.call({
+					method: "erpnext.controllers.stock_controller.create_quality_inspections",
+					args: {
+						dt: me.frm.doc.doctype,
+						dn: me.frm.doc.name
+					},
+					callback: function (r) {
+						if (r.message && r.message.length > 0) {
+							let message = `The following Quality Inspections were created: ${r.message.join(", ")}`;
+							me.frm.reload_doc();
+							frappe.msgprint(__(message));
+						} else {
+							let message = "No inspection documents created - either they already exist, or none are required.";
+							frappe.msgprint(__(message));
+						}
+					}
+				})
+			}, __("Create"));
+		}
 	},
 
 	make_payment_request: function() {
