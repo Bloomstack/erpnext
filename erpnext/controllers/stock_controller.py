@@ -320,41 +320,48 @@ class StockController(AccountsController):
 	def validate_inspection(self):
 		'''Checks if quality inspection is set for Items that require inspection.
 		On submit, throw an exception'''
+
 		inspection_required_fieldname = None
 		if self.doctype in ["Purchase Receipt", "Purchase Invoice"]:
 			inspection_required_fieldname = "inspection_required_before_purchase"
 		elif self.doctype in ["Delivery Note", "Sales Invoice"]:
 			inspection_required_fieldname = "inspection_required_before_delivery"
 
-		if ((not inspection_required_fieldname and self.doctype != "Stock Entry") or
-			(self.doctype == "Stock Entry" and not self.inspection_required) or
-			(self.doctype in ["Sales Invoice", "Purchase Invoice"] and not self.update_stock)):
-				return
+		skip_inspection_conditions = [
+			self.doctype != "Stock Entry" and not inspection_required_fieldname,
+			self.doctype == "Stock Entry" and not self.inspection_required,
+			self.doctype in ["Sales Invoice", "Purchase Invoice"] and not self.update_stock
+		]
 
-		for d in self.get('items'):
+		if any(skip_inspection_conditions):
+			return
+
+		for item in self.get('items'):
 			qa_required = False
 
-			if not d.quality_inspection:
-				if inspection_required_fieldname and frappe.db.get_value("Item", d.item_code, inspection_required_fieldname):
+			if not item.quality_inspection:
+				# Check if the item requires inspection
+				if inspection_required_fieldname and frappe.db.get_value("Item", item.item_code, inspection_required_fieldname):
 					qa_required = True
-				elif self.doctype == "Stock Entry" and d.t_warehouse:
+				# Check if the Stock Entry requires inspection
+				elif self.doctype == "Stock Entry" and item.t_warehouse:
 					qa_required = True
 			else:
 				# Check if Quality Inspection is Submitted
-				if frappe.db.get_value("Quality Inspection", d.quality_inspection, "docstatus") != 1:
+				if frappe.db.get_value("Quality Inspection", item.quality_inspection, "docstatus") != 1:
 					qa_required = True
 
 			if qa_required:
-				frappe.msgprint(_("A submitted Quality Inspection is required for Item {0}").format(d.item_code))
+				frappe.msgprint(_("A submitted Quality Inspection is required for Item {0}").format(item.item_code))
 				if self.docstatus == 1:
-					raise frappe.ValidationError
+					raise QualityInspectionRequiredError
 			elif self.docstatus == 1:
-				if d.quality_inspection:
-					qa_doc = frappe.get_doc("Quality Inspection", d.quality_inspection)
+				if item.quality_inspection:
+					qa_doc = frappe.get_doc("Quality Inspection", item.quality_inspection)
 					qa_failed = any([r.status=="Rejected" for r in qa_doc.readings])
 					if qa_failed:
 						frappe.throw(_("Row {0}: Quality Inspection rejected for item {1}")
-							.format(d.idx, d.item_code), QualityInspectionRejectedError)
+							.format(item.idx, item.item_code), QualityInspectionRejectedError)
 
 	def update_blanket_order(self):
 		blanket_orders = list(set([d.blanket_order for d in self.items if d.blanket_order]))
