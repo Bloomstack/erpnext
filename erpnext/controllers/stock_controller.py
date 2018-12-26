@@ -324,25 +324,31 @@ class StockController(AccountsController):
 		elif self.doctype in ["Delivery Note", "Sales Invoice"]:
 			inspection_required_fieldname = "inspection_required_before_delivery"
 
-		if ((not inspection_required_fieldname and self.doctype != "Stock Entry") or
-			(self.doctype == "Stock Entry" and not self.inspection_required) or
-			(self.doctype in ["Sales Invoice", "Purchase Invoice"] and not self.update_stock)):
-				return
+		skip_inspection_conditions = [
+			self.doctype != "Stock Entry" and not inspection_required_fieldname,
+			self.doctype == "Stock Entry" and not self.inspection_required,
+			self.doctype in ["Sales Invoice", "Purchase Invoice"] and not self.update_stock
+		]
 
-		for d in self.get('items'):
+		if any(skip_inspection_conditions):
+			return
+
+		for item in self.get('items'):
 			raise_exception = False
-			if not d.quality_inspection:
-				if inspection_required_fieldname and frappe.db.get_value("Item", d.item_code, inspection_required_fieldname):
+			if not item.quality_inspection:
+				# Check if the item requires inspection
+				if inspection_required_fieldname and frappe.db.get_value("Item", item.item_code, inspection_required_fieldname):
 					raise_exception = True
-				elif self.doctype == "Stock Entry" and d.t_warehouse:
+				# Check if a QI exists for a Stock Entry that requires inspection
+				elif self.doctype == "Stock Entry" and item.t_warehouse:
 					raise_exception = True
 			else:
-				# Check if Quality Inspection is Submitted
-				if frappe.db.get_value("Quality Inspection", d.quality_inspection, "docstatus") != 1:
+				# Check if the Quality Inspection is Submitted
+				if frappe.db.get_value("Quality Inspection", item.quality_inspection, "docstatus") != 1:
 					raise_exception = True
 
 			if raise_exception:
-				frappe.msgprint(_("A submitted Quality Inspection is required for Item {0}").format(d.item_code))
+				frappe.msgprint(_("A submitted Quality Inspection is required for Item {0}").format(item.item_code))
 				if self.docstatus == 1:
 					raise frappe.ValidationError
 
