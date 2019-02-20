@@ -2,26 +2,33 @@
 # For license information, please see license.txt
 
 from __future__ import unicode_literals
-from six.moves import range
+
 from six import iteritems
+from six.moves import range
+
 import frappe
 
-
 field_map = {
-	"Contact": [ "first_name", "last_name", "phone", "mobile_no", "email_id", "is_primary_contact" ],
-	"Address": [ "address_line1", "address_line2", "city", "state", "pincode", "country", "is_primary_address" ]
+	"Contact": ["first_name", "last_name", "phone", "mobile_no", "email_id", "is_primary_contact"],
+	"Address": ["address_line1", "address_line2", "city", "state", "pincode", "country", "is_primary_address"]
 }
+
 
 def execute(filters=None):
 	columns, data = get_columns(filters), get_data(filters)
 	return columns, data
 
+
 def get_columns(filters):
 	party_type = filters.get("party_type")
 	party_type_value = get_party_group(party_type)
+
 	return [
 		"{party_type}:Link/{party_type}".format(party_type=party_type),
-		"{party_value_type}::150".format(party_value_type = frappe.unscrub(str(party_type_value))),
+		"{party_value_type}::150".format(party_value_type=frappe.unscrub(str(party_type_value))),
+		"License Type",
+		"License Number",
+		"Seller Permit",
 		"Address Line 1",
 		"Address Line 2",
 		"City",
@@ -37,12 +44,14 @@ def get_columns(filters):
 		"Is Primary Contact:Check"
 	]
 
+
 def get_data(filters):
 	party_type = filters.get("party_type")
 	party = filters.get("party_name")
 	party_group = get_party_group(party_type)
 
 	return get_party_addresses_and_contact(party_type, party, party_group)
+
 
 def get_party_addresses_and_contact(party_type, party, party_group):
 	data = []
@@ -53,7 +62,7 @@ def get_party_addresses_and_contact(party_type, party, party_group):
 		return []
 
 	if party:
-		filters = { "name": party }
+		filters = {"name": party}
 
 	fetch_party_list = frappe.get_list(party_type, filters=filters, fields=["name", party_group], as_list=True)
 	party_list = [d[0] for d in fetch_party_list]
@@ -68,11 +77,18 @@ def get_party_addresses_and_contact(party_type, party, party_group):
 	party_details = get_party_details(party_type, party_list, "Contact", party_details)
 
 	for party, details in iteritems(party_details):
+		license_type = license_number = seller_permit = None
+		if party_type in ("Customer", "Supplier"):
+			license_type, license_number, seller_permit = frappe.db.get_value(party_type, party, ["license_type", "license_number", "seller_permit"])
+
 		addresses = details.get("address", [])
-		contacts  = details.get("contact", [])
+		contacts = details.get("contact", [])
+
 		if not any([addresses, contacts]):
 			result = [party]
 			result.append(party_groups[party])
+			result.extend([license_type, license_number, seller_permit])
+
 			result.extend(add_blank_columns_for("Contact"))
 			result.extend(add_blank_columns_for("Address"))
 			data.append(result)
@@ -81,19 +97,23 @@ def get_party_addresses_and_contact(party_type, party, party_group):
 			contacts = list(map(list, contacts))
 
 			max_length = max(len(addresses), len(contacts))
-			for idx in range(0, max_length):
+			for idx in range(max_length):
 				result = [party]
 				result.append(party_groups[party])
+				result.extend([license_type, license_number, seller_permit])
+
 				address = addresses[idx] if idx < len(addresses) else add_blank_columns_for("Address")
 				contact = contacts[idx] if idx < len(contacts) else add_blank_columns_for("Contact")
 				result.extend(address)
 				result.extend(contact)
 
 				data.append(result)
+
 	return data
 
+
 def get_party_details(party_type, party_list, doctype, party_details):
-	filters =  [
+	filters = [
 		["Dynamic Link", "link_doctype", "=", party_type],
 		["Dynamic Link", "link_name", "in", party_list]
 	]
@@ -106,11 +126,14 @@ def get_party_details(party_type, party_list, doctype, party_details):
 
 	return party_details
 
+
 def add_blank_columns_for(doctype):
 	return ["" for field in field_map.get(doctype, [])]
 
+
 def get_party_group(party_type):
-	if not party_type: return
+	if not party_type:
+		return
 	group = {
 		"Customer": "customer_group",
 		"Supplier": "supplier_group",
