@@ -64,7 +64,7 @@ frappe.ui.form.on(cur_frm.doctype, {
 				}
 			})
 		}
-	}	
+	}
 });
 
 frappe.ui.form.on('Sales Invoice Payment', {
@@ -142,22 +142,31 @@ var get_payment_mode_account = function(frm, mode_of_payment, callback) {
 }
 
 cur_frm.cscript.account_head = function(doc, cdt, cdn) {
-	var d = locals[cdt][cdn];
-	if(!d.charge_type && d.account_head){
-		frappe.msgprint(__("Please select Charge Type first"));
-		frappe.model.set_value(cdt, cdn, "account_head", "");
-	} else if(d.account_head && d.charge_type!=="Actual") {
-		frappe.call({
-			type:"GET",
-			method: "erpnext.controllers.accounts_controller.get_tax_rate",
-			args: {"account_head":d.account_head},
-			callback: function(r) {
-				frappe.model.set_value(cdt, cdn, "rate", r.message.tax_rate || 0);
-				frappe.model.set_value(cdt, cdn, "description", r.message.account_name);
+	let row = locals[cdt][cdn];
+
+	if (row.account_head) {
+		frappe.db.get_value("Account", row.account_head, "account_type", (r) => {
+			if (r.account_type) {
+				frappe.model.set_value(cdt, cdn, "account_type", r.account_type);
 			}
-		})
-	} else if (d.charge_type == 'Actual' && d.account_head) {
-		frappe.model.set_value(cdt, cdn, "description", d.account_head.split(' - ')[0]);
+		});
+
+		if (!row.charge_type) {
+			frappe.msgprint(__("Please select Charge Type first"));
+			frappe.model.set_value(cdt, cdn, "account_head", "");
+		} else if (row.charge_type !== "Actual") {
+			frappe.call({
+				type: "GET",
+				method: "erpnext.controllers.accounts_controller.get_tax_rate",
+				args: { "account_head": row.account_head },
+				callback: function (r) {
+					frappe.model.set_value(cdt, cdn, "rate", r.message.tax_rate || 0);
+					frappe.model.set_value(cdt, cdn, "description", r.message.account_name);
+				}
+			})
+		} else if (row.charge_type == 'Actual') {
+			frappe.model.set_value(cdt, cdn, "description", row.account_head.split(' - ')[0]);
+		}
 	}
 }
 
