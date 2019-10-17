@@ -8,6 +8,7 @@ import frappe
 from frappe import _
 from frappe.model.document import Document
 from frappe.utils import getdate, now_datetime, nowdate
+from frappe.utils.jinja import render_template
 
 
 class Contract(Document):
@@ -26,6 +27,7 @@ class Contract(Document):
 
 	def validate(self):
 		self.validate_dates()
+		self.create_contract_terms_display()
 		self.update_contract_status()
 		self.update_fulfilment_status()
 
@@ -36,6 +38,10 @@ class Contract(Document):
 	def validate_dates(self):
 		if self.end_date and self.end_date < self.start_date:
 			frappe.throw(_("End Date cannot be before Start Date."))
+
+	def create_contract_terms_display(self):
+		if self.contract_terms:
+			self.contract_terms_display = render_template(self.contract_terms, {"doc": self.as_dict()})
 
 	def update_contract_status(self):
 		if self.is_signed:
