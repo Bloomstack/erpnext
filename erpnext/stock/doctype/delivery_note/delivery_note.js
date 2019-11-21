@@ -11,7 +11,6 @@ frappe.provide("erpnext.stock.delivery_note");
 frappe.ui.form.on("Delivery Note", {
 	setup: function(frm) {
 		frm.custom_make_buttons = {
-			'Packing Slip': 'Packing Slip',
 			'Installation Note': 'Installation Note',
 			'Sales Invoice': 'Invoice',
 			'Stock Entry': 'Return',
@@ -140,14 +139,6 @@ erpnext.stock.DeliveryNoteController = erpnext.selling.SellingController.extend(
 			if (doc.docstatus==1) {
 				this.frm.add_custom_button(__('Delivery Trip'), function() {
 					me.make_delivery_trip() }, __("Make"));
-			}
-
-			if(doc.docstatus==0 && !doc.__islocal) {
-				this.frm.add_custom_button(__('Packing Slip'), function() {
-					frappe.model.open_mapped_doc({
-						method: "erpnext.stock.doctype.delivery_note.delivery_note.make_packing_slip",
-						frm: me.frm
-					}) }, __("Make"));
 			}
 
 			if (!doc.__islocal && doc.docstatus==1) {
@@ -305,4 +296,3 @@ erpnext.stock.delivery_note.set_print_hide = function(doc, cdt, cdn){
 			dn_fields['taxes'].print_hide = 0;
 	}
 }
-

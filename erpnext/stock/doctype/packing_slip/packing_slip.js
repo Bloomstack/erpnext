@@ -1,26 +1,27 @@
 // Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
 // License: GNU General Public License v3. See license.txt
 
-cur_frm.fields_dict['delivery_note'].get_query = function(doc, cdt, cdn) {
-	return{
-		filters:{ 'docstatus': 0}
-	}
-}
+frappe.ui.form.on("Packing Slip", {
+	setup: (frm) => {
+		frm.set_query('sales_order', (doc) => {
+			return { filters: { 'docstatus': 1 } }
+		});
 
+		frm.set_query("item_code", "items", (doc, cdt, cdn) => {
+			if (!doc.sales_order) {
+				frappe.throw(__("Please select a Sales Order"));
+			}
 
-cur_frm.fields_dict['items'].grid.get_field('item_code').get_query = function(doc, cdt, cdn) {
-	if(!doc.delivery_note) {
-		frappe.throw(__("Please select a Delivery Note"));
-	} else {
-		return {
-			query: "erpnext.stock.doctype.packing_slip.packing_slip.item_details",
-			filters:{ 'delivery_note': doc.delivery_note}
-		}
+			return {
+				query: "erpnext.stock.doctype.packing_slip.packing_slip.item_details",
+				filters: { 'sales_order': doc.sales_order }
+			}
+		});
 	}
-}
+})
 
 cur_frm.cscript.onload_post_render = function(doc, cdt, cdn) {
-	if(doc.delivery_note && doc.__islocal) {
+	if(doc.sales_order && doc.__islocal) {
 		cur_frm.cscript.get_items(doc, cdt, cdn);
 	}
 }

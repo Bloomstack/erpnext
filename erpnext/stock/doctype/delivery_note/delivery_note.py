@@ -585,23 +585,6 @@ def make_installation_note(source_name, target_doc=None):
 
 	return doclist
 
-@frappe.whitelist()
-def make_packing_slip(source_name, target_doc=None):
-	doclist = get_mapped_doc("Delivery Note", source_name, 	{
-		"Delivery Note": {
-			"doctype": "Packing Slip",
-			"field_map": {
-				"name": "delivery_note",
-				"letter_head": "letter_head"
-			},
-			"validation": {
-				"docstatus": ["=", 0]
-			}
-		}
-	}, target_doc)
-
-	return doclist
-
 
 @frappe.whitelist()
 def make_sales_return(source_name, target_doc=None):

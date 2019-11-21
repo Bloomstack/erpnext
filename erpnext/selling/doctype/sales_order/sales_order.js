@@ -6,6 +6,7 @@
 frappe.ui.form.on("Sales Order", {
 	setup: function(frm) {
 		frm.custom_make_buttons = {
+			'Packing Slip': 'Packing Slip',
 			'Delivery Note': 'Delivery',
 			'Sales Invoice': 'Invoice',
 			'Material Request': 'Material Request',
@@ -139,6 +140,12 @@ erpnext.selling.SalesOrderController = erpnext.selling.SellingController.extend(
 							function() { me.close_sales_order() }, __("Status"))
 					}
 				}
+
+				// packing slip
+				if (flt(doc.per_delivered, 6) < 100 && allow_delivery) {
+					this.frm.add_custom_button(__('Packing Slip'), () => { me.make_packing_slip(); }, __("Make"));
+				}
+
 
 				// delivery note
 				if(flt(doc.per_delivered, 6) < 100 && allow_delivery) {
@@ -430,6 +437,13 @@ erpnext.selling.SalesOrderController = erpnext.selling.SellingController.extend(
 			primary_action_label: __('Make')
 		});
 		d.show();
+	},
+
+	make_packing_slip: function() {
+		frappe.model.open_mapped_doc({
+			method: "erpnext.selling.doctype.sales_order.sales_order.make_packing_slip",
+			frm: this.frm
+		})
 	},
 
 	make_delivery_note_based_on_delivery_date: function() {

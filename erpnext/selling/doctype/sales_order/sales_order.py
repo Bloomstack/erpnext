@@ -557,6 +557,24 @@ def make_project(source_name, target_doc=None):
 
 	return doc
 
+
+@frappe.whitelist()
+def make_packing_slip(source_name, target_doc=None):
+	doclist = get_mapped_doc("Sales Order", source_name, {
+		"Sales Order": {
+			"doctype": "Packing Slip",
+			"field_map": {
+				"name": "sales_order"
+			},
+			"validation": {
+				"docstatus": ["=", 1]
+			}
+		}
+	}, target_doc)
+
+	return doclist
+
+
 @frappe.whitelist()
 def make_delivery_note(source_name, target_doc=None):
 	def set_missing_values(source, target):
