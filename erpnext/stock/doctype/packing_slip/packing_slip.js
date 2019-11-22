@@ -2,6 +2,12 @@
 // License: GNU General Public License v3. See license.txt
 
 frappe.ui.form.on("Packing Slip", {
+	onload_post_render: (frm) => {
+		if (frm.doc.sales_order && frm.is_new()) {
+			frm.trigger("get_items");
+		}
+	},
+
 	setup: (frm) => {
 		frm.set_query('sales_order', (doc) => {
 			return { filters: { 'docstatus': 1 } }
@@ -17,118 +23,93 @@ frappe.ui.form.on("Packing Slip", {
 				filters: { 'sales_order': doc.sales_order }
 			}
 		});
-	}
-})
+	},
 
-cur_frm.cscript.onload_post_render = function(doc, cdt, cdn) {
-	if(doc.sales_order && doc.__islocal) {
-		cur_frm.cscript.get_items(doc, cdt, cdn);
-	}
-}
+	validate: (frm) => {
+		frm.trigger("validate_case_nos");
+		frm.trigger("validate_item_details");
+		frm.trigger("calculate_package_weights");
+	},
 
-cur_frm.cscript.get_items = function(doc, cdt, cdn) {
-	return this.frm.call({
-		doc: this.frm.doc,
-		method: "get_items",
-		callback: function(r) {
-			if(!r.exc) cur_frm.refresh();
+	items_on_form_rendered: (frm) => {
+		// display the "Add Serial No" button
+		erpnext.setup_serial_no();
+	},
+
+	sales_order: (frm) => {
+		frm.trigger("get_items");
+	},
+
+	get_items: (frm) => {
+		return frm.call({
+			doc: frm.doc,
+			method: "get_items",
+			callback: (r) => {
+				if (!r.exc) {
+					frm.refresh();
+				}
+			}
+		});
+	},
+
+	validate_case_nos: (frm) => {
+		// To Case No. cannot be less than From Case No.
+		if (!frm.doc.from_case_no) {
+			frappe.throw(__("The 'From Package No.' field must neither be empty nor it's value less than 1."));
+		} else if (!frm.doc.to_case_no) {
+			frm.doc.to_case_no = frm.doc.from_case_no;
+			refresh_field('to_case_no');
+		} else if (frm.doc.to_case_no < frm.doc.from_case_no) {
+			frappe.throw(__("'To Package No.' cannot be less than 'From Package No.'"));
 		}
-	});
-}
+	},
 
-cur_frm.cscript.refresh = function(doc, dt, dn) {
-	cur_frm.toggle_display("misc_details", doc.amended_from);
-}
-
-cur_frm.cscript.validate = function(doc, cdt, cdn) {
-	cur_frm.cscript.validate_case_nos(doc);
-	cur_frm.cscript.validate_calculate_item_details(doc);
-}
-
-cur_frm.cscript.items_on_form_rendered = function (doc, grid_row) {
-	// display the "Add Serial No" button
-	erpnext.setup_serial_no();
-}
-
-// To Case No. cannot be less than From Case No.
-cur_frm.cscript.validate_case_nos = function(doc) {
-	doc = locals[doc.doctype][doc.name];
-	if(cint(doc.from_case_no)==0) {
-		frappe.msgprint(__("The 'From Package No.' field must neither be empty nor it's value less than 1."));
-		frappe.validated = false;
-	} else if(!cint(doc.to_case_no)) {
-		doc.to_case_no = doc.from_case_no;
-		refresh_field('to_case_no');
-	} else if(cint(doc.to_case_no) < cint(doc.from_case_no)) {
-		frappe.msgprint(__("'To Case No.' cannot be less than 'From Case No.'"));
-		frappe.validated = false;
-	}
-}
-
-
-cur_frm.cscript.validate_calculate_item_details = function(doc) {
-	doc = locals[doc.doctype][doc.name];
-	var ps_detail = doc.items || [];
-
-	cur_frm.cscript.validate_duplicate_items(doc, ps_detail);
-	cur_frm.cscript.calc_net_total_pkg(doc, ps_detail);
-}
-
-
-// Do not allow duplicate items i.e. items with same item_code
-// Also check for 0 qty
-cur_frm.cscript.validate_duplicate_items = function(doc, ps_detail) {
-	for(var i=0; i<ps_detail.length; i++) {
-		for(var j=0; j<ps_detail.length; j++) {
-			if(i!=j && ps_detail[i].item_code && ps_detail[i].item_code==ps_detail[j].item_code) {
-				frappe.msgprint(__("You have entered duplicate items. Please rectify and try again."));
-				frappe.validated = false;
-				return;
+	validate_item_details: (frm) => {
+		// item quantity should be greater than 0
+		for (let item of frm.doc.items) {
+			if (item.qty <= 0) {
+				frappe.throw(__(`Invalid quantity specified for item ${item.item_code}. Quantity should be greater than 0.`));
 			}
 		}
-		if(flt(ps_detail[i].qty)<=0) {
-			frappe.msgprint(__("Invalid quantity specified for item {0}. Quantity should be greater than 0.", [ps_detail[i].item_code]));
-			frappe.validated = false;
+
+		// do not allow duplicate item codes
+		const unique_items = frm.doc.items.uniqBy((item) => item.item_code)
+		if (unique_items.length != frm.doc.items.length) {
+			frappe.throw(__("You have entered duplicate items. Please rectify and try again."));
 		}
-	}
-}
+	},
 
+	calculate_package_weights: (frm) => {
+		let net_weight = 0;
+		frm.doc.net_weight_uom = (frm.doc.items && frm.doc.items.length) ? frm.doc.items[0].weight_uom : '';
+		frm.doc.gross_weight_uom = frm.doc.net_weight_uom;
 
-// Calculate Net Weight of Package
-cur_frm.cscript.calc_net_total_pkg = function(doc, ps_detail) {
-	var net_weight_pkg = 0;
-	doc.net_weight_uom = (ps_detail && ps_detail.length) ? ps_detail[0].weight_uom : '';
-	doc.gross_weight_uom = doc.net_weight_uom;
-
-	for(var i=0; i<ps_detail.length; i++) {
-		var item = ps_detail[i];
-		if(item.weight_uom != doc.net_weight_uom) {
-			frappe.msgprint(__("Different UOM for items will lead to incorrect (Total) Net Weight value. Make sure that Net Weight of each item is in the same UOM."));
-			frappe.validated = false;
+		for (let item of frm.doc.items) {
+			if (item.weight_uom != frm.doc.net_weight_uom) {
+				frappe.throw(__("Different UOM for items will lead to incorrect (Total) Net Weight value. Make sure that Net Weight of each item is in the same UOM."));
+			}
+			net_weight += flt(item.net_weight) * flt(item.qty);
 		}
-		net_weight_pkg += flt(item.net_weight) * flt(item.qty);
-	}
 
-	doc.net_weight_pkg = roundNumber(net_weight_pkg, 2);
-	if(!flt(doc.gross_weight_pkg)) {
-		doc.gross_weight_pkg = doc.net_weight_pkg;
-	}
-	refresh_many(['net_weight_pkg', 'net_weight_uom', 'gross_weight_uom', 'gross_weight_pkg']);
+		frm.doc.net_weight_pkg = roundNumber(net_weight, 2);
+		if (!flt(frm.doc.gross_weight_pkg)) {
+			frm.doc.gross_weight_pkg = frm.doc.net_weight_pkg;
+		}
+		refresh_many(['net_weight_pkg', 'net_weight_uom', 'gross_weight_uom', 'gross_weight_pkg']);
+	},
+})
+
+let make_row = (title, val, bold) => {
+	return `<tr>
+			<td class="datalabelcell">${(bold ? '<b>' : '')} ${title} ${(bold ? '</b>' : '')}</td>
+			<td class="datainputcell" style="text-align:left;">${val}</td>
+		</tr>`
 }
 
-var make_row = function(title,val,bold){
-	var bstart = '<b>'; var bend = '</b>';
-	return '<tr><td class="datalabelcell">'+(bold?bstart:'')+title+(bold?bend:'')+'</td>'
-	+'<td class="datainputcell" style="text-align:left;">'+ val +'</td>'
-	+'</tr>'
+cur_frm.pformat.net_weight_pkg = (doc) => {
+	return `<table style="width:100%">${make_row('Net Weight', doc.net_weight_pkg)}</table>`
 }
 
-cur_frm.pformat.net_weight_pkg= function(doc){
-	return '<table style="width:100%">' + make_row('Net Weight', doc.net_weight_pkg) + '</table>'
+cur_frm.pformat.gross_weight_pkg = (doc) => {
+	return `<table style="width:100%">${make_row('Gross Weight', doc.gross_weight_pkg)}</table>`
 }
-
-cur_frm.pformat.gross_weight_pkg= function(doc){
-	return '<table style="width:100%">' + make_row('Gross Weight', doc.gross_weight_pkg) + '</table>'
-}
-
-// TODO: validate gross weight field
