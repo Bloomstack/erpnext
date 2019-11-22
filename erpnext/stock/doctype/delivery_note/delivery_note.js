@@ -104,9 +104,9 @@ erpnext.stock.DeliveryNoteController = erpnext.selling.SellingController.extend(
 		var me = this;
 		this._super();
 		if ((!doc.is_return) && (doc.status!="Closed" || this.frm.is_new())) {
-			if (this.frm.doc.docstatus===0) {
+			if (this.frm.doc.docstatus === 0) {
 				this.frm.add_custom_button(__('Sales Order'),
-					function() {
+					function () {
 						erpnext.utils.map_current_doc({
 							method: "erpnext.selling.doctype.sales_order.sales_order.make_delivery_note",
 							source_doctype: "Sales Order",
@@ -120,6 +120,23 @@ erpnext.stock.DeliveryNoteController = erpnext.selling.SellingController.extend(
 								per_delivered: ["<", 99.99],
 								company: me.frm.doc.company,
 								project: me.frm.doc.project || undefined,
+							}
+						})
+					}, __("Get items from"));
+
+				const sales_orders = me.frm.doc.items.map((item) => item.against_sales_order) || []
+				this.frm.add_custom_button(__('Packing Slip'),
+					function () {
+						erpnext.utils.map_current_doc({
+							method: "erpnext.stock.doctype.packing_slip.packing_slip.make_delivery_note",
+							source_doctype: "Packing Slip",
+							target: me.frm,
+							date_field: "modified",
+							setters: {},
+							get_query_filters: {
+								docstatus: 1,
+								company: me.frm.doc.company,
+								sales_order: ["in", sales_orders]
 							}
 						})
 					}, __("Get items from"));

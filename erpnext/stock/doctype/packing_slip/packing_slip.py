@@ -7,25 +7,23 @@ import frappe
 from frappe import _
 from frappe.model import no_value_fields
 from frappe.model.document import Document
+from frappe.model.mapper import get_mapped_doc
 from frappe.utils import cint, flt
 
 
 class PackingSlip(Document):
-
 	def validate(self):
 		"""
 			* Check if packing cases do not overlap
+			* Check for duplicate and zero-quantity items
 			* Check if packed quantities doesn't exceed ordered quantities
+			* If all checks pass, calculate net weights from package items
 		"""
 
 		self.validate_case_nos()
 		self.validate_item_details()
 		self.validate_packed_qty()
 		self.calculate_package_weights()
-
-		from erpnext.utilities.transaction_base import validate_uom_is_integer
-		validate_uom_is_integer(self, "stock_uom", "qty")
-		validate_uom_is_integer(self, "weight_uom", "net_weight")
 
 	def on_submit(self):
 		self.create_delivery_note()
@@ -76,22 +74,26 @@ class PackingSlip(Document):
 	def validate_packed_qty(self):
 		"""
 			Check packed quantity across Packing Slips and Sales Order, and throw
-			validation if packed quantity is greater than ordered quantity.
+			validation if packed quantity is lesser or greater than ordered quantity.
 		"""
 
-		# Get Sales Order Items, Item Quantity Dict and No. of Cases for this Packing slip
-		so_details, ps_item_qty, no_of_cases = self.get_details_for_packing()
+		so_items = self.get_ordered_items()
+		ps_items = {item.item_code: item.qty for item in self.items}
 
-		for item in so_details:
-			new_packed_qty = (flt(ps_item_qty[item.item_code]) * no_of_cases) + flt(item.packed_qty)
-			if new_packed_qty > flt(item.qty) and no_of_cases:
-				item.recommended_qty = (flt(item.qty) - flt(item.packed_qty)) / (no_of_cases or 1)
-				item.specified_qty = flt(ps_item_qty[item.item_code])
-				if not item.packed_qty: item.packed_qty = 0
+		for so_item in so_items:
+			previous_packed_qty = flt(so_item.packed_qty)
+			current_packed_qty = flt(ps_items.get(so_item.item_code))
+			total_packed_qty = current_packed_qty + previous_packed_qty
 
-				frappe.throw(_("Quantity for Item {0} must be less than {1}").format(item.item_code, item.recommended_qty))
+			if total_packed_qty > flt(so_item.qty):
+				so_item.recommended_qty = (flt(so_item.qty) - previous_packed_qty)
+				frappe.throw(_("Quantity for item {0} must be less than {1}").format(so_item.item_code, so_item.recommended_qty))
 
 	def calculate_package_weights(self):
+		from erpnext.utilities.transaction_base import validate_uom_is_integer
+		validate_uom_is_integer(self, "stock_uom", "qty")
+		validate_uom_is_integer(self, "weight_uom", "net_weight")
+
 		# validate for unequal item weight UOMs
 		item_weight_uoms = list(set([item.weight_uom for item in self.items if item.weight_uom]))
 		if len(item_weight_uoms) > 1:
@@ -109,24 +111,14 @@ class PackingSlip(Document):
 			self.gross_weight_pkg = self.net_weight_pkg
 
 	def create_delivery_note(self):
-		# TODO: create delivery note and set serial and batch details
-		pass
+		delivery_note = make_delivery_note(self.name)
+		delivery_note.insert()
+		frappe.msgprint(_("Delivery note {0} created".format(delivery_note.name)))
+		return delivery_note.name
 
-		# so = frappe.get_doc("Sales Order", self.sales_order)
-		# so_items = {item.item_code: item.name for item in so.items}
-
-		# for packing_item in self.items:
-		# 	if packing_item.item_code in so_items:
-		# 		for row in so.items:
-		# 			if row.name == so_items.get(packing_item.item_code):
-		# 				frappe.db.set_value("Sales Order Item", row.name, "serial_no", packing_item.serial_no)
-
-	def get_details_for_packing(self):
+	def get_ordered_items(self):
 		"""
-			Returns
-			* 'Sales Order Items' query result as a list of dict
-			* Item Quantity dict of current packing slip doc
-			* No. of Cases of this packing slip
+			Returns details on ordered and already packed items
 		"""
 
 		# also pick custom fields from Sales Order
@@ -143,13 +135,13 @@ class PackingSlip(Document):
 			condition = " and soi.item_code in (%s)" % (", ".join(["%s"] * len(items)))
 
 		# gets item code, qty per item code, latest packed qty per item code and stock uom
-		res = frappe.db.sql("""
+		so_items = frappe.db.sql("""
 			SELECT
 				soi.item_code,
 				SUM(soi.qty) AS qty,
 				(
 					SELECT
-						SUM(psi.qty * (ABS(ps.to_case_no - ps.from_case_no) + 1))
+						SUM(psi.qty)
 					FROM
 						`tabPacking Slip` AS ps,
 						`tabPacking Slip Item` AS psi
@@ -172,10 +164,7 @@ class PackingSlip(Document):
 				soi.item_code
 			""".format(condition=condition, custom_fields=custom_fields), tuple([self.sales_order] + items), as_dict=1)
 
-		ps_item_qty = {item.item_code: item.qty for item in self.items}
-		no_of_cases = cint(self.to_case_no) - cint(self.from_case_no) + 1
-
-		return res, ps_item_qty, no_of_cases
+		return so_items
 
 	def update_item_details(self):
 		"""
@@ -203,8 +192,8 @@ class PackingSlip(Document):
 
 		custom_fields = frappe.get_meta("Sales Order Item").get_custom_fields()
 
-		so_details, ps_item_qty, no_of_cases = self.get_details_for_packing()
-		for item in so_details:
+		so_items = self.get_ordered_items()
+		for item in so_items:
 			if flt(item.qty) > flt(item.packed_qty):
 				ch = self.append('items', {})
 				ch.item_code = item.item_code
@@ -240,3 +229,28 @@ def item_details(doctype, txt, searchfield, start, page_len, filters):
 			as_list=True)
 
 	return item_details
+
+
+@frappe.whitelist()
+def make_delivery_note(source_name, target_doc=None):
+	def set_missing_values(source, target):
+		target.customer = frappe.db.get_value("Sales Order", source.sales_order, "customer")
+
+	def update_item(source, target, source_parent):
+		target.against_sales_order = source_parent.sales_order
+
+	doclist = get_mapped_doc("Packing Slip", source_name, {
+		"Packing Slip": {
+			"doctype": "Delivery Note"
+		},
+		"Packing Slip Item": {
+			"doctype": "Delivery Note Item",
+			"field_map": {
+				"source_warehouse": "warehouse",
+				"stock_uom": "uom"
+			},
+			"postprocess": update_item
+		},
+	}, target_doc, set_missing_values)
+
+	return doclist

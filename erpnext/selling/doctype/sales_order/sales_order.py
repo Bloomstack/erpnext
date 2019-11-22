@@ -565,9 +565,6 @@ def make_packing_slip(source_name, target_doc=None):
 			"doctype": "Packing Slip",
 			"field_map": {
 				"name": "sales_order"
-			},
-			"validation": {
-				"docstatus": ["=", 1]
 			}
 		}
 	}, target_doc)

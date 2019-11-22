@@ -28,6 +28,23 @@ frappe.ui.form.on("Packing Slip", {
 				filters: { 'sales_order': doc.sales_order }
 			}
 		});
+
+		frm.set_query("batch_no", "items", (doc, cdt, cdn) => {
+			const row = locals[cdt][cdn];
+			if (!row.item_code) {
+				frappe.throw(__("Please enter Item Code to get Batch Number"));
+			}
+
+			const filters = {
+				'item_code': row.item_code,
+				'warehouse': row.source_warehouse || ""
+			}
+
+			return {
+				query: "erpnext.controllers.queries.get_batch_no",
+				filters: filters
+			}
+		});
 	},
 
 	items_on_form_rendered: (frm) => {
