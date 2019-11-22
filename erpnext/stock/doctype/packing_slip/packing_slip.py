@@ -19,7 +19,9 @@ class PackingSlip(Document):
 		"""
 
 		self.validate_case_nos()
-		self.validate_qty()
+		self.validate_item_details()
+		self.validate_packed_qty()
+		self.calculate_package_weights()
 
 		from erpnext.utilities.transaction_base import validate_uom_is_integer
 		validate_uom_is_integer(self, "stock_uom", "qty")
@@ -33,13 +35,13 @@ class PackingSlip(Document):
 			Validate if case numbers overlap. If they do, recommend next case no.
 		"""
 
-		if not self.from_case_no:
-			frappe.throw(_("Please specify a valid 'From Package No.'"))
-		elif not self.to_case_no:
+		# check for empty and invalid case numbers
+		if not self.to_case_no:
 			self.to_case_no = self.from_case_no
 		elif self.from_case_no > self.to_case_no:
-			frappe.throw(_("'To Package No.' cannot be less than 'From Package No.'"))
+			frappe.throw(_("Final package number should be greater than the starting package number"))
 
+		# check for already used case numbers
 		res = frappe.db.sql("""
 			SELECT
 				name
@@ -60,7 +62,18 @@ class PackingSlip(Document):
 		if res:
 			frappe.throw(_("The provided case numbers are already in use. Try case number {0} and above").format(self.get_recommended_case_no()))
 
-	def validate_qty(self):
+	def validate_item_details(self):
+		# validate non-positive item quantities
+		for item in self.items:
+			if item.qty <= 0:
+				frappe.throw(_("Row {0}: Quantity of item {1} should be greater than 0.".format(item.idx, item.item_code)))
+
+		# validate duplicate items
+		items = list(set([item.item_code for item in self.items]))
+		if len(items) != len(self.items):
+			frappe.throw(_("You have entered duplicate items. Please rectify and try again."))
+
+	def validate_packed_qty(self):
 		"""
 			Check packed quantity across Packing Slips and Sales Order, and throw
 			validation if packed quantity is greater than ordered quantity.
@@ -77,6 +90,23 @@ class PackingSlip(Document):
 				if not item.packed_qty: item.packed_qty = 0
 
 				frappe.throw(_("Quantity for Item {0} must be less than {1}").format(item.item_code, item.recommended_qty))
+
+	def calculate_package_weights(self):
+		# validate for unequal item weight UOMs
+		item_weight_uoms = list(set([item.weight_uom for item in self.items if item.weight_uom]))
+		if len(item_weight_uoms) > 1:
+			frappe.throw(_("Different item UOMs will lead to incorrect net weight value. Make sure that each item's net weight is in the same UOM."))
+
+		self.net_weight_uom = self.gross_weight_uom = item_weight_uoms[0]
+
+		# set net and gross package weight
+		net_weight = 0
+		for item in self.items:
+			net_weight += flt(item.net_weight) * flt(item.qty)
+
+		self.net_weight_pkg = round(net_weight, 2)
+		if not flt(self.gross_weight_pkg):
+			self.gross_weight_pkg = self.net_weight_pkg
 
 	def create_delivery_note(self):
 		# TODO: create delivery note and set serial and batch details

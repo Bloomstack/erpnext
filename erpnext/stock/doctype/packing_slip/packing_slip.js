@@ -9,8 +9,13 @@ frappe.ui.form.on("Packing Slip", {
 	},
 
 	setup: (frm) => {
-		frm.set_query('sales_order', (doc) => {
-			return { filters: { 'docstatus': 1 } }
+		frm.set_query("sales_order", (doc) => {
+			return {
+				filters: {
+					"docstatus": 1,
+					"per_delivered": ["<", 100]
+				}
+			}
 		});
 
 		frm.set_query("item_code", "items", (doc, cdt, cdn) => {
@@ -23,12 +28,6 @@ frappe.ui.form.on("Packing Slip", {
 				filters: { 'sales_order': doc.sales_order }
 			}
 		});
-	},
-
-	validate: (frm) => {
-		frm.trigger("validate_case_nos");
-		frm.trigger("validate_item_details");
-		frm.trigger("calculate_package_weights");
 	},
 
 	items_on_form_rendered: (frm) => {
@@ -50,53 +49,7 @@ frappe.ui.form.on("Packing Slip", {
 				}
 			}
 		});
-	},
-
-	validate_case_nos: (frm) => {
-		// To Case No. cannot be less than From Case No.
-		if (!frm.doc.from_case_no) {
-			frappe.throw(__("The 'From Package No.' field must neither be empty nor it's value less than 1."));
-		} else if (!frm.doc.to_case_no) {
-			frm.doc.to_case_no = frm.doc.from_case_no;
-			refresh_field('to_case_no');
-		} else if (frm.doc.to_case_no < frm.doc.from_case_no) {
-			frappe.throw(__("'To Package No.' cannot be less than 'From Package No.'"));
-		}
-	},
-
-	validate_item_details: (frm) => {
-		// item quantity should be greater than 0
-		for (let item of frm.doc.items) {
-			if (item.qty <= 0) {
-				frappe.throw(__(`Invalid quantity specified for item ${item.item_code}. Quantity should be greater than 0.`));
-			}
-		}
-
-		// do not allow duplicate item codes
-		const unique_items = frm.doc.items.uniqBy((item) => item.item_code)
-		if (unique_items.length != frm.doc.items.length) {
-			frappe.throw(__("You have entered duplicate items. Please rectify and try again."));
-		}
-	},
-
-	calculate_package_weights: (frm) => {
-		let net_weight = 0;
-		frm.doc.net_weight_uom = (frm.doc.items && frm.doc.items.length) ? frm.doc.items[0].weight_uom : '';
-		frm.doc.gross_weight_uom = frm.doc.net_weight_uom;
-
-		for (let item of frm.doc.items) {
-			if (item.weight_uom != frm.doc.net_weight_uom) {
-				frappe.throw(__("Different UOM for items will lead to incorrect (Total) Net Weight value. Make sure that Net Weight of each item is in the same UOM."));
-			}
-			net_weight += flt(item.net_weight) * flt(item.qty);
-		}
-
-		frm.doc.net_weight_pkg = roundNumber(net_weight, 2);
-		if (!flt(frm.doc.gross_weight_pkg)) {
-			frm.doc.gross_weight_pkg = frm.doc.net_weight_pkg;
-		}
-		refresh_many(['net_weight_pkg', 'net_weight_uom', 'gross_weight_uom', 'gross_weight_pkg']);
-	},
+	}
 })
 
 let make_row = (title, val, bold) => {
