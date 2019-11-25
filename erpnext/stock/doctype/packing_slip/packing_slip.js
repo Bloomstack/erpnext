@@ -24,7 +24,7 @@ frappe.ui.form.on("Packing Slip", {
 			}
 
 			return {
-				query: "erpnext.stock.doctype.packing_slip.packing_slip.item_details",
+				query: "erpnext.stock.doctype.packing_slip.packing_slip.get_item_details",
 				filters: { 'sales_order': doc.sales_order }
 			}
 		});
@@ -47,6 +47,21 @@ frappe.ui.form.on("Packing Slip", {
 		});
 	},
 
+	refresh: (frm) => {
+		if (frm.doc.docstatus == 1) {
+			const delivery_notes = me.frm.doc.items
+				.filter((item) => item.delivery_note)
+				.map((item) => item.delivery_note) || [];
+
+			if (!delivery_notes.length) {
+				frm.add_custom_button(__("Delivery Note"), () => {
+					frm.trigger("make_delivery_note");
+				}, __("Make"));
+				frm.page.set_inner_btn_group_as_primary(__("Make"));
+			}
+		}
+	},
+
 	items_on_form_rendered: (frm) => {
 		// display the "Add Serial No" button
 		erpnext.setup_serial_no();
@@ -63,23 +78,31 @@ frappe.ui.form.on("Packing Slip", {
 			callback: (r) => {
 				if (!r.exc) {
 					frm.refresh();
+					frappe.msgprint(__(`Items retrieved from Sales Order (${frm.doc.sales_order})`));
 				}
 			}
 		});
+	},
+
+	make_delivery_note: (frm) => {
+		frappe.model.open_mapped_doc({
+			method: "erpnext.stock.doctype.packing_slip.packing_slip.make_delivery_note",
+			frm: frm
+		});
 	}
-})
+});
 
 let make_row = (title, val, bold) => {
 	return `<tr>
 			<td class="datalabelcell">${(bold ? '<b>' : '')} ${title} ${(bold ? '</b>' : '')}</td>
 			<td class="datainputcell" style="text-align:left;">${val}</td>
-		</tr>`
+		</tr>`;
 }
 
 cur_frm.pformat.net_weight_pkg = (doc) => {
-	return `<table style="width:100%">${make_row('Net Weight', doc.net_weight_pkg)}</table>`
+	return `<table style="width:100%">${make_row('Net Weight', doc.net_weight_pkg)}</table>`;
 }
 
 cur_frm.pformat.gross_weight_pkg = (doc) => {
-	return `<table style="width:100%">${make_row('Gross Weight', doc.gross_weight_pkg)}</table>`
+	return `<table style="width:100%">${make_row('Gross Weight', doc.gross_weight_pkg)}</table>`;
 }

@@ -17,7 +17,7 @@ from frappe.contacts.doctype.address.address import get_company_address
 from frappe.desk.notifications import clear_doctype_notifications
 from frappe.model.mapper import get_mapped_doc
 from frappe.model.utils import get_fetch_values
-from frappe.utils import cint, flt
+from frappe.utils import cint, flt, get_link_to_form
 
 from collections import defaultdict
 
@@ -235,7 +235,7 @@ class DeliveryNote(SellingController):
 		# because updating reserved qty in bin depends upon updated delivered qty in SO
 		self.update_stock_ledger()
 
-		self.cancel_packing_slips()
+		self.update_packing_slips()
 		self.make_gl_entries_on_cancel()
 
 	def check_credit_limit(self):
@@ -287,18 +287,21 @@ class DeliveryNote(SellingController):
 		if submit_in:
 			frappe.throw(_("Installation Note {0} has already been submitted").format(submit_in[0][0]))
 
-	def cancel_packing_slips(self):
+	def update_packing_slips(self):
 		"""
-			Cancel submitted packing slips related to this delivery note
+			Update submitted packing slips related to this delivery note
 		"""
-		res = frappe.db.sql("""SELECT name FROM `tabPacking Slip` WHERE delivery_note = %s
-			AND docstatus = 1""", self.name)
 
-		if res:
-			for r in res:
-				ps = frappe.get_doc('Packing Slip', r[0])
-				ps.cancel()
-			frappe.msgprint(_("Packing Slip(s) cancelled"))
+		packing_items = frappe.get_all("Packing Slip Item",
+			filters={"docstatus": 1, "delivery_note": self.name},
+			fields=["name", "parent"])
+
+		for item in packing_items:
+			frappe.db.set_value("Packing Slip Item", item.name, "delivery_note", None)
+
+		packing_slips = list(set([get_link_to_form("Packing Slip", item.parent) for item in packing_items]))
+		if packing_slips:
+			frappe.msgprint(_("Packing Slips {0} updated".format(", ".join(packing_slips))), alert=True)
 
 	def update_status(self, status):
 		self.set_status(update=True, status=status)

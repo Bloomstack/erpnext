@@ -96,17 +96,18 @@ class PackingSlip(Document):
 
 		# validate for unequal item weight UOMs
 		item_weight_uoms = list(set([item.weight_uom for item in self.items if item.weight_uom]))
+		if not item_weight_uoms:
+			frappe.throw(_("Please set a weight UOM for the items to calculate package weights."))
+
 		if len(item_weight_uoms) > 1:
 			frappe.throw(_("Different item UOMs will lead to incorrect net weight value. Make sure that each item's net weight is in the same UOM."))
 
 		self.net_weight_uom = self.gross_weight_uom = item_weight_uoms[0]
 
 		# set net and gross package weight
-		net_weight = 0
-		for item in self.items:
-			net_weight += flt(item.net_weight) * flt(item.qty)
-
+		net_weight = sum([flt(item.net_weight) * flt(item.qty) for item in self.items])
 		self.net_weight_pkg = round(net_weight, 2)
+
 		if not flt(self.gross_weight_pkg):
 			self.gross_weight_pkg = self.net_weight_pkg
 
@@ -210,7 +211,7 @@ class PackingSlip(Document):
 		self.update_item_details()
 
 
-def item_details(doctype, txt, searchfield, start, page_len, filters):
+def get_item_details(doctype, txt, searchfield, start, page_len, filters):
 	if not filters:
 		filters = {}
 
