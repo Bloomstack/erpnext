@@ -26,6 +26,7 @@ class PackingSlip(Document):
 		self.calculate_package_weights()
 
 	def on_submit(self):
+		self.create_stock_entry()
 		self.create_delivery_note()
 
 	def validate_case_nos(self):
@@ -111,11 +112,16 @@ class PackingSlip(Document):
 		if not flt(self.gross_weight_pkg):
 			self.gross_weight_pkg = self.net_weight_pkg
 
+	def create_stock_entry(self):
+		stock_entry = make_stock_entry(self.name)
+		stock_entry.save()
+		stock_entry.submit()
+		frappe.msgprint(_("Stock Entry {0} created".format(get_link_to_form("Stock Entry", stock_entry.name))))
+
 	def create_delivery_note(self):
 		delivery_note = make_delivery_note(self.name)
 		delivery_note.insert()
 		frappe.msgprint(_("Delivery note {0} created".format(get_link_to_form("Delivery Note", delivery_note.name))))
-		return delivery_note.name
 
 	def get_ordered_items(self):
 		"""
@@ -230,6 +236,42 @@ def get_item_details(doctype, txt, searchfield, start, page_len, filters):
 			as_list=True)
 
 	return item_details
+
+
+@frappe.whitelist()
+def make_stock_entry(source_name, target_doc=None):
+	packing_warehouse = frappe.db.get_single_value("Delivery Settings", "default_packing_warehouse")
+	if not packing_warehouse:
+		delivery_settings = get_link_to_form("Delivery Settings", "Delivery Settings")
+		frappe.msgprint(_("To automatically set a packing warehouse, choose a default packing warehouse in {0}".format(delivery_settings)))
+
+	def set_missing_values(source, target):
+		target.purpose = "Material Transfer"
+		target.packing_slip_no = source.name
+
+	def update_item(source, target, source_parent):
+		target.t_warehouse = target.t_warehouse or packing_warehouse
+
+	doclist = get_mapped_doc("Packing Slip", source_name, {
+		"Packing Slip": {
+			"doctype": "Stock Entry",
+			"validation": {
+				"docstatus": ["=", 1]
+			}
+		},
+		"Packing Slip Item": {
+			"doctype": "Stock Entry Detail",
+			"field_map": {
+				"serial_no": "serial_no",
+				"batch_no": "batch_no",
+				"source_warehouse": "s_warehouse",
+				"target_warehouse": "t_warehouse"
+			},
+			"postprocess": update_item
+		}
+	}, target_doc, set_missing_values)
+
+	return doclist
 
 
 @frappe.whitelist()
