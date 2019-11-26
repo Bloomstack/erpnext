@@ -49,16 +49,10 @@ frappe.ui.form.on("Packing Slip", {
 
 	refresh: (frm) => {
 		if (frm.doc.docstatus == 1) {
-			const delivery_notes = me.frm.doc.items
-				.filter((item) => item.delivery_note)
-				.map((item) => item.delivery_note) || [];
-
-			if (!delivery_notes.length) {
-				frm.add_custom_button(__("Delivery Note"), () => {
-					frm.trigger("make_delivery_note");
-				}, __("Make"));
-				frm.page.set_inner_btn_group_as_primary(__("Make"));
-			}
+			frm.add_custom_button(__("Delivery Note"), () => {
+				frm.trigger("make_delivery_note");
+			}, __("Make"));
+			frm.page.set_inner_btn_group_as_primary(__("Make"));
 		}
 	},
 

@@ -8,7 +8,7 @@ from frappe import _
 from frappe.model import no_value_fields
 from frappe.model.document import Document
 from frappe.model.mapper import get_mapped_doc
-from frappe.utils import cint, flt
+from frappe.utils import cint, flt, get_link_to_form
 
 
 class PackingSlip(Document):
@@ -114,7 +114,7 @@ class PackingSlip(Document):
 	def create_delivery_note(self):
 		delivery_note = make_delivery_note(self.name)
 		delivery_note.insert()
-		frappe.msgprint(_("Delivery note {0} created".format(delivery_note.name)))
+		frappe.msgprint(_("Delivery note {0} created".format(get_link_to_form("Delivery Note", delivery_note.name))))
 		return delivery_note.name
 
 	def get_ordered_items(self):
@@ -247,8 +247,11 @@ def make_delivery_note(source_name, target_doc=None):
 		"Packing Slip Item": {
 			"doctype": "Delivery Note Item",
 			"field_map": {
+				"name": "ps_detail",
+				"parent": "against_packing_slip",
 				"source_warehouse": "warehouse",
-				"stock_uom": "uom"
+				"stock_uom": "uom",
+				"serial_no": "serial_no"
 			},
 			"postprocess": update_item
 		},
