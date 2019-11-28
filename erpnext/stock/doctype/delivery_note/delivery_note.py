@@ -17,7 +17,7 @@ from frappe.contacts.doctype.address.address import get_company_address
 from frappe.desk.notifications import clear_doctype_notifications
 from frappe.model.mapper import get_mapped_doc
 from frappe.model.utils import get_fetch_values
-from frappe.utils import cint, flt, get_link_to_form
+from frappe.utils import cint, flt
 
 from collections import defaultdict
 
@@ -234,8 +234,6 @@ class DeliveryNote(SellingController):
 		# Updating stock ledger should always be called after updating prevdoc status,
 		# because updating reserved qty in bin depends upon updated delivered qty in SO
 		self.update_stock_ledger()
-
-		self.update_packing_slips()
 		self.make_gl_entries_on_cancel()
 
 	def check_credit_limit(self):
@@ -286,22 +284,6 @@ class DeliveryNote(SellingController):
 			(self.name))
 		if submit_in:
 			frappe.throw(_("Installation Note {0} has already been submitted").format(submit_in[0][0]))
-
-	def update_packing_slips(self):
-		"""
-			Update submitted packing slips related to this delivery note
-		"""
-
-		packing_items = frappe.get_all("Packing Slip Item",
-			filters={"docstatus": 1, "delivery_note": self.name},
-			fields=["name", "parent"])
-
-		for item in packing_items:
-			frappe.db.set_value("Packing Slip Item", item.name, "delivery_note", None)
-
-		packing_slips = list(set([get_link_to_form("Packing Slip", item.parent) for item in packing_items]))
-		if packing_slips:
-			frappe.msgprint(_("Packing Slips {0} updated".format(", ".join(packing_slips))), alert=True)
 
 	def update_status(self, status):
 		self.set_status(update=True, status=status)
