@@ -62,7 +62,33 @@ frappe.ui.form.on("Packing Slip", {
 	},
 
 	sales_order: (frm) => {
-		frm.trigger("get_items");
+		if (frm.doc.sales_order) {
+			frm.trigger("get_items");
+
+			erpnext.queries.setup_queries(frm, "Warehouse", function () {
+				return erpnext.queries.warehouse(frm.doc);
+			});
+		}
+	},
+
+	source_warehouse: (frm) => {
+		if (frm.doc.source_warehouse) {
+			for (let item of frm.doc.items || []) {
+				if (!item.source_warehouse) {
+					frappe.model.set_value(item.doctype, item.name, "source_warehouse", frm.doc.source_warehouse);
+				};
+			};
+		}
+	},
+
+	target_warehouse: (frm) => {
+		if (frm.doc.target_warehouse) {
+			for (let item of frm.doc.items || []) {
+				if (!item.target_warehouse) {
+					frappe.model.set_value(item.doctype, item.name, "target_warehouse", frm.doc.target_warehouse);
+				};
+			};
+		}
 	},
 
 	get_items: (frm) => {
@@ -72,7 +98,10 @@ frappe.ui.form.on("Packing Slip", {
 			callback: (r) => {
 				if (!r.exc) {
 					frm.refresh();
-					frappe.msgprint(__(`Items retrieved from Sales Order (${frm.doc.sales_order})`));
+
+					if (frm.doc.items.length) {
+						frappe.msgprint(__(`Items retrieved from Sales Order (${frm.doc.sales_order})`));
+					}
 				}
 			}
 		});

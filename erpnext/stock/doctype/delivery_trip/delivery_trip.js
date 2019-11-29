@@ -58,7 +58,7 @@ frappe.ui.form.on('Delivery Trip', {
 						company: frm.doc.company,
 					},
 					get_query_filters: {
-						docstatus: 1,
+						docstatus: ["<", 2],
 						company: frm.doc.company,
 					}
 				})
