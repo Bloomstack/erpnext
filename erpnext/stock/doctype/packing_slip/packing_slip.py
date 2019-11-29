@@ -14,13 +14,11 @@ from frappe.utils import cint, flt, get_link_to_form
 class PackingSlip(Document):
 	def validate(self):
 		"""
-			* Check if packing cases do not overlap
 			* Check for duplicate and zero-quantity items
 			* Check if packed quantities doesn't exceed ordered quantities
 			* If all checks pass, calculate net weights from package items
 		"""
 
-		self.validate_case_nos()
 		self.validate_item_details()
 		self.validate_packed_qty()
 		self.calculate_package_weights()
@@ -28,38 +26,6 @@ class PackingSlip(Document):
 	def on_submit(self):
 		self.create_stock_entry()
 		self.create_delivery_note()
-
-	def validate_case_nos(self):
-		"""
-			Validate if case numbers overlap. If they do, recommend next case no.
-		"""
-
-		# check for empty and invalid case numbers
-		if not self.to_case_no:
-			self.to_case_no = self.from_case_no
-		elif self.from_case_no > self.to_case_no:
-			frappe.throw(_("Final package number should be greater than the starting package number"))
-
-		# check for already used case numbers
-		res = frappe.db.sql("""
-			SELECT
-				name
-			FROM
-				`tabPacking Slip`
-			WHERE
-				sales_order = %(sales_order)s
-					AND docstatus = 1
-					AND ((from_case_no BETWEEN %(from_case_no)s AND %(to_case_no)s)
-						OR (to_case_no BETWEEN %(from_case_no)s AND %(to_case_no)s)
-						OR (%(from_case_no)s BETWEEN from_case_no AND to_case_no))
-			""", {
-				"sales_order": self.sales_order,
-				"from_case_no": self.from_case_no,
-				"to_case_no": self.to_case_no
-			})
-
-		if res:
-			frappe.throw(_("The provided case numbers are already in use. Try case number {0} and above").format(self.get_recommended_case_no()))
 
 	def validate_item_details(self):
 		# validate non-positive item quantities
@@ -178,21 +144,8 @@ class PackingSlip(Document):
 			Fill empty columns in Packing Slip Item
 		"""
 
-		if not self.from_case_no:
-			self.from_case_no = self.get_recommended_case_no()
-
 		for item in self.items:
 			item.update(frappe.db.get_value("Item", item.item_code, ["weight_per_unit", "weight_uom"], as_dict=True))
-
-	def get_recommended_case_no(self):
-		"""
-			Returns the next case number for a new Packing Slip
-		"""
-
-		recommended_case_no = frappe.db.get_value("Packing Slip",
-			{"sales_order": self.sales_order, "docstatus": 1}, "MAX(to_case_no)")
-
-		return cint(recommended_case_no) + 1
 
 	def get_items(self):
 		self.set("items", [])
