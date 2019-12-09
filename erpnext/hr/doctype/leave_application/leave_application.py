@@ -8,7 +8,7 @@ from frappe.utils import cint, cstr, date_diff, flt, formatdate, getdate, get_li
 	comma_or, get_fullname, add_days, nowdate, get_datetime_str
 from erpnext.hr.utils import set_employee_name, get_leave_period
 from erpnext.hr.doctype.leave_block_list.leave_block_list import get_applicable_block_dates
-from erpnext.hr.doctype.employee.employee import get_holiday_list_for_employee
+from erpnext.hr.doctype.employee.employee import get_employee_emails, get_holiday_list_for_employee
 from erpnext.buying.doctype.supplier_scorecard.supplier_scorecard import daterange
 from erpnext.hr.doctype.leave_ledger_entry.leave_ledger_entry import create_leave_ledger_entry
 
@@ -290,7 +290,17 @@ class LeaveApplication(Document):
 
 	def notify_employee(self):
 		employee = frappe.get_doc("Employee", self.employee)
-		if not employee.user_id:
+		if employee.branch and employee.department:
+			recipients_list = frappe.get_all('Employee', filters={'status': 'Active'}, or_filters=[{'branch': employee.branch}, {'department': employee.department}])
+		elif employee.branch:
+			recipients_list = frappe.get_all('Employee', filters={'status': 'Active', 'branch': employee.branch})
+		elif employee.department:
+			recipients_list = frappe.get_all('Employee', filters={'status': 'Active', 'department': employee.department})
+		else:
+			recipients_list = [employee.name]
+		recipients = get_employee_emails(recipients_list)
+
+		if not recipients:
 			return
 
 		parent_doc = frappe.get_doc('Leave Application', self.name)
@@ -306,7 +316,7 @@ class LeaveApplication(Document):
 		self.notify({
 			# for post in messages
 			"message": message,
-			"message_to": employee.user_id,
+			"message_to": recipients,
 			# for email
 			"subject": email_template.subject,
 			"notify": "employee"
@@ -352,6 +362,7 @@ class LeaveApplication(Document):
 					subject = args.subject,
 					message = args.message,
 				)
+				contact = ", ".join(contact) if isinstance(contact, list) else contact
 				frappe.msgprint(_("Email sent to {0}").format(contact))
 			except frappe.OutgoingEmailError:
 				pass
