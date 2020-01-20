@@ -3,7 +3,7 @@
 
 frappe.ui.form.on('Employee Checkin', {
 	setup: (frm) => {
-		if(frm.doc.time == "") {
+		if(!frm.doc.time) {
 			frm.set_value("time", frappe.datetime.now_datetime());
 		}
 	}
