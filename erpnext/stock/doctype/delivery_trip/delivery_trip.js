@@ -232,7 +232,7 @@ frappe.ui.form.on('Delivery Stop', {
 				callback: function (r) {
 					if(r.message && (r.message.delivery_start_time || r.message.delivery_end_time) ){
 						frappe.model.set_value(cdt, cdn, "delivery_start_time", r.message.delivery_start_time);
-						frappe.model.set_value(cdt, cdn, "delivery_end_time", r.message.delivery_end_time); 
+						frappe.model.set_value(cdt, cdn, "delivery_end_time", r.message.delivery_end_time);
 						frappe.show_alert({
 							indicator: 'blue',
 							message: __(r.message.default_window
