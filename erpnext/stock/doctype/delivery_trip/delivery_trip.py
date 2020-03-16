@@ -189,22 +189,6 @@ class DeliveryTrip(Document):
 
 		return route_list
 
-	def sanitize_address(self, address):
-		"""
-		Remove HTML breaks in a given address
-
-		Args:
-			address (str): Address to be sanitized
-
-		Returns:
-			(str): Sanitized address
-		"""
-
-		address = address.split('<br>')
-
-		# Only get the first 4 blocks of the address
-		return ', '.join(address[:3])
-
 	def rearrange_stops(self, optimized_order, start):
 		"""
 		Re-arrange delivery stops based on order optimized
@@ -263,9 +247,22 @@ class DeliveryTrip(Document):
 		try:
 			directions = maps_client.directions(**directions_data)
 		except Exception as e:
-			frappe.throw(_(e))
+			frappe.throw(_(str(e)))
 
 		return directions[0] if directions else False
+
+
+@frappe.whitelist()
+def get_delivery_window(customer=None):
+	delivery_window = frappe.db.get_value("Customer", customer, ["delivery_start_time", "delivery_end_time"], as_dict=1)
+	delivery_window.default_window = False
+
+	if delivery_window and (delivery_window.delivery_start_time or delivery_window.delivery_end_time):
+		return delivery_window
+
+	default_window = frappe.db.get_value("Delivery Settings", "Delivery Settings", ["delivery_start_time", "delivery_end_time"], as_dict=1)
+	default_window.default_window = True
+	return default_window
 
 
 @frappe.whitelist()
