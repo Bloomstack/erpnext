@@ -439,7 +439,7 @@ class StockEntry(StockController):
 				"purpose": "Material Transfer for Manufacture"}, "name")
 
 		for d in self.get('items'):
-			transferred_serial_no, transferred_batch_no= frappe.db.get_value("Stock Entry Detail",{"parent": previous_se,
+			transferred_serial_no, transferred_batch_no = frappe.db.get_value("Stock Entry Detail",{"parent": previous_se,
 				"item_code": d.item_code}, ["serial_no", "batch_no"])
 
 			if transferred_serial_no:
