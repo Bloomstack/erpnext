@@ -2,15 +2,17 @@
 # License: GNU General Public License v3. See license.txt
 
 from __future__ import unicode_literals
-from six import text_type
+
+from six import string_types, text_type
+
 import frappe
 from frappe import _
 from frappe.model.document import Document
 from frappe.model.naming import make_autoname
-from frappe.utils import flt, cint
-from frappe.utils.jinja import render_template
+from frappe.utils import cint, flt, unique
 from frappe.utils.data import add_days
-from six import string_types
+from frappe.utils.jinja import render_template
+
 
 class UnableToSelectBatchError(frappe.ValidationError):
 	pass
@@ -109,6 +111,7 @@ class Batch(Document):
 	def validate(self):
 		self.item_has_batch_enabled()
 		self.calculate_batch_qty()
+		self.set_source_batches()
 
 	def item_has_batch_enabled(self):
 		if frappe.db.get_value("Item", self.item, "has_batch_no") == 0:
@@ -138,6 +141,10 @@ class Batch(Document):
 		name = make_autoname(key)
 
 		return name
+
+	def set_source_batches(self):
+		if not self.source_batches:
+			self.set("source_batches", get_source_batches(self.name))
 
 
 @frappe.whitelist()
@@ -181,6 +188,54 @@ def get_batches_by_oldest(item_code, warehouse):
 	batches_dates.sort(key=lambda tup: tup[1])
 	return batches_dates
 
+
+def get_source_batches(batch_no, processed_entries=None):
+	source_batches = []
+
+	if not processed_entries:
+		processed_entries = []
+
+	# fetch unique stock entries where the given batch was manufactured
+	stock_entries = frappe.get_all("Stock Entry",
+		filters=[
+			["Stock Entry Detail", "batch_no", "=", batch_no],
+			["Stock Entry Detail", "s_warehouse", "=", ""],
+			["Stock Entry Detail", "t_warehouse", "!=", ""]
+		],
+		distinct=1)
+	stock_entries = [se.name for se in stock_entries]
+	unprocessed_entries = list(set(stock_entries).difference(set(processed_entries)))
+
+	# build a list of all consumed batches in the stock entries
+	consumed_batches = frappe.get_all("Stock Entry Detail",
+		filters={
+			"parent": ["IN", unprocessed_entries],
+			"batch_no": ["!=", batch_no],
+			"s_warehouse": ["!=", ""]
+		},
+		fields=["batch_no"],
+		distinct=1)
+	consumed_batches = [batch.batch_no for batch in consumed_batches if batch.batch_no]
+
+	# repeat previous steps for the new batches until no source is found
+	if not consumed_batches:
+		return [batch_no] if processed_entries else []
+
+	# filter for batches that have linked purchase receipt(s)
+	processed_entries.extend(stock_entries)
+	for batch in consumed_batches:
+		purchase_receipts = frappe.get_all("Purchase Receipt",
+			filters=[["Purchase Receipt Item", "batch_no", "=", batch]])
+
+		if any(purchase_receipts):
+			source_batches.extend(get_source_batches(batch, processed_entries))
+
+	# remove query batch no from the list
+	if batch_no in source_batches:
+		source_batches.remove(batch_no)
+
+	source_batches = [frappe.get_doc("Batch", batch) for batch in source_batches]
+	return source_batches
 
 @frappe.whitelist()
 def split_batch(batch_no, item_code, warehouse, qty, new_batch_id=None):

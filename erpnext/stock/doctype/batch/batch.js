@@ -12,6 +12,14 @@ frappe.ui.form.on('Batch', {
 				}
 			}
 		}
+
+		// override table multiselect formatter
+		frappe.meta.set_formatter(frm.doc.doctype, "source_batches", frm.doc.name, (rows, df, options) => {
+			rows = rows || [];
+			const field = frappe.get_meta(df.options).fields.find(df => df.fieldname === "batch_id");
+			const formatted_values = rows.map(row => frappe.format(row.batch_id, field, options, row))
+			return formatted_values.join(', ');
+		});
 	},
 	refresh: (frm) => {
 		if(!frm.is_new()) {

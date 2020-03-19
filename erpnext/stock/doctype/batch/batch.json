@@ -17,6 +17,7 @@
   "parent_batch",
   "manufacturing_date",
   "column_break_3",
+  "source_batches",
   "batch_qty",
   "stock_uom",
   "expiry_date",
@@ -160,6 +161,13 @@
    "oldfieldname": "description",
    "oldfieldtype": "Small Text",
    "width": "300px"
+  },
+  {
+   "fieldname": "source_batches",
+   "fieldtype": "Table MultiSelect",
+   "label": "From Purchased Batches",
+   "options": "Batch",
+   "read_only": 1
   }
  ],
  "icon": "fa fa-archive",
@@ -167,7 +175,7 @@
  "image_field": "image",
  "links": [],
  "max_attachments": 5,
- "modified": "2019-12-24 02:49:19.868790",
+ "modified": "2020-03-19 04:06:44.921861",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Batch",
