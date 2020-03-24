@@ -77,7 +77,8 @@ class Customer(TransactionBase):
 	def validate_default_bank_account(self):
 		if self.default_bank_account:
 			is_company_account = frappe.db.get_value('Bank Account', self.default_bank_account, 'is_company_account')
-			frappe.throw(_("{0} is not a company bank account").format(frappe.bold(self.default_bank_account)))
+			if not is_company_account:
+				frappe.throw(_("{0} is not a company bank account").format(frappe.bold(self.default_bank_account)))
 
 	def validate_delivery_window_times(self):
 		if self.delivery_start_time and self.delivery_end_time:

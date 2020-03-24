@@ -41,12 +41,17 @@ def get_abbreviated_name(name, company):
 @frappe.whitelist()
 def get_children(doctype, parent=None, company=None, is_root=False):
 	condition = ''
+	var_dict = {
+		"name": get_root_of("Department"),
+		"parent": parent,
+		"company": company,
+	}
 	if company == parent:
-		condition = "name='{0}'".format(get_root_of("Department"))
+		condition = "name=%(name)s"
 	elif company:
-		condition = "parent_department='{0}' and company='{1}'".format(parent, company)
+		condition = "parent_department=%(parent)s and company=%(company)s"
 	else:
-		condition = "parent_department = '{0}'".format(parent)
+		condition = "parent_department = %(parent)s"
 
 	return frappe.db.sql("""
 		select
@@ -55,7 +60,7 @@ def get_children(doctype, parent=None, company=None, is_root=False):
 		from `tab{doctype}`
 		where
 			{condition}
-		order by name""".format(doctype=doctype, condition=condition), as_dict=1)
+		order by name""".format(doctype=doctype, condition=condition), var_dict, as_dict=1)
 
 @frappe.whitelist()
 def add_node():
