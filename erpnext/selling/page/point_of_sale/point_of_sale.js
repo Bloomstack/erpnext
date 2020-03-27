@@ -1465,7 +1465,7 @@ class POSItems {
 
 	get_item_html(item) {
 		const price_list_rate = format_currency(item.price_list_rate, this.currency);
-		const { item_code, item_name, item_image} = item;
+		const { item_code, item_name, item_image, actual_qty} = item;
 		const item_title = item_name || item_code;
 
 		const template = `
@@ -1489,9 +1489,12 @@ class POSItems {
 								</span>` : '' }
 							${item_image ? `<img src="${item_image}" alt="${item_title}">` : '' }
 						</div>
-						<span class="price-info">
+						<p class="price-info">
 							${price_list_rate}
-						</span>
+						</p>
+						<p class="qty-info">
+							Qty:${actual_qty}
+						</p>
 					</a>
 				</div>
 			</div>
