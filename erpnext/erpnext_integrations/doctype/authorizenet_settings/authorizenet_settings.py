@@ -92,10 +92,10 @@ def charge_credit_card(data, card_number, expiration_date, card_code):
 	data = json.loads(data)
 	data = frappe._dict(data)
 
-	# Create a merchantAuthenticationType object with authentication details
+	# Authenticate with Authorizenet
 	merchant_auth = apicontractsv1.merchantAuthenticationType()
-	merchant_auth.name = frappe.db.get_value("Authorizenet Settings", "Authorizenet Settings", ["api_login_id"])
-	merchant_auth.transactionKey = get_decrypted_password('Authorizenet Settings', 'Authorizenet Settings',fieldname='api_transaction_key', raise_exception=False)
+	merchant_auth.name = frappe.db.get_single_value("Authorizenet Settings", "api_login_id")
+	merchant_auth.transactionKey = get_decrypted_password('Authorizenet Settings', 'Authorizenet Settings', fieldname='api_transaction_key', raise_exception=False)
 	
 	# Create the payment data for a credit card
 	credit_card = apicontractsv1.creditCardType()
@@ -118,6 +118,9 @@ def charge_credit_card(data, card_number, expiration_date, card_code):
 	order = apicontractsv1.orderType()
 	order.invoiceNumber = sales_order.name
 
+	# build the array of line items
+	line_items = apicontractsv1.ArrayOfLineItem()
+
 	for item in sales_order.get("items"):
 		for i in range(len(sales_order.get("items"))):
 
@@ -129,8 +132,6 @@ def charge_credit_card(data, card_number, expiration_date, card_code):
 			item[i].quantity = item.qty
 			item[i].unitPrice = item.amount
 
-			# build the array of line items
-			line_items = apicontractsv1.ArrayOfLineItem()
 			line_items.lineItem.append(item[i])
 
 	# Create a transactionRequestType object and add the previous objects to it.
@@ -176,31 +177,21 @@ def charge_credit_card(data, card_number, expiration_date, card_code):
 			else:
 				status = "Failed"
 
-	custom_redirect_to = None
-
 	if status != "Failed":
 		try:
-			custom_redirect_to = frappe.get_doc(data.reference_doctype, data.reference_docname).run_method("on_payment_authorized",
-				status)
+			frappe.get_doc(data.reference_doctype, data.reference_docname).run_method("on_payment_authorized", status)
 		except Exception as ex:
 			raise ex
 
-	response = to_dict(response)
-	transId = response.get("transactionResponse").get("transId")
-	responseCode = response.get("transactionResponse").get("responseCode")\
+	response_dict = to_dict(response)
 
 	if status == "Completed":
-		code = response.get("transactionResponse").get("messages").get("message").get("code")
-		description = response.get("transactionResponse").get("messages").get("message").get("description")
+		description = response_dict.get("transactionResponse").get("messages").get("message").get("description")
 	elif status == "Failed":
-		code = response.get("transactionResponse").get("errors").get("error").get("errorCode")
-		description = response.get("transactionResponse").get("errors").get("error").get("errorText")
+		description = response_dict.get("transactionResponse").get("errors").get("error").get("errorText")
 
 	return frappe._dict({
 		"status": status,
-		"transId" : transId,
-		"responseCode" : responseCode,
-		"code" : code,
 		"description" : description
 	})
 
