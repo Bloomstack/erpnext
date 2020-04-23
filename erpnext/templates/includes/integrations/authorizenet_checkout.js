@@ -1,12 +1,13 @@
 $('#submit').on("click", function (e) {
     data = context.replace(/'/g, '"');
     e.preventDefault();
-    cardNumber = document.getElementById('cardholder-cardNumber').value;
-    expirationDate = document.getElementById('cardholder-expirationDate').value;
-    cardCode = document.getElementById('cardholder-cardCode').value;
+    cardNumber = document.getElementById('card-number').value;
+    expirationDate = document.getElementById('card-expiry').value;
+    cardCode = document.getElementById('card-code').value;
 
     frappe.call({
         method: "erpnext.erpnext_integrations.doctype.authorizenet_settings.authorizenet_settings.charge_credit_card",
+        freeze: true,
         args: {
             "card_number": cardNumber,
             "expiration_date": expirationDate,

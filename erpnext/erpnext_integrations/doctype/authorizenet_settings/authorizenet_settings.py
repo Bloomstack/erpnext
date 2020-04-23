@@ -62,7 +62,7 @@ import sys
 import re
 from six.moves.urllib.parse import urlencode
 from frappe.model.document import Document
-from frappe.integrations.utils import create_payment_gateway
+from frappe.integrations.utils import create_payment_gateway, create_request_log
 from frappe.utils import get_url, call_hook_method
 from frappe.utils.password import get_decrypted_password
 
@@ -92,6 +92,9 @@ def charge_credit_card(data, card_number, expiration_date, card_code):
 	data = json.loads(data)
 	data = frappe._dict(data)
 
+	# Create Integration Request
+	integration_request = create_request_log(data, "Host", "AuthorizeNet")
+
 	# Authenticate with Authorizenet
 	merchant_auth = apicontractsv1.merchantAuthenticationType()
 	merchant_auth.name = frappe.db.get_single_value("Authorizenet Settings", "api_login_id")
@@ -108,21 +111,22 @@ def charge_credit_card(data, card_number, expiration_date, card_code):
 	payment.creditCard = credit_card
 
 	pr = frappe.get_doc("Payment Request", data.reference_docname)
-	sales_order = frappe.get_doc("Sales Order", pr.reference_name).as_dict()
+	reference_doc = frappe.get_doc(pr.reference_doctype, pr.reference_name).as_dict()
 
 	customer_address = apicontractsv1.customerAddressType()
 	customer_address.firstName = data.payer_name
-	customer_address.address = sales_order.customer_address[:60]
+	customer_address.email = data.payer_email
+	customer_address.address = reference_doc.customer_address[:60]
 
 	# Create order information 
 	order = apicontractsv1.orderType()
-	order.invoiceNumber = sales_order.name
+	order.invoiceNumber = reference_doc.name
 
 	# build the array of line items
 	line_items = apicontractsv1.ArrayOfLineItem()
 
-	for item in sales_order.get("items"):
-		for i in range(len(sales_order.get("items"))):
+	for item in reference_doc.get("items"):
+		for i in range(len(reference_doc.get("items"))):
 
 			# setup individual line items
 			item[i] = apicontractsv1.lineItemType()
@@ -155,6 +159,8 @@ def charge_credit_card(data, card_number, expiration_date, card_code):
 
 	response = createtransactioncontroller.getresponse()
 
+	doc = frappe.get_doc("Integration Request", integration_request.name).as_dict()
+
 	if response is not None:
 		# Check to see if the API request was successfully received and acted upon
 		if response.messages.resultCode == "Ok":
@@ -162,20 +168,26 @@ def charge_credit_card(data, card_number, expiration_date, card_code):
 			# and parse it to display the results of authorizing the card
 			if hasattr(response.transactionResponse, 'messages') is True:
 				status = "Completed"
+				frappe.db.set_value("Integration Request", doc.name, "status", "Completed")
 			else:
 				status = "Failed"
+				frappe.db.set_value("Integration Request", doc.name, "status", "Failed")
 				if hasattr(response.transactionResponse, 'errors') is True:
 					status = "Failed"
+					frappe.db.set_value("Integration Request", doc.name, "status", "Failed")
 
 		# Or, print errors if the API request wasn't successful
 		else:
 			status = "Failed"
+			frappe.db.set_value("Integration Request", doc.name, "status", "Failed")
 			if hasattr(response, 'transactionResponse') is True and hasattr(
 					response.transactionResponse, 'errors') is True:
 				status = "Failed"
+				frappe.db.set_value("Integration Request", doc.name, "status", "Failed")
 
 			else:
 				status = "Failed"
+				frappe.db.set_value("Integration Request", doc.name, "status", "Failed")
 
 	if status != "Failed":
 		try:
