@@ -8,6 +8,12 @@
     -webkit-transition: box-shadow 150ms ease;
     transition: box-shadow 150ms ease;
   }
+
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
   
   .authorizenetElement--focus {
     box-shadow: 0 1px 3px 0 #cfd7df;

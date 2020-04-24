@@ -1,4 +1,6 @@
 $('#submit').on("click", function (e) {
+    $('#submit').prop('disabled', true)
+	$('#submit').html(__('Processing...'))
     data = context.replace(/'/g, '"');
     e.preventDefault();
     cardNumber = document.getElementById('card-number').value;

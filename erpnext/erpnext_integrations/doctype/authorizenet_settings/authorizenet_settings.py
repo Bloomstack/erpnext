@@ -159,7 +159,7 @@ def charge_credit_card(data, card_number, expiration_date, card_code):
 
 	response = createtransactioncontroller.getresponse()
 
-	doc = frappe.get_doc("Integration Request", integration_request.name).as_dict()
+	doc = frappe.get_doc("Integration Request", integration_request.name)
 
 	if response is not None:
 		# Check to see if the API request was successfully received and acted upon
@@ -168,26 +168,20 @@ def charge_credit_card(data, card_number, expiration_date, card_code):
 			# and parse it to display the results of authorizing the card
 			if hasattr(response.transactionResponse, 'messages') is True:
 				status = "Completed"
-				frappe.db.set_value("Integration Request", doc.name, "status", "Completed")
 			else:
 				status = "Failed"
-				frappe.db.set_value("Integration Request", doc.name, "status", "Failed")
 				if hasattr(response.transactionResponse, 'errors') is True:
 					status = "Failed"
-					frappe.db.set_value("Integration Request", doc.name, "status", "Failed")
 
 		# Or, print errors if the API request wasn't successful
 		else:
 			status = "Failed"
-			frappe.db.set_value("Integration Request", doc.name, "status", "Failed")
 			if hasattr(response, 'transactionResponse') is True and hasattr(
 					response.transactionResponse, 'errors') is True:
 				status = "Failed"
-				frappe.db.set_value("Integration Request", doc.name, "status", "Failed")
 
 			else:
 				status = "Failed"
-				frappe.db.set_value("Integration Request", doc.name, "status", "Failed")
 
 	if status != "Failed":
 		try:
@@ -199,8 +193,12 @@ def charge_credit_card(data, card_number, expiration_date, card_code):
 
 	if status == "Completed":
 		description = response_dict.get("transactionResponse").get("messages").get("message").get("description")
+		doc.update_status(data, status)
 	elif status == "Failed":
-		description = response_dict.get("transactionResponse").get("errors").get("error").get("errorText")
+		error_text = response_dict.get("transactionResponse").get("errors").get("error").get("errorText")
+		description = error_text
+		doc.update_status(data, status)
+		frappe.db.set_value("Integration Request", doc.name, "error", error_text)
 
 	return frappe._dict({
 		"status": status,
