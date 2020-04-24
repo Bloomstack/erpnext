@@ -126,17 +126,15 @@ def charge_credit_card(data, card_number, expiration_date, card_code):
 	line_items = apicontractsv1.ArrayOfLineItem()
 
 	for item in reference_doc.get("items"):
-		for i in range(len(reference_doc.get("items"))):
-
-			# setup individual line items
-			item[i] = apicontractsv1.lineItemType()
-			item[i].itemId = item.item_code
-			item[i].name = item.item_name[:30]
-			item[i].description = item.description[:255]
-			item[i].quantity = item.qty
-			item[i].unitPrice = item.rate
-
-			line_items.lineItem.append(item[i])
+		# setup individual line items
+		line_item = apicontractsv1.lineItemType()
+		line_item.itemId = item.item_code
+		line_item.name = item.item_name[:30]
+		line_item.description = item.item_name
+		line_item.quantity = item.qty
+		line_item.unitPrice = item.amount
+		
+		line_items.lineItem.append(line_item)
 
 	# Create a transactionRequestType object and add the previous objects to it.
 	transaction_request = apicontractsv1.transactionRequestType()
@@ -179,9 +177,9 @@ def charge_credit_card(data, card_number, expiration_date, card_code):
 	if status == "Completed":
 		description = response_dict.get("transactionResponse").get("messages").get("message").get("description")
 	elif status == "Failed":
-		error_text = response_dict.get("transactionResponse").get("errors").get("error").get("errorText")
-		description = error_text
-		frappe.db.set_value("Integration Request", integration_request.name, "error", error_text)
+		description = error_text = response_dict.get("transactionResponse").get("errors").get("error").get("errorText")
+		integration_request.error = error_text
+		integration_request.save(ignore_permissions=True)
 
 	return frappe._dict({
 		"status": status,
