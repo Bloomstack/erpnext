@@ -110,7 +110,7 @@ def charge_credit_card(data, card_number, expiration_date, card_code):
 	payment = apicontractsv1.paymentType()
 	payment.creditCard = credit_card
 
-	pr = frappe.get_doc("Payment Request", data.reference_docname)
+	pr = frappe.get_doc(data.reference_doctype, data.reference_docname)
 	reference_doc = frappe.get_doc(pr.reference_doctype, pr.reference_name).as_dict()
 
 	customer_address = apicontractsv1.customerAddressType()
@@ -132,9 +132,9 @@ def charge_credit_card(data, card_number, expiration_date, card_code):
 			item[i] = apicontractsv1.lineItemType()
 			item[i].itemId = item.item_code
 			item[i].name = item.item_name[:30]
-			item[i].description = item.item_name
+			item[i].description = item.description[:255]
 			item[i].quantity = item.qty
-			item[i].unitPrice = item.amount
+			item[i].unitPrice = item.rate
 
 			line_items.lineItem.append(item[i])
 
@@ -159,46 +159,29 @@ def charge_credit_card(data, card_number, expiration_date, card_code):
 
 	response = createtransactioncontroller.getresponse()
 
-	doc = frappe.get_doc("Integration Request", integration_request.name)
+	status = "Failed"
 
 	if response is not None:
 		# Check to see if the API request was successfully received and acted upon
-		if response.messages.resultCode == "Ok":
-			# Since the API request was successful, look for a transaction response
-			# and parse it to display the results of authorizing the card
-			if hasattr(response.transactionResponse, 'messages') is True:
-				status = "Completed"
-			else:
-				status = "Failed"
-				if hasattr(response.transactionResponse, 'errors') is True:
-					status = "Failed"
-
-		# Or, print errors if the API request wasn't successful
-		else:
-			status = "Failed"
-			if hasattr(response, 'transactionResponse') is True and hasattr(
-					response.transactionResponse, 'errors') is True:
-				status = "Failed"
-
-			else:
-				status = "Failed"
+		if response.messages.resultCode == "Ok" and hasattr(response.transactionResponse, 'messages') is True:
+			status = "Completed"
 
 	if status != "Failed":
 		try:
-			frappe.get_doc(data.reference_doctype, data.reference_docname).run_method("on_payment_authorized", status)
+			pr.run_method("on_payment_authorized", status)
 		except Exception as ex:
 			raise ex
 
 	response_dict = to_dict(response)
 
+	integration_request.update_status(data, status)
+
 	if status == "Completed":
 		description = response_dict.get("transactionResponse").get("messages").get("message").get("description")
-		doc.update_status(data, status)
 	elif status == "Failed":
 		error_text = response_dict.get("transactionResponse").get("errors").get("error").get("errorText")
 		description = error_text
-		doc.update_status(data, status)
-		frappe.db.set_value("Integration Request", doc.name, "error", error_text)
+		frappe.db.set_value("Integration Request", integration_request.name, "error", error_text)
 
 	return frappe._dict({
 		"status": status,
