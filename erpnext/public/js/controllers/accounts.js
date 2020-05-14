@@ -248,7 +248,6 @@ if(!erpnext.taxes.flags[cur_frm.cscript.tax_table]) {
 	});
 
 	frappe.ui.form.on(cur_frm.cscript.tax_table, "category", function(frm, cdt, cdn) {
-		var d = locals[cdt][cdn];
 		var open_form = frm.open_grid_row();
 		if(open_form) {
 			erpnext.taxes.update_category_and_add_deduct_tax(open_form);
@@ -256,11 +255,10 @@ if(!erpnext.taxes.flags[cur_frm.cscript.tax_table]) {
 			// apply in current row
 			erpnext.taxes.update_category_and_add_deduct_tax(frm.get_field('taxes').grid.get_row(cdn));
 		}
-		refresh_field('add_deduct_tax', d.name, 'taxes');
+		refresh_field('add_deduct_tax', open_form.doc.name, 'taxes');
 	});
 
 	frappe.ui.form.on(cur_frm.cscript.tax_table, "add_deduct_tax", function(frm, cdt, cdn) {
-		var d = locals[cdt][cdn];
 		var open_form = frm.open_grid_row();
 		if(open_form) {
 			erpnext.taxes.update_category_and_add_deduct_tax(open_form);
@@ -268,7 +266,7 @@ if(!erpnext.taxes.flags[cur_frm.cscript.tax_table]) {
 			// apply in current row
 			erpnext.taxes.update_category_and_add_deduct_tax(frm.get_field('taxes').grid.get_row(cdn));
 		}
-		refresh_field('add_deduct_tax', d.name, 'taxes');
+		refresh_field('add_deduct_tax', open_form.doc.name, 'taxes');
 	});
 
 	frappe.ui.form.on(cur_frm.cscript.tax_table, "charge_type", function(frm, cdt, cdn) {
