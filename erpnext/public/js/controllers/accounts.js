@@ -11,7 +11,6 @@ frappe.ui.form.on(cur_frm.doctype, {
 		$(frm.wrapper).on('grid-row-render', function(e, grid_row) {
 			if(in_list(['Sales Taxes and Charges', 'Purchase Taxes and Charges'], grid_row.doc.doctype)) {
 				erpnext.taxes.set_conditional_mandatory_rate_or_amount(grid_row);
-				erpnext.taxes.update_category_and_add_deduct_tax(grid_row);
 			}
 		});
 	},
@@ -249,6 +248,7 @@ if(!erpnext.taxes.flags[cur_frm.cscript.tax_table]) {
 	});
 
 	frappe.ui.form.on(cur_frm.cscript.tax_table, "category", function(frm, cdt, cdn) {
+		var open_form = frm.open_grid_row();
 		if(open_form) {
 			erpnext.taxes.update_category_and_add_deduct_tax(open_form);
 		} else {
@@ -258,6 +258,7 @@ if(!erpnext.taxes.flags[cur_frm.cscript.tax_table]) {
 	});
 
 	frappe.ui.form.on(cur_frm.cscript.tax_table, "add_deduct_tax", function(frm, cdt, cdn) {
+		var open_form = frm.open_grid_row();
 		if(open_form) {
 			erpnext.taxes.update_category_and_add_deduct_tax(open_form);
 		} else {
@@ -316,7 +317,6 @@ erpnext.taxes.update_category_and_add_deduct_tax = function(grid_row) {
 			frappe.msgprint(__("Cannot deduct when category is for 'Valuation' or 'Valuation and Total'"));
 			grid_row.doc.add_deduct_tax = '';
 		}
-		refresh_field('add_deduct_tax', grid_row.doc.name, 'taxes');
 	}
 }
 
