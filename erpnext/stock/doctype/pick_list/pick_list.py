@@ -23,7 +23,8 @@ from frappe.utils import cint, floor, flt, today
 
 class PickList(Document):
 	def before_save(self):
-		self.set_item_locations()
+		pass
+		#self.set_item_locations()
 
 	def before_submit(self):
 		for item in self.locations:
