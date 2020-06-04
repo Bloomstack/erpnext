@@ -57,7 +57,7 @@ class Project(Document):
 			for task in template.tasks:
 				frappe.get_doc(dict(
 					doctype = 'Task',
-					subject = task.subject,
+					subject = task.task_name,
 					project = self.name,
 					status = 'Open',
 					exp_start_date = add_days(self.expected_start_date, task.start),
