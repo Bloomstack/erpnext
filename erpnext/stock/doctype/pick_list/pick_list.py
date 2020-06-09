@@ -26,6 +26,7 @@ class PickList(Document):
 		self.set_item_locations()
 
 	def before_submit(self):
+		self.set_picked_qty()
 		for item in self.locations:
 			if not frappe.get_cached_value('Item', item.item_code, 'has_serial_no'):
 				continue
@@ -36,6 +37,12 @@ class PickList(Document):
 				continue
 			frappe.throw(_('For item {0} at row {1}, count of serial numbers does not match with the picked quantity')
 				.format(frappe.bold(item.item_code), frappe.bold(item.idx)))
+
+	def set_picked_qty(self):
+		for row in self.locations:
+				row.update({
+					'picked_qty': row.stock_qty
+				})
 
 	def set_item_locations(self):
 		items = self.aggregate_item_qty()
