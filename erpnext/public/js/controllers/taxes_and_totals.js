@@ -224,7 +224,7 @@ erpnext.taxes_and_totals = erpnext.payments.extend({
 			me.frm.doc.net_total += item.net_amount;
 			me.frm.doc.base_net_total += item.base_net_amount;
 			});
-		
+
 		$.each(this.frm.doc["timesheets"] || [], function(i, timesheet) {
 			me.frm.doc.total += timesheet.billing_amount;
 			me.frm.doc.base_total += timesheet.billing_amount;
