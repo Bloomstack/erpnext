@@ -140,9 +140,53 @@ frappe.ui.form.on("Customer", {
 		var grid = cur_frm.get_field("sales_team").grid;
 		grid.set_column_disp("allocated_amount", false);
 		grid.set_column_disp("incentives", false);
+
+		if(frm.doc.__onload && frm.doc.__onload.dashboard_info) {
+			var company_wise_info = frm.doc.__onload.dashboard_info;
+			frm.set_value("total_monthly_sales", company_wise_info[0].billing_this_month);
+
+			if(frm.doc.total_monthly_sales && frm.doc.monthly_sales_target){
+				frm.trigger('make_dashboard_and_show_progress');
+			}
+		}
+
 	},
 	validate: function(frm) {
 		if(frm.doc.lead_name) frappe.model.clear_doc("Lead", frm.doc.lead_name);
 
 	},
+	make_dashboard_and_show_progress: function(frm) {
+		var bars = [];
+		var message = '';
+		var added_min = false;
+
+		// Total Monthly Sales
+		var title = __('{0} Total Monthly Sales', [frm.doc.total_monthly_sales]);
+		bars.push({
+			'title': title,
+			'width': (frm.doc.total_monthly_sales / frm.doc.monthly_sales_target * 100) + '%',
+			'progress_class': 'progress-bar-success'
+		});
+		if (bars[0].width == '0%') {
+			bars[0].width = '0.5%';
+			added_min = 0.5;
+		}
+		message = title;
+		// Target Remaining
+		var pending_complete = frm.doc.monthly_sales_target - frm.doc.total_monthly_sales;
+		if(pending_complete) {
+			var width = ((pending_complete / frm.doc.monthly_sales_target * 100) - added_min);
+			title = __('{0} Target Remaining', [pending_complete]);
+			bars.push({
+				'title': title,
+				'width': (width > 100 ? "99.5" : width)  + '%',
+				'progress_class': 'progress-bar-warning'
+			});
+			message = message + '. ' + title;
+		}
+		let section = frm.dashboard.add_section(`<h5 style="margin-top: 0px;">
+			${ __("Sales Target") }</a></h5>`);
+		frm.dashboard.add_progress(__('Status'), bars, message).appendTo(section)
+		frm.dashboard.show();
+	}
 });
