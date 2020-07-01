@@ -143,7 +143,7 @@ frappe.ui.form.on("Customer", {
 
 		if(frm.doc.__onload && frm.doc.__onload.dashboard_info) {
 			let company_wise_info = frm.doc.__onload.dashboard_info;
-			if(company_wise_info > 0){
+			if(company_wise_info.length > 0){
 				frm.set_value("total_monthly_sales", company_wise_info[0].billing_this_month);
 			}
 
@@ -162,7 +162,7 @@ frappe.ui.form.on("Customer", {
 		let message = '';
 
 		// Total Monthly Sales
-		let title = __('{0} Total sales this month', [format_currency(frm.doc.total_monthly_sales)]);
+		let title = __('{0} total sales this month', [format_currency(frm.doc.total_monthly_sales)]);
 		bars.push({
 			'title': title,
 			'width': (frm.doc.total_monthly_sales / frm.doc.monthly_sales_target * 100) + '%',
@@ -174,7 +174,7 @@ frappe.ui.form.on("Customer", {
 		let pending_complete = frm.doc.monthly_sales_target - frm.doc.total_monthly_sales;
 		if(pending_complete > 0) {
 			let width = ((pending_complete / frm.doc.monthly_sales_target * 100));
-			title = __('{0} Target Remaining', [format_currency(pending_complete)]);
+			title = __('{0} remaining', [format_currency(pending_complete)]);
 			bars.push({
 				'title': title,
 				'width': width + '%',
