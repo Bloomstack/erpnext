@@ -860,8 +860,7 @@ var calculate_total_billing_amount =  function(frm) {
 			doc.total_billing_amount += data.billing_amount
 		})
 	}
-
-	frm.cscript.calculate_taxes_and_totals();
+	refresh_field('total_billing_amount')
 }
 
 var select_loyalty_program = function(frm, loyalty_programs) {
