@@ -495,7 +495,7 @@ def get_timeline_data(doctype, name):
 
 def get_dashboard_info(party_type, party, loyalty_program=None):
 	current_fiscal_year = get_fiscal_year(nowdate(), as_dict=True)
-	
+
 	doctype = "Sales Invoice" if party_type=="Customer" else "Purchase Invoice"
 
 	companies = frappe.get_all(doctype, filters={

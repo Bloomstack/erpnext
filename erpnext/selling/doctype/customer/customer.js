@@ -142,10 +142,12 @@ frappe.ui.form.on("Customer", {
 		grid.set_column_disp("incentives", false);
 
 		if(frm.doc.__onload && frm.doc.__onload.dashboard_info) {
-			var company_wise_info = frm.doc.__onload.dashboard_info;
-			frm.set_value("total_monthly_sales", company_wise_info[0].billing_this_month);
+			let company_wise_info = frm.doc.__onload.dashboard_info;
+			if(company_wise_info > 0){
+				frm.set_value("total_monthly_sales", company_wise_info[0].billing_this_month);
+			}
 
-			if(frm.doc.total_monthly_sales && frm.doc.monthly_sales_target){
+			if(frm.doc.monthly_sales_target){
 				frm.trigger('make_dashboard_and_show_progress');
 			}
 		}
@@ -156,30 +158,26 @@ frappe.ui.form.on("Customer", {
 
 	},
 	make_dashboard_and_show_progress: function(frm) {
-		var bars = [];
-		var message = '';
-		var added_min = false;
+		let bars = [];
+		let message = '';
 
 		// Total Monthly Sales
-		var title = __('{0} Total Monthly Sales', [frm.doc.total_monthly_sales]);
+		let title = __('{0} Total sales this month', [format_currency(frm.doc.total_monthly_sales)]);
 		bars.push({
 			'title': title,
 			'width': (frm.doc.total_monthly_sales / frm.doc.monthly_sales_target * 100) + '%',
 			'progress_class': 'progress-bar-success'
 		});
-		if (bars[0].width == '0%') {
-			bars[0].width = '0.5%';
-			added_min = 0.5;
-		}
 		message = title;
+
 		// Target Remaining
-		var pending_complete = frm.doc.monthly_sales_target - frm.doc.total_monthly_sales;
-		if(pending_complete) {
-			var width = ((pending_complete / frm.doc.monthly_sales_target * 100) - added_min);
-			title = __('{0} Target Remaining', [pending_complete]);
+		let pending_complete = frm.doc.monthly_sales_target - frm.doc.total_monthly_sales;
+		if(pending_complete > 0) {
+			let width = ((pending_complete / frm.doc.monthly_sales_target * 100));
+			title = __('{0} Target Remaining', [format_currency(pending_complete)]);
 			bars.push({
 				'title': title,
-				'width': (width > 100 ? "99.5" : width)  + '%',
+				'width': width + '%',
 				'progress_class': 'progress-bar-warning'
 			});
 			message = message + '. ' + title;
