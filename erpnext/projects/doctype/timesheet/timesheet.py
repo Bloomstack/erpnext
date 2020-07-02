@@ -277,7 +277,7 @@ def make_sales_invoice(source_name, item_code=None, customer=None):
 	if customer:
 		target.customer = customer
 	data = billing_amount / hours
-	print("===============================================================================", data, billing_rate)
+
 	if item_code:
 		target.append('items', {
 			'item_code': item_code,
@@ -293,7 +293,6 @@ def make_sales_invoice(source_name, item_code=None, customer=None):
 
 	target.run_method("calculate_billing_amount_for_timesheet")
 	target.run_method("set_missing_values")
-	# target.run_method("calculate_taxes_and_totals")
 
 	return target
 
