@@ -839,7 +839,7 @@ frappe.ui.form.on('Sales Invoice Timesheet', {
 						frappe.model.set_value(cdt, cdn, "billing_hours", data.billing_hours);
 						frappe.model.set_value(cdt, cdn, "billing_amount", data.billing_amount);
 						frappe.model.set_value(cdt, cdn, "timesheet_detail", data.timesheet_detail);
-						calculate_total_billing_amount(frm, data.billing_hours, data.billing_amount);
+						calculate_total_billing_amount(frm);
 					}
 				}
 			}).then(
@@ -886,8 +886,9 @@ frappe.ui.form.on('Sales Invoice Timesheet', {
 	}
 })
 
-var calculate_total_billing_amount =  function(frm, billing_hours, billing_amount) {
+var calculate_total_billing_amount =  function(frm) {
 	var doc = frm.doc;
+
 	doc.total_billing_amount = 0.0
 	if(doc.timesheets) {
 		$.each(doc.timesheets, function(index, data){
