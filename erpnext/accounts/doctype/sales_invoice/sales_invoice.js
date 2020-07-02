@@ -839,10 +839,45 @@ frappe.ui.form.on('Sales Invoice Timesheet', {
 						frappe.model.set_value(cdt, cdn, "billing_hours", data.billing_hours);
 						frappe.model.set_value(cdt, cdn, "billing_amount", data.billing_amount);
 						frappe.model.set_value(cdt, cdn, "timesheet_detail", data.timesheet_detail);
-						calculate_total_billing_amount(frm);
+						calculate_total_billing_amount(frm, data.billing_hours, data.billing_amount);
 					}
 				}
-			})
+			}).then(
+				(data) => {
+					 frappe.prompt({
+						label: "Add Item",
+						fieldname: "item_code",
+						fieldtype: "Link",
+						options: "Item",
+						reqd: 1
+					},
+					(item_code) => {
+						let billing_rate = data.message.billing_amount / data.message.billing_hours;
+						frappe.call({
+							method: "erpnext.accounts.doctype.sales_invoice.sales_invoice.get_item_details",
+							args: {"item_code": item_code.item_code},
+							callback: function (r) {
+								if (r.message) {
+									let item = r.message;
+									frm.add_child("items", {
+										'item_code': item.item_code,
+										'item_name': item.item_name,
+										'qty': data.message.billing_hours,
+										'amount': data.message.billing_amount,
+										'rate': billing_rate,
+										'description': item.description,
+										'uom': item.uoms[0].uom,
+										'conversion_factor': item.uoms[0].conversion_factor,
+										'income_account': item.item_defaults[0].income_account
+									})
+									frm.cscript.calculate_taxes_and_totals()
+								}
+							}
+						})
+					},
+					__("Select Item"));
+				}
+			)
 		}
 	},
 
@@ -851,9 +886,8 @@ frappe.ui.form.on('Sales Invoice Timesheet', {
 	}
 })
 
-var calculate_total_billing_amount =  function(frm) {
+var calculate_total_billing_amount =  function(frm, billing_hours, billing_amount) {
 	var doc = frm.doc;
-
 	doc.total_billing_amount = 0.0
 	if(doc.timesheets) {
 		$.each(doc.timesheets, function(index, data){
@@ -861,6 +895,7 @@ var calculate_total_billing_amount =  function(frm) {
 		})
 	}
 	refresh_field('total_billing_amount')
+	frm.cscript.calculate_taxes_and_totals();
 }
 
 var select_loyalty_program = function(frm, loyalty_programs) {
