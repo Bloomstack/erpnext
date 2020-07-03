@@ -852,25 +852,39 @@ frappe.ui.form.on('Sales Invoice Timesheet', {
 						reqd: 1
 					},
 					(item_code) => {
+						frappe.model.set_value(cdt, cdn, "item_code", item_code.item_code);
 						let billing_rate = data.message.billing_amount / data.message.billing_hours;
 						frappe.call({
 							method: "erpnext.accounts.doctype.sales_invoice.sales_invoice.get_item_details",
 							args: {"item_code": item_code.item_code},
 							callback: function (r) {
 								if (r.message) {
-									let item = r.message;
-									frm.add_child("items", {
-										'item_code': item.item_code,
-										'item_name': item.item_name,
-										'qty': data.message.billing_hours,
-										'amount': data.message.billing_amount,
-										'rate': billing_rate,
-										'description': item.description,
-										'uom': item.uoms[0].uom,
-										'conversion_factor': item.uoms[0].conversion_factor,
-										'income_account': item.item_defaults[0].income_account
-									})
-									frm.cscript.calculate_taxes_and_totals()
+									let item_list = frm.doc.items.map(item => item.item_code);
+									if(item_list.includes(item_code.item_code)){
+										frm.doc.items.forEach( item_data => {
+											if(item_data.item_code == item_code.item_code){
+												let qty = item_data.qty += data.message.billing_hours;
+												frappe.model.set_value(item_data.doctype, item_data.name, "qty", qty)
+												refresh_field("items")
+											}
+										})
+									}
+									else {
+										let item = r.message;
+										frm.add_child("items", {
+											'item_code': item.item_code,
+											'item_name': item.item_name,
+											'time_sheet': d.time_sheet,
+											'qty': data.message.billing_hours,
+											'amount': data.message.billing_amount,
+											'rate': billing_rate,
+											'description': item.description,
+											'uom': item.uoms[0].uom,
+											'conversion_factor': item.uoms[0].conversion_factor,
+											'income_account': item.item_defaults[0].income_account
+										})
+										frm.cscript.calculate_taxes_and_totals()
+									}
 								}
 							}
 						})
@@ -879,6 +893,18 @@ frappe.ui.form.on('Sales Invoice Timesheet', {
 				}
 			)
 		}
+	},
+
+	before_timesheets_remove: function(frm, cdt, cdn){
+		const row = frm.selected_doc || locals[cdt][cdn];
+		frm.doc.items.forEach( item => {
+			if(row.item_code == item.item_code){
+				let qty = item.qty -= row.billing_hours;
+				frappe.model.set_value(item.doctype, item.name, "qty", qty);
+				frm.doc.items = frm.doc.items.filter(item => item.qty > 0)
+				calculate_total_billing_amount(frm);
+			}
+		})
 	},
 
 	timesheets_remove: function(frm, cdt, cdn){
