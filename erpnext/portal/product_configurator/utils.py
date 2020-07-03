@@ -368,6 +368,7 @@ def get_items(filters=None, search=None):
 			left_joins.append(f[0])
 
 	left_join = ' '.join(['LEFT JOIN `tab{0}` on (`tab{0}`.parent = `tabItem`.name)'.format(l) for l in left_joins])
+	left_join = left_join.join('LEFT JOIN `tabItem Price` ON `tabItem`.`name` = `tabItem Price`.`item_code`')
 
 	results = frappe.db.sql('''
 		SELECT
@@ -383,7 +384,9 @@ def get_items(filters=None, search=None):
 		GROUP BY
 			`tabItem`.`name`
 		ORDER BY
-			`tabItem`.`weightage` DESC
+			`tabItem`.`weightage` DESC,
+			`tabItem`.`item_group` DESC,
+			`tabItem Price`.`price_list_rate` DESC
 		LIMIT
 			{page_length}
 		OFFSET
