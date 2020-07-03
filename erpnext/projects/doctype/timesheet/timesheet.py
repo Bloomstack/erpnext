@@ -276,11 +276,12 @@ def make_sales_invoice(source_name, item_code=None, customer=None):
 	target.company = timesheet.company
 	if customer:
 		target.customer = customer
-	data = billing_amount / hours
 
 	if item_code:
 		target.append('items', {
-			'item_code': item_code
+			'item_code': item_code,
+			'qty': hours,
+			'rate': billing_rate
 		})
 
 	target.append('timesheets', {
