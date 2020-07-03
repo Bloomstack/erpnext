@@ -141,15 +141,8 @@ frappe.ui.form.on("Customer", {
 		grid.set_column_disp("allocated_amount", false);
 		grid.set_column_disp("incentives", false);
 
-		if(frm.doc.__onload && frm.doc.__onload.dashboard_info) {
-			let company_wise_info = frm.doc.__onload.dashboard_info;
-			if(company_wise_info.length > 0){
-				frm.set_value("total_monthly_sales", company_wise_info[0].billing_this_month);
-			}
-
-			if(frm.doc.monthly_sales_target){
-				frm.trigger('make_dashboard_and_show_progress');
-			}
+		if(frm.doc.monthly_sales_target){
+			frm.trigger('make_dashboard_and_show_progress');
 		}
 
 	},
