@@ -9,6 +9,7 @@
   "billing_hours",
   "billing_amount",
   "timesheet_detail",
+  "column_break_5",
   "item_code"
  ],
  "fields": [
@@ -48,12 +49,17 @@
    "fieldname": "item_code",
    "fieldtype": "Link",
    "label": "Item",
-   "options": "Item"
+   "options": "Item",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_5",
+   "fieldtype": "Column Break"
   }
  ],
  "istable": 1,
  "links": [],
- "modified": "2020-07-02 23:04:57.948491",
+ "modified": "2020-07-03 01:39:32.097905",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Sales Invoice Timesheet",
