@@ -158,7 +158,7 @@ frappe.ui.form.on("Customer", {
 		let title = __('{0} total sales this month', [format_currency(frm.doc.total_monthly_sales)]);
 		bars.push({
 			'title': title,
-			'width': (frm.doc.total_monthly_sales / frm.doc.monthly_sales_target * 100) + '%',
+			'width': Math.min(100 ,(frm.doc.total_monthly_sales / frm.doc.monthly_sales_target * 100)) + '%',
 			'progress_class': 'progress-bar-success'
 		});
 		message = title;
