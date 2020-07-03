@@ -537,6 +537,7 @@ def get_dashboard_info(party_type, party, loyalty_program=None):
 				"base_grand_total": d.base_grand_total
 			})
 
+
 	company_wise_total_unpaid = frappe._dict(frappe.db.sql("""
 		select company, sum(debit_in_account_currency) - sum(credit_in_account_currency)
 		from `tabGL Entry`
