@@ -13,6 +13,7 @@
   "naming_series",
   "customer",
   "customer_name",
+  "order_type",
   "column_break1",
   "amended_from",
   "company",
@@ -1249,13 +1250,19 @@
    "fieldtype": "Time",
    "label": "Deliver Before",
    "read_only": 1
+  },
+  {
+   "fieldname": "order_type",
+   "fieldtype": "Select",
+   "label": "Order Type",
+   "options": "Sales\nMarketing"
   }
  ],
  "icon": "fa fa-truck",
  "idx": 146,
  "is_submittable": 1,
  "links": [],
- "modified": "2020-04-02 23:15:08.846208",
+ "modified": "2020-07-15 03:33:09.200978",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Delivery Note",
