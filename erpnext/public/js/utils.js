@@ -107,8 +107,11 @@ $.extend(erpnext.utils, {
 				frm.dashboard.add_indicator(__('Total Unpaid: {0}',
 					[format_currency(company_wise_info[0].total_unpaid, company_wise_info[0].currency)]),
 				company_wise_info[0].total_unpaid ? 'orange' : 'green');
-				frm.dashboard.add_indicator(__('Marketing Expense: {0}',
-					[format_currency(company_wise_info[0].marketing_expense, company_wise_info[0].currency)]), 'blue');
+
+				if (frm.doc.doctype === 'Customer') {
+					frm.dashboard.add_indicator(__('Marketing Expense: {0}',
+						[format_currency(company_wise_info[0].marketing_expense, company_wise_info[0].currency)]), 'blue');
+				}
 
 				if(company_wise_info[0].loyalty_points) {
 					frm.dashboard.add_indicator(__('Loyalty Points: {0}',
@@ -135,11 +138,11 @@ $.extend(erpnext.utils, {
 			'<span class="indicator '+color+'">Total Unpaid: '
 			+format_currency(info.total_unpaid, info.currency)+'</span></div>'+
 
-			'<div class="badge-link small" style="margin-bottom:10px">'+
-			'<span class="indicator '+color+'">Marketing Expense: '
-			+format_currency(info.marketing_expense, info.currency)+'</span></div>'+
-
 			'</div>').appendTo(frm.dashboard.stats_area_row);
+		if (frm.doc.doctype === 'Customer') {
+			$('<div class="badge-link small" style="margin-bottom:10px"><span class="indicator blue">'+
+			'Marketing Expense: '+info.marketing_expense+'</span></div>').appendTo(indicator);
+		}
 
 		if(info.loyalty_points){
 			$('<div class="badge-link small" style="margin-bottom:10px"><span class="indicator blue">'+
