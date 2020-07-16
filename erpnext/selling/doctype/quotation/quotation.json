@@ -229,7 +229,7 @@
    "label": "Order Type",
    "oldfieldname": "order_type",
    "oldfieldtype": "Select",
-   "options": "\nSales\nMaintenance\nShopping Cart\nMarketing",
+   "options": "\nSales\nMaintenance\nShopping Cart\nPromotional\nSample\nPAD\nWarranty\nConsignment\nReplenishment\nMarketing",
    "print_hide": 1,
    "reqd": 1
   },
@@ -930,7 +930,7 @@
  "is_submittable": 1,
  "links": [],
  "max_attachments": 1,
- "modified": "2020-07-15 03:24:10.684145",
+ "modified": "2020-07-16 01:27:03.276157",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Quotation",

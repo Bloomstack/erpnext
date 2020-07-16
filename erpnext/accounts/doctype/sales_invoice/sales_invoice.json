@@ -1571,14 +1571,14 @@
    "fieldname": "order_type",
    "fieldtype": "Select",
    "label": "Order Type",
-   "options": "Sales\nMarketing"
+   "options": "\nSales\nPromotional\nSample\nPAD\nWarranty\nConsignment\nReplenishment\nMarketing"
   }
  ],
  "icon": "fa fa-file-text",
  "idx": 181,
  "is_submittable": 1,
  "links": [],
- "modified": "2020-07-15 03:32:21.258743",
+ "modified": "2020-07-16 01:49:06.266368",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Sales Invoice",
