@@ -1255,14 +1255,14 @@
    "fieldname": "order_type",
    "fieldtype": "Select",
    "label": "Order Type",
-   "options": "\nSales\nPromotional\nSample\nPAD\nWarranty\nConsignment\nReplenishment\nMarketing"
+   "options": "\nSales\nMaintenance\nShopping Cart\nPromotional\nSample\nPAD\nWarranty\nConsignment\nReplenishment\nMarketing"
   }
  ],
  "icon": "fa fa-truck",
  "idx": 146,
  "is_submittable": 1,
  "links": [],
- "modified": "2020-07-16 01:48:44.625428",
+ "modified": "2020-07-16 06:13:49.710494",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Delivery Note",
