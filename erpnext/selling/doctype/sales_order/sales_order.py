@@ -101,7 +101,6 @@ class SalesOrder(SellingController):
 
 	def validate_delivery_date(self):
 		if self.order_type == 'Sales' and not self.skip_delivery_note:
-			delivery_date_list = [d.delivery_date for d in self.get("items") if d.delivery_date]
 			if self.delivery_date:
 				for d in self.get("items"):
 					if not d.delivery_date:
