@@ -116,6 +116,21 @@ erpnext.accounts.PaymentReconciliationController = frappe.ui.form.Controller.ext
 
 	},
 
+	auto_match: function() {
+		let mapped_invoices = [];
+		this.frm.doc.payments.forEach(p => {
+			if (!p.invoice_number) {
+				this.frm.doc.invoices.forEach(i => {
+					let inv = i.invoice_type + " | " + i.invoice_number
+					if(i.outstanding_amount==p.amount && !mapped_invoices.includes(inv)) {
+						frappe.model.set_value(p.doctype, p.name, "invoice_number", inv);
+						mapped_invoices.push(inv);
+					};
+				});
+			}
+		});
+	},
+
 	reconcile: function() {
 		var me = this;
 		var show_dialog = me.frm.doc.payments.filter(d => d.difference_amount && !d.difference_account);
