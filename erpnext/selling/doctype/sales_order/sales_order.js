@@ -98,7 +98,7 @@ frappe.ui.form.on("Sales Order", {
 
 	delivery_date: function(frm) {
 		$.each(frm.doc.items || [], function(i, d) {
-			if(!d.delivery_date) d.delivery_date = frm.doc.delivery_date;
+			d.delivery_date = frm.doc.delivery_date;
 		});
 		refresh_field("items");
 	}
