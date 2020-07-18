@@ -1,0 +1,166 @@
+{
+ "autoname": "HAR.#####",
+ "creation": "2020-07-19 09:58:18.540748",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "plant",
+  "plant_tag",
+  "plant_batch",
+  "column_break_3",
+  "harvest_type",
+  "actual_date",
+  "strain",
+  "section_break_3",
+  "harvest_location",
+  "drying_location",
+  "drying_warehouse",
+  "column_break_11",
+  "harvest_weight",
+  "harvest_uom",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "harvest_type",
+   "fieldtype": "Select",
+   "label": "Harvest Type",
+   "options": "Manicure\nHarvest"
+  },
+  {
+   "fetch_from": "plant.plant_tag",
+   "fieldname": "plant_tag",
+   "fieldtype": "Link",
+   "label": "Plant Tag",
+   "options": "Plant Tag",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "plant.strain",
+   "fieldname": "strain",
+   "fieldtype": "Link",
+   "label": "Strain",
+   "options": "Strain",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "plant.plant_batch",
+   "fieldname": "plant_batch",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Plant Batch",
+   "options": "Plant Batch",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_3",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fetch_from": "plant.location_id",
+   "fieldname": "column_break_11",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Harvest",
+   "print_hide": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "plant",
+   "fieldtype": "Link",
+   "label": "Plant",
+   "options": "Plant",
+   "reqd": 1
+  },
+  {
+   "default": "Today",
+   "fieldname": "actual_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Actual Date",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "plant.location",
+   "fieldname": "harvest_location",
+   "fieldtype": "Link",
+   "label": "Harvest Location",
+   "options": "Location",
+   "reqd": 1
+  },
+  {
+   "fieldname": "drying_location",
+   "fieldtype": "Link",
+   "label": "Drying Location",
+   "options": "Location"
+  },
+  {
+   "fieldname": "drying_warehouse",
+   "fieldtype": "Data",
+   "label": "Drying Warehouse",
+   "options": "Warehouse"
+  },
+  {
+   "fieldname": "harvest_weight",
+   "fieldtype": "Float",
+   "label": "Harvest Weight",
+   "reqd": 1
+  },
+  {
+   "fieldname": "harvest_uom",
+   "fieldtype": "Link",
+   "label": "Harvest UOM",
+   "options": "UOM",
+   "reqd": 1
+  }
+ ],
+ "is_submittable": 1,
+ "modified": "2020-07-20 07:13:26.960948",
+ "modified_by": "Administrator",
+ "module": "Agriculture",
+ "name": "Harvest",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Agriculture Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Agriculture User",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "restrict_to_domain": "Agriculture",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "title_field": "plant",
+ "track_changes": 1
+}

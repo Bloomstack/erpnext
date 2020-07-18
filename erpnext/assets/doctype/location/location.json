@@ -1,5 +1,4 @@
 {
- "actions": [],
  "allow_import": 1,
  "allow_rename": 1,
  "autoname": "field:location_name",
@@ -10,9 +9,14 @@
  "field_order": [
   "location_name",
   "parent_location",
+  "location_id",
   "cb_details",
   "is_container",
   "is_group",
+  "license_details_section",
+  "license_number",
+  "column_break_8",
+  "license_expiry_date",
   "sb_location_details",
   "latitude",
   "longitude",
@@ -137,11 +141,37 @@
    "no_copy": 1,
    "print_hide": 1,
    "read_only": 1
+  },
+  {
+   "fieldname": "license_details_section",
+   "fieldtype": "Section Break",
+   "label": "License Details"
+  },
+  {
+   "fieldname": "license_number",
+   "fieldtype": "Link",
+   "label": "License Number",
+   "options": "Compliance Info"
+  },
+  {
+   "fieldname": "column_break_8",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "license_number.license_expiry_date",
+   "fieldname": "license_expiry_date",
+   "fieldtype": "Read Only",
+   "label": "License Expiry Date"
+  },
+  {
+   "fieldname": "location_id",
+   "fieldtype": "Data",
+   "label": "Location ID",
+   "read_only": 1
   }
  ],
  "is_tree": 1,
- "links": [],
- "modified": "2020-03-18 18:25:59.283057",
+ "modified": "2020-07-18 05:40:05.120635",
  "modified_by": "Administrator",
  "module": "Assets",
  "name": "Location",

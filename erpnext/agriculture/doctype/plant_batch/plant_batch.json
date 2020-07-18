@@ -1,0 +1,293 @@
+{
+ "autoname": "field:title",
+ "creation": "2017-11-02 03:09:35.449880",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "title",
+  "plant_tag",
+  "strain",
+  "column_break_3",
+  "growth_phase",
+  "strain_id",
+  "plant_batch_id",
+  "section_break_3",
+  "cycle_type",
+  "project",
+  "column_break_12",
+  "start_date",
+  "end_date",
+  "section_break_7",
+  "location",
+  "plant_spacing",
+  "column_break_11",
+  "location_id",
+  "plant_spacing_uom",
+  "section_break_22",
+  "soil_texture",
+  "soil_analysis",
+  "plant_analysis",
+  "source_section",
+  "source_plant",
+  "source_plant_batch",
+  "column_break_30",
+  "source_plant_id",
+  "source_plant_batch_id",
+  "statistics_section",
+  "untracked_count",
+  "tracked_count",
+  "packaged_count",
+  "column_break_37",
+  "harvested_count",
+  "destroyed_count"
+ ],
+ "fields": [
+  {
+   "fieldname": "title",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Title",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "column_break_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_3",
+   "fieldtype": "Section Break"
+  },
+  {
+   "depends_on": "eval:!doc.__islocal",
+   "fieldname": "project",
+   "fieldtype": "Link",
+   "ignore_user_permissions": 1,
+   "label": "Project",
+   "options": "Project"
+  },
+  {
+   "fieldname": "column_break_12",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "This will be day 1 of the crop cycle",
+   "fieldname": "start_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Start Date",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "project.expected_end_date",
+   "fieldname": "end_date",
+   "fieldtype": "Data",
+   "label": "End Date",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_7",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "cycle_type",
+   "fieldtype": "Select",
+   "label": "Cycle Type",
+   "options": "Yearly\nLess than a year"
+  },
+  {
+   "fieldname": "column_break_11",
+   "fieldtype": "Column Break"
+  },
+  {
+   "collapsible": 1,
+   "collapsible_depends_on": "eval:false",
+   "fieldname": "section_break_22",
+   "fieldtype": "Section Break",
+   "label": "LInked Analysis"
+  },
+  {
+   "fieldname": "soil_texture",
+   "fieldtype": "Table",
+   "label": "Soil Texture",
+   "options": "Linked Soil Texture"
+  },
+  {
+   "fieldname": "soil_analysis",
+   "fieldtype": "Table",
+   "label": "Soil Analysis",
+   "options": "Linked Soil Analysis"
+  },
+  {
+   "fieldname": "plant_analysis",
+   "fieldtype": "Table",
+   "label": "Plant Analysis",
+   "options": "Linked Plant Analysis"
+  },
+  {
+   "fieldname": "location",
+   "fieldtype": "Link",
+   "label": "Location",
+   "options": "Location"
+  },
+  {
+   "fieldname": "growth_phase",
+   "fieldtype": "Select",
+   "label": "Growth Phase",
+   "options": "\nVegetative\nFlowering"
+  },
+  {
+   "fetch_from": "strain.strain_id",
+   "fieldname": "strain_id",
+   "fieldtype": "Data",
+   "label": "Strain ID",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "location.location_id",
+   "fieldname": "location_id",
+   "fieldtype": "Data",
+   "label": "Location ID",
+   "read_only": 1
+  },
+  {
+   "fieldname": "strain",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Strain",
+   "options": "Strain",
+   "reqd": 1
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "source_section",
+   "fieldtype": "Section Break",
+   "label": "Source"
+  },
+  {
+   "fieldname": "source_plant",
+   "fieldtype": "Data",
+   "label": "Source Plant",
+   "read_only": 1
+  },
+  {
+   "fieldname": "source_plant_batch",
+   "fieldtype": "Data",
+   "label": "Source Plant Batch",
+   "read_only": 1
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "statistics_section",
+   "fieldtype": "Section Break",
+   "label": "Statistics"
+  },
+  {
+   "fieldname": "column_break_30",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "source_plant.plant_id",
+   "fieldname": "source_plant_id",
+   "fieldtype": "Data",
+   "label": "Source Plant ID",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "source_plant_batch.plant_batch_id",
+   "fieldname": "source_plant_batch_id",
+   "fieldtype": "Data",
+   "label": "Source Plant Batch ID",
+   "read_only": 1
+  },
+  {
+   "fieldname": "plant_batch_id",
+   "fieldtype": "Data",
+   "label": "Plant Batch ID",
+   "read_only": 1
+  },
+  {
+   "fieldname": "untracked_count",
+   "fieldtype": "Int",
+   "label": "Untracked Count"
+  },
+  {
+   "fieldname": "tracked_count",
+   "fieldtype": "Int",
+   "label": "Tracked Count"
+  },
+  {
+   "fieldname": "packaged_count",
+   "fieldtype": "Int",
+   "label": "Packaged Count"
+  },
+  {
+   "fieldname": "column_break_37",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "harvested_count",
+   "fieldtype": "Int",
+   "label": "Harvested Count"
+  },
+  {
+   "fieldname": "destroyed_count",
+   "fieldtype": "Int",
+   "label": "Destroyed Count"
+  },
+  {
+   "description": "The minimum distance between each plant for optimum growth",
+   "fetch_from": "strain.plant_spacing",
+   "fieldname": "plant_spacing",
+   "fieldtype": "Float",
+   "label": "Plant Spacing"
+  },
+  {
+   "fetch_from": "strain.plant_spacing_uom",
+   "fieldname": "plant_spacing_uom",
+   "fieldtype": "Link",
+   "label": "Plant Spacing UOM",
+   "options": "UOM"
+  },
+  {
+   "fieldname": "plant_tag",
+   "fieldtype": "Link",
+   "label": "Plant Tag",
+   "options": "Plant Tag"
+  }
+ ],
+ "modified": "2020-07-19 05:15:47.524712",
+ "modified_by": "Administrator",
+ "module": "Agriculture",
+ "name": "Plant Batch",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Agriculture Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Agriculture User",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "restrict_to_domain": "Agriculture",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

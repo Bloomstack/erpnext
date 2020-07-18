@@ -4,28 +4,53 @@ from frappe import _
 def get_data():
 	return [
 		{
-			"label": _("Crops & Lands"),
+			"label": _("Cultivation & Harvesting"),
 			"items": [
 				{
 					"type": "doctype",
-					"name": "Crop",
+					"name": "Strain",
 					"onboard": 1,
 				},
 				{
 					"type": "doctype",
-					"name": "Crop Cycle",
+					"name": "Plant Batch",
+					"onboard": 1,
+				},
+				{
+					"type": "doctype",
+					"name": "Plant",
+					"onboard": 1,
+				},
+				{
+					"type": "doctype",
+					"name": "Harvest",
 					"onboard": 1,
 				},
 				{
 					"type": "doctype",
 					"name": "Location",
 					"onboard": 1,
+				},
+				{
+					"type": "doctype",
+					"name": "Plant Tag",
+					"onboard": 1,
 				}
 			]
 		},
 		{
-			"label": _("Diseases & Fertilizers"),
+			"label": _("Diseases & Additives"),
 			"items": [
+				{
+					"type": "doctype",
+					"name": "Plant Disease Diagnosis",
+					"onboard": 1,
+				},
+				{
+					"type": "doctype",
+					"name": "Plant Additives Log",
+					"onboard": 1,
+				},
 				{
 					"type": "doctype",
 					"name": "Disease",
@@ -33,7 +58,12 @@ def get_data():
 				},
 				{
 					"type": "doctype",
-					"name": "Fertilizer",
+					"name": "Additives",
+					"onboard": 1,
+				},
+				{
+					"type": "doctype",
+					"name": "Additive Type",
 					"onboard": 1,
 				}
 			]

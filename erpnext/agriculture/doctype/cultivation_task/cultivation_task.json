@@ -1,0 +1,79 @@
+{
+ "autoname": "AG-TASK-.#####",
+ "creation": "2017-10-26 15:51:19.602452",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "task_name",
+  "column_break_2",
+  "holiday_management",
+  "section_break_4",
+  "start_day",
+  "end_day",
+  "column_break_7",
+  "priority"
+ ],
+ "fields": [
+  {
+   "fieldname": "task_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Task Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "start_day",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Start Day",
+   "reqd": 1
+  },
+  {
+   "fieldname": "end_day",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "End Day",
+   "reqd": 1
+  },
+  {
+   "default": "Ignore holidays",
+   "fieldname": "holiday_management",
+   "fieldtype": "Select",
+   "label": "Holiday Management",
+   "options": "Ignore holidays\nPrevious Business Day\nNext Business Day",
+   "reqd": 1
+  },
+  {
+   "default": "Low",
+   "fieldname": "priority",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Priority",
+   "options": "Low\nMedium\nHigh\nUrgent"
+  },
+  {
+   "fieldname": "column_break_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_4",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_7",
+   "fieldtype": "Column Break"
+  }
+ ],
+ "istable": 1,
+ "modified": "2020-07-18 04:40:56.775307",
+ "modified_by": "Administrator",
+ "module": "Agriculture",
+ "name": "Cultivation Task",
+ "owner": "Administrator",
+ "permissions": [],
+ "restrict_to_domain": "Agriculture",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

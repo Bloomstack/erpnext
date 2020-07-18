@@ -1,0 +1,105 @@
+{
+ "autoname": "field:additive_name",
+ "creation": "2017-10-17 18:17:06.175062",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "additive_name",
+  "additive_type",
+  "default_supplier",
+  "column_break_3",
+  "item",
+  "product_trade_name",
+  "default_application_device",
+  "section_break_28",
+  "additive_contents"
+ ],
+ "fields": [
+  {
+   "fieldname": "item",
+   "fieldtype": "Link",
+   "label": "Item",
+   "options": "Item",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_28",
+   "fieldtype": "Section Break",
+   "label": "Additive Contents"
+  },
+  {
+   "fieldname": "column_break_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "additive_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Additive Name",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "additive_type",
+   "fieldtype": "Link",
+   "label": "Additive Type",
+   "options": "Additive Type",
+   "reqd": 1
+  },
+  {
+   "fieldname": "additive_contents",
+   "fieldtype": "Table",
+   "options": "Additive Content"
+  },
+  {
+   "fieldname": "product_trade_name",
+   "fieldtype": "Data",
+   "label": "Product Trade Name"
+  },
+  {
+   "fieldname": "default_application_device",
+   "fieldtype": "Data",
+   "label": "Default Application Device"
+  },
+  {
+   "fieldname": "default_supplier",
+   "fieldtype": "Link",
+   "label": "Default Supplier",
+   "options": "Supplier"
+  }
+ ],
+ "modified": "2020-07-19 09:34:43.317892",
+ "modified_by": "Administrator",
+ "module": "Agriculture",
+ "name": "Additives",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Agriculture Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Agriculture User",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "restrict_to_domain": "Agriculture",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}
