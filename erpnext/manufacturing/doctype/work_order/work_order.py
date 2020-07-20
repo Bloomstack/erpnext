@@ -814,20 +814,17 @@ def start_and_stop_job_cards(work_order, job_started=None):
 		}, ['name'])
 	for job_card in open_job_cards:
 		job = frappe.get_doc('Job Card', job_card)
+		job.job_started = job_started
 		if job_started == 1:
-			job.job_started = job_started
 			row = job.append('time_logs', {
 				"from_time": now_datetime(),
 				"completed_qty": 0
 			})
-			job.save()
-			job_cards.append(job.name)
 		elif job_started == 0:
-			job.job_started = job_started
 			for row in job.time_logs:
 				if not row.to_time:
 					row.to_time = now_datetime()
 					row.completed_qty = 0
-			job.save()
-			job_cards.append(job.name)
+		job.save()
+		job_cards.append(frappe.utils.get_link_to_form("Job Card", job.name))
 	return job_cards
