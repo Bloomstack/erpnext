@@ -38,7 +38,7 @@ def get_data():
 		{
 			"module_name": "Buying",
 			"category": "Modules",
-			"label": _("Buying"),
+			"label": _("Purchasing"),
 			"color": "#c0392b",
 			"icon": "octicon octicon-briefcase",
 			"type": "module",
