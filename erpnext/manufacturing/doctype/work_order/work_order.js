@@ -148,15 +148,15 @@ frappe.ui.form.on("Work Order", {
 			if(not_completed && not_completed.length) {
 				frm.add_custom_button(__('Create Job Card'), () => {
 					frm.trigger("make_job_card");
-				}).addClass('btn-primary');
+				},__('Job Card'));
 
 				frm.add_custom_button(__('Start Job Cards'), () => {
 					frm.trigger("start_job_cards");
-				}).addClass('btn-primary');
+				},__('Job Card'));
 
 				frm.add_custom_button(__('Stop Job Cards'), () => {
 					frm.trigger("stop_job_cards");
-				}).addClass('btn-primary');
+				},__('Job Card'));
 			}
 		}
 
@@ -277,15 +277,14 @@ frappe.ui.form.on("Work Order", {
 		frappe.call({
 			method: "erpnext.manufacturing.doctype.work_order.work_order.start_job_cards",
 			args: {
-				name: frm.doc.name
+				work_order: frm.doc.name
 			},
 			freeze: true,
 			callback: (r) => {
-				console.log("message", r);
 				if(!r.message.length){
-					frappe.msgprint("There is nothing open job cards to start");
+					frappe.msgprint("There are no open Job Cards to start");
 				} else {
-					frappe.msgprint(__("Following job cards has been started {0}", [r.message.join("\n")]));
+					frappe.msgprint(__("The following job cards have been started:<br><ul><li>{0}</li></ul>", [r.message.join("<br><li>")]));
 				}
 			}
 		})
@@ -295,15 +294,14 @@ frappe.ui.form.on("Work Order", {
 		frappe.call({
 			method: "erpnext.manufacturing.doctype.work_order.work_order.stop_job_cards",
 			args: {
-				name: frm.doc.name
+				work_order: frm.doc.name
 			},
 			freeze: true,
 			callback: (r) => {
-				console.log("message", r.message)
 				if(!r.message.length){
-					frappe.msgprint("There is nothing open job cards to stop");
+					frappe.msgprint("There are no open Job Cards to stop");
 				} else {
-					frappe.msgprint(__("Following job cards has been stopped {0}", [r.message.join("\n")]));
+					frappe.msgprint(__("The following job cards have been stopped: <br><ul><li>{0}</li></ul>", [r.message.join("<br><li>")]));
 				}
 			}
 		})

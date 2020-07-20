@@ -798,34 +798,36 @@ def create_pick_list(source_name, target_doc=None, for_qty=None):
 	return doc
 
 @frappe.whitelist()
-def start_job_cards(name):
-	job_cards = []
-	open_job_cards = frappe.db.get_all('Job Card', {
-		'work_order':name, 'status':('in', ['Open', 'Work In Progress', 'Material Transferred'])
-		}, ['*'])
-	for job_card in open_job_cards:
-		job = frappe.get_doc('Job Card', job_card.name)
-		job.job_started = 1
-		row = job.append('time_logs', {})
-		row.from_time = now_datetime()
-		row.completed_qty = 0
-		job.save()
-		job_cards.append(job.name)
+def start_job_cards(work_order):
+	job_cards = start_and_stop_job_cards(work_order, job_started=1)
 	return job_cards
 
 @frappe.whitelist()
-def stop_job_cards(name):
+def stop_job_cards(work_order):
+	job_cards = start_and_stop_job_cards(work_order, job_started=0)
+	return job_cards
+
+def start_and_stop_job_cards(work_order, job_started=None):
 	job_cards = []
 	open_job_cards = frappe.db.get_all('Job Card', {
-		'work_order':name, 'status':('in', ['Open', 'Work In Progress', 'Material Transferred'])
-		}, ['*'])
+		'work_order':work_order, 'status':('in', ['Open', 'Work In Progress', 'Material Transferred'])
+		}, ['name'])
 	for job_card in open_job_cards:
-		job = frappe.get_doc('Job Card', job_card.name)
-		job.job_started = 0
-		for row in job.time_logs:
-			if not row.to_time:
-				row.to_time = now_datetime()
-				row.completed_qty = 0
-		job.save()
-		job_cards.append(job.name)
+		job = frappe.get_doc('Job Card', job_card)
+		if job_started == 1:
+			job.job_started = job_started
+			row = job.append('time_logs', {
+				"from_time": now_datetime(),
+				"completed_qty": 0
+			})
+			job.save()
+			job_cards.append(job.name)
+		elif job_started == 0:
+			job.job_started = job_started
+			for row in job.time_logs:
+				if not row.to_time:
+					row.to_time = now_datetime()
+					row.completed_qty = 0
+			job.save()
+			job_cards.append(job.name)
 	return job_cards
