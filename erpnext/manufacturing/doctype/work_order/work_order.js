@@ -146,15 +146,15 @@ frappe.ui.form.on("Work Order", {
 			});
 
 			if(not_completed && not_completed.length) {
-				frm.add_custom_button(__('Create Job Card'), () => {
+				frm.add_custom_button(__('Create'), () => {
 					frm.trigger("make_job_card");
 				},__('Job Card'));
 
-				frm.add_custom_button(__('Start Job Cards'), () => {
+				frm.add_custom_button(__('Start All'), () => {
 					frm.trigger("start_job_cards");
 				},__('Job Card'));
 
-				frm.add_custom_button(__('Stop Job Cards'), () => {
+				frm.add_custom_button(__('Stop All'), () => {
 					frm.trigger("stop_job_cards");
 				},__('Job Card'));
 			}
