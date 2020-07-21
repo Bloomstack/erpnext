@@ -799,28 +799,33 @@ def create_pick_list(source_name, target_doc=None, for_qty=None):
 
 @frappe.whitelist()
 def start_job_cards(work_order):
-	job_cards = start_and_stop_job_cards(work_order, job_started=1)
+	job_cards = start_and_stop_job_cards(work_order, job_started=True)
 	return job_cards
 
 @frappe.whitelist()
 def stop_job_cards(work_order):
-	job_cards = start_and_stop_job_cards(work_order, job_started=0)
+	job_cards = start_and_stop_job_cards(work_order, job_started=False)
 	return job_cards
 
 def start_and_stop_job_cards(work_order, job_started=None):
 	job_cards = []
-	open_job_cards = frappe.db.get_all('Job Card', {
-		'work_order':work_order, 'status':('in', ['Open', 'Work In Progress', 'Material Transferred'])
-		}, ['name'])
+	open_job_cards = frappe.db.get_all('Job Card',
+		filters={
+			'work_order': work_order,
+			'status': ('in', ['Open', 'Work In Progress', 'Material Transferred'])
+		})
 	for job_card in open_job_cards:
 		job = frappe.get_doc('Job Card', job_card)
 		job.job_started = job_started
-		if job_started == 1:
+		if job_started == True:
+			for row in job.time_logs:
+				if not row.to_time:
+					frappe.throw(_("Some Job Cards still in process. You can not start Job Cards."))
 			row = job.append('time_logs', {
 				"from_time": now_datetime(),
 				"completed_qty": 0
 			})
-		elif job_started == 0:
+		elif job_started == False:
 			for row in job.time_logs:
 				if not row.to_time:
 					row.to_time = now_datetime()
