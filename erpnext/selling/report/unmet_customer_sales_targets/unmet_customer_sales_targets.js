@@ -2,6 +2,8 @@
 // For license information, please see license.txt
 /* eslint-disable */
 
-frappe.query_reports["Customer sales target not met"] = {
-	"filters": []
+frappe.query_reports["Unmet Customer Sales Targets"] = {
+	"filters": [
+
+	]
 };
