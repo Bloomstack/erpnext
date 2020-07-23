@@ -166,6 +166,7 @@ class TestPickList(unittest.TestCase):
 				'doctype': "Sales Order",
 				'customer': '_Test Customer',
 				'company': '_Test Company',
+				'delivery_date': frappe.utils.today(),
 				'items': [{
 					'item_code': '_Test Item Home Desktop 100',
 					'qty': 10,
