@@ -126,6 +126,12 @@ frappe.ui.form.on("BOM", {
 		}
 	},
 
+	item: function(frm) {
+		frappe.db.get_value('Item', {name: frm.doc.item}, 'inspection_required_before_manufacturing', (r) => {
+			frm.set_value("inspection_required", r.inspection_required_before_manufacturing)
+		})
+	},
+
 	make_work_order: function(frm) {
 		const fields = [{
 			fieldtype: 'Float',
