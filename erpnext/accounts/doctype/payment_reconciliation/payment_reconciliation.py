@@ -3,10 +3,10 @@
 
 from __future__ import unicode_literals
 import frappe, erpnext
-from frappe.utils import flt, today
+from frappe.utils import flt, today, getdate, nowdate
 from frappe import msgprint, _
 from frappe.model.document import Document
-from erpnext.accounts.utils import (get_outstanding_invoices,
+from erpnext.accounts.utils import (get_held_invoices,
 	update_reference_in_payment_entry, reconcile_against_document)
 from erpnext.controllers.accounts_controller import get_advance_payment_entries
 
@@ -289,3 +289,93 @@ def reconcile_dr_cr_note(dr_cr_notes):
 		})
 
 		jv.submit()
+
+def get_outstanding_invoices(party_type, party, account, condition=None, filters=None):
+	outstanding_invoices = []
+	precision = frappe.get_precision("Sales Invoice", "outstanding_amount") or 2
+
+	if account:
+		root_type, account_type = frappe.get_cached_value("Account", account, ["root_type", "account_type"])
+		party_account_type = "Receivable" if root_type == "Asset" else "Payable"
+		party_account_type = account_type or party_account_type
+	else:
+		party_account_type = erpnext.get_party_account_type(party_type)
+
+	if party_account_type == 'Receivable':
+		dr_or_cr = "debit_in_account_currency - credit_in_account_currency"
+		payment_dr_or_cr = "credit_in_account_currency - debit_in_account_currency"
+	else:
+		dr_or_cr = "credit_in_account_currency - debit_in_account_currency"
+		payment_dr_or_cr = "debit_in_account_currency - credit_in_account_currency"
+
+	held_invoices = get_held_invoices(party_type, party)
+
+	invoice_list = frappe.db.sql("""
+		select
+			voucher_no, voucher_type, posting_date, due_date,
+			ifnull(sum({dr_or_cr}), 0) as invoice_amount
+		from
+			`tabGL Entry`
+		where
+			party_type = %(party_type)s and party = %(party)s
+			and account = %(account)s and {dr_or_cr} > 0
+			{condition}
+			and ((voucher_type = 'Journal Entry'
+					and (against_voucher = '' or against_voucher is null))
+				or (voucher_type not in ('Journal Entry', 'Payment Entry')))
+		group by voucher_type, voucher_no
+		order by posting_date, name""".format(
+			dr_or_cr=dr_or_cr,
+			condition=condition or ""
+		), {
+			"party_type": party_type,
+			"party": party,
+			"account": account,
+		}, as_dict=True)
+
+	payment_entries = frappe.db.sql("""
+		select against_voucher_type, against_voucher,
+			ifnull(sum({payment_dr_or_cr}), 0) as payment_amount
+		from `tabGL Entry`
+		where party_type = %(party_type)s and party = %(party)s
+			and account = %(account)s
+			and {payment_dr_or_cr} > 0
+			and against_voucher is not null and against_voucher != ''
+		group by against_voucher_type, against_voucher
+	""".format(payment_dr_or_cr=payment_dr_or_cr), {
+		"party_type": party_type,
+		"party": party,
+		"account": account
+	}, as_dict=True)
+
+	pe_map = frappe._dict()
+	for d in payment_entries:
+		pe_map.setdefault((d.against_voucher_type, d.against_voucher), d.payment_amount)
+
+	for d in invoice_list:
+		payment_amount = pe_map.get((d.voucher_type, d.voucher_no), 0)
+		outstanding_amount = flt(d.invoice_amount - payment_amount, precision)
+		if d.voucher_type == "Sales Invoice":
+			outstanding_amount = flt(frappe.db.get_value("Sales Invoice", d.voucher_no, "outstanding_amount"))
+
+		if outstanding_amount > 0.5 / (10**precision):
+			if (filters and filters.get("outstanding_amt_greater_than") and
+				not (outstanding_amount >= filters.get("outstanding_amt_greater_than") and
+				outstanding_amount <= filters.get("outstanding_amt_less_than"))):
+				continue
+
+			if not d.voucher_type == "Purchase Invoice" or d.voucher_no not in held_invoices:
+				outstanding_invoices.append(
+					frappe._dict({
+						'voucher_no': d.voucher_no,
+						'voucher_type': d.voucher_type,
+						'posting_date': d.posting_date,
+						'invoice_amount': flt(d.invoice_amount),
+						'payment_amount': payment_amount,
+						'outstanding_amount': outstanding_amount,
+						'due_date': d.due_date
+					})
+				)
+
+	outstanding_invoices = sorted(outstanding_invoices, key=lambda k: k['due_date'] or getdate(nowdate()))
+	return outstanding_invoices

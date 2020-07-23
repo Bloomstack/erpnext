@@ -20,6 +20,8 @@
   "batch_qty",
   "stock_uom",
   "expiry_date",
+  "harvest_date",
+  "packaged_date",
   "source",
   "supplier",
   "column_break_9",
@@ -160,6 +162,16 @@
    "oldfieldname": "description",
    "oldfieldtype": "Small Text",
    "width": "300px"
+  },
+  {
+   "fieldname": "harvest_date",
+   "fieldtype": "Date",
+   "label": "Harvest Date"
+  },
+  {
+   "fieldname": "packaged_date",
+   "fieldtype": "Date",
+   "label": "Packaged On Date"
   }
  ],
  "icon": "fa fa-archive",
@@ -167,7 +179,7 @@
  "image_field": "image",
  "links": [],
  "max_attachments": 5,
- "modified": "2019-12-24 02:49:19.868790",
+ "modified": "2020-07-21 07:10:13.906100",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Batch",
