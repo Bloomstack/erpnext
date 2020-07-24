@@ -823,7 +823,7 @@ def start_and_stop_job_cards(work_order, job_started=None):
 				if not row.to_time:
 					existing_from_time_count = existing_from_time_count + 1
 					continue
-			if not row_count:
+			if not existing_from_time_count:
 				row = job.append('time_logs', {
 					"from_time": now_datetime(),
 					"completed_qty": 0
