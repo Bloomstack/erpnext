@@ -818,13 +818,16 @@ def start_and_stop_job_cards(work_order, job_started=None):
 		job = frappe.get_doc('Job Card', job_card)
 		job.job_started = job_started
 		if job_started == True:
+			existing_from_time_count = 0
 			for row in job.time_logs:
 				if not row.to_time:
-					frappe.throw(_("Some Job Cards still in process. You can not start Job Cards."))
-			row = job.append('time_logs', {
-				"from_time": now_datetime(),
-				"completed_qty": 0
-			})
+					existing_from_time_count = existing_from_time_count + 1
+					continue
+			if not row_count:
+				row = job.append('time_logs', {
+					"from_time": now_datetime(),
+					"completed_qty": 0
+				})
 		elif job_started == False:
 			for row in job.time_logs:
 				if not row.to_time:
