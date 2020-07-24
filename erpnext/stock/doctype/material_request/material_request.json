@@ -19,6 +19,13 @@
   "items_section",
   "scan_barcode",
   "items",
+  "section_break_label",
+  "label_quantity",
+  "jar_type",
+  "warehouse",
+  "column_break_label",
+  "labels_needed",
+  "unwind_direction",
   "more_info",
   "requested_by",
   "transaction_date",
@@ -273,13 +280,47 @@
    "options": "Job Card",
    "print_hide": 1,
    "read_only": 1
+  },
+  {
+   "fieldname": "label_quantity",
+   "fieldtype": "Data",
+   "label": "Label Quantity"
+  },
+  {
+   "fieldname": "labels_needed",
+   "fieldtype": "Data",
+   "label": "Labels Needed"
+  },
+  {
+   "fieldname": "jar_type",
+   "fieldtype": "Data",
+   "label": "Jar Type(Flower only)"
+  },
+  {
+   "fieldname": "unwind_direction",
+   "fieldtype": "Data",
+   "label": "Unwind Direction(Flower only)"
+  },
+  {
+   "fieldname": "warehouse",
+   "fieldtype": "Link",
+   "label": "Destination(Warehouse)",
+   "options": "Warehouse"
+  },
+  {
+   "fieldname": "section_break_label",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_label",
+   "fieldtype": "Column Break"
   }
  ],
  "icon": "fa fa-ticket",
  "idx": 70,
  "is_submittable": 1,
  "links": [],
- "modified": "2019-12-24 02:30:35.984986",
+ "modified": "2020-07-24 04:43:39.803872",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Material Request",
