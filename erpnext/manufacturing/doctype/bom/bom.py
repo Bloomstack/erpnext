@@ -318,11 +318,10 @@ class BOM(WebsiteGenerator):
 		if not item:
 			frappe.throw(_("Item {0} does not exist in the system or has expired").format(self.item))
 		else:
-			ret = frappe.db.get_value("Item", self.item, ["description", "stock_uom", "item_name", "inspection_required_before_manufacturing"])
+			ret = frappe.db.get_value("Item", self.item, ["description", "stock_uom", "item_name"])
 			self.description = ret[0]
 			self.uom = ret[1]
 			self.item_name= ret[2]
-			self.inspection_required = ret[3]
 
 		if not self.quantity:
 			frappe.throw(_("Quantity should be greater than 0"))
