@@ -7,22 +7,8 @@ frappe.ui.form.on("Quality Inspection", {
 	item_code: function(frm) {
 		if (frm.doc.item_code) {
 			frappe.db.get_value('Item', {name: frm.doc.item_code}, ['has_batch_no','has_serial_no'], (r) => {
-				if (r.has_batch_no && r.has_serial_no) {
-					frm.toggle_reqd("batch_no", true);
-					frm.toggle_reqd("item_serial_no", true);
-				}
-				else if (r.has_batch_no && !r.has_serial_no) {
-					frm.toggle_reqd("batch_no", true);
-					frm.toggle_reqd("item_serial_no", false);
-				}
-				else if (!r.has_batch_no && r.has_serial_no) {
-					frm.toggle_reqd("batch_no", false);
-					frm.toggle_reqd("item_serial_no", true);
-				}
-				else {
-					frm.toggle_reqd("batch_no", false);
-					frm.toggle_reqd("item_serial_no", false);
-				}
+				frm.toggle_reqd("batch_no", r.has_batch_no);
+				frm.toggle_reqd("item_serial_no", r.has_serial_no);
 			});
 
 			return frm.call({
