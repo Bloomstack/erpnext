@@ -1,16 +1,16 @@
 # Copyright (c) 2013, Frappe Technologies Pvt. Ltd. and contributors
 # For license information, please see license.txt
 
-from __future__ import unicode_literals
-from frappe import _
 import frappe
+from frappe import _
+
 
 def execute(filters=None):
-	columns=get_columns(filters)
-
+	columns = get_columns(filters)
 	data = get_data(filters)
 
 	return columns, data
+
 
 def get_columns(filters):
 	return [
@@ -35,15 +35,15 @@ def get_columns(filters):
 		}
 	]
 
-def get_data(filters= None):
+
+def get_data(filters=None):
 	return frappe.db.sql("""
 		SELECT
-		customer_name,
+			customer_name,
 			monthly_sales_target,
 			total_monthly_sales
-        FROM
+		FROM
 			tabCustomer
-    	WHERE
+		WHERE
 			monthly_sales_target > total_monthly_sales
 		""")
-				
