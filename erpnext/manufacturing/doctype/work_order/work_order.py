@@ -797,42 +797,51 @@ def create_pick_list(source_name, target_doc=None, for_qty=None):
 
 	return doc
 
+
 @frappe.whitelist()
 def start_job_cards(work_order):
 	job_cards = start_and_stop_job_cards(work_order, job_started=True)
 	return job_cards
+
 
 @frappe.whitelist()
 def stop_job_cards(work_order):
 	job_cards = start_and_stop_job_cards(work_order, job_started=False)
 	return job_cards
 
-def start_and_stop_job_cards(work_order, job_started=None):
+
+def start_and_stop_job_cards(work_order, job_started):
 	job_cards = []
 	open_job_cards = frappe.db.get_all('Job Card',
 		filters={
 			'work_order': work_order,
 			'status': ('in', ['Open', 'Work In Progress', 'Material Transferred'])
 		})
+
 	for job_card in open_job_cards:
 		job = frappe.get_doc('Job Card', job_card)
 		job.job_started = job_started
-		if job_started == True:
-			existing_from_time_count = 0
+		job_changed = False
+
+		if job_started:
 			for row in job.time_logs:
 				if not row.to_time:
-					existing_from_time_count = existing_from_time_count + 1
-					continue
-			if not existing_from_time_count:
-				row = job.append('time_logs', {
+					break
+			else:
+				job_changed = True
+				job.append('time_logs', {
 					"from_time": now_datetime(),
 					"completed_qty": 0
 				})
-		elif job_started == False:
+		else:
 			for row in job.time_logs:
 				if not row.to_time:
+					job_changed = True
 					row.to_time = now_datetime()
 					row.completed_qty = 0
-		job.save()
-		job_cards.append(frappe.utils.get_link_to_form("Job Card", job.name))
+
+		if job_changed:
+			job.save()
+			job_cards.append(frappe.utils.get_link_to_form("Job Card", job.name))
+
 	return job_cards
