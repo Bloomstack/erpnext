@@ -1,4 +1,5 @@
 {
+ "actions": [],
  "autoname": "hash",
  "creation": "2013-02-22 01:28:02",
  "doctype": "DocType",
@@ -30,6 +31,13 @@
   "rate",
   "amount",
   "stock_qty",
+  "section_break_label",
+  "label_quantity",
+  "jar_type",
+  "destination_warehouse",
+  "column_break_label",
+  "labels_needed",
+  "unwind_direction",
   "more_info",
   "lead_time_date",
   "sales_order",
@@ -403,11 +411,46 @@
    "fieldtype": "Data",
    "label": "Manufacturer Part Number",
    "read_only": 1
+  },
+  {
+   "fieldname": "section_break_label",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "label_quantity",
+   "fieldtype": "Data",
+   "label": "Label Quantity"
+  },
+  {
+   "fieldname": "jar_type",
+   "fieldtype": "Data",
+   "label": "Jar Type(Flower only)"
+  },
+  {
+   "fieldname": "destination_warehouse",
+   "fieldtype": "Link",
+   "label": "Destination(Warehouse)",
+   "options": "Warehouse"
+  },
+  {
+   "fieldname": "column_break_label",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "labels_needed",
+   "fieldtype": "Data",
+   "label": "Labels Needed"
+  },
+  {
+   "fieldname": "unwind_direction",
+   "fieldtype": "Data",
+   "label": "Unwind Direction(Flower only)"
   }
  ],
  "idx": 1,
  "istable": 1,
- "modified": "2019-06-02 06:49:36.493957",
+ "links": [],
+ "modified": "2020-07-27 05:47:12.774516",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Material Request Item",
