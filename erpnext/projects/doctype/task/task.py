@@ -227,7 +227,8 @@ def make_timesheet(source_name, target_doc=None, ignore_permissions=False):
 			"hours": source.actual_time,
 			"completed": source.status == "Completed",
 			"project": source.project,
-			"task": source.name
+			"task": source.name,
+			"billable": source.billable
 		})
 
 	doclist = get_mapped_doc("Task", source_name, {
