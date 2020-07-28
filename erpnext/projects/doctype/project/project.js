@@ -150,7 +150,7 @@ function open_form(frm, doctype, child_doctype, parentfield) {
 		new_child_doc.parent = new_doc.name;
 		new_child_doc.parentfield = parentfield;
 		new_child_doc.parenttype = doctype;
-		if (frm.doc.billable) {
+		if (doctype == "Timesheet") {
 			new_child_doc.billable = frm.doc.billable;
 		}
 		new_doc[parentfield] = [new_child_doc];
