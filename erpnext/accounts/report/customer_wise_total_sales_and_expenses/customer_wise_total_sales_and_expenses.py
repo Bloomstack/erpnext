@@ -36,7 +36,7 @@ def get_columns(filters):
 		},
 		{
 			"fieldname": "net_gl", #net_gl is Net Gain/Loss
-			"label": _("Net Profit/Loss"),
+			"label": _("Net Gain/Loss"),
 			"width": 200
 
 		}
@@ -44,21 +44,16 @@ def get_columns(filters):
 
 def get_data(filters=None):
 	data = frappe.db.sql("""
-	SELECT 
-		c.customer_name AS customer_name,
-		si.grand_total AS total_sales,
-		pi.grand_total AS total_purchase,
-		si.grand_total - pi.grand_total AS net_gl
-	FROM 
-		tabCustomer c INNER JOIN 
-		tabSupplier s, 
-		`tabSales Invoice` si, 
-		`tabPurchase Invoice` pi 
-	WHERE 
-		c.customer_name=s.supplier_name 
-	AND 
-		si.customer=c.customer_name 
-	And 
-		pi.supplier=c.customer_name""", as_dict=True)
+		SELECT 
+			c.customer_name AS customer_name,
+			si.grand_total AS total_sales,
+			pi.grand_total AS total_purchase,
+			si.grand_total - pi.grand_total AS net_gl
+		FROM 
+			tabCustomer c
+				JOIN tabSupplier s ON c.customer_name = s.supplier_name
+				JOIN `tabSales Invoice` si ON si.customer = c.customer_name
+				JOIN `tabPurchase Invoice` pi ON pi.supplier = c.customer_name
+		""", as_dict=True)
 
 	return data
