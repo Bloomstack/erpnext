@@ -539,3 +539,7 @@ def create_pick_list(source_name, target_doc=None):
 	doc.set_item_locations()
 
 	return doc
+
+@frappe.whitelist()
+def check_compliance_item_category(item_code):
+	return bool(frappe.db.exists("Compliance Item",{"item_code": item_code,"item_category": "Dry Flower"}))

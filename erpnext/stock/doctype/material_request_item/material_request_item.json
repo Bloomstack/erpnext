@@ -34,7 +34,6 @@
   "section_break_label",
   "label_quantity",
   "jar_type",
-  "destination_warehouse",
   "column_break_label",
   "labels_needed",
   "unwind_direction",
@@ -424,13 +423,8 @@
   {
    "fieldname": "jar_type",
    "fieldtype": "Data",
-   "label": "Jar Type(Flower only)"
-  },
-  {
-   "fieldname": "destination_warehouse",
-   "fieldtype": "Link",
-   "label": "Destination(Warehouse)",
-   "options": "Warehouse"
+   "hidden": 1,
+   "label": "Jar Type"
   },
   {
    "fieldname": "column_break_label",
@@ -444,13 +438,14 @@
   {
    "fieldname": "unwind_direction",
    "fieldtype": "Data",
-   "label": "Unwind Direction(Flower only)"
+   "hidden": 1,
+   "label": "Unwind Direction"
   }
  ],
  "idx": 1,
  "istable": 1,
  "links": [],
- "modified": "2020-07-27 05:47:12.774516",
+ "modified": "2020-07-29 03:07:18.953255",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Material Request Item",
