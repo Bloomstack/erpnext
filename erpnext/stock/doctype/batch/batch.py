@@ -142,12 +142,14 @@ class Batch(Document):
 
 	def validate_display_on_website(self):
 		"""
-			Unchecked all other batches display on website if current batch display on website is checked
+		Uncheck website display status from all other batches for the current batch's item
 		"""
-		batches = frappe.get_all('Batch', filters={'item':self.item, 'name': ['!=', self.name]})
+
+		batches = frappe.get_all('Batch', filters={'item': self.item, 'name': ['!=', self.name]})
 
 		for batch in batches:
 			frappe.db.set_value('Batch', batch, 'display_on_website', False)
+
 
 @frappe.whitelist()
 def get_batch_qty(batch_no=None, warehouse=None, item_code=None):
