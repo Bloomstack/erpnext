@@ -25,12 +25,6 @@ frappe.ui.form.on('Batch', {
 		}
 	},
 
-	validate: (frm) => {
-		if(frm.doc.display_on_website) {
-			frm.call("toggle_display_on_website");
-		}
-	},
-
 	item: (frm) => {
 		// frappe.db.get_value('Item', {name: frm.doc.item}, 'has_expiry_date', (r) => {
 		// 	frm.toggle_reqd('expiry_date', r.has_expiry_date);

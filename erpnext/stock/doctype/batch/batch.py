@@ -109,6 +109,7 @@ class Batch(Document):
 	def validate(self):
 		self.item_has_batch_enabled()
 		self.calculate_batch_qty()
+		self.validate_display_on_website()
 
 	def item_has_batch_enabled(self):
 		if frappe.db.get_value("Item", self.item, "has_batch_no") == 0:
@@ -139,15 +140,14 @@ class Batch(Document):
 
 		return name
 
-	def toggle_display_on_website(self):
-		batches = frappe.get_all("Batch", filters={'item':self.item}, fields=['name', 'display_on_website'])
+	def validate_display_on_website(self):
+		"""
+			Unchecked all other batches display on website if current batch display on website is checked
+		"""
+		batches = frappe.get_all('Batch', filters={'item':self.item, 'name': ['!=', self.name]})
 
 		for batch in batches:
-			if not self.name == batch.name:
-				batch = frappe.get_doc("Batch", batch.name)
-				batch.display_on_website = 0
-				batch.save()
-
+			frappe.db.set_value('Batch', batch, 'display_on_website', False)
 
 @frappe.whitelist()
 def get_batch_qty(batch_no=None, warehouse=None, item_code=None):
