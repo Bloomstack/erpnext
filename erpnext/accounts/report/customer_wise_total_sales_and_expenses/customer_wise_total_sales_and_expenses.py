@@ -27,33 +27,32 @@ def get_columns(filters):
 			"width": 200
 		},
 		{
-			"fieldname": "total_purchase",
+			"fieldname": "total_expense",
 			"label": _("Total Expense"),
 			"fieldtype": "Link",
 			"options": "Purchase Invoice",
 			"width": 200
-
 		},
 		{
 			"fieldname": "net_gl", #net_gl is Net Gain/Loss
 			"label": _("Net Gain/Loss"),
 			"width": 200
-
 		}
 	]
 
 def get_data(filters=None):
 	data = frappe.db.sql("""
-		SELECT 
+		SELECT
 			c.customer_name AS customer_name,
-			si.grand_total AS total_sales,
-			pi.grand_total AS total_purchase,
-			si.grand_total - pi.grand_total AS net_gl
-		FROM 
+			SUM(IFNULL(si.grand_total, 0)) AS total_sales,
+			SUM(IFNULL(pi.grand_total, 0)) AS total_expense,
+			SUM(IFNULL(si.grand_total, 0)) - SUM(IFNULL(pi.grand_total, 0)) AS net_gl
+		FROM
 			tabCustomer c
 				JOIN tabSupplier s ON c.customer_name = s.supplier_name
-				JOIN `tabSales Invoice` si ON si.customer = c.customer_name
-				JOIN `tabPurchase Invoice` pi ON pi.supplier = c.customer_name
+				LEFT JOIN `tabSales Invoice` si ON si.customer = c.customer_name
+				LEFT JOIN `tabPurchase Invoice` pi ON pi.supplier = c.customer_name
+		GROUP BY
+			c.customer_name
 		""", as_dict=True)
-
 	return data
