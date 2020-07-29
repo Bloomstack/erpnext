@@ -139,6 +139,15 @@ class Batch(Document):
 
 		return name
 
+	def toggle_display_on_website(self):
+		batches = frappe.get_all("Batch", filters={'item':self.item}, fields=['name', 'display_on_website'])
+
+		for batch in batches:
+			if not self.name == batch.name:
+				batch = frappe.get_doc("Batch", batch.name)
+				batch.display_on_website = 0
+				batch.save()
+
 
 @frappe.whitelist()
 def get_batch_qty(batch_no=None, warehouse=None, item_code=None):
