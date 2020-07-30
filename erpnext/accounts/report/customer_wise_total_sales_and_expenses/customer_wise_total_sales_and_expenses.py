@@ -2,13 +2,16 @@
 # For license information, please see license.txt
 
 from __future__ import unicode_literals
+
 from frappe import _
 import frappe
 
+
 def execute(filters=None):
-	columns= get_columns(filters)
+	columns = get_columns(filters)
 	data = get_data(filters)
 	return columns, data
+
 
 def get_columns(filters):
 	return [
@@ -34,11 +37,12 @@ def get_columns(filters):
 			"width": 200
 		},
 		{
-			"fieldname": "net_gl", #net_gl is Net Gain/Loss
+			"fieldname": "net_gl",  # Net Gain/Loss
 			"label": _("Net Gain/Loss"),
 			"width": 200
 		}
 	]
+
 
 def get_data(filters=None):
 	data = frappe.db.sql("""
