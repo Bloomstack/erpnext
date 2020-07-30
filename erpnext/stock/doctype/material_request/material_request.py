@@ -541,5 +541,5 @@ def create_pick_list(source_name, target_doc=None):
 	return doc
 
 @frappe.whitelist()
-def check_compliance_item_category(item_code):
-	return bool(frappe.db.exists("Compliance Item", {"item_code": item_code, "item_category": "Dry Flower"}))
+def check_compliance_item_category(item_code,item_category):
+	return bool(frappe.db.exists("Compliance Item", {"item_code": item_code, "item_category": item_category}))

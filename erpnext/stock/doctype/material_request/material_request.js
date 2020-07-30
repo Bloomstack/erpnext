@@ -358,7 +358,8 @@ erpnext.buying.MaterialRequestController = erpnext.buying.BuyingController.exten
 			frappe.call({
 				method: "erpnext.stock.doctype.material_request.material_request.check_compliance_item_category",
 				args: {
-					"item_code": row.item_code
+					"item_code": row.item_code,
+					"item_category": "Dry Flower"
 				},
 				callback: function (readable) {
 					cur_frm.fields_dict.items.grid.set_column_disp("jar_type", readable.message);
