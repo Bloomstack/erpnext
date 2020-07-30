@@ -433,7 +433,7 @@
   {
    "fieldname": "labels_needed",
    "fieldtype": "Data",
-   "label": "Labels Needed"
+   "label": "Labels Needed (Wrap, Front, Back, Top, Bag, etc.)"
   },
   {
    "fieldname": "unwind_direction",
