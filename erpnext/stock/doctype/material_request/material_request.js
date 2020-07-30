@@ -355,17 +355,13 @@ erpnext.buying.MaterialRequestController = erpnext.buying.BuyingController.exten
 		// to override item code trigger from transaction.js
 		const row = locals[cdt][cdn];
 		if (row.item_code) {
-			frappe.call({
-				method: "erpnext.stock.doctype.material_request.material_request.check_compliance_item_category",
-				args: {
-					"item_code": row.item_code,
-					"item_category": "Dry Flower"
-				},
-				callback: function (readable) {
-					cur_frm.fields_dict.items.grid.set_column_disp("jar_type", readable.message);
-					cur_frm.fields_dict.items.grid.set_column_disp("unwind_direction", readable.message);
-				}
-			})
+			frappe.db.get_value("Compliance Item", { "item_code": row.item_code }, "item_category")
+			    .then(item => {
+			    	if (item.message.item_category == "Dry Flower") {
+						frm.fields_dict.items.grid.set_column_disp("jar_type", true);
+						frm.fields_dict.items.grid.set_column_disp("unwind_direction", true);
+					}
+			    })
 		}
 	},
 
