@@ -353,7 +353,7 @@ erpnext.buying.MaterialRequestController = erpnext.buying.BuyingController.exten
 
 	item_code: function (frm, cdt, cdn) {
 		// to override item code trigger from transaction.js
-		var row = locals[cdt][cdn];
+		const row = locals[cdt][cdn];
 		if (row.item_code) {
 			frappe.call({
 				method: "erpnext.stock.doctype.material_request.material_request.check_compliance_item_category",
