@@ -694,6 +694,110 @@ $(document).on('app_ready', function() {
 		});
 	}
 
+	$.each(["Purchase Receipt", "Stock Entry", "Delivery Note"], function(i, doctype) {
+		frappe.ui.form.on(doctype, {
+			refresh: function(frm) {
+				if(!frm.doc.is_return && frm.doc.status!="Closed") {
+					if (frm.doc.docstatus == 0) {
+						frm.add_custom_button(__('Make Quality Inspection'),
+						function () {
+							let data = [];
+							let inspection_type = " "
+							if (frm.doc.doctype === "Purchase Receipt") {
+								inspection_type = "Incoming";
+							}
+							else if (frm.doc.doctype === "Delivery Note") {
+								inspection_type = "Outgoing";
+							} 
+							else if (frm.doc.doctype === "Stock Entry") {
+								inspection_type = "In Process";
+							}
+							for (let row of cur_frm.doc.items) {
+								data.push({
+									"doctype": row.doctype,
+									"docname": row.name,
+									"reference_type": row.parenttype,
+									"reference_name": row.parent,
+									"item_code": row.item_code,
+									"item_name": row.item_name,
+									"inspection_type": inspection_type
+								})
+							}
+							const dialog = new frappe.ui.Dialog({
+								title: __("Make Quality Inspection"),
+								fields: [
+									{
+										label: __("Items"),
+										fieldname: "items",
+										fieldtype: "Table",
+										cannot_add_rows: true,
+										data: data,
+										in_place_edit: true,
+										get_data: () => {
+											return this.data;
+										},
+										fields: [
+											{
+												fieldtype: 'Data',
+												fieldname: "docname",
+												hidden: 1
+											},
+											{
+												label: __("Item Code"),
+												fieldtype: 'Link',
+												fieldname: "item_code",
+												options: "Item",
+												read_only: 1,
+												in_list_view: 1
+											},
+											{
+												label: __("Item Name"),
+												fieldtype: 'Data',
+												fieldname: "item_name",
+												read_only: 1,
+												in_list_view: 1
+											},
+											{
+												label: __("Sample Size"),
+												fieldtype: 'Float',
+												fieldname: 'sample_size',
+												read_only: 1,
+												in_list_view: 1
+											}
+										],
+									}
+								],
+								primary_action: function () {
+									const values = dialog.get_values().items;
+									frappe.call({
+										method: "erpnext.stock.doctype.quality_inspection.quality_inspection.make_quality_inspection_pr",
+										freeze: true,
+										args: {
+											"items": values
+										},
+										callback: function(r) {
+											let items = r.message;
+											items.forEach(item => {
+												console.log("item", item)
+											});
+										}
+									})
+									dialog.hide();
+									frappe.show_alert({
+										indicator: 'green',
+										message: __("The Quality Inspection has been created")
+									});
+								},
+								primary_action_label: __('Create')
+							})
+							dialog.show();
+						}).addClass("btn-primary");
+					}
+				}
+			}
+		});
+	});
+
 	$.each(["Project", "Task", "Project Template", "Project Type"], function (i, doctype) {
 		frappe.ui.form.on(doctype, {
 			billable: (frm) => {

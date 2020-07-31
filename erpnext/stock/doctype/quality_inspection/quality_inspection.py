@@ -145,3 +145,33 @@ def make_quality_inspection(source_name, target_doc=None):
 	}, target_doc, postprocess)
 
 	return doc
+
+@frappe.whitelist()
+def get_purchase_item_details(doctype, name, item_code):
+	doc = frappe.get_doc(doctype, name)
+	for item in doc.items:
+		if item.item_code == item_code:
+			data = {
+				"supplier": doc.supplier,
+				"uom": item.uom,
+				"qty": item.qty
+			}
+			return data
+
+def make_quality_inspection_pr(items):
+	items = json.loads(items)
+	quality_inspection = []
+	for item in items:
+		qi = frappe.new_doc("Quality Inspection")
+
+		qi.update({
+			"inspection_type": item.get("inspection_type"),
+			"reference_type": item.get("reference_type"),
+			"reference_name": item.get("reference_name"),
+			"item_code": item.get("item_code"),
+			"sample_size": item.get("sample_size"),
+			"inspected_by": frappe.session.user,
+			"quality_inspection_template": frappe.db.get_value('BOM', item.get("item_code"), 'quality_inspection_template')
+		}).save()
+		quality_inspection.append(qi)
+	return quality_inspection
