@@ -158,9 +158,9 @@ def get_purchase_item_details(doctype, name, item_code):
 			}
 			return data
 
-def make_quality_inspection_pr(items):
+def make_quality_inspections(items):
 	items = json.loads(items)
-	quality_inspection = []
+	quality_inspections = []
 	for item in items:
 		qi = frappe.new_doc("Quality Inspection")
 
@@ -173,5 +173,5 @@ def make_quality_inspection_pr(items):
 			"inspected_by": frappe.session.user,
 			"quality_inspection_template": frappe.db.get_value('BOM', item.get("item_code"), 'quality_inspection_template')
 		}).save()
-		quality_inspection.append(qi)
-	return quality_inspection
+		quality_inspections.append(qi)
+	return quality_inspections

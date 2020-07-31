@@ -699,30 +699,23 @@ $(document).on('app_ready', function() {
 			refresh: function(frm) {
 				if(!frm.doc.is_return && frm.doc.status!="Closed") {
 					if (frm.doc.docstatus == 0) {
-						frm.add_custom_button(__('Make Quality Inspection'),
-						function () {
+						frm.add_custom_button(__('Quality Inspection'), function () {
 							let data = [];
-							let inspection_type = " "
-							if (frm.doc.doctype === "Purchase Receipt") {
-								inspection_type = "Incoming";
+							let inspection_type_map = {
+								"Purchase Receipt": "Incoming",
+								"Delivery Note": "Outgoing",
+								"Stock Entry": "In Process"
 							}
-							else if (frm.doc.doctype === "Delivery Note") {
-								inspection_type = "Outgoing";
-							} 
-							else if (frm.doc.doctype === "Stock Entry") {
-								inspection_type = "In Process";
-							}
-							for (let row of cur_frm.doc.items) {
-								data.push({
-									"doctype": row.doctype,
-									"docname": row.name,
-									"reference_type": row.parenttype,
-									"reference_name": row.parent,
-									"item_code": row.item_code,
-									"item_name": row.item_name,
-									"inspection_type": inspection_type
-								})
-							}
+							let inspection_type = inspection_type_map[frm.doc.doctype];
+							data = frm.doc.items.map(row => ({
+								"doctype": row.doctype,
+								"docname": row.name,
+								"reference_type": row.parenttype,
+								"reference_name": row.parent,
+								"item_code": row.item_code,
+								"item_name": row.item_name,
+								"inspection_type": inspection_type
+							}))
 							const dialog = new frappe.ui.Dialog({
 								title: __("Make Quality Inspection"),
 								fields: [
@@ -734,7 +727,7 @@ $(document).on('app_ready', function() {
 										data: data,
 										in_place_edit: true,
 										get_data: () => {
-											return this.data;
+											return data;
 										},
 										fields: [
 											{
@@ -770,7 +763,7 @@ $(document).on('app_ready', function() {
 								primary_action: function () {
 									const values = dialog.get_values().items;
 									frappe.call({
-										method: "erpnext.stock.doctype.quality_inspection.quality_inspection.make_quality_inspection_pr",
+										method: "erpnext.stock.doctype.quality_inspection.quality_inspection.make_quality_inspections",
 										freeze: true,
 										args: {
 											"items": values
@@ -778,20 +771,20 @@ $(document).on('app_ready', function() {
 										callback: function(r) {
 											let items = r.message;
 											items.forEach(item => {
-												console.log("item", item)
+												frappe.show_alert({
+													indicator: 'green',
+													message: __(`The Quality Inspection ${item.name} has been created `)
+												});
 											});
 										}
 									})
 									dialog.hide();
-									frappe.show_alert({
-										indicator: 'green',
-										message: __("The Quality Inspection has been created")
-									});
 								},
 								primary_action_label: __('Create')
 							})
 							dialog.show();
-						}).addClass("btn-primary");
+						}, __("Make"));
+						frm.page.set_inner_btn_group_as_primary(__('Make'));
 					}
 				}
 			}
