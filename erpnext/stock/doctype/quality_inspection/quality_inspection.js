@@ -6,6 +6,11 @@ cur_frm.cscript.refresh = cur_frm.cscript.inspection_type;
 frappe.ui.form.on("Quality Inspection", {
 	item_code: function(frm) {
 		if (frm.doc.item_code) {
+			frappe.db.get_value('Item', {name: frm.doc.item_code}, ['has_batch_no','has_serial_no'], (r) => {
+				frm.toggle_reqd("batch_no", r.has_batch_no);
+				frm.toggle_reqd("item_serial_no", r.has_serial_no);
+			});
+
 			return frm.call({
 				method: "get_quality_inspection_template",
 				doc: frm.doc,

@@ -577,7 +577,8 @@
    "fieldname": "quality_inspection",
    "fieldtype": "Link",
    "label": "Quality Inspection",
-   "options": "Quality Inspection"
+   "options": "Quality Inspection",
+   "read_only": 1
   },
   {
    "fieldname": "batch_no",
@@ -795,7 +796,7 @@
  "idx": 1,
  "istable": 1,
  "links": [],
- "modified": "2020-05-08 06:11:38.569638",
+ "modified": "2020-07-27 02:22:59.458110",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Sales Invoice Item",
