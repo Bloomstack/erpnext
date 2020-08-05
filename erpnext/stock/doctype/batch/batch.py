@@ -328,5 +328,5 @@ def save_thc_cbd(batch_no, thc, cbd):
 @frappe.whitelist()
 def get_active_batch(item_code):
 	active_batch = frappe.get_all("Batch", {"item": item_code, "display_on_website": 1})
-	active_batch = active_batch[0] if active_batch else None
+	active_batch = active_batch[0] if active_batch else {}
 	return active_batch
