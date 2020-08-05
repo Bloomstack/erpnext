@@ -109,6 +109,7 @@ class Batch(Document):
 	def validate(self):
 		self.item_has_batch_enabled()
 		self.calculate_batch_qty()
+		self.validate_display_on_website()
 
 	def item_has_batch_enabled(self):
 		if frappe.db.get_value("Item", self.item, "has_batch_no") == 0:
@@ -138,6 +139,16 @@ class Batch(Document):
 		name = make_autoname(key)
 
 		return name
+
+	def validate_display_on_website(self):
+		"""
+		Uncheck website display status from all other batches for the current batch's item
+		"""
+
+		batches = frappe.get_all('Batch', filters={'item': self.item, 'name': ['!=', self.name]})
+
+		for batch in batches:
+			frappe.db.set_value('Batch', batch, 'display_on_website', False)
 
 
 @frappe.whitelist()
@@ -305,3 +316,17 @@ def get_batches(item_code, warehouse, qty=1, serial_no=None, as_dict=True):
 	)
 
 	return batches
+
+
+@frappe.whitelist()
+def save_thc_cbd(batch_no, thc, cbd):
+	doc = frappe.get_doc('Batch', batch_no)
+	doc.thc = thc
+	doc.cbd = cbd
+	doc.save()
+
+@frappe.whitelist()
+def get_active_batch(item_code):
+	active_batch = frappe.get_all("Batch", {"item": item_code, "display_on_website": 1})
+	active_batch = active_batch[0] if active_batch else {}
+	return active_batch

@@ -1,4 +1,5 @@
 {
+ "actions": [],
  "autoname": "naming_series:",
  "creation": "2013-04-30 13:13:03",
  "doctype": "DocType",
@@ -23,14 +24,31 @@
   "status",
   "section_break_14",
   "inspected_by",
-  "verified_by",
   "bom_no",
+  "thc",
+  "cbd",
+  "verified_by",
+  "sign_off",
   "column_break_17",
   "remarks",
   "amended_from",
   "specification_details",
   "quality_inspection_template",
-  "readings"
+  "readings",
+  "section_break_strain_test",
+  "strain_notes",
+  "column_break_strain_test",
+  "testing_lab",
+  "testing_result_link",
+  "testing_date",
+  "section_break_manufacture_information",
+  "manufacturer_name",
+  "column_break_manufacture_information",
+  "manufacturer_website",
+  "secation_break_purchase_details",
+  "qty",
+  "column_break_purchase_details",
+  "uom"
  ],
  "fields": [
   {
@@ -226,12 +244,103 @@
    "label": "Status",
    "options": "\nUntested\nAccepted\nRejected\nPartially Rejected\nSkipped",
    "reqd": 1
+  },
+  {
+   "fieldname": "section_break_strain_test",
+   "fieldtype": "Section Break",
+   "label": "Strain Test"
+  },
+  {
+   "fieldname": "strain_notes",
+   "fieldtype": "Text",
+   "label": "Strain Notes"
+  },
+  {
+   "fieldname": "testing_lab",
+   "fieldtype": "Link",
+   "label": "Testing Lab",
+   "options": "Supplier"
+  },
+  {
+   "fieldname": "column_break_strain_test",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "testing_result_link",
+   "fieldtype": "Data",
+   "label": "Testing Result Link"
+  },
+  {
+   "fieldname": "section_break_manufacture_information",
+   "fieldtype": "Section Break",
+   "label": "Manufacture Information"
+  },
+  {
+   "fieldname": "manufacturer_name",
+   "fieldtype": "Link",
+   "label": "Manufacturer Name",
+   "options": "Supplier",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_manufacture_information",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "manufacturer_website",
+   "fieldtype": "Data",
+   "label": "Manufacturer Website",
+   "read_only": 1
+  },
+  {
+   "fieldname": "sign_off",
+   "fieldtype": "Signature",
+   "label": "Verifier\u2019s signature"
+  },
+  {
+   "fieldname": "secation_break_purchase_details",
+   "fieldtype": "Section Break",
+   "label": "Purchase Details"
+  },
+  {
+   "fieldname": "qty",
+   "fieldtype": "Data",
+   "label": "Accepted Quantity",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_purchase_details",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "uom",
+   "fieldtype": "Data",
+   "label": "UOM",
+   "read_only": 1
+  },
+  {
+   "fieldname": "thc",
+   "fieldtype": "Float",
+   "hidden": 1,
+   "label": "THC %"
+  },
+  {
+   "fieldname": "cbd",
+   "fieldtype": "Float",
+   "hidden": 1,
+   "label": "CBD %"
+  },
+  {
+   "fieldname": "testing_date",
+   "fieldtype": "Date",
+   "label": "Testing Date"
   }
  ],
  "icon": "fa fa-search",
  "idx": 1,
  "is_submittable": 1,
- "modified": "2019-07-12 12:07:23.153698",
+ "links": [],
+ "modified": "2020-07-29 04:18:55.551330",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Quality Inspection",

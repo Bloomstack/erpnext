@@ -25,4 +25,6 @@ def get_context(context):
 	context.product_settings = product_settings
 	context.page_length = product_settings.products_per_page
 
+	context.banner_image = frappe.db.get_single_value('Products Settings', 'banner_image')
+
 	context.no_cache = 1

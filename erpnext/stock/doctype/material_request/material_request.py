@@ -539,3 +539,4 @@ def create_pick_list(source_name, target_doc=None):
 	doc.set_item_locations()
 
 	return doc
+

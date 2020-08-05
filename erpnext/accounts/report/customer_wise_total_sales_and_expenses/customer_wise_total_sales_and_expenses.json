@@ -1,0 +1,48 @@
+{
+ "add_total_row": 0,
+ "creation": "2020-07-29 00:24:05.514639",
+ "disable_prepared_report": 0,
+ "disabled": 0,
+ "docstatus": 0,
+ "doctype": "Report",
+ "idx": 0,
+ "is_standard": "Yes",
+ "modified": "2020-07-29 00:24:05.514639",
+ "modified_by": "Administrator",
+ "module": "Accounts",
+ "name": "Customer-wise Total Sales and Expenses",
+ "owner": "Administrator",
+ "prepared_report": 0,
+ "ref_doctype": "Customer",
+ "report_name": "Customer-wise Total Sales and Expenses",
+ "report_type": "Script Report",
+ "roles": [
+  {
+   "role": "Stock User"
+  },
+  {
+   "role": "Accounts Manager"
+  },
+  {
+   "role": "Sales User"
+  },
+  {
+   "role": "Accounts User"
+  },
+  {
+   "role": "Stock Manager"
+  },
+  {
+   "role": "Sales Manager"
+  },
+  {
+   "role": "Sales Master Manager"
+  },
+  {
+   "role": "Fleet Manager"
+  },
+  {
+   "role": "Customer"
+  }
+ ]
+}
