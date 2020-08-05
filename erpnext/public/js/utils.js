@@ -731,11 +731,6 @@ $(document).on('app_ready', function() {
 										},
 										fields: [
 											{
-												fieldtype: 'Data',
-												fieldname: "docname",
-												hidden: 1
-											},
-											{
 												label: __("Item Code"),
 												fieldtype: 'Link',
 												fieldname: "item_code",
@@ -754,7 +749,6 @@ $(document).on('app_ready', function() {
 												label: __("Sample Size"),
 												fieldtype: 'Float',
 												fieldname: 'sample_size',
-												read_only: 1,
 												in_list_view: 1
 											}
 										],
@@ -783,8 +777,8 @@ $(document).on('app_ready', function() {
 								primary_action_label: __('Create')
 							})
 							dialog.show();
-						}, __("Make"));
-						frm.page.set_inner_btn_group_as_primary(__('Make'));
+						}, __("Create"));
+						frm.page.set_inner_btn_group_as_primary(__('Create'));
 					}
 				}
 			}
