@@ -30,6 +30,7 @@
   "column_break_9",
   "reference_doctype",
   "reference_name",
+  "certificate_of_analysis",
   "section_break_7",
   "description"
  ],
@@ -193,6 +194,12 @@
    "fieldname": "display_on_website",
    "fieldtype": "Check",
    "label": "Display on Website"
+  },
+  {
+   "fieldname": "certificate_of_analysis",
+   "fieldtype": "Attach",
+   "label": " Certificate of Analysis",
+   "read_only": 1
   }
  ],
  "icon": "fa fa-archive",
@@ -200,7 +207,7 @@
  "image_field": "image",
  "links": [],
  "max_attachments": 5,
- "modified": "2020-07-30 03:58:40.547577",
+ "modified": "2020-08-05 05:55:48.514001",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Batch",
