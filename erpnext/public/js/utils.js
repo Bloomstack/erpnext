@@ -659,10 +659,12 @@ $(document).on('app_ready', function() {
 			billable: (frm) => {
 				let confirm_message = "";
 				frappe.call({
-					method: "erpnext.projects.utils.get_linked_documents",
+					method: "frappe.desk.form.linked_with.get_submitted_linked_docs",
 					args: {
 						doctype: frm.doc.doctype,
-						name: frm.doc.name
+						name: frm.doc.name,
+						is_submittable: 0,
+						skip_doctypes: ["Activity Log"]
 					},
 					freeze: true,
 					callback: (r) => {
