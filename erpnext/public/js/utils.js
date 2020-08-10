@@ -663,8 +663,8 @@ $(document).on('app_ready', function() {
 					args: {
 						doctype: frm.doc.doctype,
 						name: frm.doc.name,
-						is_submittable: false,
-						skip_doctypes: ["Activity Log"]
+						only_submittable: false,
+						skip_doctypes: ["Activity Log", "Comment"]
 					},
 					freeze: true,
 					callback: (r) => {
