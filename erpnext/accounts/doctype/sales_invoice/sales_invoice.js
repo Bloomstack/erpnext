@@ -825,6 +825,12 @@ frappe.ui.form.on('Sales Invoice', {
 			method: "erpnext.accounts.doctype.sales_invoice.sales_invoice.create_invoice_discounting",
 			frm: frm
 		});
+	},
+	order_type: function(frm) {
+		let discount_percentage = 100;
+		if(frm.doc.order_type === "Marketing") {
+			frm.set_value("additional_discount_percentage", discount_percentage);
+		}
 	}
 })
 
