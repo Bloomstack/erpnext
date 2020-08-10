@@ -5,7 +5,6 @@
 
 from __future__ import unicode_literals
 import frappe
-from frappe.desk.form.linked_with import get_linked_docs, get_linked_doctypes
 
 @frappe.whitelist()
 def query_task(doctype, txt, searchfield, start, page_len, filters):
