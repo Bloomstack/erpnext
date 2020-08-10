@@ -22,10 +22,20 @@
   "column_break_4",
   "vehicle",
   "departure_time",
+  "odometer",
+  "odometer_start_value",
+  "odometer_start_time",
+  "actual_distance_travelled",
+  "column_break_17",
+  "odometer_end_value",
+  "odometer_end_time",
   "delivery_service_stops",
   "delivery_stops",
   "calculate_arrival_time",
   "optimize_route",
+  "sb_map",
+  "map_html",
+  "map_embed",
   "section_break_15",
   "status",
   "cb_more_info",
@@ -184,11 +194,71 @@
    "fieldtype": "Currency",
    "label": "Package Total",
    "read_only": 1
+  },
+  {
+   "fieldname": "odometer",
+   "fieldtype": "Section Break",
+   "label": "Odometer"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "odometer_start_value",
+   "fieldtype": "Int",
+   "label": "Odometer Start Value",
+   "read_only": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "odometer_start_time",
+   "fieldtype": "Datetime",
+   "label": "Odometer Start Time",
+   "read_only": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "actual_distance_travelled",
+   "fieldtype": "Int",
+   "label": "Actual Distance Travelled",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_17",
+   "fieldtype": "Column Break"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "odometer_end_value",
+   "fieldtype": "Int",
+   "label": "Odometer End Value",
+   "read_only": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "odometer_end_time",
+   "fieldtype": "Datetime",
+   "label": "Odometer End Time",
+   "read_only": 1
+  },
+  {
+   "fieldname": "sb_map",
+   "fieldtype": "Section Break",
+   "label": "Map"
+  },
+  {
+   "fieldname": "map_html",
+   "fieldtype": "HTML",
+   "label": "Map"
+  },
+  {
+   "fieldname": "map_embed",
+   "fieldtype": "Long Text",
+   "hidden": 1,
+   "label": "Map Embed"
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-01-26 22:37:14.824021",
+ "modified": "2020-08-05 05:02:38.250830",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Delivery Trip",

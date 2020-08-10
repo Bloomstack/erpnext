@@ -77,6 +77,11 @@ frappe.ui.form.on("Delivery Note", {
 
 
 	},
+	on_submit: (frm) => {
+		if (!frm.doc.delivered) {
+			frappe.db.set_value("Delivery Note", frm.doc.name, "status", "To Deliver")
+		}
+	},
 
 	print_without_amount: function(frm) {
 		erpnext.stock.delivery_note.set_print_hide(frm.doc);
@@ -91,6 +96,14 @@ frappe.ui.form.on("Delivery Note", {
 				})
 			}, __('Create'));
 			frm.page.set_inner_btn_group_as_primary(__('Create'));
+		}
+	},
+	delivered: function (frm) {
+		if (frm.doc.delivered) {
+			frm.set_value("status", "Delivered")
+		}
+		else {
+			frm.set_value("status", "To Deliver")
 		}
 	}
 });

@@ -19,10 +19,12 @@
   "company",
   "posting_date",
   "posting_time",
+  "delivered",
   "set_posting_time",
   "is_return",
   "issue_credit_note",
   "return_against",
+  "license",
   "customer_po_details",
   "po_no",
   "section_break_18",
@@ -1092,6 +1094,7 @@
    "label": "Status"
   },
   {
+   "allow_on_submit": 1,
    "default": "Draft",
    "fieldname": "status",
    "fieldtype": "Select",
@@ -1100,7 +1103,7 @@
    "no_copy": 1,
    "oldfieldname": "status",
    "oldfieldtype": "Select",
-   "options": "\nDraft\nTo Bill\nCompleted\nCancelled\nClosed",
+   "options": "\nDraft\nTo Bill\nTo Deliver\nOut for Delivery\nDelivered\nCompleted\nCancelled\nClosed",
    "print_hide": 1,
    "print_width": "150px",
    "read_only": 1,
@@ -1256,13 +1259,27 @@
    "fieldtype": "Select",
    "label": "Order Type",
    "options": "\nSales\nMaintenance\nShopping Cart\nPromotional\nSample\nPAD\nWarranty\nConsignment\nReplenishment\nMarketing"
+  },
+  {
+   "allow_on_submit": 1,
+   "default": "0",
+   "depends_on": "eval:doc.docstatus==1",
+   "fieldname": "delivered",
+   "fieldtype": "Check",
+   "label": "Delivered ?"
+  },
+  {
+   "fieldname": "license",
+   "fieldtype": "Link",
+   "label": "License",
+   "options": "Compliance Info"
   }
  ],
  "icon": "fa fa-truck",
  "idx": 146,
  "is_submittable": 1,
  "links": [],
- "modified": "2020-07-16 06:13:49.710494",
+ "modified": "2020-08-08 05:23:06.665088",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Delivery Note",
