@@ -1,4 +1,4 @@
-frappe.query_reports["Marketing Expense"] = {
+frappe.query_reports["Marketing Expenses"] = {
 	"filters": [
 		{
 			"fieldname":"company",
