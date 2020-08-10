@@ -7,7 +7,10 @@ import frappe
 import frappe.defaults
 from erpnext.controllers.selling_controller import SellingController
 from erpnext.stock.doctype.batch.batch import set_batch_nos
+<<<<<<< HEAD
 from erpnext.stock.doctype.delivery_trip.delivery_trip import get_delivery_window
+=======
+>>>>>>> ff164cf861... feat: Delivery Note status auto updated
 from erpnext.stock.doctype.serial_no.serial_no import get_delivery_note_serial_no
 from frappe import _
 from frappe.contacts.doctype.address.address import get_company_address
@@ -539,6 +542,7 @@ def make_delivery_trip(source_name, target_doc=None):
 		target.package_total = sum([stop.grand_total for stop in target.delivery_stops])
 
 	def update_stop_details(source_doc, target_doc, source_parent):
+		from erpnext.stock.doctype.delivery_trip.delivery_trip import get_delivery_window
 		delivery_window = get_delivery_window(source_parent.doctype, source_parent.name)
 		target_doc.delivery_start_time = delivery_window.delivery_start_time
 		target_doc.delivery_end_time = delivery_window.delivery_end_time
