@@ -726,16 +726,15 @@
    "label": "Ignore Pricing Rule"
   },
   {
-<<<<<<< HEAD
    "fieldname": "package_tag",
    "fieldtype": "Link",
    "label": "Package Tag",
    "options": "Package Tag"
-=======
+  },
+  {
    "fieldname": "certificate_of_analysis",
    "fieldtype": "Attach",
    "label": "Certificate of Analysis"
->>>>>>> c72f6b4b4a... WIP
   }
  ],
  "idx": 1,
