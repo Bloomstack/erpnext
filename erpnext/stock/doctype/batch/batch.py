@@ -337,6 +337,7 @@ def validate_serial_no_with_batch(serial_nos, item_code):
 	frappe.throw(_("There is no batch found against the {0}: {1}")
 		.format(message, serial_no_link))
 
+
 @frappe.whitelist()
 def save_thc_cbd(batch_no, thc, cbd):
 	doc = frappe.get_doc('Batch', batch_no)
@@ -344,9 +345,29 @@ def save_thc_cbd(batch_no, thc, cbd):
 	doc.cbd = cbd
 	doc.save()
 
+
 @frappe.whitelist()
 def get_active_batch(item_code):
-    fields = ["name", "item", "item_name", "stock_uom", "thc", "cbd", "certificate_of_analysis"]
-    active_batch = frappe.get_all("Batch", filters={"item": item_code, "display_on_website": 1}, fields=fields)
-    active_batch = active_batch[0] if active_batch else {}
-    return active_batch
+	"""
+	Get the current active batch for the given item
+
+	Args:
+		item_code (str): The item code
+
+	Returns:
+		dict: The details for the active Batch
+			Example: {
+				"name": "TEST-ITEM-CODE",
+				"item": "TEST-ITEM-CODE",
+				"item_name": "Test Item",
+				"stock_uom": "Unit",
+				"thc": 10.0,
+				"cbd": 10.0,
+				"certificate_of_analysis": "/files/coa.pdf"
+			}
+	"""
+	
+	fields = ["name", "item", "item_name", "stock_uom", "thc", "cbd", "certificate_of_analysis"]
+	active_batch = frappe.get_all("Batch", filters={"item": item_code, "display_on_website": 1}, fields=fields)
+	active_batch = active_batch[0] if active_batch else {}
+	return active_batch
