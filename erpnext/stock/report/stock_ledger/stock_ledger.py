@@ -41,6 +41,11 @@ def execute(filters=None):
 				"stock_value": stock_value
 			})
 
+		sle.update({
+			"in_qty": max(sle.actual_qty, 0),
+			"out_qty": min(sle.actual_qty, 0)
+		})
+
 		# get the name of the item that was produced using this item
 		if sle.voucher_type == "Stock Entry":
 			purpose, work_order, fg_completed_qty = frappe.db.get_value(sle.voucher_type, sle.voucher_no, ["purpose", "work_order", "fg_completed_qty"])
