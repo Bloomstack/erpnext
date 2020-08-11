@@ -157,6 +157,12 @@ class DeliveryNote(SellingController):
 			self.validate_rate_with_reference_doc([["Sales Order", "against_sales_order", "so_detail"],
 				["Sales Invoice", "against_sales_invoice", "si_detail"]])
 
+	def validate_batch_coa(self):
+		for item in self.items:
+			if item.batch_no:
+				coa = frappe.db.get_value("Batch", item.batch_no, "certificate_of_analysis")
+				item.certificate_of_analysis = coa
+
 	def validate_proj_cust(self):
 		"""check for does customer belong to same project as entered.."""
 		if self.project and self.customer:
