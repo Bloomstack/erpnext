@@ -26,3 +26,56 @@ def query_task(doctype, txt, searchfield, start, page_len, filters):
 		(searchfield, "%s", "%s", match_conditions, "%s",
 			searchfield, "%s", searchfield, "%s", "%s"),
 		(search_string, search_string, order_by_string, order_by_string, start, page_len))
+
+@frappe.whitelist()
+def update_timesheet_logs(ref_dt, ref_dn, billable):
+	time_logs = []
+
+	if ref_dt in ["Project", "Task"]:
+		if ref_dt == "Project":
+			tasks = update_linked_tasks(ref_dn, billable)
+			time_logs = [get_task_time_logs(task) for task in tasks]
+			# flatten the list of time log lists
+			time_logs = [log for time_log in time_logs for log in time_log]
+		else:
+			time_logs = frappe.get_all("Timesheet Detail", filters={frappe.scrub(ref_dt): ref_dn})
+
+	elif ref_dt in ["Project Type", "Project Template"]:
+		projects = update_linked_projects(frappe.scrub(ref_dt), ref_dn, billable)
+		time_logs = [get_project_time_logs(project) for project in projects]
+		# flatten the list of time log lists
+		time_logs = [log for time_log in time_logs for log in time_log]
+
+	for log in time_logs:
+		frappe.db.set_value("Timesheet Detail", log.name, "billable", billable)
+
+
+def update_linked_projects(ref_field, ref_value, billable):
+	projects = frappe.get_all("Project", filters={ref_field: ref_value})
+
+	for project in projects:
+		project_doc = frappe.get_doc("Project", project.name)
+		project_doc.billable = billable
+		project_doc.save()
+		update_linked_tasks(project.name, billable)
+
+	return projects
+
+
+def update_linked_tasks(project, billable):
+	tasks = frappe.get_all("Task", filters={"project": project})
+
+	for task in tasks:
+		task_doc = frappe.get_doc("Task", task.name)
+		task_doc.billable = billable
+		task_doc.save()
+
+	return tasks
+
+
+def get_project_time_logs(project):
+	return frappe.get_all("Timesheet Detail", filters={"project": project.name})
+
+def get_task_time_logs(task):
+	return frappe.get_all("Timesheet Detail", filters={"task": task.name})
+

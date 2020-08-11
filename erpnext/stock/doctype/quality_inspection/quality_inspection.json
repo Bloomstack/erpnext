@@ -23,12 +23,14 @@
   "description",
   "status",
   "section_break_14",
+  "inspection_by",
   "inspected_by",
   "bom_no",
   "thc",
   "cbd",
   "verified_by",
   "sign_off",
+  "certificate_of_analysis",
   "column_break_17",
   "remarks",
   "amended_from",
@@ -334,13 +336,25 @@
    "fieldname": "testing_date",
    "fieldtype": "Date",
    "label": "Testing Date"
+  },
+  {
+   "fieldname": "inspection_by",
+   "fieldtype": "Select",
+   "label": "Inspection By",
+   "options": "\nInternal\nExternal",
+   "reqd": 1
+  },
+  {
+   "fieldname": "certificate_of_analysis",
+   "fieldtype": "Attach",
+   "label": " Certificate of Analysis"
   }
  ],
  "icon": "fa fa-search",
  "idx": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2020-07-29 04:18:55.551330",
+ "modified": "2020-08-05 05:59:05.839098",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Quality Inspection",

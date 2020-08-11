@@ -118,6 +118,26 @@ frappe.ui.form.on("Project", {
 		});
 	},
 
+	project_template: (frm) => {
+		if (frm.is_new() && frm.doc.project_template && frm.doc.billable === 0) {
+			frappe.db.get_value("Project Template", { "name": frm.doc.project_template }, "billable", (r) => {
+				if (r && r.billable === 1) {
+					frm.set_value("billable", r.billable);
+				}
+			});
+		}
+	},
+
+	project_type: (frm) => {
+		if (frm.doc.project_type && frm.doc.billable === 0) {
+			frappe.db.get_value("Project Type", { "name": frm.doc.project_type }, "billable", (r) => {
+				if (r && r.billable === 1) {
+					frm.set_value("billable", r.billable);
+				}
+			});
+		}
+	}
+
 });
 
 function open_form(frm, doctype, child_doctype, parentfield) {
@@ -130,6 +150,9 @@ function open_form(frm, doctype, child_doctype, parentfield) {
 		new_child_doc.parent = new_doc.name;
 		new_child_doc.parentfield = parentfield;
 		new_child_doc.parenttype = doctype;
+		if (doctype === "Timesheet") {
+			new_child_doc.billable = frm.doc.billable;
+		}
 		new_doc[parentfield] = [new_child_doc];
 
 		frappe.ui.form.make_quick_entry(doctype, null, null, new_doc);

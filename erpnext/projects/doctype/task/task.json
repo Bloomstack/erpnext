@@ -11,6 +11,7 @@
   "issue",
   "type",
   "is_group",
+  "billable",
   "column_break0",
   "status",
   "priority",
@@ -360,12 +361,18 @@
    "fieldtype": "Link",
    "label": "Completed By",
    "options": "User"
+  },
+  {
+   "default": "0",
+   "fieldname": "billable",
+   "fieldtype": "Check",
+   "label": "Billable"
   }
  ],
  "icon": "fa fa-check",
  "idx": 1,
  "max_attachments": 5,
- "modified": "2020-07-27 02:56:28.963202",
+ "modified": "2020-07-28 03:05:26.743052",
  "modified_by": "Administrator",
  "module": "Projects",
  "name": "Task",
