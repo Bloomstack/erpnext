@@ -13,6 +13,7 @@
   "customer_name",
   "tax_id",
   "is_pos",
+  "order_type",
   "pos_profile",
   "offline_pos_name",
   "is_return",
@@ -1564,13 +1565,19 @@
   {
    "fieldname": "dimension_col_break",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "order_type",
+   "fieldtype": "Select",
+   "label": "Order Type",
+   "options": "\nSales\nMaintenance\nShopping Cart\nPromotional\nSample\nPAD\nWarranty\nConsignment\nReplenishment\nMarketing"
   }
  ],
  "icon": "fa fa-file-text",
  "idx": 181,
  "is_submittable": 1,
  "links": [],
- "modified": "2020-05-19 17:00:57.208696",
+ "modified": "2020-07-16 06:13:14.139976",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Sales Invoice",

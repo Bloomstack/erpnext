@@ -1,14 +1,14 @@
 # Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
 # License: GNU General Public License v3. See license.txt
 
-from __future__ import unicode_literals
+from collections import defaultdict
 
 import frappe
 import frappe.defaults
 from erpnext.controllers.selling_controller import SellingController
 from erpnext.stock.doctype.batch.batch import set_batch_nos
-from erpnext.stock.doctype.serial_no.serial_no import get_delivery_note_serial_no
 from erpnext.stock.doctype.delivery_trip.delivery_trip import get_delivery_window
+from erpnext.stock.doctype.serial_no.serial_no import get_delivery_note_serial_no
 from frappe import _
 from frappe.contacts.doctype.address.address import get_company_address
 from frappe.desk.notifications import clear_doctype_notifications
@@ -16,11 +16,10 @@ from frappe.model.mapper import get_mapped_doc
 from frappe.model.utils import get_fetch_values
 from frappe.utils import cint, flt
 
-from collections import defaultdict
-
 form_grid_templates = {
 	"items": "templates/form_grid/item_grid.html"
 }
+
 
 class DeliveryNote(SellingController):
 	def __init__(self, *args, **kwargs):

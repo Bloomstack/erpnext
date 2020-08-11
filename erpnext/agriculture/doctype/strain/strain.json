@@ -1,0 +1,215 @@
+{
+ "autoname": "field:strain_name",
+ "creation": "2017-10-20 01:16:17.606174",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "strain_name",
+  "indica_percentage",
+  "sativa_percentage",
+  "strain_id",
+  "column_break_3",
+  "target_warehouse",
+  "default_location",
+  "section_break_20",
+  "cultivation_task",
+  "period",
+  "section_break_9",
+  "plant_spacing",
+  "column_break_12",
+  "plant_spacing_uom",
+  "section_break_4",
+  "type",
+  "category",
+  "column_break_14",
+  "planting_uom",
+  "yield_uom",
+  "section_break_16",
+  "section_break_17",
+  "materials_required",
+  "section_break_29",
+  "produced_items",
+  "section_break_26",
+  "byproducts"
+ ],
+ "fields": [
+  {
+   "description": "You can define all the tasks which need to carried out for this crop here. The day field is used to mention the day on which the task needs to be carried out, 1 being the 1st day, etc.. ",
+   "fieldname": "section_break_20",
+   "fieldtype": "Section Break",
+   "label": "Tasks"
+  },
+  {
+   "default": "0",
+   "fieldname": "period",
+   "fieldtype": "Int",
+   "label": "Period"
+  },
+  {
+   "fieldname": "section_break_9",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_12",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_4",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "type",
+   "fieldtype": "Select",
+   "label": "Type",
+   "options": "Annual\nPerennial\nBiennial"
+  },
+  {
+   "fieldname": "category",
+   "fieldtype": "Data",
+   "label": "Category"
+  },
+  {
+   "fieldname": "target_warehouse",
+   "fieldtype": "Link",
+   "label": "Target Warehouse",
+   "options": "Warehouse"
+  },
+  {
+   "fieldname": "planting_uom",
+   "fieldtype": "Link",
+   "label": "Planting UOM",
+   "options": "UOM"
+  },
+  {
+   "fieldname": "column_break_14",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "yield_uom",
+   "fieldtype": "Link",
+   "label": "Yield UOM",
+   "options": "UOM"
+  },
+  {
+   "fieldname": "section_break_16",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "section_break_17",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "materials_required",
+   "fieldtype": "Table",
+   "label": "Materials Required",
+   "options": "BOM Item"
+  },
+  {
+   "fieldname": "byproducts",
+   "fieldtype": "Table",
+   "label": "By-products",
+   "options": "Strain Item"
+  },
+  {
+   "fieldname": "section_break_29",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "produced_items",
+   "fieldtype": "Table",
+   "label": "Produced Items",
+   "options": "Strain Item"
+  },
+  {
+   "description": "The minimum distance between each plant for optimum growth",
+   "fieldname": "plant_spacing",
+   "fieldtype": "Float",
+   "label": "Plant Spacing"
+  },
+  {
+   "fieldname": "strain_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Strain Name",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "default_location",
+   "fieldtype": "Link",
+   "label": "Default Location",
+   "options": "Location"
+  },
+  {
+   "fieldname": "column_break_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "cultivation_task",
+   "fieldtype": "Table",
+   "label": "Cultivation Task",
+   "options": "Cultivation Task",
+   "reqd": 1
+  },
+  {
+   "fieldname": "strain_id",
+   "fieldtype": "Data",
+   "label": "Strain ID",
+   "read_only": 1
+  },
+  {
+   "fieldname": "indica_percentage",
+   "fieldtype": "Percent",
+   "label": "Indica Percentage"
+  },
+  {
+   "fieldname": "sativa_percentage",
+   "fieldtype": "Percent",
+   "label": "Sativa Percentage"
+  },
+  {
+   "fieldname": "plant_spacing_uom",
+   "fieldtype": "Link",
+   "label": "Plant Spacing UOM",
+   "options": "UOM"
+  },
+  {
+   "fieldname": "section_break_26",
+   "fieldtype": "Section Break"
+  }
+ ],
+ "modified": "2020-07-20 05:10:15.066703",
+ "modified_by": "Administrator",
+ "module": "Agriculture",
+ "name": "Strain",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Agriculture Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Agriculture User",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "restrict_to_domain": "Agriculture",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

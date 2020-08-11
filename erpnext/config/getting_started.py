@@ -215,12 +215,12 @@ def get_data():
 			"items": [
 				{
 					"type": "doctype",
-					"name": "Crop",
+					"name": "Strain",
 					"onboard": 1,
 				},
 				{
 					"type": "doctype",
-					"name": "Crop Cycle",
+					"name": "Disease",
 					"onboard": 1,
 				},
 				{
@@ -230,7 +230,7 @@ def get_data():
 				},
 				{
 					"type": "doctype",
-					"name": "Fertilizer",
+					"name": "Additive",
 					"onboard": 1,
 				}
 			]

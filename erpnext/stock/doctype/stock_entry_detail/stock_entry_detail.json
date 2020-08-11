@@ -1,5 +1,4 @@
 {
- "actions": [],
  "autoname": "hash",
  "creation": "2013-03-29 18:22:12",
  "doctype": "DocType",
@@ -41,6 +40,7 @@
   "serial_no",
   "col_break4",
   "batch_no",
+  "package_tag",
   "quality_inspection",
   "accounting",
   "expense_account",
@@ -307,7 +307,8 @@
    "fieldname": "quality_inspection",
    "fieldtype": "Link",
    "label": "Quality Inspection",
-   "options": "Quality Inspection"
+   "options": "Quality Inspection",
+   "read_only": 1
   },
   {
    "fieldname": "accounting",
@@ -497,15 +498,19 @@
    "depends_on": "eval:parent.purpose===\"Repack\" && doc.t_warehouse",
    "fieldname": "set_basic_rate_manually",
    "fieldtype": "Check",
-   "label": "Set Basic Rate Manually",
-   "show_days": 1,
-   "show_seconds": 1
+   "label": "Set Basic Rate Manually"
+  },
+  {
+   "fieldname": "package_tag",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Package Tag",
+   "options": "Package Tag"
   }
  ],
  "idx": 1,
  "istable": 1,
- "links": [],
- "modified": "2020-06-08 12:57:03.172887",
+ "modified": "2020-08-06 04:10:46.529496",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Stock Entry Detail",

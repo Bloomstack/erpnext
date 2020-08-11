@@ -1,5 +1,4 @@
 {
- "actions": [],
  "autoname": "hash",
  "creation": "2013-05-24 19:29:10",
  "doctype": "DocType",
@@ -10,6 +9,7 @@
   "barcode",
   "section_break_2",
   "item_code",
+  "package_tag",
   "supplier_part_no",
   "column_break_2",
   "item_name",
@@ -485,7 +485,8 @@
    "oldfieldname": "qa_no",
    "oldfieldtype": "Link",
    "options": "Quality Inspection",
-   "print_hide": 1
+   "print_hide": 1,
+   "read_only": 1
   },
   {
    "fieldname": "column_break_40",
@@ -825,12 +826,17 @@
    "fieldname": "item_ignore_pricing_rule",
    "fieldtype": "Check",
    "label": "Ignore Pricing Rule"
+  },
+  {
+   "fieldname": "package_tag",
+   "fieldtype": "Link",
+   "label": "Package Tag",
+   "options": "Package Tag"
   }
  ],
  "idx": 1,
  "istable": 1,
- "links": [],
- "modified": "2020-05-08 06:10:10.448848",
+ "modified": "2020-08-06 04:15:33.068875",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Purchase Receipt Item",

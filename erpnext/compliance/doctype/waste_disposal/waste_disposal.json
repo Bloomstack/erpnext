@@ -1,0 +1,112 @@
+{
+ "actions": [],
+ "autoname": "naming_series:",
+ "creation": "2019-05-03 00:09:51.963540",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "company",
+  "s_warehouse",
+  "stock_entry",
+  "cb_waste",
+  "disposal_date",
+  "disposal_time",
+  "sb_items",
+  "items",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "default": "MAT-DSPL-.YYYY.-",
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Naming Series",
+   "options": "\nMAT-DSPL-.YYYY.-"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company",
+   "reqd": 1
+  },
+  {
+   "fieldname": "s_warehouse",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Default Source Warehouse",
+   "options": "Warehouse"
+  },
+  {
+   "fieldname": "stock_entry",
+   "fieldtype": "Link",
+   "label": "Stock Entry",
+   "options": "Stock Entry",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cb_waste",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Today",
+   "fieldname": "disposal_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Disposal Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "disposal_time",
+   "fieldtype": "Time",
+   "in_list_view": 1,
+   "label": "Disposal Time",
+   "reqd": 1
+  },
+  {
+   "fieldname": "sb_items",
+   "fieldtype": "Section Break",
+   "label": "Items"
+  },
+  {
+   "fieldname": "items",
+   "fieldtype": "Table",
+   "options": "Waste Disposal Item",
+   "reqd": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Waste Disposal",
+   "print_hide": 1,
+   "read_only": 1
+  }
+ ],
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2020-08-04 04:58:17.923986",
+ "modified_by": "Administrator",
+ "module": "Compliance",
+ "name": "Waste Disposal",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "ASC",
+ "track_changes": 1
+}

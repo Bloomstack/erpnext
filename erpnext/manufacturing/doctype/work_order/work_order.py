@@ -19,6 +19,7 @@ from frappe.utils.csvutils import getlink
 from erpnext.stock.utils import get_bin, validate_warehouse_company, get_latest_stock_qty
 from erpnext.utilities.transaction_base import validate_uom_is_integer
 from frappe.model.mapper import get_mapped_doc
+from frappe.utils import now_datetime
 
 class OverProductionError(frappe.ValidationError): pass
 class StockOverProductionError(frappe.ValidationError): pass
@@ -614,7 +615,7 @@ def get_item_details(item, project = None):
 			frappe.throw(_("Default BOM for {0} not found").format(item))
 
 	bom_data = frappe.db.get_value('BOM', res['bom_no'],
-		['project', 'allow_alternative_item', 'transfer_material_against', 'item_name'], as_dict=1)
+		['project', 'allow_alternative_item', 'transfer_material_against', 'item_name','raw_material_cost','operating_cost'], as_dict=1)
 
 	res['project'] = project or bom_data.pop("project")
 	res.update(bom_data)
@@ -767,6 +768,8 @@ def create_job_card(work_order, row, qty=0, auto_create=False):
 		'wip_warehouse': work_order.wip_warehouse
 	})
 
+	doc.get_scrap_items()
+
 	if work_order.transfer_material_against == 'Job Card' and not work_order.skip_transfer:
 		doc.get_required_items()
 
@@ -824,3 +827,52 @@ def create_pick_list(source_name, target_doc=None, for_qty=None):
 	doc.set_item_locations()
 
 	return doc
+
+
+@frappe.whitelist()
+def start_job_cards(work_order):
+	job_cards = start_and_stop_job_cards(work_order, job_started=True)
+	return job_cards
+
+
+@frappe.whitelist()
+def stop_job_cards(work_order):
+	job_cards = start_and_stop_job_cards(work_order, job_started=False)
+	return job_cards
+
+
+def start_and_stop_job_cards(work_order, job_started):
+	job_cards = []
+	open_job_cards = frappe.db.get_all('Job Card',
+		filters={
+			'work_order': work_order,
+			'status': ('in', ['Open', 'Work In Progress', 'Material Transferred'])
+		})
+
+	for job_card in open_job_cards:
+		job = frappe.get_doc('Job Card', job_card)
+		job.job_started = job_started
+		job_changed = False
+
+		if job_started:
+			for row in job.time_logs:
+				if not row.to_time:
+					break
+			else:
+				job_changed = True
+				job.append('time_logs', {
+					"from_time": now_datetime(),
+					"completed_qty": 0
+				})
+		else:
+			for row in job.time_logs:
+				if not row.to_time:
+					job_changed = True
+					row.to_time = now_datetime()
+					row.completed_qty = 0
+
+		if job_changed:
+			job.save()
+			job_cards.append(frappe.utils.get_link_to_form("Job Card", job.name))
+
+	return job_cards

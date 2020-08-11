@@ -1,38 +1,37 @@
 # Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
 # License: GNU General Public License v3. See license.txt
 
-from __future__ import unicode_literals
-import frappe, erpnext
-import frappe.defaults
-from frappe.utils import cint, flt, add_months, today, date_diff, getdate, add_days, cstr, nowdate
-from frappe import _, msgprint, throw
-from erpnext.accounts.party import get_party_account, get_due_date
-from erpnext.controllers.stock_controller import update_gl_entries_after
-from frappe.model.mapper import get_mapped_doc
-from erpnext.accounts.doctype.sales_invoice.pos import update_multi_mode_option
-
-from erpnext.controllers.selling_controller import SellingController
-from erpnext.accounts.utils import get_account_currency
-from erpnext.stock.doctype.delivery_note.delivery_note import update_billed_amount_based_on_so
-from erpnext.projects.doctype.timesheet.timesheet import get_projectwise_timesheet_data
-from erpnext.assets.doctype.asset.depreciation \
-	import get_disposal_account_and_cost_center, get_gl_entries_on_asset_disposal
-from erpnext.stock.doctype.batch.batch import set_batch_nos
-from erpnext.stock.doctype.serial_no.serial_no import get_serial_nos, get_delivery_note_serial_no
-from erpnext.setup.doctype.company.company import update_company_current_month_sales
-from erpnext.selling.doctype.customer.customer import update_customer_current_month_sales
-from erpnext.accounts.general_ledger import get_round_off_account_and_cost_center
-from erpnext.accounts.doctype.loyalty_program.loyalty_program import \
-	get_loyalty_program_details_with_points, get_loyalty_details, validate_loyalty_points
-from erpnext.accounts.deferred_revenue import validate_service_stop_date
-
-from erpnext.healthcare.utils import manage_invoice_submit_cancel
-
 from six import iteritems
+
+import erpnext
+import frappe
+import frappe.defaults
+from erpnext.accounts.deferred_revenue import validate_service_stop_date
+from erpnext.accounts.doctype.loyalty_program.loyalty_program import (
+	get_loyalty_program_details_with_points, validate_loyalty_points)
+from erpnext.accounts.doctype.sales_invoice.pos import update_multi_mode_option
+from erpnext.accounts.general_ledger import get_round_off_account_and_cost_center
+from erpnext.accounts.party import get_due_date, get_party_account
+from erpnext.accounts.utils import get_account_currency
+from erpnext.assets.doctype.asset.depreciation import (
+	get_gl_entries_on_asset_disposal, get_disposal_account_and_cost_center)
+from erpnext.controllers.selling_controller import SellingController
+from erpnext.controllers.stock_controller import update_gl_entries_after
+from erpnext.healthcare.utils import manage_invoice_submit_cancel
+from erpnext.projects.doctype.timesheet.timesheet import get_projectwise_timesheet_data
+from erpnext.selling.doctype.customer.customer import update_customer_current_month_sales
+from erpnext.setup.doctype.company.company import update_company_current_month_sales
+from erpnext.stock.doctype.batch.batch import set_batch_nos
+from erpnext.stock.doctype.delivery_note.delivery_note import update_billed_amount_based_on_so
+from erpnext.stock.doctype.serial_no.serial_no import get_delivery_note_serial_no, get_serial_nos
+from frappe import _, msgprint, throw
+from frappe.model.mapper import get_mapped_doc
+from frappe.utils import add_days, cint, cstr, date_diff, flt, getdate, nowdate, today
 
 form_grid_templates = {
 	"items": "templates/form_grid/item_grid.html"
 }
+
 
 class SalesInvoice(SellingController):
 	def __init__(self, *args, **kwargs):
@@ -398,7 +397,8 @@ class SalesInvoice(SellingController):
 		if cint(self.is_pos) != 1:
 			return
 
-		from erpnext.stock.get_item_details import get_pos_profile_item_details, get_pos_profile
+		from erpnext.stock.get_item_details import (get_pos_profile,
+			get_pos_profile_item_details)
 		if not self.pos_profile:
 			pos_profile = get_pos_profile(self.company) or {}
 			self.pos_profile = pos_profile.get('name')
@@ -731,7 +731,8 @@ class SalesInvoice(SellingController):
 				update_outstanding=update_outstanding, merge_entries=False, from_repost=from_repost)
 
 			if update_outstanding == "No":
-				from erpnext.accounts.doctype.gl_entry.gl_entry import update_outstanding_amt
+				from erpnext.accounts.doctype.gl_entry.gl_entry import \
+					update_outstanding_amt
 				update_outstanding_amt(self.debit_to, "Customer", self.customer,
 					self.doctype, self.return_against if cint(self.is_return) and self.return_against else self.name)
 
@@ -1159,8 +1160,8 @@ class SalesInvoice(SellingController):
 
 	# redeem the loyalty points.
 	def apply_loyalty_points(self):
-		from erpnext.accounts.doctype.loyalty_point_entry.loyalty_point_entry \
-			import get_loyalty_point_entries, get_redemption_details
+		from erpnext.accounts.doctype.loyalty_point_entry.loyalty_point_entry import (
+			get_redemption_details, get_loyalty_point_entries)
 		loyalty_point_entries = get_loyalty_point_entries(self.customer, self.loyalty_program, self.company, self.posting_date)
 		redemption_details = get_redemption_details(self.customer, self.loyalty_program, self.company)
 
@@ -1272,6 +1273,7 @@ class SalesInvoice(SellingController):
 		if update:
 			self.db_set('status', self.status, update_modified = update_modified)
 
+
 def get_discounting_status(sales_invoice):
 	status = None
 
@@ -1291,6 +1293,7 @@ def get_discounting_status(sales_invoice):
 			break
 
 	return status
+
 
 def validate_inter_company_party(doctype, party, company, inter_company_reference):
 	if not party:

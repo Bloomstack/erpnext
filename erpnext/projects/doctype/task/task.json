@@ -1,5 +1,4 @@
 {
- "actions": [],
  "allow_import": 1,
  "autoname": "TASK-.YYYY.-.#####",
  "creation": "2013-01-29 19:25:50",
@@ -12,6 +11,7 @@
   "issue",
   "type",
   "is_group",
+  "billable",
   "column_break0",
   "status",
   "priority",
@@ -150,6 +150,7 @@
    "fieldname": "exp_start_date",
    "fieldtype": "Date",
    "label": "Expected Start Date",
+   "no_copy": 1,
    "oldfieldname": "exp_start_date",
    "oldfieldtype": "Date"
   },
@@ -176,6 +177,7 @@
    "fieldname": "exp_end_date",
    "fieldtype": "Date",
    "label": "Expected End Date",
+   "no_copy": 1,
    "oldfieldname": "exp_end_date",
    "oldfieldtype": "Date",
    "search_index": 1
@@ -359,14 +361,19 @@
    "fieldtype": "Link",
    "label": "Completed By",
    "options": "User"
+  },
+  {
+   "default": "0",
+   "fieldname": "billable",
+   "fieldtype": "Check",
+   "label": "Billable"
   }
  ],
  "icon": "fa fa-check",
  "idx": 1,
  "is_tree": 1,
- "links": [],
  "max_attachments": 5,
- "modified": "2020-06-24 04:30:53.712091",
+ "modified": "2020-07-28 03:05:26.743052",
  "modified_by": "Administrator",
  "module": "Projects",
  "name": "Task",

@@ -66,6 +66,16 @@ frappe.ui.form.on("Sales Order", {
 				})
 			});
 		}
+
+		frm.set_query("package_tag", "items", (doc, cdt, cdn) => {
+			let row = frm.selected_doc || locals[cdt][cdn];
+
+			if (!row.batch_no) {
+				return { filters: { "item_code": row.item_code } };
+			} else {
+				return { filters: { "item_code": row.item_code, "batch_no": row.batch_no } };
+			}
+		})
 	},
 	onload: function(frm) {
 		if (!frm.doc.transaction_date){

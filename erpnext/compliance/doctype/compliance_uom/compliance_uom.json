@@ -1,0 +1,60 @@
+{
+ "actions": [],
+ "autoname": "field:uom_name",
+ "creation": "2019-04-23 05:07:55.225609",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "uom_name",
+  "uom",
+  "quantity_type",
+  "abbreviation"
+ ],
+ "fields": [
+  {
+   "fieldname": "uom_name",
+   "fieldtype": "Data",
+   "label": "UOM Name",
+   "unique": 1
+  },
+  {
+   "fieldname": "uom",
+   "fieldtype": "Link",
+   "label": "UOM",
+   "options": "UOM"
+  },
+  {
+   "fieldname": "quantity_type",
+   "fieldtype": "Data",
+   "label": "Quantity Type"
+  },
+  {
+   "fieldname": "abbreviation",
+   "fieldtype": "Data",
+   "label": "Abbreviation"
+  }
+ ],
+ "links": [],
+ "modified": "2020-08-04 02:12:44.862837",
+ "modified_by": "Administrator",
+ "module": "Compliance",
+ "name": "Compliance UOM",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}

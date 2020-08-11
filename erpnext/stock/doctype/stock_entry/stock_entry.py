@@ -1,38 +1,40 @@
 # Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
 # License: GNU General Public License v3. See license.txt
 
-from __future__ import unicode_literals
-import frappe, erpnext
-import frappe.defaults
-from frappe import _
-from frappe.utils import cstr, cint, flt, comma_or, getdate, nowdate, formatdate, format_time
-from erpnext.stock.utils import get_incoming_rate
-from erpnext.stock.stock_ledger import get_previous_sle, NegativeStockError, get_valuation_rate
-from erpnext.stock.get_item_details import get_bin_details, get_default_cost_center, get_conversion_factor, get_reserved_qty_for_so
-from erpnext.setup.doctype.item_group.item_group import get_item_group_defaults
-from erpnext.setup.doctype.brand.brand import get_brand_defaults
-from erpnext.stock.doctype.batch.batch import get_batch_no, set_batch_nos, get_batch_qty
-from erpnext.stock.doctype.item.item import get_item_defaults
-from erpnext.manufacturing.doctype.bom.bom import validate_bom_no, add_additional_cost
-from erpnext.stock.utils import get_bin
-from frappe.model.mapper import get_mapped_doc
-from erpnext.stock.doctype.serial_no.serial_no import update_serial_nos_after_submit, get_serial_nos
-from erpnext.stock.doctype.stock_reconciliation.stock_reconciliation import OpeningEntryAccountError
-
 import json
 
-from six import string_types, itervalues, iteritems
+from six import iteritems, itervalues, string_types
+
+import erpnext
+import frappe
+import frappe.defaults
+from erpnext.controllers.stock_controller import StockController
+from erpnext.manufacturing.doctype.bom.bom import add_additional_cost, validate_bom_no
+from erpnext.setup.doctype.brand.brand import get_brand_defaults
+from erpnext.setup.doctype.item_group.item_group import get_item_group_defaults
+from erpnext.stock.doctype.batch.batch import get_batch_no, get_batch_qty, set_batch_nos
+from erpnext.stock.doctype.item.item import get_item_defaults
+from erpnext.stock.doctype.serial_no.serial_no import get_serial_nos, update_serial_nos_after_submit
+from erpnext.stock.doctype.stock_reconciliation.stock_reconciliation import OpeningEntryAccountError
+from erpnext.stock.get_item_details import (get_bin_details,
+	get_conversion_factor, get_default_cost_center, get_reserved_qty_for_so)
+from erpnext.stock.stock_ledger import NegativeStockError, get_previous_sle, get_valuation_rate
+from erpnext.stock.utils import get_bin, get_incoming_rate
+from frappe import _
+from frappe.model.mapper import get_mapped_doc
+from frappe.utils import (cint, comma_or, cstr, flt, format_time, formatdate, getdate, nowdate)
+
 
 class IncorrectValuationRateError(frappe.ValidationError): pass
 class DuplicateEntryForWorkOrderError(frappe.ValidationError): pass
 class OperationsNotCompleteError(frappe.ValidationError): pass
 class MaxSampleAlreadyRetainedError(frappe.ValidationError): pass
 
-from erpnext.controllers.stock_controller import StockController
 
 form_grid_templates = {
 	"items": "templates/form_grid/stock_entry_grid.html"
 }
+
 
 class StockEntry(StockController):
 	def get_feed(self):
@@ -96,6 +98,7 @@ class StockEntry(StockController):
 		self.update_quality_inspection()
 		if self.work_order and self.purpose == "Manufacture":
 			self.update_so_in_serial_number()
+		self.update_coa_batch_no()
 
 	def on_cancel(self):
 
@@ -905,13 +908,34 @@ class StockEntry(StockController):
 
 	def set_scrap_items(self):
 		if self.purpose != "Send to Subcontractor" and self.purpose in ["Manufacture", "Repack"]:
-			scrap_item_dict = self.get_bom_scrap_material(self.fg_completed_qty)
+			scrap_item_dict = {}
+			backflush_scrap_items_based_on = frappe.db.get_single_value("Manufacturing Settings", "backflush_scrap_items_based_on")
+			if backflush_scrap_items_based_on =="BOM":
+				scrap_item_dict = self.get_bom_scrap_material(self.fg_completed_qty)
+			elif backflush_scrap_items_based_on =="Job Card":
+				if flt(self.fg_completed_qty) != flt(frappe.db.get_value("Work Order", self.work_order, 'qty')):
+					frappe.throw(_("For Qty must be same as Work Order Qty if backflush scrap items is based on Job Card."))
+				else:
+					scrap_item_dict = self.get_scrap_material()
 			for item in itervalues(scrap_item_dict):
 				item.idx = ''
 				if self.pro_doc and self.pro_doc.scrap_warehouse:
 					item["to_warehouse"] = self.pro_doc.scrap_warehouse
 
 			self.add_to_stock_entry_detail(scrap_item_dict, bom_no=self.bom_no)
+
+	def get_scrap_material(self):
+		scrap_items = {}
+		job_cards = frappe.get_all("Job Card", filters={'docstatus': 1, 'work_order': self.work_order})
+		for card in job_cards:
+			job_card = frappe.get_doc("Job Card", card.name)
+			for scrap in job_card.scrap_items:
+				if not scrap_items.get(scrap.item_code):
+					scrap_items[scrap.item_code] = scrap.as_dict()
+					scrap_items[scrap.item_code]['qty'] = scrap.stock_qty
+				else:
+					scrap_items[scrap.item_code]['qty'] += scrap.stock_qty
+		return scrap_items
 
 	def set_work_order_details(self):
 		if not getattr(self, "pro_doc", None):
@@ -1342,6 +1366,23 @@ class StockEntry(StockController):
 						'reference_type': reference_type,
 						'reference_name': reference_name
 					})
+
+	def update_coa_batch_no(self):
+		stock_entry_purpose = frappe.db.get_value("Stock Entry Type", self.stock_entry_type, "purpose")
+		if stock_entry_purpose == "Material Receipt":
+			for item in self.items:
+				if item.package_tag:
+					frappe.db.set_value("Package Tag", item.package_tag, "coa_batch_no", item.batch_no)
+		elif stock_entry_purpose in ["Manufacture", "Repack"]:
+			source_item = next((item for item in self.items if item.s_warehouse), None)
+			for item in self.items:
+				if item.package_tag and item.t_warehouse:
+					if frappe.db.get_value("Compliance Item", item.item_code, "requires_lab_tests"):
+						frappe.db.set_value("Package Tag", item.package_tag, "coa_batch_no", item.batch_no)
+					else:
+						coa_batch_no = frappe.db.get_value("Package Tag", source_item.package_tag, "coa_batch_no")
+						frappe.db.set_value("Package Tag", item.package_tag, "coa_batch_no", coa_batch_no)
+
 
 @frappe.whitelist()
 def move_sample_to_retention_warehouse(company, items):

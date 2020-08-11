@@ -30,6 +30,16 @@ frappe.ui.form.on('Job Card', {
 		}
 	},
 
+	bom_no: (frm) => {
+		return frm.call({
+			method: "get_scrap_items",
+			doc: frm.doc,
+			callback: function() {
+				refresh_field("scrap_items");
+			}
+		});
+	},
+
 	prepare_timer_buttons: function(frm) {
 		frm.trigger("make_dashboard");
 		if (!frm.doc.job_started) {
@@ -223,6 +233,18 @@ frappe.ui.form.on('Job Card', {
 		});
 
 		refresh_field("total_completed_qty");
+	},
+
+	set_scrap_amount: function(frm, cdt, cdn) {
+		let d = locals[cdt][cdn];
+
+		let base_rate = flt(d.rate) * flt(d.conversion_rate);
+		let amount = flt(d.rate) * flt(d.stock_qty);
+		let base_amount = amount * flt(d.conversion_rate);
+
+		frappe.model.set_value(d.doctype, d.name, 'base_rate', base_rate);
+		frappe.model.set_value(d.doctype, d.name, 'amount', amount);
+		frappe.model.set_value(d.doctype, d.name, 'base_amount', base_amount);
 	}
 });
 
@@ -235,4 +257,18 @@ frappe.ui.form.on('Job Card Time Log', {
 		frm.set_value('job_started', 0);
 		frm.set_value('started_time', '');
 	}
-})
+});
+
+frappe.ui.form.on('BOM Scrap Item', {
+	stock_qty: (frm, cdt, cdn) => {
+		if (frm.doctype =="Job Card") {
+			frm.events.set_scrap_amount(frm, cdt, cdn);
+		}
+	},
+
+	rate: (frm, cdt, cdn) => {
+		if (frm.doctype =="Job Card") {
+			frm.events.set_scrap_amount(frm, cdt, cdn);
+		}
+	}
+});

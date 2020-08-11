@@ -1,5 +1,4 @@
 {
- "actions": [],
  "autoname": "hash",
  "creation": "2013-05-24 19:29:06",
  "doctype": "DocType",
@@ -68,6 +67,7 @@
   "sales_order_item",
   "supplier_quotation",
   "supplier_quotation_item",
+  "package_tag",
   "col_break5",
   "blanket_order",
   "blanket_order_rate",
@@ -700,7 +700,8 @@
   {
    "fieldname": "manufacturer_part_no",
    "fieldtype": "Data",
-   "label": "Manufacturer Part Number"
+   "label": "Manufacturer Part Number",
+   "read_only": 1
   },
   {
    "default": "0",
@@ -715,12 +716,17 @@
    "fieldname": "item_ignore_pricing_rule",
    "fieldtype": "Check",
    "label": "Ignore Pricing Rule"
+  },
+  {
+   "fieldname": "package_tag",
+   "fieldtype": "Link",
+   "label": "Package Tag",
+   "options": "Package Tag"
   }
  ],
  "idx": 1,
  "istable": 1,
- "links": [],
- "modified": "2020-05-08 06:12:04.769939",
+ "modified": "2020-08-06 04:16:23.661669",
  "modified_by": "Administrator",
  "module": "Buying",
  "name": "Purchase Order Item",

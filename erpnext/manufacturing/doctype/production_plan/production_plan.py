@@ -704,10 +704,21 @@ def get_items_for_material_requests(doc, ignore_existing_ordered_qty=None):
 @frappe.whitelist()
 def get_item_data(item_code):
 	item_details = get_item_details(item_code)
+	bom_no = item_details.get("bom_no")
+	
+	total_operating_hours = frappe.db.get_value(
+		"BOM Operation", {"parent": bom_no}, "sum(time_in_mins) AS total_operating_time")
+	total_operating_hours = flt(total_operating_hours) / 60.0
 
+	total_workstations = frappe.db.count(
+		"BOM Operation", {"parent": bom_no, "workstation": ["!=", ""]})
 	return {
 		"bom_no": item_details.get("bom_no"),
-		"stock_uom": item_details.get("stock_uom")
+		"stock_uom": item_details.get("stock_uom"),
+		"raw_material_cost": item_details.get("raw_material_cost"),
+		"total_operational_cost": item_details.get("operating_cost"),
+		"total_operational_hours": total_operating_hours,
+		"total_workstations": total_workstations
 #		"description": item_details.get("description")
 	}
 

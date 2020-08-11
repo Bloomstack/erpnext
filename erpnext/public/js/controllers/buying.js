@@ -48,6 +48,17 @@ erpnext.buying.BuyingController = erpnext.TransactionController.extend({
 			});
 		}
 		/* eslint-enable */
+
+		if (this.frm.fields_dict.license && this.frm.doc.supplier) {
+			this.frm.set_query("license", () => {
+				return {
+					query: "erpnext.compliance.utils.filter_license",
+					filters: {
+						party_name: this.frm.doc.supplier
+					}
+				};
+			});
+		}
 	},
 
 	setup_queries: function(doc, cdt, cdn) {
@@ -125,9 +136,26 @@ erpnext.buying.BuyingController = erpnext.TransactionController.extend({
 
 	supplier: function() {
 		var me = this;
-		erpnext.utils.get_party_details(this.frm, null, null, function(){
+		erpnext.utils.get_party_details(this.frm, null, null, function () {
 			me.apply_price_list();
 		});
+
+		if (this.frm.fields_dict.license) {
+			if (this.frm.doc.supplier) {
+				frappe.call({
+					method: "erpnext.compliance.doctype.compliance_info.compliance_info.validate_entity_license",
+					args: {
+						party_type: "Supplier",
+						party_name: this.frm.doc.supplier
+					},
+					callback: (r) => {
+						if (r.message) {
+							this.frm.set_value("license", r.message);
+						}
+					}
+				});
+			}
+		}
 	},
 
 	supplier_address: function() {
@@ -238,6 +266,107 @@ erpnext.buying.BuyingController = erpnext.TransactionController.extend({
 				}
 			});
 		}
+	},
+
+	reverse_calculate: function () {
+		const me = this;
+		let data = [];
+
+		for (let row of this.frm.doc.items) {
+			data.push({
+				"doctype": row.doctype,
+				"docname": row.name,
+				"item_code": row.item_code,
+				"item_name": row.item_name,
+				"qty": row.qty,
+				"rate": row.rate,
+				"amount": row.amount,
+				"flower_weight": row.flower_weight,
+				"leaf_weight": row.leaf_weight,
+				"plant_weight": row.plant_weight,
+				"uom": row.uom,
+				"cultivation_weight_uom": row.cultivation_weight_uom
+			})
+		}
+
+		const dialog = new frappe.ui.Dialog({
+			title: __("Set Amount for Items"),
+			fields: [
+				{
+					label: __("Items"),
+					fieldname: "items",
+					fieldtype: "Table",
+					cannot_add_rows: true,
+					data: data,
+					in_place_edit: true,
+					get_data: () => {
+						return data;
+					},
+					fields: [
+						{
+							label: __("Item Code"),
+							fieldtype: 'Link',
+							fieldname: "item_code",
+							options: "Item",
+							read_only: 1,
+							in_list_view: 1
+						},
+						{
+							label: __("Item Name"),
+							fieldtype: 'Data',
+							fieldname: "item_name",
+							read_only: 1,
+							in_list_view: 1
+						},
+						{
+							label: __("Qty"),
+							fieldtype: 'Data',
+							fieldname: 'qty',
+							read_only: 1,
+							in_list_view: 1
+						},
+						{
+							label: __("Rate"),
+							fieldtype: 'Data',
+							fieldname: 'rate',
+							read_only: 1,
+							in_list_view: 1
+						},
+						{
+							label: __("Amount"),
+							fieldtype: 'Data',
+							fieldname: 'amount',
+							in_list_view: 1
+						}
+					],
+				}
+			],
+			primary_action: function () {
+				const values = dialog.get_values().items;
+				frappe.call({
+					method: "erpnext.compliance.taxes.get_cultivation_tax",
+					freeze: true,
+					args: {
+						"doc": me.frm.doc,
+						"items": values
+					},
+					callback: function (r) {
+						let items = r.message;
+						items.forEach(item => {
+							let rate = item.amount / item.qty;
+							frappe.model.set_value(item.doctype, item.docname, "rate", rate);
+						});
+					}
+				})
+				dialog.hide();
+				frappe.show_alert({
+					indicator: 'green',
+					message: __("The amounts have been successfully set")
+				});
+			},
+			primary_action_label: __('Set Amounts')
+		})
+		dialog.show();
 	},
 
 	project: function(doc, cdt, cdn) {

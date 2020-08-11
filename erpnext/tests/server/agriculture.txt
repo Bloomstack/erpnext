@@ -1,4 +1,3 @@
 Disease
-Crop
-Crop Cycle
+Strain
 Soil Texture

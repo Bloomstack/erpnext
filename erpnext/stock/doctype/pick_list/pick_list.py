@@ -18,7 +18,10 @@ from erpnext.selling.doctype.sales_order.sales_order import make_delivery_note a
 
 class PickList(Document):
 	def before_save(self):
-		self.set_item_locations()
+		# prevent the system from re-calculating the item quantities based on batch locations
+		# TODO: only keep until proper fix is made
+		# self.set_item_locations()
+		pass
 
 	def before_submit(self):
 		for item in self.locations:
@@ -31,6 +34,16 @@ class PickList(Document):
 				continue
 			frappe.throw(_('For item {0} at row {1}, count of serial numbers does not match with the picked quantity')
 				.format(frappe.bold(item.item_code), frappe.bold(item.idx)))
+
+		self.set_picked_qty()
+
+	def on_submit(self):
+		self.update_order_package_tag()
+		self.update_package_tag()
+
+	def on_cancel(self):
+		self.update_order_package_tag(reset=True)
+		self.update_package_tag(reset=True)
 
 	def set_item_locations(self, save=False):
 		items = self.aggregate_item_qty()
@@ -91,6 +104,62 @@ class PickList(Document):
 			self.item_count_map[item_code] += flt(item.stock_qty)
 
 		return item_map.values()
+
+	def set_picked_qty(self):
+		for row in self.locations:
+			if not row.picked_qty:
+				row.picked_qty = row.stock_qty
+
+	def update_order_package_tag(self, reset=False):
+		package_tags = [item.package_tag for item in self.locations if item.package_tag]
+		if not package_tags:
+			return
+
+		for item in self.locations:
+			if not item.package_tag:
+				continue
+
+			if item.sales_order_item:
+				existing_package_tag = frappe.db.get_value("Sales Order Item", item.sales_order_item, "package_tag")
+
+				if not reset:
+					if not existing_package_tag:
+						frappe.db.set_value("Sales Order Item", item.sales_order_item, "package_tag", item.package_tag)
+				else:
+					if existing_package_tag:
+						frappe.db.set_value("Sales Order Item", item.sales_order_item, "package_tag", None)
+
+	def update_package_tag(self, reset=False):
+		package_tags = [item.package_tag for item in self.locations if item.package_tag]
+		if not package_tags:
+			return
+
+		for item in self.locations:
+			if not item.package_tag:
+				continue
+
+			if item.sales_order_item:
+				package_tag = frappe.get_doc("Package Tag", item.package_tag)
+
+				if not reset:
+					source_package_tag = frappe.db.get_value("Sales Order Item", item.sales_order_item, "package_tag")
+					source_package_tag = source_package_tag if source_package_tag != item.package_tag else None
+
+					package_tag.update({
+						"item_code": item.item_code,
+						"batch_no": item.batch_no,
+						"source_package_tag": source_package_tag
+					})
+					package_tag.save()
+				else:
+					package_tag.update({
+						"item_code": None,
+						"item_name": None,
+						"item_group": None,
+						"batch_no": None,
+						"source_package_tag": None
+					})
+					package_tag.save()
 
 
 def validate_item_locations(pick_list):

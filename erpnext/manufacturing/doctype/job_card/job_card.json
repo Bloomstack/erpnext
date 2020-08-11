@@ -32,6 +32,8 @@
   "column_break_15",
   "section_break_8",
   "items",
+  "scrap_materials_section",
+  "scrap_items",
   "more_information",
   "operation_id",
   "transferred_qty",
@@ -287,10 +289,21 @@
    "no_copy": 1,
    "print_hide": 1,
    "read_only": 1
+  },
+  {
+   "fieldname": "scrap_materials_section",
+   "fieldtype": "Section Break",
+   "label": "Scrap Materials"
+  },
+  {
+   "fieldname": "scrap_items",
+   "fieldtype": "Table",
+   "label": "Scrap Items",
+   "options": "BOM Scrap Item"
   }
  ],
  "is_submittable": 1,
- "modified": "2020-03-27 13:36:35.417502",
+ "modified": "2020-07-30 03:11:12.040459",
  "modified_by": "Administrator",
  "module": "Manufacturing",
  "name": "Job Card",

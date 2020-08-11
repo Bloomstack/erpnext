@@ -1,0 +1,197 @@
+{
+ "autoname": "PAL.#####",
+ "creation": "2020-07-19 08:54:58.118588",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "additive",
+  "additive_type",
+  "column_break_3",
+  "actual_date",
+  "section_break_5",
+  "item",
+  "supplier",
+  "product_trade_name",
+  "column_break_9",
+  "application_device",
+  "total_amount_used",
+  "uom",
+  "section_break_8",
+  "plant_batch",
+  "plant",
+  "column_break_12",
+  "strain",
+  "location",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fetch_from": "additive.additive_type",
+   "fieldname": "additive_type",
+   "fieldtype": "Link",
+   "label": "Additive Type",
+   "options": "Additive Type",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "additive.default_supplier",
+   "fetch_if_empty": 1,
+   "fieldname": "supplier",
+   "fieldtype": "Link",
+   "label": "Supplier",
+   "options": "Supplier",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Today",
+   "fieldname": "actual_date",
+   "fieldtype": "Date",
+   "label": "Actual Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_8",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "plant_batch",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Plant Batch",
+   "options": "Plant Batch",
+   "reqd": 1
+  },
+  {
+   "fieldname": "plant",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Plant",
+   "options": "Plant"
+  },
+  {
+   "fieldname": "column_break_12",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "plant_batch.strain",
+   "fieldname": "strain",
+   "fieldtype": "Link",
+   "label": "Strain",
+   "options": "Strain",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "plant_batch.location",
+   "fetch_if_empty": 1,
+   "fieldname": "location",
+   "fieldtype": "Link",
+   "label": "Location",
+   "options": "Location",
+   "reqd": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Plant Additive Log",
+   "print_hide": 1,
+   "read_only": 1
+  },
+  {
+   "fetch_from": "additive.product_trade_name",
+   "fieldname": "product_trade_name",
+   "fieldtype": "Data",
+   "label": "Product Trade Name"
+  },
+  {
+   "fetch_from": "additive.default_application_device",
+   "fieldname": "application_device",
+   "fieldtype": "Data",
+   "label": "Application Device"
+  },
+  {
+   "fetch_from": "additive.item",
+   "fieldname": "item",
+   "fieldtype": "Link",
+   "label": "Item",
+   "options": "Item",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_5",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_9",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_amount_used",
+   "fieldtype": "Float",
+   "label": "Total Amount Used",
+   "reqd": 1
+  },
+  {
+   "fieldname": "uom",
+   "fieldtype": "Link",
+   "label": "UOM",
+   "options": "UOM",
+   "reqd": 1
+  },
+  {
+   "fieldname": "additive",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Additive",
+   "options": "Additive",
+   "reqd": 1
+  }
+ ],
+ "is_submittable": 1,
+ "modified": "2020-08-05 06:00:20.144226",
+ "modified_by": "Administrator",
+ "module": "Agriculture",
+ "name": "Plant Additive Log",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Agriculture Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Agriculture User",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "restrict_to_domain": "Agriculture",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "title_field": "additive",
+ "track_changes": 1
+}

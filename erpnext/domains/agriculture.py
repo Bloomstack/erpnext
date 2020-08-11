@@ -2,10 +2,15 @@ from __future__ import unicode_literals
 
 data = {
 	'desktop_icons': [
-		'Agriculture Task',
-		'Crop',
-		'Crop Cycle',
-		'Fertilizer',
+		'Strain',
+		'Plant Batch',
+		'Plant',
+		'Harvest',
+		'Plant Tag',
+		'Plant Disease Diagnosis',
+		'Plant Additive Log',
+		'Additive',
+		'Additive Type',
 		'Item',
 		'Location',
 		'Disease',

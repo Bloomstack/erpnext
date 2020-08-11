@@ -199,8 +199,22 @@ frappe.ui.form.on("Timesheet Detail", {
 	task: (frm, cdt, cdn) => {
 		let row = frm.selected_doc;
 		if (row.task) {
-			frappe.db.get_value("Task", row.task, "project", (r) => {
+			frappe.db.get_value("Task", row.task, ["project", "billable"], (r) => {
 				frappe.model.set_value(cdt, cdn, "project", r.project);
+				if (r && r.billable === 1) {
+					frappe.model.set_value(cdt, cdn, "billable", r.billable);
+				}
+			});
+		}
+	},
+
+	project: function (frm, cdt, cdn) {
+		let row = frm.selected_doc;
+		if (row.project) {
+			frappe.db.get_value("Project", row.project, "billable", (r) => {
+				if (r && r.billable === 1) {
+					frappe.model.set_value(cdt, cdn, "billable", r.billable);
+				}
 			});
 		}
 	},

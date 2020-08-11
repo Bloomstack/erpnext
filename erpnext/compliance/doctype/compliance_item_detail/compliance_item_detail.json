@@ -1,0 +1,73 @@
+{
+ "actions": [],
+ "creation": "2019-04-23 04:58:10.671496",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "compliance_service",
+  "compliance_id",
+  "item_category",
+  "unit_value",
+  "cb_details",
+  "uom",
+  "unit_uom"
+ ],
+ "fields": [
+  {
+   "fieldname": "compliance_service",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Compliance Service",
+   "options": "\nMETRC"
+  },
+  {
+   "fieldname": "compliance_id",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Compliance ID",
+   "read_only": 1
+  },
+  {
+   "fieldname": "item_category",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Item Category"
+  },
+  {
+   "fieldname": "unit_value",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Unit Value"
+  },
+  {
+   "fieldname": "cb_details",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "uom",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "UOM",
+   "options": "UOM"
+  },
+  {
+   "fieldname": "unit_uom",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Unit UOM",
+   "options": "UOM"
+  }
+ ],
+ "istable": 1,
+ "links": [],
+ "modified": "2020-08-04 02:12:45.176084",
+ "modified_by": "Administrator",
+ "module": "Compliance",
+ "name": "Compliance Item Detail",
+ "owner": "Administrator",
+ "permissions": [],
+ "quick_entry": 1,
+ "sort_field": "modified",
+ "sort_order": "ASC",
+ "track_changes": 1
+}

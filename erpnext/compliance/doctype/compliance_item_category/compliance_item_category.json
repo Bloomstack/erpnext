@@ -1,0 +1,74 @@
+{
+ "actions": [],
+ "autoname": "field:category_name",
+ "creation": "2019-04-23 05:07:29.734017",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "category_name",
+  "item_group",
+  "product_category_type",
+  "quantity_type",
+  "mandatory_unit",
+  "strain_mandatory"
+ ],
+ "fields": [
+  {
+   "fieldname": "category_name",
+   "fieldtype": "Data",
+   "label": "Category Name",
+   "unique": 1
+  },
+  {
+   "fieldname": "item_group",
+   "fieldtype": "Link",
+   "label": "Item Group",
+   "options": "Item Group"
+  },
+  {
+   "fieldname": "product_category_type",
+   "fieldtype": "Data",
+   "label": "Product Category Type"
+  },
+  {
+   "fieldname": "quantity_type",
+   "fieldtype": "Data",
+   "label": "Quantity Type"
+  },
+  {
+   "fieldname": "mandatory_unit",
+   "fieldtype": "Select",
+   "label": "Mandatory Unit",
+   "options": "\nVolume\nWeight"
+  },
+  {
+   "default": "0",
+   "fieldname": "strain_mandatory",
+   "fieldtype": "Check",
+   "label": "Strain Mandatory"
+  }
+ ],
+ "links": [],
+ "modified": "2020-08-04 02:12:45.016978",
+ "modified_by": "Administrator",
+ "module": "Compliance",
+ "name": "Compliance Item Category",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}

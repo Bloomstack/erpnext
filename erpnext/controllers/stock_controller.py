@@ -1,20 +1,24 @@
 # Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
 # License: GNU General Public License v3. See license.txt
 
-from __future__ import unicode_literals
-import frappe, erpnext
-from frappe.utils import cint, flt, cstr
-from frappe import _
+import erpnext
+import frappe
 import frappe.defaults
+from erpnext.accounts.general_ledger import delete_gl_entries, make_gl_entries, process_gl_map
 from erpnext.accounts.utils import get_fiscal_year
-from erpnext.accounts.general_ledger import make_gl_entries, delete_gl_entries, process_gl_map
+from erpnext.compliance.doctype.compliance_info.compliance_info import validate_license_expiry
+from erpnext.compliance.taxes import calculate_cannabis_tax
 from erpnext.controllers.accounts_controller import AccountsController
-from erpnext.stock.stock_ledger import get_valuation_rate
 from erpnext.stock import get_warehouse_account_map
+from erpnext.stock.stock_ledger import get_valuation_rate
+from frappe import _
+from frappe.utils import cint, cstr, flt
+
 
 class QualityInspectionRequiredError(frappe.ValidationError): pass
 class QualityInspectionRejectedError(frappe.ValidationError): pass
 class QualityInspectionNotSubmittedError(frappe.ValidationError): pass
+
 
 class StockController(AccountsController):
 	def validate(self):
@@ -23,6 +27,8 @@ class StockController(AccountsController):
 			self.validate_inspection()
 		self.validate_serialized_batch()
 		self.validate_customer_provided_item()
+		validate_license_expiry(self)
+		calculate_cannabis_tax(self)
 
 	def make_gl_entries(self, gl_entries=None, repost_future_gle=True, from_repost=False):
 		if self.docstatus == 2:

@@ -517,6 +517,18 @@ def get_dashboard_info(party_type, party, loyalty_program=None):
 			group_by="company",
 			fields=["company", "sum(grand_total) as grand_total", "sum(base_grand_total) as base_grand_total"]
 		)
+	company_wise_marketing_expense = []
+	if party_type == "Customer":
+		company_wise_marketing_expense = frappe.get_all(doctype,
+			filters={
+				'docstatus': 1,
+				party_type.lower(): party,
+				'order_type': 'Marketing',
+				'status': 'Paid',
+				'posting_date': ('between', [current_fiscal_year.year_start_date, current_fiscal_year.year_end_date])
+				},
+				group_by="company",
+				fields=["company", "sum(grand_total) as grand_total", "sum(base_grand_total) as base_grand_total"])
 
 	loyalty_point_details = []
 
@@ -532,6 +544,7 @@ def get_dashboard_info(party_type, party, loyalty_program=None):
 			))
 
 	company_wise_billing_this_year = frappe._dict()
+	company_wise_marketing_expense_this_year = frappe._dict()
 
 	for d in company_wise_grand_total:
 		company_wise_billing_this_year.setdefault(
@@ -539,7 +552,13 @@ def get_dashboard_info(party_type, party, loyalty_program=None):
 				"grand_total": d.grand_total,
 				"base_grand_total": d.base_grand_total
 			})
-
+	if party_type == "Customer":
+		for d in company_wise_marketing_expense:
+			company_wise_marketing_expense_this_year.setdefault(
+				d.company,{
+					"grand_total": d.grand_total,
+					"base_grand_total": d.base_grand_total
+				})
 
 	company_wise_total_unpaid = frappe._dict(frappe.db.sql("""
 		select company, sum(debit_in_account_currency) - sum(credit_in_account_currency)
@@ -553,8 +572,11 @@ def get_dashboard_info(party_type, party, loyalty_program=None):
 
 		if party_account_currency==company_default_currency:
 			billing_this_year = flt(company_wise_billing_this_year.get(d.company,{}).get("base_grand_total"))
+			marketing_expense = flt(company_wise_marketing_expense_this_year.get(d.company,{}).get("base_grand_total"))
 		else:
 			billing_this_year = flt(company_wise_billing_this_year.get(d.company,{}).get("grand_total"))
+			marketing_expense = flt(company_wise_marketing_expense_this_year.get(d.company,{}).get("grand_total"))
+
 
 		total_unpaid = flt(company_wise_total_unpaid.get(d.company))
 
@@ -569,6 +591,8 @@ def get_dashboard_info(party_type, party, loyalty_program=None):
 
 		if party_type == "Customer" and loyalty_point_details:
 			info["loyalty_points"] = loyalty_points
+		elif party_type == "Customer":
+			info["marketing_expense"] = flt(marketing_expense) if marketing_expense else 0
 
 		if party_type == "Supplier":
 			info["total_unpaid"] = -1 * info["total_unpaid"]

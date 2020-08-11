@@ -11,6 +11,19 @@ erpnext.stock.StockController = frappe.ui.form.Controller.extend({
 		}
 	},
 
+	package_tag: function(doc, cdt, cdn) {
+		if (["Sales Order", "Sales Invoice", "Delivery Note", "Stock Entry"].includes(doc.doctype)) {
+			const row = this.frm.selected_doc || locals[cdt][cdn];
+
+			// set batch no from the selected package tag, even if none found
+			if (row.package_tag) {
+				frappe.db.get_value("Package Tag", row.package_tag, "batch_no", (r) => {
+					frappe.model.set_value(cdt, cdn, "batch_no", r.batch_no);
+				})
+			}
+		}
+	},
+
 	setup_warehouse_query: function() {
 		var me = this;
 		erpnext.queries.setup_queries(this.frm, "Warehouse", function() {

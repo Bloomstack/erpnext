@@ -1,0 +1,217 @@
+{
+ "autoname": "field:title",
+ "creation": "2020-07-18 06:47:59.662640",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "title",
+  "plant_tag",
+  "strain",
+  "plant_batch",
+  "column_break_3",
+  "growth_phase",
+  "strain_id",
+  "plant_id",
+  "section_break_3",
+  "location",
+  "plant_spacing",
+  "column_break_11",
+  "location_id",
+  "plant_spacing_uom",
+  "section_break_22",
+  "soil_texture",
+  "soil_analysis",
+  "plant_analysis",
+  "statistics_section",
+  "untracked_count",
+  "tracked_count",
+  "packaged_count",
+  "column_break_37",
+  "harvested_count",
+  "destroyed_count"
+ ],
+ "fields": [
+  {
+   "fieldname": "title",
+   "fieldtype": "Data",
+   "label": "Title",
+   "read_only": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "strain",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Strain",
+   "options": "Strain",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "strain.strain_id",
+   "fieldname": "strain_id",
+   "fieldtype": "Data",
+   "label": "Strain ID",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "growth_phase",
+   "fieldtype": "Select",
+   "label": "Growth Phase",
+   "options": "\nVegetative\nFlowering"
+  },
+  {
+   "fieldname": "location",
+   "fieldtype": "Link",
+   "label": "Location",
+   "options": "Location"
+  },
+  {
+   "fetch_from": "location.location_id",
+   "fieldname": "location_id",
+   "fieldtype": "Data",
+   "label": "Location ID",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_3",
+   "fieldtype": "Section Break"
+  },
+  {
+   "description": "The minimum distance between each plant for optimum growth",
+   "fetch_from": "strain.plant_spacing",
+   "fieldname": "plant_spacing",
+   "fieldtype": "Float",
+   "label": "Plant Spacing"
+  },
+  {
+   "fieldname": "column_break_11",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "strain.plant_spacing_uom",
+   "fieldname": "plant_spacing_uom",
+   "fieldtype": "Link",
+   "label": "Plant Spacing UOM",
+   "options": "UOM"
+  },
+  {
+   "collapsible": 1,
+   "collapsible_depends_on": "eval:false",
+   "fieldname": "section_break_22",
+   "fieldtype": "Section Break",
+   "label": "LInked Analysis"
+  },
+  {
+   "fieldname": "soil_texture",
+   "fieldtype": "Table",
+   "label": "Soil Texture",
+   "options": "Linked Soil Texture"
+  },
+  {
+   "fieldname": "soil_analysis",
+   "fieldtype": "Table",
+   "label": "Soil Analysis",
+   "options": "Linked Soil Analysis"
+  },
+  {
+   "fieldname": "plant_analysis",
+   "fieldtype": "Table",
+   "label": "Plant Analysis",
+   "options": "Linked Plant Analysis"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "statistics_section",
+   "fieldtype": "Section Break",
+   "label": "Statistics"
+  },
+  {
+   "fieldname": "untracked_count",
+   "fieldtype": "Int",
+   "label": "Untracked Count"
+  },
+  {
+   "fieldname": "tracked_count",
+   "fieldtype": "Int",
+   "label": "Tracked Count"
+  },
+  {
+   "fieldname": "packaged_count",
+   "fieldtype": "Int",
+   "label": "Packaged Count"
+  },
+  {
+   "fieldname": "column_break_37",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "harvested_count",
+   "fieldtype": "Int",
+   "label": "Harvested Count"
+  },
+  {
+   "fieldname": "destroyed_count",
+   "fieldtype": "Int",
+   "label": "Destroyed Count"
+  },
+  {
+   "fieldname": "plant_id",
+   "fieldtype": "Data",
+   "label": "Plant ID",
+   "read_only": 1
+  },
+  {
+   "fieldname": "plant_tag",
+   "fieldtype": "Link",
+   "label": "Plant Tag",
+   "options": "Plant Tag",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "plant_batch",
+   "fieldtype": "Link",
+   "label": "Plant Batch",
+   "options": "Plant Batch",
+   "reqd": 1
+  }
+ ],
+ "modified": "2020-07-19 05:19:49.982089",
+ "modified_by": "Administrator",
+ "module": "Agriculture",
+ "name": "Plant",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Agriculture Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Agriculture User",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "restrict_to_domain": "Agriculture",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

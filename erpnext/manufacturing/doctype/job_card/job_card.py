@@ -80,6 +80,11 @@ class JobCard(Document):
 					'required_qty': (d.required_qty * flt(self.for_quantity)) / doc.qty
 				})
 
+	def get_scrap_items(self):
+		scrap_items = frappe.get_all('BOM Scrap Item', fields=["item_code", "item_name", "stock_qty", "rate", "amount"],
+			filters={'parenttype': 'BOM', 'parent': self.bom_no}, order_by="idx")
+		self.set('scrap_items', scrap_items)
+
 	def on_submit(self):
 		self.validate_job_card()
 		self.update_work_order()

@@ -1,5 +1,4 @@
 {
- "actions": [],
  "creation": "2019-07-11 16:01:22.832885",
  "doctype": "DocType",
  "editable_grid": 1,
@@ -24,6 +23,7 @@
   "serial_no",
   "column_break_20",
   "batch_no",
+  "package_tag",
   "column_break_15",
   "sales_order",
   "sales_order_item",
@@ -176,11 +176,17 @@
    "fieldtype": "Data",
    "label": "Item Group",
    "read_only": 1
+  },
+  {
+   "fieldname": "package_tag",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Package Tag",
+   "options": "Package Tag"
   }
  ],
  "istable": 1,
- "links": [],
- "modified": "2020-03-13 19:08:21.995986",
+ "modified": "2020-08-06 04:18:44.824135",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Pick List Item",

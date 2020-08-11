@@ -18,6 +18,16 @@ frappe.ui.form.on('Quotation', {
 			}
 		});
 
+		frm.set_query("license", function() {
+			if (frm.doc.quotation_to === "Customer" && frm.doc.party_name) {
+				return {
+					query: "erpnext.compliance.utils.filter_license",
+					filters: {
+						party_name: frm.doc.party_name
+					}
+				};
+			}
+		});
 	},
 
 	refresh: function(frm) {
@@ -44,13 +54,27 @@ erpnext.selling.QuotationController = erpnext.selling.SellingController.extend({
 	},
 	party_name: function() {
 		var me = this;
-		erpnext.utils.get_party_details(this.frm, null, null, function() {
+		erpnext.utils.get_party_details(this.frm, null, null, function () {
 			me.apply_price_list();
 		});
 
-		if(me.frm.doc.quotation_to=="Lead" && me.frm.doc.party_name) {
+		if (me.frm.doc.quotation_to == "Lead" && me.frm.doc.party_name) {
 			me.frm.trigger("get_lead_details");
-		}
+		} else if (me.frm.doc.quotation_to === "Customer" && me.frm.doc.party_name) {
+			frappe.call({
+				method: "erpnext.compliance.doctype.compliance_info.compliance_info.validate_entity_license",
+				args: {
+					party_type: me.frm.doc.quotation_to,
+					party_name: me.frm.doc.party_name
+				},
+				callback: (r) => {
+					if (r.message) {
+						me.frm.set_value("license", r.message);
+						me.set_and_update_excise_tax();
+					}
+				}
+			});
+		};
 	},
 	refresh: function(doc, dt, dn) {
 		this._super(doc, dt, dn);

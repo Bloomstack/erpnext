@@ -33,7 +33,7 @@ def get_data():
 			},
 			{
 				'label': _('Traceability'),
-				'items': ['Serial No', 'Batch']
+				'items': ['Serial No', 'Batch', 'Compliance Item']
 			},
 			{
 				'label': _('Move'),

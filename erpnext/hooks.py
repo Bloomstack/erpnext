@@ -521,10 +521,16 @@ global_search_doctypes = {
 		{'doctype': 'Soil Analysis', 'index': 4},
 		{'doctype': 'Plant Analysis', 'index': 5},
 		{'doctype': 'Agriculture Analysis Criteria', 'index': 6},
-		{'doctype': 'Disease', 'index': 7},
-		{'doctype': 'Crop', 'index': 8},
-		{'doctype': 'Fertilizer', 'index': 9},
-		{'doctype': 'Crop Cycle', 'index': 10}
+		{'doctype': 'Plant Tag', 'index': 7},
+		{'doctype': 'Strain', 'index': 8},
+		{'doctype': 'Plant', 'index': 9},
+		{'doctype': 'Plant Batch', 'index': 10},
+		{'doctype': 'Additive Type', 'index': 11},
+		{'doctype': 'Additive', 'index': 12},
+		{'doctype': 'Plant Additive Log', 'index': 13},
+		{'doctype': 'Disease', 'index': 14},
+		{'doctype': 'Plant Disease Diagnosis', 'index': 15},
+		{'doctype': 'Harvest', 'index': 16}
 	],
 	"Non Profit": [
 		{'doctype': 'Certified Consultant', 'index': 1},

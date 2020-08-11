@@ -1,5 +1,4 @@
 {
- "actions": [],
  "autoname": "hash",
  "creation": "2013-05-22 12:43:10",
  "doctype": "DocType",
@@ -66,6 +65,7 @@
   "rejected_warehouse",
   "quality_inspection",
   "batch_no",
+  "package_tag",
   "col_br_wh",
   "serial_no",
   "rejected_serial_no",
@@ -414,7 +414,8 @@
    "label": "Quality Inspection",
    "no_copy": 1,
    "options": "Quality Inspection",
-   "print_hide": 1
+   "print_hide": 1,
+   "read_only": 1
   },
   {
    "depends_on": "eval:!doc.is_fixed_asset",
@@ -771,12 +772,18 @@
    "fieldname": "item_ignore_pricing_rule",
    "fieldtype": "Check",
    "label": "Ignore Pricing Rule"
+  },
+  {
+   "depends_on": "eval:!doc.is_fixed_asset",
+   "fieldname": "package_tag",
+   "fieldtype": "Link",
+   "label": "Package Tag",
+   "options": "Package Tag"
   }
  ],
  "idx": 1,
  "istable": 1,
- "links": [],
- "modified": "2020-05-08 06:11:08.386919",
+ "modified": "2020-08-06 04:17:43.605447",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Purchase Invoice Item",

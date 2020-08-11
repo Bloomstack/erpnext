@@ -1,0 +1,14 @@
+[
+	{
+		"doctype": "Item",
+		"item_code": "Urea",
+		"item_name": "Urea",
+		"item_group": "Fertilizer"
+	},
+	{
+		"doctype": "Additive",
+		"additive_name": "Urea",
+		"additive_type": "Fertilizer",
+		"item": "Urea"
+	}
+]

@@ -1,0 +1,178 @@
+{
+ "autoname": "PDD.#####",
+ "creation": "2020-07-18 11:25:51.178531",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "disease",
+  "scientific_name",
+  "project",
+  "column_break_3",
+  "diagnosis_date",
+  "treatment_start_date",
+  "treatment_period",
+  "section_break_8",
+  "plant_batch",
+  "plant",
+  "column_break_12",
+  "strain",
+  "location",
+  "section_break_3",
+  "treatment_task",
+  "observations",
+  "disease_description",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "disease",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Disease",
+   "options": "Disease",
+   "reqd": 1
+  },
+  {
+   "fieldname": "scientific_name",
+   "fieldtype": "Data",
+   "label": "Scientific Name"
+  },
+  {
+   "fieldname": "plant_batch",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Plant Batch",
+   "options": "Plant Batch"
+  },
+  {
+   "fieldname": "column_break_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Today",
+   "fieldname": "diagnosis_date",
+   "fieldtype": "Date",
+   "label": "Diagnosis Date"
+  },
+  {
+   "fieldname": "treatment_start_date",
+   "fieldtype": "Date",
+   "label": "Treatment Start Date"
+  },
+  {
+   "fieldname": "treatment_period",
+   "fieldtype": "Int",
+   "label": "Treatment Period"
+  },
+  {
+   "fieldname": "section_break_3",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "treatment_task",
+   "fieldtype": "Table",
+   "label": "Treatment Task",
+   "options": "Cultivation Task"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Plant Disease Diagnosis",
+   "print_hide": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "plant",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Plant",
+   "options": "Plant"
+  },
+  {
+   "fieldname": "project",
+   "fieldtype": "Link",
+   "label": "Project",
+   "options": "Project",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "disease.description",
+   "fieldname": "disease_description",
+   "fieldtype": "Long Text",
+   "label": "Disease Description",
+   "read_only": 1
+  },
+  {
+   "fieldname": "observations",
+   "fieldtype": "Text",
+   "label": "Observations"
+  },
+  {
+   "fetch_from": "plant_batch.strain",
+   "fieldname": "strain",
+   "fieldtype": "Link",
+   "label": "Strain",
+   "options": "Strain"
+  },
+  {
+   "fieldname": "section_break_8",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_12",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "plant_batch.location",
+   "fetch_if_empty": 1,
+   "fieldname": "location",
+   "fieldtype": "Link",
+   "label": "Location",
+   "options": "Location"
+  }
+ ],
+ "is_submittable": 1,
+ "modified": "2020-07-20 07:14:06.615593",
+ "modified_by": "Administrator",
+ "module": "Agriculture",
+ "name": "Plant Disease Diagnosis",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Agriculture Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Agriculture User",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "restrict_to_domain": "Agriculture",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "title_field": "disease",
+ "track_changes": 1
+}

@@ -143,7 +143,9 @@ class PurchaseReceipt(BuyingController):
 				check_list.append(d.purchase_order)
 				check_on_hold_or_closed_status('Purchase Order', d.purchase_order)
 
-	# on submit
+	def before_submit(self):
+		self.create_package_tag()
+
 	def on_submit(self):
 		super(PurchaseReceipt, self).on_submit()
 
@@ -167,6 +169,21 @@ class PurchaseReceipt(BuyingController):
 		update_serial_nos_after_submit(self, "items")
 
 		self.make_gl_entries()
+
+		for item in self.items:
+			if item.batch_no and item.package_tag:
+				frappe.db.set_value("Package Tag", item.package_tag, "item_code", item.item_code)
+				frappe.db.set_value("Package Tag", item.package_tag, "batch_no", item.batch_no)
+
+		self.update_coa_batch_no()
+
+	def before_cancel(self):
+		for item in self.items:
+			if item.batch_no and item.package_tag:
+				frappe.db.set_value("Package Tag", item.package_tag, "item_code", None)
+				frappe.db.set_value("Package Tag", item.package_tag, "item_name", None)
+				frappe.db.set_value("Package Tag", item.package_tag, "item_group", None)
+				frappe.db.set_value("Package Tag", item.package_tag, "batch_no", None)
 
 	def check_next_docstatus(self):
 		submit_rv = frappe.db.sql("""select t1.name
@@ -450,6 +467,32 @@ class PurchaseReceipt(BuyingController):
 
 		self.load_from_db()
 
+	def create_package_tag(self):
+		package_tags = [item.package_tag for item in self.items if item.package_tag]
+
+		if len(package_tags) != len(set(package_tags)):
+			duplicate_tags = list(set([tag for tag in package_tags if package_tags.count(tag) > 1]))
+			frappe.throw("Package Tag {0} cannot be same for multiple Purchase Receipt Item".format(", ".join(duplicate_tags)))
+
+		for item in self.items:
+			if item.package_tag:
+				package_tag = frappe.db.exists("Package Tag", {"package_tag": item.package_tag})
+				if package_tag:
+					frappe.throw("Row #{0}: Package Tag '{1}' already exists".format(item.idx, frappe.utils.get_link_to_form("Package Tag", package_tag)))
+				else:
+					doc = frappe.new_doc("Package Tag")
+					doc.update({
+						"package_tag": item.package_tag,
+						"item_code": item.item_code
+					})
+					doc.save()
+
+	def update_coa_batch_no(self):
+		for item in self.items:
+			if item.package_tag and item.batch_no:
+				frappe.db.set_value("Package Tag", item.package_tag, "coa_batch_no", item.batch_no)
+
+
 def update_billed_amount_based_on_po(po_detail, update_modified=True):
 	# Billed against Sales Order directly
 	billed_against_po = frappe.db.sql("""select sum(amount) from `tabPurchase Invoice Item`
@@ -636,4 +679,3 @@ def get_item_account_wise_additional_cost(purchase_document):
 						account.amount * item.get(based_on_field) / total_item_cost
 
 	return item_account_wise_cost
-

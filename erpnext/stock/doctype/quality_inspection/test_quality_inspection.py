@@ -39,6 +39,7 @@ def create_quality_inspection(**args):
 	qa = frappe.new_doc("Quality Inspection")
 	qa.report_date = nowdate()
 	qa.inspection_type = args.inspection_type or "Outgoing"
+	qa.inspection_by = args.inspection_by or "Internal"
 	qa.reference_type = args.reference_type
 	qa.reference_name = args.reference_name
 	qa.item_code = args.item_code or "_Test Item with QA"

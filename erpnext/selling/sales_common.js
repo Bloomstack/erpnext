@@ -26,6 +26,17 @@ erpnext.selling.SellingController = erpnext.TransactionController.extend({
 				}
 			};
 		});
+
+		if (this.frm.fields_dict.license && this.frm.doc.customer) {
+			this.frm.set_query("license", () => {
+				return {
+					query: "erpnext.compliance.utils.filter_license",
+					filters: {
+						party_name: this.frm.doc.customer
+					}
+				};
+			});
+		}
 	},
 
 	setup_queries: function() {
@@ -112,6 +123,34 @@ erpnext.selling.SellingController = erpnext.TransactionController.extend({
 		erpnext.utils.get_party_details(this.frm, null, null, function() {
 			me.apply_price_list();
 		});
+
+		if (this.frm.fields_dict.license) {
+			if (this.frm.doc.customer) {
+				frappe.call({
+					method: "erpnext.compliance.doctype.compliance_info.compliance_info.validate_entity_license",
+					args: {
+						party_type: "Customer",
+						party_name: this.frm.doc.customer
+					},
+					callback: (r) => {
+						if (r.message) {
+							this.frm.set_value("license", r.message);
+							frappe.show_alert({
+								indicator: 'blue',
+								message: __(`The following license was set for ${this.frm.doc.customer}: ${r.message.bold()}`)
+							});
+							this.set_and_update_excise_tax();
+						}
+					}
+				});
+			}
+		}
+	},
+
+	order_type: function() {
+		if (this.frm.doc.order_type) {
+			this.set_and_update_excise_tax();
+		}
 	},
 
 	customer_address: function() {
@@ -425,6 +464,22 @@ erpnext.selling.SellingController = erpnext.TransactionController.extend({
 			if (doc.doctype === 'Sales Invoice' && (!doc.update_stock)) return;
 			this.set_batch_number(cdt, cdn);
 		}
+
+		this.set_and_update_excise_tax();
+	},
+
+	item_code: function(doc, cdt, cdn) {
+		if (this.frm.doc.total) {
+			this.set_and_update_excise_tax();
+		}
+	},
+
+	rate: function(doc, cdt, cdn) {
+		this.set_and_update_excise_tax();
+	},
+
+	items_remove: function(doc, cdt, cdn) {
+		this.set_and_update_excise_tax();
 	},
 
 	/* Determine appropriate batch number and set it in the form.

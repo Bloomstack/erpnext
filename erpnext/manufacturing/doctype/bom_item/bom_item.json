@@ -3,6 +3,7 @@
  "doctype": "DocType",
  "document_type": "Setup",
  "editable_grid": 1,
+ "engine": "InnoDB",
  "field_order": [
   "item_code",
   "item_name",
@@ -15,7 +16,6 @@
   "description",
   "col_break1",
   "image",
-  "image_view",
   "quantity_and_rate",
   "qty",
   "uom",
@@ -52,6 +52,7 @@
   },
   {
    "columns": 3,
+   "fetch_from": "item_code.item_name",
    "fieldname": "item_name",
    "fieldtype": "Data",
    "label": "Item Name"
@@ -105,16 +106,10 @@
   },
   {
    "fieldname": "image",
-   "fieldtype": "Attach",
+   "fieldtype": "Attach Image",
    "hidden": 1,
    "label": "Image",
    "print_hide": 1
-  },
-  {
-   "fieldname": "image_view",
-   "fieldtype": "Image",
-   "label": "Image View",
-   "options": "image"
   },
   {
    "fieldname": "quantity_and_rate",
@@ -262,7 +257,7 @@
  ],
  "idx": 1,
  "istable": 1,
- "modified": "2019-11-22 11:38:52.087303",
+ "modified": "2020-07-18 04:37:47.820326",
  "modified_by": "Administrator",
  "module": "Manufacturing",
  "name": "BOM Item",

@@ -704,5 +704,55 @@ erpnext.taxes_and_totals = erpnext.payments.extend({
 			this.frm.doc.paid_amount = 0.0;
 		}
 		this.calculate_outstanding_amount(false);
+	},
+
+	set_and_update_excise_tax: function () {
+		if (!this.frm.doc.license) {
+			return;
+		}
+
+		const me = this;
+		frappe.db.get_value("Compliance Info", { "name": this.frm.doc.license }, "license_for", (r) => {
+			if (!r || r.license_for !== "Retailer") {
+				return;
+			}
+
+			frappe.call({
+				method: "erpnext.compliance.taxes.set_excise_tax",
+				args: {
+					doc: this.frm.doc
+				},
+				callback: (r) => {
+					if (r.message) {
+						let taxes = me.frm.doc.taxes;
+						let excise_tax_row = r.message;
+						if (excise_tax_row.tax_amount > 0) {
+							if (taxes && taxes.length > 0) {
+								$.each(taxes, function (i, tax) {
+									if (tax.account_head == excise_tax_row.account_head) {
+										tax.tax_amount = excise_tax_row.tax_amount;
+										me.frm.refresh_field('taxes');
+									} else {
+										me.frm.add_child('taxes', excise_tax_row);
+									}
+								});
+							} else {
+								me.frm.add_child('taxes', excise_tax_row);
+								me.frm.refresh_field('taxes');
+								me.calculate_taxes_and_totals();
+							}
+						} else if (excise_tax_row.tax_amount === 0) {
+							if (taxes && taxes.length > 0) {
+								$.each(taxes, function (i, tax) {
+									if (tax.account_head == excise_tax_row.account_head) {
+										me.frm.get_field("taxes").grid.grid_rows[i].remove();
+									}
+								});
+							}
+						}
+					}
+				}
+			});
+		})
 	}
 });
