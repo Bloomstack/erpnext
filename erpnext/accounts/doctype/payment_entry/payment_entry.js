@@ -171,7 +171,7 @@ frappe.ui.form.on('Payment Entry', {
 
 		frm.toggle_display("base_received_amount", (
 			frm.doc.paid_to_account_currency != company_currency &&
-			frm.doc.paid_from_account_currency != frm.doc.paid_to_account_currency 
+			frm.doc.paid_from_account_currency != frm.doc.paid_to_account_currency
 			&& frm.doc.base_paid_amount != frm.doc.base_received_amount
 		));
 
@@ -1001,7 +1001,7 @@ frappe.ui.form.on('Payment Entry Deduction', {
 })
 frappe.ui.form.on('Payment Entry', {
 	cost_center: function(frm){
-		if (frm.doc.posting_date && (frm.doc.paid_from||frm.doc.paid_to)) {
+		if (frm.doc.posting_date && (frm.doc.paid_from || frm.doc.paid_to)) {
 			return frappe.call({
 				method: "erpnext.accounts.doctype.payment_entry.payment_entry.get_party_and_account_balance",
 				args: {
@@ -1013,21 +1013,15 @@ frappe.ui.form.on('Payment Entry', {
 					pty: frm.doc.party,
 					cost_center: frm.doc.cost_center
 				},
-				callback: function(r, rt) {
-					if(r.message) {
+				callback: function (r, rt) {
+					if (r.message) {
 						frappe.run_serially([
 							() => {
 								frm.set_value("paid_from_account_balance", r.message.paid_from_account_balance);
 								frm.set_value("paid_to_account_balance", r.message.paid_to_account_balance);
 								frm.set_value("party_balance", r.message.party_balance);
-							},
-							() => {
-								if(frm.doc.payment_type != "Internal") {
-									frm.clear_table("references");
-								}
 							}
 						]);
-
 					}
 				}
 			});
