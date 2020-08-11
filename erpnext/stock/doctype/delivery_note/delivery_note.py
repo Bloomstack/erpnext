@@ -7,10 +7,6 @@ import frappe
 import frappe.defaults
 from erpnext.controllers.selling_controller import SellingController
 from erpnext.stock.doctype.batch.batch import set_batch_nos
-<<<<<<< HEAD
-from erpnext.stock.doctype.delivery_trip.delivery_trip import get_delivery_window
-=======
->>>>>>> ff164cf861... feat: Delivery Note status auto updated
 from erpnext.stock.doctype.serial_no.serial_no import get_delivery_note_serial_no
 from frappe import _
 from frappe.contacts.doctype.address.address import get_company_address

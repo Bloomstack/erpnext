@@ -193,12 +193,6 @@
    "options": "Delivery Trip",
    "print_hide": 1,
    "read_only": 1
-<<<<<<< HEAD
-  }
- ],
- "is_submittable": 1,
- "modified": "2020-06-10 07:06:57.935453",
-=======
   },
   {
    "fetch_from": "driver.address",
@@ -283,9 +277,7 @@
   }
  ],
  "is_submittable": 1,
- "links": [],
- "modified": "2020-08-05 05:02:38.250830",
->>>>>>> ff164cf861... feat: Delivery Note status auto updated
+ "modified": "2020-08-11 07:03:04.312886",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Delivery Trip",

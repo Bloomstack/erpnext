@@ -114,11 +114,20 @@ frappe.ui.form.on('Delivery Trip', {
 		}
 	},
 
-<<<<<<< HEAD
 	calculate_arrival_time: function (frm) {
 		if (!frm.doc.driver_address) {
 			frappe.throw(__("Cannot Calculate Arrival Time as Driver Address is Missing."));
-=======
+		}
+		frappe.show_alert({
+			message: "Calculating Arrival Times",
+			indicator: 'orange'
+		});
+		frm.call("process_route", {
+			optimize: false,
+		}, () => {
+			frm.reload_doc();
+		});
+	},
 	force_save_or_update: function (frm, cdt, cdn) {
 		// `model.set_value` doesn't trigger a form change, so
 		// force-dirty to allow the form to be saved or updated
@@ -270,19 +279,9 @@ frappe.ui.form.on('Delivery Trip', {
 					error: (r) => reject(r.message)
 				})
 			})
->>>>>>> ff164cf861... feat: Delivery Note status auto updated
-		}
-		frappe.show_alert({
-			message: "Calculating Arrival Times",
-			indicator: 'orange'
-		});
-		frm.call("process_route", {
-			optimize: false,
-		}, () => {
-			frm.reload_doc();
-		});
-	},
 
+		}
+	},
 	driver: function (frm) {
 		if (frm.doc.driver) {
 			frappe.db.get_value("Delivery Trip", {
