@@ -734,13 +734,13 @@
   {
    "fieldname": "certificate_of_analysis",
    "fieldtype": "Attach",
-   "label": "Certificate of Analysis"
+   "label": "Certificate of Analysis",
+   "read_only": 1
   }
  ],
  "idx": 1,
  "istable": 1,
- "links": [],
- "modified": "2020-08-10 22:54:07.086825",
+ "modified": "2020-08-11 06:38:45.146109",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Delivery Note Item",

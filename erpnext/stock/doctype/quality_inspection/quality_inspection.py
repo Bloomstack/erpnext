@@ -30,10 +30,9 @@ class QualityInspection(Document):
 			child.status = "Accepted"
 
 	def validate_certificate_of_analysis(self):
-		ci = frappe.db.get_value("Compliance Item", self.item_code, "item_code")
-		if ci and self.inspection_by == "External":
-			if not self.certificate_of_analysis:
-				frappe.throw(_("Please attach CoA"))
+		compliance_item = frappe.db.exists("Compliance Item", self.item_code)
+		if compliance_item and self.inspection_by == "External" and not self.certificate_of_analysis:
+			frappe.throw(_("Please attach a Certificate of Analysis"))
 
 	def get_quality_inspection_template(self):
 		template = ''

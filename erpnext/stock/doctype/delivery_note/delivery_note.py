@@ -161,8 +161,7 @@ class DeliveryNote(SellingController):
 	def validate_batch_coa(self):
 		for item in self.items:
 			if item.batch_no:
-				coa = frappe.db.get_value("Batch", item.batch_no, "certificate_of_analysis")
-				item.certificate_of_analysis = coa
+				item.certificate_of_analysis = frappe.db.get_value("Batch", item.batch_no, "certificate_of_analysis")
 
 	def validate_proj_cust(self):
 		"""check for does customer belong to same project as entered.."""
