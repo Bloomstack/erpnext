@@ -307,3 +307,10 @@ def validate_serial_no_with_batch(serial_nos, item_code):
 	message = "Serial Nos" if len(serial_nos) > 1 else "Serial No"
 	frappe.throw(_("There is no batch found against the {0}: {1}")
 		.format(message, serial_no_link))
+
+@frappe.whitelist()
+def get_active_batch(item_code):
+    fields = ["name", "item", "item_name", "stock_uom", "thc", "cbd", "certificate_of_analysis"]
+    active_batch = frappe.get_all("Batch", filters={"item": item_code, "display_on_website": 1}, fields=fields)
+    active_batch = active_batch[0] if active_batch else {}
+    return active_batch
