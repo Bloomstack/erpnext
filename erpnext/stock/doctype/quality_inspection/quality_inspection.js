@@ -92,6 +92,16 @@ frappe.ui.form.on("Quality Inspection", {
 				frm.set_value("batch_no", r.batch_no);
 			});
 		}
+	},
+	before_save: (frm) => {
+		if (frm.doc.item_code) {
+			frappe.db.get_value("Compliance Item", { "item_code": frm.doc.item_code }, "item_code")
+			.then(item => {
+				if(frm.doc.inspection_by == "External"){
+					frm.toggle_reqd('certificate_of_analysis', !!item.message);
+				}
+			})
+		}
 	}
 })
 
