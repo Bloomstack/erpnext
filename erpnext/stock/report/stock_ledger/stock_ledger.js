@@ -32,7 +32,7 @@ frappe.query_reports["Stock Ledger"] = {
 			"options": "Warehouse",
 			"get_query": function() {
 				const company = frappe.query_report.get_filter_value('company');
-				return { 
+				return {
 					filters: { 'company': company }
 				}
 			}
@@ -88,6 +88,8 @@ frappe.query_reports["Stock Ledger"] = {
 		value = default_formatter(value, row, column, data);
 		if (column.fieldname == "out_qty" && data.out_qty < 0) {
 			value = "<span style='color:red'>" + value + "</span>";
+		} else if (column.fieldname == "in_qty" && data.in_qty > 0) {
+			value = "<span style='color:green'>" + value + "</span>";
 		}
 
 		return value;

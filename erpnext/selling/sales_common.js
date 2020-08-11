@@ -469,6 +469,7 @@ erpnext.selling.SellingController = erpnext.TransactionController.extend({
 	},
 
 	item_code: function(doc, cdt, cdn) {
+		this._super(doc, cdt, cdn);
 		if (this.frm.doc.total) {
 			this.set_and_update_excise_tax();
 		}
