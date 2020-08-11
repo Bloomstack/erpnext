@@ -557,6 +557,7 @@ frappe.ui.form.on(cur_frm.doctype, {
 	},
 
 	order_type: function(frm) {
+		this._super(frm);
 		if(in_list(["Quotation", "Sales Order", "Sales Invoice", "Delivery Note"], frm.doc.doctype)) {
 			if(frm.doc.order_type) {
 				frm.trigger("set_expense_discount");
