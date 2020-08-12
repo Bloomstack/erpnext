@@ -133,13 +133,14 @@ erpnext.selling.SellingController = erpnext.TransactionController.extend({
 						party_name: this.frm.doc.customer
 					},
 					callback: (r) => {
+						this.frm.set_value("license", r.message);
+						this.set_and_update_excise_tax();
+
 						if (r.message) {
-							this.frm.set_value("license", r.message);
 							frappe.show_alert({
 								indicator: 'blue',
 								message: __(`The following license was set for ${this.frm.doc.customer}: ${r.message.bold()}`)
 							});
-							this.set_and_update_excise_tax();
 						}
 					}
 				});

@@ -99,6 +99,13 @@ class JobCard(Document):
 			frappe.throw(_("Time logs are required for {0} {1}")
 				.format(frappe.bold("Job Card"), get_link_to_form("Job Card", self.name)))
 
+		for log in self.time_logs:
+			if not log.from_time:
+				frappe.throw(_("Row #{0}: Please enter a 'From Time' value").format(log.idx))
+
+			if not log.to_time:
+				frappe.throw(_("Row #{0}: Please enter a 'To Time' value").format(log.idx))
+
 		if self.for_quantity and self.total_completed_qty != self.for_quantity:
 			total_completed_qty = frappe.bold(_("Total Completed Qty"))
 			qty_to_manufacture = frappe.bold(_("Qty to Manufacture"))

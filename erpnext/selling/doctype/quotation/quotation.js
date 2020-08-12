@@ -68,10 +68,8 @@ erpnext.selling.QuotationController = erpnext.selling.SellingController.extend({
 					party_name: me.frm.doc.party_name
 				},
 				callback: (r) => {
-					if (r.message) {
-						me.frm.set_value("license", r.message);
-						me.set_and_update_excise_tax();
-					}
+					me.frm.set_value("license", r.message);
+					me.set_and_update_excise_tax();
 				}
 			});
 		};
