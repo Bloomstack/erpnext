@@ -77,11 +77,6 @@ frappe.ui.form.on("Delivery Note", {
 
 
 	},
-	on_submit: (frm) => {
-		if (!frm.doc.delivered) {
-			frappe.db.set_value("Delivery Note", frm.doc.name, "status", "To Deliver")
-		}
-	},
 
 	print_without_amount: function(frm) {
 		erpnext.stock.delivery_note.set_print_hide(frm.doc);

@@ -208,6 +208,11 @@ class DeliveryNote(SellingController):
 		elif self.issue_credit_note:
 			self.make_return_invoice()
 
+		if self.delivered:
+			frappe.db.set_value("Delivery Note", self.name, "status", "Delivered")
+		else:
+			frappe.db.set_value("Delivery Note", self.name, "status", "To Deliver")
+
 		# Updating stock ledger should always be called after updating prevdoc status,
 		# because updating reserved qty in bin depends upon updated delivered qty in SO
 		self.update_stock_ledger()
@@ -538,7 +543,7 @@ def make_delivery_trip(source_name, target_doc=None):
 		target.package_total = sum([stop.grand_total for stop in target.delivery_stops])
 
 	def update_stop_details(source_doc, target_doc, source_parent):
-		from erpnext.stock.doctype.delivery_trip.delivery_trip import get_delivery_window
+		from erpnext.stock.doctype.delivery_trip.delivery_trip import get_delivery_window #To resolve Cyclic Dependency, Please Keep it inside the function
 		delivery_window = get_delivery_window(source_parent.doctype, source_parent.name)
 		target_doc.delivery_start_time = delivery_window.delivery_start_time
 		target_doc.delivery_end_time = delivery_window.delivery_end_time
