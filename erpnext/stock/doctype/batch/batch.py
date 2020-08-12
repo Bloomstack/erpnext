@@ -345,8 +345,29 @@ def save_thc_cbd(batch_no, thc, cbd):
 	doc.cbd = cbd
 	doc.save()
 
+
 @frappe.whitelist()
 def get_active_batch(item_code):
-	active_batch = frappe.get_all("Batch", {"item": item_code, "display_on_website": 1})
+	"""
+	Get the current active batch for the given item
+
+	Args:
+		item_code (str): The item code
+
+	Returns:
+		dict: The details for the active Batch
+			Example: {
+				"name": "TEST-ITEM-CODE",
+				"item": "TEST-ITEM-CODE",
+				"item_name": "Test Item",
+				"stock_uom": "Unit",
+				"thc": 10.0,
+				"cbd": 10.0,
+				"certificate_of_analysis": "/files/coa.pdf"
+			}
+	"""
+	
+	fields = ["name", "item", "item_name", "stock_uom", "thc", "cbd", "certificate_of_analysis"]
+	active_batch = frappe.get_all("Batch", filters={"item": item_code, "display_on_website": 1}, fields=fields)
 	active_batch = active_batch[0] if active_batch else {}
 	return active_batch
