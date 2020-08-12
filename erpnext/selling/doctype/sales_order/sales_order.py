@@ -1010,8 +1010,9 @@ def make_inter_company_purchase_order(source_name, target_doc=None):
 @frappe.whitelist()
 def create_pick_list(source_name, target_doc=None):
 	def update_item_quantity(source, target, source_parent):
-		target.qty = flt(source.qty) - flt(source.delivered_qty)
-		target.stock_qty = (flt(source.qty) - flt(source.delivered_qty)) * flt(source.conversion_factor)
+		target_qty = flt(source.qty) - flt(source.delivered_qty)
+		target.qty = target_qty
+		target.stock_qty = target_qty * flt(source.conversion_factor)
 
 	doc = get_mapped_doc('Sales Order', source_name, {
 		'Sales Order': {
@@ -1027,15 +1028,15 @@ def create_pick_list(source_name, target_doc=None):
 				'name': 'sales_order_item'
 			},
 			'postprocess': update_item_quantity,
-			'condition': lambda doc: abs(doc.delivered_qty) < abs(doc.qty) and doc.delivered_by_supplier!=1
+			'condition': lambda doc: abs(doc.delivered_qty) < abs(doc.qty) and doc.delivered_by_supplier != 1
 		},
 	}, target_doc)
 
 	doc.purpose = 'Delivery'
-
-	doc.set_item_locations()
+	# doc.set_item_locations()
 
 	return doc
+
 
 def update_produced_qty_in_so_item(sales_order, sales_order_item):
 	#for multiple work orders against same sales order item
