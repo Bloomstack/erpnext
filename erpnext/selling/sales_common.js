@@ -151,7 +151,25 @@ erpnext.selling.SellingController = erpnext.TransactionController.extend({
 	order_type: function() {
 		if (this.frm.doc.order_type) {
 			this.set_and_update_excise_tax();
+			this.frm.trigger("set_expense_discount");
 		}
+	},
+
+	set_expense_discount: function(frm) {
+		let me = this;
+		let percentage_discount = 0;
+
+		if (me.frm.doc.order_type === "Marketing") {
+			me.frm.set_value("apply_discount_on", "Grand Total");
+			percentage_discount = 100;
+		}
+
+		me.frm.set_value("additional_discount_percentage", percentage_discount);
+
+		frappe.show_alert({
+			indicator: 'green',
+			message: __(`${percentage_discount}% discount applied`)
+		});
 	},
 
 	customer_address: function() {
@@ -554,31 +572,6 @@ frappe.ui.form.on(cur_frm.doctype, {
 				})
 			}
 		}
-	},
-
-	order_type: function(frm) {
-		this._super(frm);
-		if(in_list(["Quotation", "Sales Order", "Sales Invoice", "Delivery Note"], frm.doc.doctype)) {
-			if(frm.doc.order_type) {
-				frm.trigger("set_expense_discount");
-			}
-		}
-	},
-
-	set_expense_discount: function(frm) {
-		let percentage_discount = 0;
-
-		if (frm.doc.order_type === "Marketing") {
-			frm.set_value("apply_discount_on", "Grand Total");
-			percentage_discount = 100;
-		}
-
-		frm.set_value("additional_discount_percentage", percentage_discount);
-
-		frappe.show_alert({
-			indicator: 'green',
-			message: __(`${percentage_discount}% discount applied`)
-		});
 	}
 })
 
