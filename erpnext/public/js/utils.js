@@ -708,7 +708,6 @@ $(document).on('app_ready', function() {
 							}
 							let inspection_type = inspection_type_map[frm.doc.doctype];
 							data = frm.doc.items.map(row => ({
-								"doctype": row.doctype,
 								"docname": row.name,
 								"reference_type": row.parenttype,
 								"reference_name": row.parent,
