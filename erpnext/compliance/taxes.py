@@ -5,6 +5,7 @@ from erpnext.accounts.utils import get_company_default
 from erpnext.compliance.utils import get_default_license
 from erpnext.stock.doctype.item.item import get_uom_conv_factor
 from frappe import _
+from frappe.utils import flt
 
 DRY_FLOWER_TAX_RATE = 9.65
 DRY_LEAF_TAX_RATE = 2.87
@@ -208,6 +209,6 @@ def get_cultivation_tax(doc, items):
 	for item in items:
 		tax = calculate_item_cultivation_tax(doc, item)
 		if tax:
-			item['amount'] = float(item.get("amount")) + sum(tax.values())
+			item['amount'] = flt(item.get("amount")) + sum(tax.values())
 
 	return items
