@@ -189,11 +189,11 @@
    "depends_on": "eval:doc.docstatus==1",
    "fieldname": "email_coas",
    "fieldtype": "Button",
-   "label": "Email CoAs"
+   "label": "Email Certificates of Analysis"
   }
  ],
  "is_submittable": 1,
- "modified": "2020-08-14 04:30:57.313683",
+ "modified": "2020-08-14 05:18:24.767202",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Delivery Trip",

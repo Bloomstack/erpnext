@@ -1257,13 +1257,13 @@
    "depends_on": "eval:doc.docstatus==1",
    "fieldname": "email_coas",
    "fieldtype": "Button",
-   "label": "Email CoAs"
+   "label": "Email Certificates of Analysis"
   }
  ],
  "icon": "fa fa-truck",
  "idx": 146,
  "is_submittable": 1,
- "modified": "2020-08-14 04:32:05.975786",
+ "modified": "2020-08-14 05:17:18.750711",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Delivery Note",
