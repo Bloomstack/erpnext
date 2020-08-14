@@ -340,3 +340,16 @@ def make_opportunity_from_communication(communication, ignore_communication_link
 	link_communication_to_document(doc, "Opportunity", opportunity.name, ignore_communication_links)
 
 	return opportunity.name
+
+@frappe.whitelist()
+def make_investor(source_name, target_doc=None):
+	doclist = get_mapped_doc("Opportunity", source_name, {
+		"Opportunity": {
+			"doctype": "Investor",
+			"field_map": {
+				"customer_name":"investor_name",
+				"party_name": "lead_name"
+			}
+		}
+	}, target_doc)
+	return doclist

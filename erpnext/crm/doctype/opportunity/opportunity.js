@@ -96,6 +96,9 @@ frappe.ui.form.on("Opportunity", {
 					frm.trigger('set_as_lost_dialog');
 				});
 			}
+			
+			frm.add_custom_button(__('Investor'),
+			cur_frm.cscript.create_investor, __('Create'));
 		}
 
 		if(!frm.doc.__islocal && frm.perm[0].write && frm.doc.docstatus==0) {
@@ -181,6 +184,13 @@ erpnext.crm.Opportunity = frappe.ui.form.Controller.extend({
 		else if (me.frm.doc.opportunity_from == "Customer") {
 			me.frm.set_query('party_name', erpnext.queries['customer']);
 		}
+	},
+
+	create_investor: function(){
+		frappe.model.open_mapped_doc({
+			method: "erpnext.crm.doctype.opportunity.opportunity.make_investor",
+			frm: cur_frm
+		})
 	},
 
 	create_quotation: function() {

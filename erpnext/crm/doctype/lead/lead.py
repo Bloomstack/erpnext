@@ -371,3 +371,18 @@ def get_lead_with_phone_number(number):
 	lead = leads[0].name if leads else None
 
 	return lead
+
+@frappe.whitelist()
+def make_investor(source_name, target_doc=None):
+	def set_missing_values(source, target):
+		_set_missing_values(source, target)
+	
+	data= frappe.get_doc("Lead",source_name).as_dict()
+	target_doc = get_mapped_doc("Lead", source_name, {
+		"Lead": {
+			"doctype": "Investor",
+			"field_map": {
+				"lead_name": "investor_name",
+				"name":"lead_name"
+		}}}, target_doc,set_missing_values)
+	return target_doc
