@@ -634,3 +634,24 @@ def make_sales_return(source_name, target_doc=None):
 def update_delivery_note_status(docname, status):
 	dn = frappe.get_doc("Delivery Note", docname)
 	dn.update_status(status)
+
+@frappe.whitelist()
+def email_coas(docname):
+	delivery_note = frappe.get_doc("Delivery Note", docname).as_dict()
+	fid = {}
+	attachments = []
+	if not delivery_note.get("contact_email"):
+		frappe.throw(_("No contact email found"))
+
+	for item in delivery_note.get("items"):
+		if not item.certificate_of_analysis:
+			frappe.msgprint(_("No Certificate of Analysis attached"))
+		else:
+			coa = frappe.db.get_value("File", {"file_url": item.certificate_of_analysis},
+				["name", "attached_to_doctype", "attached_to_name"], as_dict = 1)
+
+			fid['fid'] = coa.name
+			attachments.append(fid)
+			frappe.sendmail(recipients = delivery_note.get("contact_email"), subject = "Certificate of Analysis" , attachments = attachments)
+			status = "success"
+			return status

@@ -157,6 +157,27 @@ frappe.ui.form.on('Delivery Trip', {
 				});
 			}
 		});
+	},
+
+	email_coas: function(frm) {
+		let delivery_notes = frm.doc.delivery_stops.map(stop => stop.delivery_note);
+		delivery_notes = [...new Set(delivery_notes)];
+		delivery_notes.forEach(delivery_note =>{
+			frappe.call({
+				method: "erpnext.stock.doctype.delivery_note.delivery_note.email_coas",
+				args: {
+					docname: delivery_note
+				},
+				callback: (r) => {
+					if(r.message == "success"){
+						frappe.show_alert({
+							indicator: 'green',
+							message: __('Email Queued')
+						});
+					}
+				}
+			})
+		})
 	}
 });
 

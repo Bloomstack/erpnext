@@ -12,7 +12,7 @@ class QualityInspection(Document):
 	def validate(self):
 		if not self.readings and self.item_code:
 			self.get_item_specification_details()
-		self.validate_certificate_of_analysis()
+		
 
 	def get_item_specification_details(self):
 		if not self.quality_inspection_template:
@@ -47,6 +47,7 @@ class QualityInspection(Document):
 
 	def on_submit(self):
 		self.update_qc_reference()
+		self.validate_certificate_of_analysis()
 		if self.batch_no:
 			self.set_batch_coa()
 
