@@ -65,7 +65,8 @@ erpnext.selling.QuotationController = erpnext.selling.SellingController.extend({
 				method: "erpnext.compliance.doctype.compliance_info.compliance_info.validate_entity_license",
 				args: {
 					party_type: me.frm.doc.quotation_to,
-					party_name: me.frm.doc.party_name
+					party_name: me.frm.doc.party_name,
+					doc: me.frm.doc
 				},
 				callback: (r) => {
 					me.frm.set_value("license", r.message);

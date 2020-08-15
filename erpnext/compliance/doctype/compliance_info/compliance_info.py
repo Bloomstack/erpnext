@@ -59,15 +59,25 @@ def get_existing_licensees(license_number, party_type):
 
 def validate_license_expiry(doc):
 	if doc.doctype in ("Sales Order", "Sales Invoice", "Delivery Note"):
-		validate_entity_license("Customer", doc.customer)
+		validate_entity_license(doc, "Customer", doc.customer)
 	elif doc.doctype in ("Supplier Quotation", "Purchase Order", "Purchase Invoice", "Purchase Receipt"):
-		validate_entity_license("Supplier", doc.supplier)
+		validate_entity_license(doc, "Supplier", doc.supplier)
 	elif doc.doctype == "Quotation" and doc.quotation_to == "Customer":
-		validate_entity_license("Customer", doc.party_name)
+		validate_entity_license(doc, "Customer", doc.party_name)
 
 
 @frappe.whitelist()
-def validate_entity_license(party_type, party_name):
+def validate_entity_license(doc, party_type, party_name):
+	is_compliance_item = False
+	compliance_items = frappe.get_all('Compliance Item', fields=['item_code'])
+	if not compliance_items:
+		return
+
+	for item in (doc.get("items") or []):
+		compliance_item = next((data for data in compliance_items if data.get("item_code") == item.get("item_code")), None)
+		if compliance_item:
+			is_compliance_item = True
+
 	license_record = get_default_license(party_type, party_name)
 	if not license_record:
 		return
@@ -75,12 +85,13 @@ def validate_entity_license(party_type, party_name):
 	license_expiry_date, license_number = frappe.db.get_value(
 		"Compliance Info", license_record, ["license_expiry_date", "license_number"])
 
-	if not license_expiry_date:
-		frappe.msgprint(_("We could not verify the status of license number {0}, Proceed with Caution.").format(
-			frappe.bold(license_number)))
-	elif license_expiry_date < getdate(nowdate()):
-		frappe.msgprint(_("Our records indicate {0}'s license number {1} has expired on {2}, Proceed with Caution.").format(
-			frappe.bold(party_name), frappe.bold(license_number), frappe.bold(license_expiry_date)))
+	if is_compliance_item:
+		if not license_expiry_date:
+			frappe.msgprint(_("We could not verify the status of license number {0}, Proceed with Caution.").format(
+				frappe.bold(license_number)))
+		elif license_expiry_date < getdate(nowdate()):
+			frappe.msgprint(_("Our records indicate {0}'s license number {1} has expired on {2}, Proceed with Caution.").format(
+				frappe.bold(party_name), frappe.bold(license_number), frappe.bold(license_expiry_date)))
 
 	return license_record
 

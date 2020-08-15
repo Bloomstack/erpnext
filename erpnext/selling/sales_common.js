@@ -130,7 +130,8 @@ erpnext.selling.SellingController = erpnext.TransactionController.extend({
 					method: "erpnext.compliance.doctype.compliance_info.compliance_info.validate_entity_license",
 					args: {
 						party_type: "Customer",
-						party_name: this.frm.doc.customer
+						party_name: this.frm.doc.customer,
+						doc: this.frm.doc
 					},
 					callback: (r) => {
 						this.frm.set_value("license", r.message);
