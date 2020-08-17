@@ -208,11 +208,6 @@ class DeliveryNote(SellingController):
 		elif self.issue_credit_note:
 			self.make_return_invoice()
 
-		if self.delivered:
-			frappe.db.set_value("Delivery Note", self.name, "status", "Delivered")
-		else:
-			frappe.db.set_value("Delivery Note", self.name, "status", "To Deliver")
-
 		# Updating stock ledger should always be called after updating prevdoc status,
 		# because updating reserved qty in bin depends upon updated delivered qty in SO
 		self.update_stock_ledger()
@@ -221,6 +216,9 @@ class DeliveryNote(SellingController):
 		# TODO: Close sales orders that are marked for it; find a better way to do this
 		if self.issue_credit_note:
 			self.close_sales_orders()
+
+	def on_update_after_submit(self):
+		self.status = "Delivered" if self.delivered else "To Deliver"
 
 	def on_cancel(self):
 		super(DeliveryNote, self).on_cancel()

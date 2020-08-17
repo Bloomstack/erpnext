@@ -93,14 +93,6 @@ frappe.ui.form.on("Delivery Note", {
 			frm.page.set_inner_btn_group_as_primary(__('Create'));
 		}
 	},
-	delivered: function (frm) {
-		if (frm.doc.delivered) {
-			frm.set_value("status", "Delivered")
-		}
-		else {
-			frm.set_value("status", "To Deliver")
-		}
-	}
 });
 
 frappe.ui.form.on("Delivery Note Item", {
