@@ -6,6 +6,20 @@ frappe.provide("erpnext.crm");
 
 cur_frm.email_field = "contact_email";
 frappe.ui.form.on("Opportunity", {
+
+	calculate_amount: function (frm) {
+		let total_amount = 0;
+		console.log(frm);
+		frm.doc.items.forEach(item => {
+			let amount = item.qty * item.rate;
+			console.log(amount);
+			frappe.model.set_value(item.doctype, item.name, 'amount', amount);
+			total_amount += amount;
+			amount = 0;
+		})
+		cur_frm.set_value("opportunity_amount", total_amount);
+	},
+
 	setup: function(frm) {
 		frm.custom_make_buttons = {
 			'Quotation': 'Quotation',
@@ -200,26 +214,16 @@ cur_frm.cscript.item_code = function(doc, cdt, cdn) {
 	}
 }
 
-cur_frm.cscript.qty = function(doc) {
-	calculate_amount(doc);
-};
+frappe.ui.form.on("Opportunity Item", {
+	qty: function (frm) {
+		frm.trigger("calculate_amount")
+	},
 
-cur_frm.cscript.rate = function(doc) {
-	calculate_amount(doc);
-};
+	rate: function (frm) {
+		frm.trigger("calculate_amount")
+	},
 
-
-frappe.ui.form.on("Opportunity Item", "items_remove", function(frm) {
-	calculate_amount(frm.doc);
-});
-
-var calculate_amount = function(doc){
-	var items = doc.items || [];
-	var total_amount = 0;
-	for (var i=0; i < items.length; i++){
-		var amount = items[i].qty * items[i].rate;
-		frappe.model.set_value('Opportunity Item', items[i].name, 'amount', amount);
-		total_amount += amount;
+	items_remove: function (frm) {
+		frm.trigger("calculate_amount")
 	}
-	cur_frm.set_value("opportunity_amount", total_amount);
-};
+})
