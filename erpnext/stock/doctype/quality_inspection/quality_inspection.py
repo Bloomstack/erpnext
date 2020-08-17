@@ -45,9 +45,11 @@ class QualityInspection(Document):
 		self.quality_inspection_template = template
 		self.get_item_specification_details()
 
+	def before_submit(self):
+		self.validate_certificate_of_analysis()
+
 	def on_submit(self):
 		self.update_qc_reference()
-		self.validate_certificate_of_analysis()
 		if self.batch_no:
 			self.set_batch_coa()
 
