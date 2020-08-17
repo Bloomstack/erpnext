@@ -19,7 +19,7 @@ frappe.query_reports["Marketing Expenses"] = {
 				if (!fiscal_year) {
 					return;
 				}
-				frappe.model.with_doc("Fiscal Year", fiscal_year, function(r) {
+				frappe.model.with_doc("Fiscal Year", fiscal_year, function() {
 					var fy = frappe.model.get_doc("Fiscal Year", fiscal_year);
 					frappe.query_report.set_filter_value({
 						from_date: fy.year_start_date,
@@ -41,4 +41,4 @@ frappe.query_reports["Marketing Expenses"] = {
 			"default": frappe.defaults.get_user_default("year_end_date"),
 		},
 	]
-}
+};
