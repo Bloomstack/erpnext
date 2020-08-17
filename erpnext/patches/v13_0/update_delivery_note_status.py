@@ -1,6 +1,8 @@
 import frappe
 
 def execute():
+	frappe.reload_doc("stock", "doctype", "delivery_note")
+	frappe.reload_doc("stock", "doctype", "delivery_trip")
 	stops = frappe.get_all("Delivery Stop", fields=["visited", "sales_invoice", "delivery_note", "parent"])
 	for stop in stops:
 		if stop.delivery_note:
