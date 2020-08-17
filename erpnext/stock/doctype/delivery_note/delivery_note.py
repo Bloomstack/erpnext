@@ -648,11 +648,8 @@ def email_coas(docname):
 
 	attachments = []
 	for item in delivery_note.get("items"):
-		coa = frappe.db.get_value("File", {"file_url": item.certificate_of_analysis},
-			["name", "attached_to_doctype", "attached_to_name"], as_dict = 1)
-		attachments.append({
-			"fid": coa.name
-		})
+		coa_file_id = frappe.db.get_value("File", {"file_url": item.certificate_of_analysis}, "name")
+		attachments.append({"fid": coa_file_id})
 
 	frappe.sendmail(recipients = delivery_note.get("contact_email"), subject = "Certificate of Analysis" , attachments = attachments)
 	status = "success"
