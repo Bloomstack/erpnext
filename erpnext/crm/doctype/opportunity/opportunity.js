@@ -199,3 +199,27 @@ cur_frm.cscript.item_code = function(doc, cdt, cdn) {
 		})
 	}
 }
+
+cur_frm.cscript.qty = function(doc) {
+	calculate_amount(doc);
+};
+
+cur_frm.cscript.rate = function(doc) {
+	calculate_amount(doc);
+};
+
+
+frappe.ui.form.on("Opportunity Item", "items_remove", function(frm) {
+	calculate_amount(frm.doc);
+});
+
+var calculate_amount = function(doc){
+	var items = doc.items || [];
+	var total_amount = 0;
+	for (var i=0; i < items.length; i++){
+		var amount = items[i].qty * items[i].rate;
+		frappe.model.set_value('Opportunity Item', items[i].name, 'amount', amount);
+		total_amount += amount;
+	}
+	cur_frm.set_value("opportunity_amount", total_amount);
+};
