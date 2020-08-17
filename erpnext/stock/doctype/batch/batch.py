@@ -346,7 +346,7 @@ def save_thc_cbd(batch_no, thc, cbd):
 	doc.save()
 
 
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
 def get_active_batch(item_code):
 	"""
 	Get the current active batch for the given item

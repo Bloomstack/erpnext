@@ -149,8 +149,13 @@ erpnext.buying.BuyingController = erpnext.TransactionController.extend({
 						party_name: this.frm.doc.supplier
 					},
 					callback: (r) => {
+						this.frm.set_value("license", r.message);
+
 						if (r.message) {
-							this.frm.set_value("license", r.message);
+							frappe.show_alert({
+								indicator: 'blue',
+								message: __(`The following license was set for ${this.frm.doc.supplier}: ${r.message.bold()}`)
+							});
 						}
 					}
 				});
@@ -271,10 +276,10 @@ erpnext.buying.BuyingController = erpnext.TransactionController.extend({
 	reverse_calculate: function () {
 		const me = this;
 		let data = [];
+		let cdt = this.frm.doc.items.map(item => item.doctype)[0];
 
 		for (let row of this.frm.doc.items) {
 			data.push({
-				"doctype": row.doctype,
 				"docname": row.name,
 				"item_code": row.item_code,
 				"item_name": row.item_name,
@@ -320,21 +325,21 @@ erpnext.buying.BuyingController = erpnext.TransactionController.extend({
 						},
 						{
 							label: __("Qty"),
-							fieldtype: 'Data',
+							fieldtype: 'Float',
 							fieldname: 'qty',
 							read_only: 1,
 							in_list_view: 1
 						},
 						{
 							label: __("Rate"),
-							fieldtype: 'Data',
+							fieldtype: 'Float',
 							fieldname: 'rate',
 							read_only: 1,
 							in_list_view: 1
 						},
 						{
 							label: __("Amount"),
-							fieldtype: 'Data',
+							fieldtype: 'Float',
 							fieldname: 'amount',
 							in_list_view: 1
 						}
@@ -353,8 +358,9 @@ erpnext.buying.BuyingController = erpnext.TransactionController.extend({
 					callback: function (r) {
 						let items = r.message;
 						items.forEach(item => {
+							let cdn = item.docname;
 							let rate = item.amount / item.qty;
-							frappe.model.set_value(item.doctype, item.docname, "rate", rate);
+							frappe.model.set_value(cdt, cdn, "rate", rate);
 						});
 					}
 				})
