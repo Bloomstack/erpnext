@@ -68,12 +68,8 @@ def validate_license_expiry(doc):
 		elif doc.doctype == "Quotation" and doc.quotation_to == "Customer":
 			validate_entity_license(doc, "Customer", doc.party_name)
 
-@frappe.whitelist()
 def validate_doc_license(doc):
 	"""Check if any compliance item available in the items table"""
-	if isinstance(doc, str):
-		doc = frappe._dict(json.loads(doc))
-
 	is_compliance_item = False
 	compliance_items = frappe.get_all('Compliance Item', fields=['item_code'])
 	if not compliance_items:
@@ -87,21 +83,26 @@ def validate_doc_license(doc):
 
 @frappe.whitelist()
 def validate_entity_license(doc, party_type, party_name):
-	license_record = get_default_license(party_type, party_name)
-	if not license_record:
-		return
+	if isinstance(doc, str):
+		doc = frappe._dict(json.loads(doc))
 
-	license_expiry_date, license_number = frappe.db.get_value(
-		"Compliance Info", license_record, ["license_expiry_date", "license_number"])
+	validate_docinfo = validate_doc_license(doc)
+	if validate_docinfo:
+		license_record = get_default_license(party_type, party_name)
+		if not license_record:
+			return
 
-	if not license_expiry_date:
-		frappe.msgprint(_("We could not verify the status of license number {0}, Proceed with Caution.").format(
-			frappe.bold(license_number)))
-	elif license_expiry_date < getdate(nowdate()):
-		frappe.msgprint(_("Our records indicate {0}'s license number {1} has expired on {2}, Proceed with Caution.").format(
-			frappe.bold(party_name), frappe.bold(license_number), frappe.bold(license_expiry_date)))
+		license_expiry_date, license_number = frappe.db.get_value(
+			"Compliance Info", license_record, ["license_expiry_date", "license_number"])
 
-	return license_record
+		if not license_expiry_date:
+			frappe.msgprint(_("We could not verify the status of license number {0}, Proceed with Caution.").format(
+				frappe.bold(license_number)))
+		elif license_expiry_date < getdate(nowdate()):
+			frappe.msgprint(_("Our records indicate {0}'s license number {1} has expired on {2}, Proceed with Caution.").format(
+				frappe.bold(party_name), frappe.bold(license_number), frappe.bold(license_expiry_date)))
+
+		return license_record
 
 
 def get_active_licenses(doctype, txt, searchfield, start, page_len, filters):
