@@ -9,15 +9,12 @@ frappe.ui.form.on("Opportunity", {
 
 	calculate_amount: function (frm) {
 		let total_amount = 0;
-		console.log(frm);
 		frm.doc.items.forEach(item => {
 			let amount = item.qty * item.rate;
-			console.log(amount);
 			frappe.model.set_value(item.doctype, item.name, 'amount', amount);
 			total_amount += amount;
-			amount = 0;
 		})
-		cur_frm.set_value("opportunity_amount", total_amount);
+		frm.set_value("opportunity_amount", total_amount);
 	},
 
 	setup: function(frm) {
@@ -216,14 +213,14 @@ cur_frm.cscript.item_code = function(doc, cdt, cdn) {
 
 frappe.ui.form.on("Opportunity Item", {
 	qty: function (frm) {
-		frm.trigger("calculate_amount")
+		frm.trigger("calculate_amount");
 	},
 
 	rate: function (frm) {
-		frm.trigger("calculate_amount")
+		frm.trigger("calculate_amount");
 	},
 
 	items_remove: function (frm) {
-		frm.trigger("calculate_amount")
+		frm.trigger("calculate_amount");
 	}
 })
