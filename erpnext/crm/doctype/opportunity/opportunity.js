@@ -102,6 +102,19 @@ frappe.ui.form.on("Opportunity", {
 		}
 	},
 
+	service_fee: function (frm) {
+		frm.trigger("calculate_opportunity_cost");
+	},
+
+	software_fee: function (frm) {
+		frm.trigger("calculate_opportunity_cost");
+	},
+
+	calculate_opportunity_cost: function (frm) {
+		let amount = frm.doc.service_fee + frm.doc.software_fee;
+		frm.set_value("opportunity_amount", amount);
+	},
+
 	set_contact_link: function(frm) {
 		if(frm.doc.opportunity_from == "Customer" && frm.doc.party_name) {
 			frappe.dynamic_link = {doc: frm.doc, fieldname: 'party_name', doctype: 'Customer'}
