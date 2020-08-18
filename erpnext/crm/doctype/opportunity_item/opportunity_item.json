@@ -121,7 +121,6 @@
   },
   {
    "default": "0",
-   "fetch_from": "item_code.valuation_rate",
    "fieldname": "rate",
    "fieldtype": "Currency",
    "in_list_view": 1,
@@ -134,12 +133,13 @@
    "fieldtype": "Currency",
    "in_list_view": 1,
    "label": "Amount",
-   "options": "currency"
+   "options": "currency",
+   "read_only": 1
   }
  ],
  "idx": 1,
  "istable": 1,
- "modified": "2020-08-17 00:28:19.768524",
+ "modified": "2020-08-17 22:14:30.091626",
  "modified_by": "Administrator",
  "module": "CRM",
  "name": "Opportunity Item",
