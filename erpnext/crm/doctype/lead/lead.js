@@ -16,7 +16,6 @@ erpnext.LeadController = frappe.ui.form.Controller.extend({
 	},
 
 	onload: function () {
-		set_field_options("type", [" ", "Client", "Channel Partner", "Consultant", "Investor"]);
 		this.frm.set_query("customer", function (doc, cdt, cdn) {
 			return { query: "erpnext.controllers.queries.customer_query" }
 		});

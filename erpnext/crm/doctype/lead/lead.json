@@ -9,12 +9,12 @@
  "field_order": [
   "organization_lead",
   "contact_by",
+  "address_html",
   "lead_details",
   "naming_series",
-  "address_html",
-  "lead_name",
   "contact_html",
   "territory",
+  "lead_name",
   "company_name",
   "email_id",
   "col_break123",
@@ -335,7 +335,8 @@
    "fieldtype": "Select",
    "label": "Lead Type",
    "oldfieldname": "type",
-   "oldfieldtype": "Select"
+   "oldfieldtype": "Select",
+   "options": "\nClient\nChannel Partner\nConsultant\nInvestor"
   },
   {
    "fieldname": "market_segment",
@@ -437,7 +438,7 @@
  "icon": "fa fa-user",
  "idx": 5,
  "image_field": "image",
- "modified": "2020-08-17 12:50:01.484205",
+ "modified": "2020-08-18 09:48:51.920543",
  "modified_by": "Administrator",
  "module": "CRM",
  "name": "Lead",
