@@ -344,7 +344,7 @@ def update_batch_doc(batch_no, qi_name, item_code):
 	batch_doc = get_batch_fields(batch_no)
 	qi_doc = get_qi_fields(qi_name)
 	ci_doc = get_ci_fields(item_code)
-	readind_doc = get_readings_for_qi(qi_name)
+	reading_doc = get_readings_for_qi(qi_name)
 
 	frappe.db.set_value("Batch", batch_no, {
 		"thc" : qi_doc.thc,
@@ -353,7 +353,7 @@ def update_batch_doc(batch_no, qi_name, item_code):
 		"templates/includes/sticker_order_material_request.html", dict(
 			qi_doc = qi_doc,
 			ci_doc = ci_doc,
-			readind_doc = readind_doc,
+			reading_doc = reading_doc,
 			batch_doc = batch_doc)
 		)
 	})
@@ -382,14 +382,12 @@ def get_qi_fields(qi_name):
 	] , as_dict=1)
 
 def get_ci_fields(item_code):
-	return frappe.db.get_value("Compliance Item", item_code, ["strain_type"], as_dict=1)
+	return frappe.db.get_value("Compliance Item", item_code, "strain_type", as_dict=1 )
 
 def get_readings_for_qi(qi_name):
-	readings_dist = {}
-	readings= frappe.db.get_list("Quality Inspection Reading", filters = {"parent" : qi_name}, fields = ["specification", "reading_1"])
-	for reading in readings:
-		readings_dist[reading.specification] = reading.reading_1
-	return readings_dist
+	readings= frappe.get_all("Quality Inspection Reading", filters={"parent" : qi_name}, fields=["specification", "reading_1"])
+	readings_info = {reading.specification: reading.reading_1 for reading in readings}
+	return readings_info
 
 @frappe.whitelist()
 def get_active_batch(item_code):

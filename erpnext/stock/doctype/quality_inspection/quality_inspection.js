@@ -59,7 +59,7 @@ frappe.ui.form.on("Quality Inspection", {
 		}
 	},
 	on_submit: function (frm) {
-		if (frm.doc.batch_no) {
+		if (frm.doc.thc || frm.doc.cbd) {
 			frappe.call({
 				method: "erpnext.stock.doctype.batch.batch.update_batch_doc",
 				args: {

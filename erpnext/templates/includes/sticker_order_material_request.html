@@ -7,11 +7,7 @@
 					{{ frappe.get_meta("Batch").get_label(item) }}
 				</td>
 				<td>
-					{% if batch_doc.get(item) %}
-					{{ batch_doc.get(item) }}
-					{% else %}
-					--
-					{% endif %}
+					{{ batch_doc.get(item) or "--"}}
 				</td>
 			</tr>
 			{% endfor %}
@@ -22,26 +18,18 @@
 					{{ frappe.get_meta("Compliance Item").get_label(item) }}
 				</td>
 				<td>
-					{% if ci_doc.get(item) %}
-					{{ ci_doc.get(item) }}
-					{% else %}
-					--
-					{% endif %}
+					{{ ci_doc.get(item) or "--"}}
 				</td>
 			</tr>
 			{% endfor %}
 
-			{% for item in readind_doc %}
+			{% for item in reading_doc %}
 			<tr>
 				<td>
 					{{ item }}
 				</td>
 				<td>
-					{% if readind_doc.get(item) %}
-					{{ readind_doc.get(item) }}
-					{% else %}
-					--
-					{% endif %}
+					{{ reading_doc.get(item) or "--" }}
 				</td>
 			</tr>
 			{% endfor %}
@@ -52,11 +40,7 @@
 					{{ frappe.get_meta("Quality Inspection").get_label(item) }}
 				</td>
 				<td>
-					{% if qi_doc.get(item) %}
-					{{ qi_doc.get(item) }}
-					{% else %}
-					--
-					{% endif %}
+					{{ qi_doc.get(item) or "--" }}
 				</td>
 			</tr>
 			{% endfor %}

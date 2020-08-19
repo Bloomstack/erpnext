@@ -22,12 +22,13 @@ frappe.ui.form.on('Batch', {
 				frappe.set_route("query-report", "Stock Ledger");
 			});
 			frm.trigger('make_dashboard');
-			frm.add_custom_button(__('Make Material Request'), () => {
-				frm.trigger("make_request")
-			});
+			frm.add_custom_button(__('Material Request'), () => {
+				frm.trigger("make_material_request")
+			}, __("Create"));
+			this.frm.page.set_inner_btn_group_as_primary(__('Create'));
 		}
 	},
-	make_request: function () {
+	make_material_request: function (frm) {
 		frappe.model.open_mapped_doc({
 			method: "erpnext.stock.doctype.material_request.material_request.make_material_request",
 			frm: frm
