@@ -3,6 +3,7 @@
 # For license information, please see license.txt
 
 import frappe
+import json
 from erpnext.compliance.utils import get_default_license
 from frappe import _
 from frappe.model.document import Document
@@ -68,7 +69,9 @@ def validate_license_expiry(doc):
 @frappe.whitelist()
 def get_entity_license(doc, party_type, party_name):
 	# get the default license for the given party
-	license_record = validate_entity_license(party_type, party_name)
+	license_record = get_default_license(party_type, party_name)
+	if not license_record:
+		return
 
 	# show a warning if a license exists and is expired, and only if compliance items are present
 	is_compliance = validate_doc_compliance(doc)
@@ -83,10 +86,13 @@ def get_entity_license(doc, party_type, party_name):
 			frappe.msgprint(_("Our records indicate {0}'s license number {1} has expired on {2}, Proceed with Caution.").format(
 				frappe.bold(party_name), frappe.bold(license_number), frappe.bold(license_expiry_date)))
 
-		return license_record
+	return license_record
 
 def validate_doc_compliance(doc):
 	"""Check if any compliance item available in the items table."""
+	if isinstance(doc, str):
+		doc = frappe._dict(json.loads(doc))
+
 	is_compliance_item = False
 	compliance_items = frappe.get_all('Compliance Item', fields=['item_code'])
 	if not compliance_items:
@@ -97,14 +103,6 @@ def validate_doc_compliance(doc):
 		if compliance_item:
 			is_compliance_item = True
 	return is_compliance_item
-
-@frappe.whitelist()
-def validate_entity_license(party_type, party_name):
-	license_record = get_default_license(party_type, party_name)
-	if not license_record:
-		return
-
-	return license_record
 
 def get_active_licenses(doctype, txt, searchfield, start, page_len, filters):
 	return frappe.get_all(doctype,
