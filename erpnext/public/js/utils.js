@@ -702,19 +702,27 @@ $(document).on('app_ready', function() {
 						frm.add_custom_button(__('Quality Inspection'), function () {
 							let data = [];
 							let inspection_type_map = {
-								"Purchase Receipt": "Incoming",
-								"Delivery Note": "Outgoing",
-								"Stock Entry": "In Process"
+								"Purchase Receipt": ["Incoming", "inspection_required_before_purchase"],
+								"Delivery Note": ["Outgoing", "inspection_required_before_delivery"],
+								"Stock Entry": ["In Process", "inspection_required_before_manufacturing"]
 							}
-							let inspection_type = inspection_type_map[frm.doc.doctype];
-							data = frm.doc.items.map(row => ({
-								"docname": row.name,
-								"reference_type": row.parenttype,
-								"reference_name": row.parent,
-								"item_code": row.item_code,
-								"item_name": row.item_name,
-								"inspection_type": inspection_type
-							}))
+							let inspection_type = inspection_type_map[frm.doc.doctype][0];
+							let inspection_required_field = inspection_type_map[frm.doc.doctype][1];
+							frm.doc.items.forEach(item => {
+								frappe.db.get_value("Item", { "name": item.item_code }, inspection_required_field, (r) => {
+									if(r.inspection_required_field) {
+										data.push({
+											"docname": item.name,
+											"reference_type": item.parenttype,
+											"reference_name": item.parent,
+											"item_code": item.item_code,
+											"item_name": item.item_name,
+											"inspection_type": inspection_type
+										});
+									}
+								});
+							});
+
 							const dialog = new frappe.ui.Dialog({
 								title: __("Make Quality Inspection"),
 								fields: [
@@ -766,7 +774,7 @@ $(document).on('app_ready', function() {
 											items.forEach(item => {
 												frappe.show_alert({
 													indicator: 'green',
-													message: __(`The Quality Inspection ${item.name} has been created `)
+													message: __(`The Quality Inspection ${item} has been created `)
 												});
 											});
 										}

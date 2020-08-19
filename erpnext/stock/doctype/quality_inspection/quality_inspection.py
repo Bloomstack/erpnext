@@ -5,6 +5,7 @@ import frappe
 from erpnext.stock.doctype.batch.batch import update_batch_doc
 from erpnext.stock.doctype.quality_inspection_template.quality_inspection_template import get_template_details
 from frappe import _
+import json
 from frappe.model.document import Document
 from frappe.model.mapper import get_mapped_doc
 
@@ -158,6 +159,7 @@ def get_purchase_item_details(doctype, name, item_code):
 			}
 			return data
 
+@frappe.whitelist()
 def make_quality_inspections(items):
 	items = json.loads(items)
 	quality_inspections = []
@@ -170,8 +172,10 @@ def make_quality_inspections(items):
 			"reference_name": item.get("reference_name"),
 			"item_code": item.get("item_code"),
 			"sample_size": item.get("sample_size"),
+			"batch_no": item.get("batch_no"),
 			"inspected_by": frappe.session.user,
+			"inspection_by": "Internal",
 			"quality_inspection_template": frappe.db.get_value('BOM', item.get("item_code"), 'quality_inspection_template')
 		}).save()
-		quality_inspections.append(qi)
+		quality_inspections.append(frappe.utils.get_link_to_form("Quality Inspection", qi.name))
 	return quality_inspections
