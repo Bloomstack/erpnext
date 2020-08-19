@@ -421,14 +421,10 @@ class SellingController(StockController):
 	def validate_marketing_expense(self):
 		# set discount 100% for marketing order
 		percentage_discount = 0
-		if self.doctype in ("Delivery Note", "Sales Invoice", "Sales Order", "Quotation"):
-			if self.order_type == "Marketing":
-				frappe.db.set_value(self.doctype, self.name, "apply_discount_on", "Grand Total")
-				percentage_discount = 100
-			frappe.db.set_value(self.doctype, self.name, "additional_discount_percentage", percentage_discount)
-			if percentage_discount:
-				frappe.msgprint(_("{0}% discount applied").format(percentage_discount))
-			self.reload()
+		if hasattr(self, "order_type") and self.order_type == "Marketing":
+			self.apply_discount_on = "Grand Total"
+			percentage_discount = 100
+		self.additional_discount_percentage = percentage_discount
 
 def set_default_income_account_for_item(obj):
 	for d in obj.get("items"):
