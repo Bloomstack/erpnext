@@ -3,7 +3,6 @@
 # For license information, please see license.txt
 
 import frappe
-import json
 from erpnext.compliance.utils import get_default_license
 from frappe import _
 from frappe.model.document import Document
@@ -87,7 +86,7 @@ def get_entity_license(doc, party_type, party_name):
 		return license_record
 
 def validate_doc_compliance(doc):
-	"""Check if any compliance item available in the items table"""
+	"""Check if any compliance item available in the items table."""
 	is_compliance_item = False
 	compliance_items = frappe.get_all('Compliance Item', fields=['item_code'])
 	if not compliance_items:
