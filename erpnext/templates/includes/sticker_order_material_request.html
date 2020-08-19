@@ -3,49 +3,31 @@
 		<tbody>
 			{% for item in batch_doc %}
 			<tr>
-				<td>
-					{{ frappe.get_meta("Batch").get_label(item) }}
-				</td>
-				<td>
-					{{ batch_doc.get(item) or "--"}}
-				</td>
+				<td>{{ frappe.get_meta("Batch").get_label(item) }}</td>
+				<td>{{ batch_doc.get(item) or "--"}}</td>
 			</tr>
 			{% endfor %}
 
 			{% for item in ci_doc %}
 			<tr>
-				<td>
-					{{ frappe.get_meta("Compliance Item").get_label(item) }}
-				</td>
-				<td>
-					{{ ci_doc.get(item) or "--"}}
-				</td>
+				<td>{{ frappe.get_meta("Compliance Item").get_label(item) }}</td>
+				<td>{{ ci_doc.get(item) or "--"}}</td>
 			</tr>
 			{% endfor %}
 
 			{% for item in reading_doc %}
 			<tr>
-				<td>
-					{{ item }}
-				</td>
-				<td>
-					{{ reading_doc.get(item) or "--" }}
-				</td>
+				<td>{{ item }}</td>
+				<td>{{ reading_doc.get(item) or "--" }}</td>
 			</tr>
 			{% endfor %}
 
 			{% for item in qi_doc %}
 			<tr>
-				<td>
-					{{ frappe.get_meta("Quality Inspection").get_label(item) }}
-				</td>
-				<td>
-					{{ qi_doc.get(item) or "--" }}
-				</td>
+				<td>{{ frappe.get_meta("Quality Inspection").get_label(item) }}</td>
+				<td>{{ qi_doc.get(item) or "--" }}</td>
 			</tr>
 			{% endfor %}
-
-
 		</tbody>
 	</table>
 </div>

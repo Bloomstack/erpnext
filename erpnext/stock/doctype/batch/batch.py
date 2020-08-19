@@ -382,7 +382,7 @@ def get_qi_fields(qi_name):
 	] , as_dict=1)
 
 def get_ci_fields(item_code):
-	return frappe.db.get_value("Compliance Item", item_code, "strain_type", as_dict=1 )
+	return frappe.db.get_value("Compliance Item", item_code, "strain_type", as_dict=1)
 
 def get_readings_for_qi(qi_name):
 	readings= frappe.get_all("Quality Inspection Reading", filters={"parent" : qi_name}, fields=["specification", "reading_1"])
