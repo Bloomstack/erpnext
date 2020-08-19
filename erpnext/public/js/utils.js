@@ -698,7 +698,7 @@ $(document).on('app_ready', function() {
 		frappe.ui.form.on(doctype, {
 			refresh: function(frm) {
 				if(!frm.doc.is_return && frm.doc.status!="Closed") {
-					if (frm.doc.docstatus == 0) {
+					if (frm.doc.docstatus === 0) {
 						frm.add_custom_button(__('Quality Inspection'), function () {
 							let data = [];
 							let inspection_type_map = {
@@ -710,9 +710,9 @@ $(document).on('app_ready', function() {
 							let inspection_required_field = inspection_type_map[frm.doc.doctype][1];
 							frm.doc.items.forEach(item => {
 								frappe.db.get_value("Item", { "name": item.item_code }, inspection_required_field, (r) => {
-									if(r.inspection_required_field) {
+									if(r[inspection_required_field]) {
 										data.push({
-											"docname": item.name,
+											// "docname": item.name,
 											"reference_type": item.parenttype,
 											"reference_name": item.parent,
 											"item_code": item.item_code,
@@ -771,12 +771,7 @@ $(document).on('app_ready', function() {
 										},
 										callback: function(r) {
 											let items = r.message;
-											items.forEach(item => {
-												frappe.show_alert({
-													indicator: 'green',
-													message: __(`The Quality Inspection ${item} has been created `)
-												});
-											});
+											frappe.msgprint(__("The following quality inspections have been created:<br><ul><li>{0}</li></ul>", [items.join("<br><li>")]));
 										}
 									})
 									dialog.hide();
