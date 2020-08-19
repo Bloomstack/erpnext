@@ -30,7 +30,7 @@ frappe.ui.form.on('Batch', {
 	make_request: function () {
 		frappe.model.open_mapped_doc({
 			method: "erpnext.stock.doctype.material_request.material_request.make_material_request",
-			frm: cur_frm
+			frm: frm
 		})
 	},
 
