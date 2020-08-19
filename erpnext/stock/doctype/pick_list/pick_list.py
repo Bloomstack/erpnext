@@ -17,6 +17,9 @@ from erpnext.selling.doctype.sales_order.sales_order import make_delivery_note a
 # TODO: Prioritize SO or WO group warehouse
 
 class PickList(Document):
+	def validate(self):
+		self.validate_delivery_date()
+
 	def before_save(self):
 		# prevent the system from re-calculating the item quantities based on batch locations
 		# TODO: only keep until proper fix is made
@@ -24,6 +27,7 @@ class PickList(Document):
 		pass
 
 	def before_submit(self):
+
 		for item in self.locations:
 			if not frappe.get_cached_value('Item', item.item_code, 'has_serial_no'):
 				continue
@@ -34,7 +38,16 @@ class PickList(Document):
 				continue
 			frappe.throw(_('For item {0} at row {1}, count of serial numbers does not match with the picked quantity')
 				.format(frappe.bold(item.item_code), frappe.bold(item.idx)))
-
+	
+	def validate_delivery_date(self):
+		delivery_dates = []
+		for location in self.locations:
+			so = frappe.get_doc("Sales Order", location.get("sales_order")).as_dict()
+			items = so.get("items")
+			for item in items:
+				delivery_dates.append(item.delivery_date)
+		self.delivery_date = min(delivery_dates)
+		
 		self.set_picked_qty()
 
 	def on_submit(self):
