@@ -19,13 +19,11 @@ frappe.ui.form.on("Quality Inspection", {
 							frm.set_value("uom", data.message.uom);
 							frm.set_value("qty", data.message.qty);
 							frm.set_value("manufacturer_name", data.message.supplier);
-							frm.refresh();
 
 							frappe.db.get_value("Supplier", { "supplier_name": data.message.supplier }, "website")
 								.then(supplier => {
 									if (supplier.message) {
 										frm.set_value("manufacturer_website", supplier.message.website);
-										frm.refresh();
 									}
 								})
 						}
@@ -61,13 +59,13 @@ frappe.ui.form.on("Quality Inspection", {
 		}
 	},
 	on_submit: function (frm) {
-		if (frm.doc.thc || frm.doc.cbd) {
+		if (frm.doc.batch_no) {
 			frappe.call({
-				method: "erpnext.stock.doctype.batch.batch.save_thc_cbd",
+				method: "erpnext.stock.doctype.batch.batch.update_batch_doc",
 				args: {
 					"batch_no": frm.doc.batch_no,
-					"thc": frm.doc.thc,
-					"cbd": frm.doc.cbd
+					"qi_name": frm.doc.name,
+					"item_code": frm.doc.item_code
 				},
 			})
 		}

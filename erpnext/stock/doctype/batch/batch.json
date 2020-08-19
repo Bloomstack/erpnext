@@ -30,6 +30,8 @@
   "reference_doctype",
   "reference_name",
   "certificate_of_analysis",
+  "sticker_details_sb",
+  "sticker_details",
   "section_break_7",
   "description"
  ],
@@ -200,13 +202,24 @@
    "fieldtype": "Attach",
    "label": " Certificate of Analysis",
    "read_only": 1
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "sticker_details_sb",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "sticker_details",
+   "fieldtype": "Long Text",
+   "label": "Sticker Details",
+   "read_only": 1
   }
  ],
  "icon": "fa fa-archive",
  "idx": 1,
  "image_field": "image",
  "max_attachments": 5,
- "modified": "2020-08-05 05:55:48.514001",
+ "modified": "2020-08-17 05:56:54.752276",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Batch",

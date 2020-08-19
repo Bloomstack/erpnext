@@ -1,5 +1,4 @@
 {
- "actions": [],
  "autoname": "hash",
  "creation": "2013-02-22 01:28:02",
  "doctype": "DocType",
@@ -16,6 +15,13 @@
   "brand",
   "image_section",
   "image",
+  "batch_details_sb",
+  "batch_item",
+  "batch_item_name",
+  "batch_details_cb",
+  "batch_no",
+  "table_sb",
+  "sticker_details",
   "manufacture_details",
   "manufacturer",
   "column_break_12",
@@ -444,12 +450,52 @@
    "fieldname": "label_qty",
    "fieldtype": "Int",
    "label": "Label Quantity"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "batch_details_sb",
+   "fieldtype": "Section Break",
+   "label": "Batch Details"
+  },
+  {
+   "fieldname": "batch_item",
+   "fieldtype": "Link",
+   "label": "Batch Item",
+   "options": "Item",
+   "read_only": 1
+  },
+  {
+   "fieldname": "batch_item_name",
+   "fieldtype": "Data",
+   "label": "Batch Item Name",
+   "read_only": 1
+  },
+  {
+   "fieldname": "batch_details_cb",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "batch_no",
+   "fieldtype": "Link",
+   "label": "Batch No.",
+   "options": "Batch",
+   "read_only": 1
+  },
+  {
+   "fieldname": "sticker_details",
+   "fieldtype": "Long Text",
+   "read_only": 1
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "table_sb",
+   "fieldtype": "Section Break",
+   "label": "Table"
   }
  ],
  "idx": 1,
  "istable": 1,
- "links": [],
- "modified": "2020-08-04 04:58:39.294760",
+ "modified": "2020-08-19 00:18:24.774934",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Material Request Item",

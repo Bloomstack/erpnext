@@ -1,0 +1,67 @@
+<div class="tax-break-up" style="overflow-x: auto;">
+	<table class="table table-bordered table-hover">
+		<tbody>
+			{% for item in batch_doc %}
+			<tr>
+				<td>
+					{{ frappe.get_meta("Batch").get_label(item) }}
+				</td>
+				<td>
+					{% if batch_doc.get(item) %}
+					{{ batch_doc.get(item) }}
+					{% else %}
+					--
+					{% endif %}
+				</td>
+			</tr>
+			{% endfor %}
+
+			{% for item in ci_doc %}
+			<tr>
+				<td>
+					{{ frappe.get_meta("Compliance Item").get_label(item) }}
+				</td>
+				<td>
+					{% if ci_doc.get(item) %}
+					{{ ci_doc.get(item) }}
+					{% else %}
+					--
+					{% endif %}
+				</td>
+			</tr>
+			{% endfor %}
+
+			{% for item in readind_doc %}
+			<tr>
+				<td>
+					{{ item }}
+				</td>
+				<td>
+					{% if readind_doc.get(item) %}
+					{{ readind_doc.get(item) }}
+					{% else %}
+					--
+					{% endif %}
+				</td>
+			</tr>
+			{% endfor %}
+
+			{% for item in qi_doc %}
+			<tr>
+				<td>
+					{{ frappe.get_meta("Quality Inspection").get_label(item) }}
+				</td>
+				<td>
+					{% if qi_doc.get(item) %}
+					{{ qi_doc.get(item) }}
+					{% else %}
+					--
+					{% endif %}
+				</td>
+			</tr>
+			{% endfor %}
+
+
+		</tbody>
+	</table>
+</div>

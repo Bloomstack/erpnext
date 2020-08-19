@@ -22,8 +22,18 @@ frappe.ui.form.on('Batch', {
 				frappe.set_route("query-report", "Stock Ledger");
 			});
 			frm.trigger('make_dashboard');
+			frm.add_custom_button(__('Make Material Request'), () => {
+				frm.trigger("make_request")
+			});
 		}
 	},
+	make_request: function () {
+		frappe.model.open_mapped_doc({
+			method: "erpnext.stock.doctype.material_request.material_request.make_material_request",
+			frm: cur_frm
+		})
+	},
+
 	item: (frm) => {
 		// frappe.db.get_value('Item', {name: frm.doc.item}, 'has_expiry_date', (r) => {
 		// 	frm.toggle_reqd('expiry_date', r.has_expiry_date);

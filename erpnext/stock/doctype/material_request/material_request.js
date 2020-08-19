@@ -311,6 +311,14 @@ frappe.ui.form.on('Material Request', {
 		frm.toggle_reqd('customer', frm.doc.material_request_type == "Customer Provided");
 	},
 
+	request_for: function (frm) {
+		if (frm.doc.request_for === "Stickers") {
+			frm.fields_dict.items.grid.set_column_disp("section_break_label", true);
+		}
+		else{
+			frm.fields_dict.items.grid.set_column_disp("section_break_label", false);
+		}
+	}
 });
 
 frappe.ui.form.on("Material Request Item", {

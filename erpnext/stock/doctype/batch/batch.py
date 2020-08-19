@@ -339,12 +339,57 @@ def validate_serial_no_with_batch(serial_nos, item_code):
 
 
 @frappe.whitelist()
-def save_thc_cbd(batch_no, thc, cbd):
-	doc = frappe.get_doc('Batch', batch_no)
-	doc.thc = thc
-	doc.cbd = cbd
-	doc.save()
+def update_batch_doc(batch_no, qi_name, item_code):
 
+	batch_doc = get_batch_fields(batch_no)
+	qi_doc = get_qi_fields(qi_name)
+	ci_doc = get_ci_fields(item_code)
+	readind_doc = get_readings_for_qi(qi_name)
+
+	frappe.db.set_value("Batch", batch_no, {
+		"thc" : qi_doc.thc,
+		"cbd" : qi_doc.cbd,
+		"sticker_details" : frappe.render_template(
+		"templates/includes/sticker_order_material_request.html", dict(
+			qi_doc = qi_doc,
+			ci_doc = ci_doc,
+			readind_doc = readind_doc,
+			batch_doc = batch_doc)
+		)
+	})
+
+def get_batch_fields(batch_no):
+	return frappe.db.get_value("Batch", batch_no, [
+		"manufacturing_date",
+		"harvest_date",
+		"packaged_date",
+	], as_dict=1)
+
+def get_qi_fields(qi_name):
+	return frappe.db.get_value("Quality Inspection",qi_name,[
+		"thc",
+		"cbd",
+		"testing_lab",
+		"testing_result_link",
+		"package_tag",
+		"testing_date",
+		"manufacturer_name",
+		"manufacturer_website",
+		"qty",
+		"uom",
+		"strain_notes",
+		"verified_by",
+	] , as_dict=1)
+
+def get_ci_fields(item_code):
+	return frappe.db.get_value("Compliance Item", item_code, ["strain_type"], as_dict=1)
+
+def get_readings_for_qi(qi_name):
+	readings_dist = {}
+	readings= frappe.db.get_list("Quality Inspection Reading", filters = {"parent" : qi_name}, fields = ["specification", "reading_1"])
+	for reading in readings:
+		readings_dist[reading.specification] = reading.reading_1
+	return readings_dist
 
 @frappe.whitelist()
 def get_active_batch(item_code):
@@ -366,7 +411,7 @@ def get_active_batch(item_code):
 				"certificate_of_analysis": "/files/coa.pdf"
 			}
 	"""
-	
+
 	fields = ["name", "item", "item_name", "stock_uom", "thc", "cbd", "certificate_of_analysis"]
 	active_batch = frappe.get_all("Batch", filters={"item": item_code, "display_on_website": 1}, fields=fields)
 	active_batch = active_batch[0] if active_batch else {}
