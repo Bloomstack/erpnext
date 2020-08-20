@@ -66,6 +66,7 @@ def validate_license_expiry(doc):
 	elif doc.doctype == "Quotation" and doc.quotation_to == "Customer":
 		get_entity_license(doc, "Customer", doc.party_name)
 
+
 @frappe.whitelist()
 def get_entity_license(doc, party_type, party_name):
 	# get the default license for the given party
@@ -77,16 +78,17 @@ def get_entity_license(doc, party_type, party_name):
 	is_compliance = validate_doc_compliance(doc)
 	if is_compliance:
 		license_expiry_date, license_number = frappe.db.get_value(
-		"Compliance Info", license_record, ["license_expiry_date", "license_number"])
+			"Compliance Info", license_record, ["license_expiry_date", "license_number"])
 
 		if not license_expiry_date:
-			frappe.msgprint(_("We could not verify the status of license number {0}, Proceed with Caution.").format(
+			frappe.msgprint(_("We could not verify the status of license number {0}. Proceed with caution.").format(
 				frappe.bold(license_number)))
 		elif license_expiry_date < getdate(nowdate()):
-			frappe.msgprint(_("Our records indicate {0}'s license number {1} has expired on {2}, Proceed with Caution.").format(
-				frappe.bold(party_name), frappe.bold(license_number), frappe.bold(license_expiry_date)))
+			frappe.msgprint(_("Our records indicate that the license number {0} has expired on {1}. Proceed with caution.").format(
+				frappe.bold(license_number), frappe.bold(license_expiry_date)))
 
 	return license_record
+
 
 def validate_doc_compliance(doc):
 	"""Check if any compliance item available in the items table."""
@@ -103,6 +105,7 @@ def validate_doc_compliance(doc):
 		if compliance_item:
 			is_compliance_item = True
 	return is_compliance_item
+
 
 def get_active_licenses(doctype, txt, searchfield, start, page_len, filters):
 	return frappe.get_all(doctype,
