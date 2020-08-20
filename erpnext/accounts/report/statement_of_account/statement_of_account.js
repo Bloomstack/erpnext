@@ -50,6 +50,12 @@ frappe.query_reports["Statement of Account"] = {
 			}
 		},
 		{
+			"fieldname":"tax_id",
+			"label": __("Tax Id"),
+			"fieldtype": "Data",
+			"hidden": 1
+		},
+		{
 			"fieldtype": "Break",
 		},
 		{
