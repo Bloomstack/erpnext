@@ -56,7 +56,8 @@ def validate_party(filters):
 
 	if party:
 		if not party_type:
-			frappe.throw(_("To filter based on Party, select Party Type first"))
+			pass
+			# frappe.throw(_("To filter based on Party, select Party Type first"))
 		else:
 			for d in party:
 				if not frappe.db.exists(party_type, d):
