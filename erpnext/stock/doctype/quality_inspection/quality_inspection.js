@@ -58,18 +58,6 @@ frappe.ui.form.on("Quality Inspection", {
 			});
 		}
 	},
-	on_submit: function (frm) {
-		if (frm.doc.thc || frm.doc.cbd) {
-			frappe.call({
-				method: "erpnext.stock.doctype.batch.batch.update_batch_doc",
-				args: {
-					"batch_no": frm.doc.batch_no,
-					"qi_name": frm.doc.name,
-					"item_code": frm.doc.item_code
-				},
-			})
-		}
-	},
 	onload: (frm) => {
 		if (frm.doc.item_code) {
 			frm.trigger("check_compliance_item");
