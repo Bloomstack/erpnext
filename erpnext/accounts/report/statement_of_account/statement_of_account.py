@@ -4,12 +4,10 @@
 from __future__ import unicode_literals
 import frappe, erpnext
 from erpnext import get_company_currency, get_default_company
-from erpnext.accounts.report.utils import get_currency, convert_to_presentation_currency
-from frappe.utils import getdate, cstr, flt, fmt_money
+from erpnext.accounts.report.utils import get_currency
+from frappe.utils import getdate, cstr, flt
 from frappe import _, _dict
 from erpnext.accounts.utils import get_account_currency
-from erpnext.accounts.report.financial_statements import get_cost_centers_with_children
-from six import iteritems
 from erpnext.accounts.doctype.accounting_dimension.accounting_dimension import get_accounting_dimensions, get_dimension_with_children
 from collections import OrderedDict
 
@@ -101,7 +99,6 @@ def get_result(filters, account_details):
 	return result
 
 def get_gl_entries(filters):
-	currency_map = get_currency(filters)
 	select_fields = """, debit, credit, debit_in_account_currency,
 		credit_in_account_currency """
 
@@ -254,25 +251,16 @@ def get_accountwise_gle(filters, gl_entries, gle_map):
 	return totals, entries
 
 def get_result_as_list(data, filters):
-	balance, balance_in_account_currency = 0, 0
-	inv_details = get_supplier_invoice_details()
-
+	balance = 0
+	
 	for d in data:
 		if not d.get('posting_date'):
-			balance, balance_in_account_currency = 0, 0
+			balance = 0
 
 		balance = get_balance(d, balance, 'debit', 'credit')
 		d['balance'] = balance
 
 	return data
-
-def get_supplier_invoice_details():
-	inv_details = {}
-	for d in frappe.db.sql(""" select name, bill_no from `tabPurchase Invoice`
-		where docstatus = 1 and bill_no is not null and bill_no != '' """, as_dict=1):
-		inv_details[d.name] = d.bill_no
-
-	return inv_details
 
 def get_balance(row, balance, debit_field, credit_field):
 	balance += (row.get(debit_field, 0) -  row.get(credit_field, 0))

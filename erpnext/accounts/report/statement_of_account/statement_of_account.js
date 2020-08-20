@@ -73,10 +73,13 @@ frappe.query_reports["Statement of Account"] = {
 			"label": __("Party"),
 			"fieldtype": "MultiSelectList",
 			get_data: function(txt) {
-				if (!frappe.query_report.filters) return;
-
+				if (!frappe.query_report.filters) {
+					return true;
+				}
 				let party_type = frappe.query_report.get_filter_value('party_type');
-				if (!party_type) return;
+				if (!party_type) { 
+					return true;
+				}
 
 				return frappe.db.get_link_options(party_type, txt);
 			},
