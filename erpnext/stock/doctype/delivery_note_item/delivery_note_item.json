@@ -74,6 +74,7 @@
   "actual_batch_qty",
   "actual_qty",
   "installed_qty",
+  "certificate_of_analysis",
   "item_tax_rate",
   "accounting_details_section",
   "expense_account",
@@ -729,11 +730,17 @@
    "fieldtype": "Link",
    "label": "Package Tag",
    "options": "Package Tag"
+  },
+  {
+   "fieldname": "certificate_of_analysis",
+   "fieldtype": "Attach",
+   "label": "Certificate of Analysis",
+   "read_only": 1
   }
  ],
  "idx": 1,
  "istable": 1,
- "modified": "2020-08-06 04:09:38.298411",
+ "modified": "2020-08-11 06:38:45.146109",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Delivery Note Item",

@@ -1,5 +1,4 @@
 {
- "actions": [],
  "allow_import": 1,
  "allow_rename": 1,
  "autoname": "naming_series:",
@@ -138,7 +137,7 @@
    "no_copy": 1,
    "oldfieldname": "status",
    "oldfieldtype": "Select",
-   "options": "Open\nQuotation\nConverted\nLost\nReplied\nClosed",
+   "options": "Open\nQuotation\nConverted\nLost\nNot Qualified\nReplied\nClosed",
    "print_hide": 1,
    "reqd": 1
   },
@@ -414,8 +413,7 @@
  ],
  "icon": "fa fa-info-sign",
  "idx": 195,
- "links": [],
- "modified": "2020-03-20 12:28:45.228994",
+ "modified": "2020-08-17 12:51:30.774480",
  "modified_by": "Administrator",
  "module": "CRM",
  "name": "Opportunity",

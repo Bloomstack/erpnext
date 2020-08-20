@@ -23,6 +23,7 @@
   "departure_time",
   "delivery_service_stops",
   "delivery_stops",
+  "email_coas",
   "calculate_arrival_time",
   "optimize_route",
   "section_break_15",
@@ -183,10 +184,16 @@
    "options": "Delivery Trip",
    "print_hide": 1,
    "read_only": 1
+  },
+  {
+   "depends_on": "eval:doc.docstatus==1",
+   "fieldname": "email_coas",
+   "fieldtype": "Button",
+   "label": "Email Certificates of Analysis"
   }
  ],
  "is_submittable": 1,
- "modified": "2020-06-10 07:06:57.935453",
+ "modified": "2020-08-14 05:18:24.767202",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Delivery Trip",

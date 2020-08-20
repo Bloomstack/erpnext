@@ -392,7 +392,7 @@ def get_readings_for_qi(qi_name):
 		reading.specification: reading.reading_1 for reading in readings}
 	return readings_info
 
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
 def get_active_batch(item_code):
 	"""
 	Get the current active batch for the given item

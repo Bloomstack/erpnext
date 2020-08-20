@@ -6,6 +6,17 @@ frappe.provide("erpnext.crm");
 
 cur_frm.email_field = "contact_email";
 frappe.ui.form.on("Opportunity", {
+
+	calculate_amount: function (frm) {
+		let total_amount = 0;
+		frm.doc.items.forEach(item => {
+			let amount = item.qty * item.rate;
+			frappe.model.set_value(item.doctype, item.name, 'amount', amount);
+			total_amount += amount;
+		})
+		frm.set_value("opportunity_amount", total_amount);
+	},
+
 	setup: function(frm) {
 		frm.custom_make_buttons = {
 			'Quotation': 'Quotation',
@@ -199,3 +210,17 @@ cur_frm.cscript.item_code = function(doc, cdt, cdn) {
 		})
 	}
 }
+
+frappe.ui.form.on("Opportunity Item", {
+	qty: function (frm) {
+		frm.trigger("calculate_amount");
+	},
+
+	rate: function (frm) {
+		frm.trigger("calculate_amount");
+	},
+
+	items_remove: function (frm) {
+		frm.trigger("calculate_amount");
+	}
+})

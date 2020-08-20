@@ -117,6 +117,7 @@ class DeliveryNote(SellingController):
 		self.validate_uom_is_integer("stock_uom", "stock_qty")
 		self.validate_uom_is_integer("uom", "qty")
 		self.validate_with_previous_doc()
+		self.validate_batch_coa()
 
 		if self._action != 'submit' and not self.is_return:
 			set_batch_nos(self, 'warehouse', True)
@@ -156,6 +157,11 @@ class DeliveryNote(SellingController):
 				and not self.is_return:
 			self.validate_rate_with_reference_doc([["Sales Order", "against_sales_order", "so_detail"],
 				["Sales Invoice", "against_sales_invoice", "si_detail"]])
+
+	def validate_batch_coa(self):
+		for item in self.items:
+			if item.batch_no:
+				item.certificate_of_analysis = frappe.db.get_value("Batch", item.batch_no, "certificate_of_analysis")
 
 	def validate_proj_cust(self):
 		"""check for does customer belong to same project as entered.."""
@@ -628,3 +634,23 @@ def make_sales_return(source_name, target_doc=None):
 def update_delivery_note_status(docname, status):
 	dn = frappe.get_doc("Delivery Note", docname)
 	dn.update_status(status)
+
+@frappe.whitelist()
+def email_coas(docname):
+	delivery_note = frappe.get_doc("Delivery Note", docname).as_dict()
+	if not delivery_note.get("contact_email"):
+		frappe.throw(_("No contact email found"))
+
+	coas = [item.get("certificate_of_analysis") for item in delivery_note.get("items") if item.get("certificate_of_analysis")]
+	if not coas:
+		frappe.msgprint(_("No Certificates of Analysis attached"))
+		return
+
+	attachments = []
+	for item in delivery_note.get("items"):
+		coa_file_id = frappe.db.get_value("File", {"file_url": item.certificate_of_analysis}, "name")
+		attachments.append({"fid": coa_file_id})
+
+	frappe.sendmail(recipients = delivery_note.get("contact_email"), subject = "Certificate of Analysis" , attachments = attachments)
+	status = "success"
+	return status

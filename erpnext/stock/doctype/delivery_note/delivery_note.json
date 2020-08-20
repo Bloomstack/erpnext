@@ -1,5 +1,4 @@
 {
- "actions": [],
  "allow_import": 1,
  "autoname": "naming_series:",
  "creation": "2013-05-24 19:29:09",
@@ -57,6 +56,7 @@
   "items_section",
   "scan_barcode",
   "items",
+  "email_coas",
   "pricing_rule_details",
   "pricing_rules",
   "packing_list",
@@ -1252,13 +1252,18 @@
    "fieldtype": "Select",
    "label": "Order Type",
    "options": "\nSales\nMaintenance\nShopping Cart\nPromotional\nSample\nPAD\nWarranty\nConsignment\nReplenishment\nMarketing"
+  },
+  {
+   "depends_on": "eval:doc.docstatus==1",
+   "fieldname": "email_coas",
+   "fieldtype": "Button",
+   "label": "Email Certificates of Analysis"
   }
  ],
  "icon": "fa fa-truck",
  "idx": 146,
  "is_submittable": 1,
- "links": [],
- "modified": "2020-07-16 06:13:49.710494",
+ "modified": "2020-08-14 05:17:18.750711",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Delivery Note",
