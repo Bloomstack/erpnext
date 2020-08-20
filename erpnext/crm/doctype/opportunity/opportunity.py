@@ -192,7 +192,6 @@ class Opportunity(TransactionBase):
 			for key in item_fields:
 				if not d.get(key): d.set(key, item.get(key))
 
-
 @frappe.whitelist()
 def get_item_details(item_code):
 	item = frappe.db.sql("""select item_name, stock_uom, image, description, item_group, brand
@@ -343,13 +342,35 @@ def make_opportunity_from_communication(communication, ignore_communication_link
 
 @frappe.whitelist()
 def make_investor(source_name, target_doc=None):
-	doclist = get_mapped_doc("Opportunity", source_name, {
+	def set_missing_values(source, target):
+		_set_missing_values(source, target)
+
+	data= frappe.get_doc("Opportunity",source_name).as_dict()
+	target_doc = get_mapped_doc("Opportunity", source_name, {
 		"Opportunity": {
 			"doctype": "Investor",
 			"field_map": {
-				"customer_name":"investor_name",
-				"party_name": "lead_name"
-			}
-		}
-	}, target_doc)
-	return doclist
+				"customer_name": "investor_name",
+				"doctype": "investor_from",
+				"name":"party_name"
+		}}}, target_doc,set_missing_values)
+	return target_doc
+
+def _set_missing_values(source, target):
+	address = frappe.get_all('Dynamic Link', {
+			'link_doctype': source.doctype,
+			'link_name': source.name,
+			'parenttype': 'Address',
+		}, ['parent'], limit=1)
+
+	contact = frappe.get_all('Dynamic Link', {
+			'link_doctype': source.doctype,
+			'link_name': source.name,
+			'parenttype': 'Contact',
+		}, ['parent'], limit=1)
+
+	if address:
+		target.customer_address = address[0].parent
+
+	if contact:
+		target.contact_person = contact[0].parent

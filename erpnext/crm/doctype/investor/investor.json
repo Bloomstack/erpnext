@@ -11,7 +11,8 @@
  "engine": "InnoDB",
  "field_order": [
   "investor_name",
-  "lead_name",
+  "investor_from",
+  "party_name",
   "address_contacts",
   "address_html",
   "column_break1",
@@ -32,6 +33,7 @@
    "unique": 1
   },
   {
+   "collapsible_depends_on": "eval:!doc.__islocal",
    "fieldname": "address_contacts",
    "fieldtype": "Section Break",
    "label": "Address and Contact"
@@ -87,15 +89,24 @@
    "print_hide": 1
   },
   {
-   "fieldname": "lead_name",
+   "bold": 1,
+   "fieldname": "investor_from",
    "fieldtype": "Link",
-   "label": "Lead Name",
-   "options": "Lead"
+   "in_list_view": 1,
+   "label": "Investor From",
+   "options": "DocType",
+   "reqd": 1
+  },
+  {
+   "fieldname": "party_name",
+   "fieldtype": "Dynamic Link",
+   "label": "Party Name",
+   "options": "investor_from"
   }
  ],
  "icon": "fa fa-user",
  "image_field": "image",
- "modified": "2020-08-14 03:03:45.202978",
+ "modified": "2020-08-20 00:46:28.483388",
  "modified_by": "Administrator",
  "module": "CRM",
  "name": "Investor",

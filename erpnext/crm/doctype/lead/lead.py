@@ -383,6 +383,7 @@ def make_investor(source_name, target_doc=None):
 			"doctype": "Investor",
 			"field_map": {
 				"lead_name": "investor_name",
-				"name":"lead_name"
+				"doctype": "investor_from",
+				"name":"party_name"
 		}}}, target_doc,set_missing_values)
 	return target_doc
