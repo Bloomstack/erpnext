@@ -38,6 +38,7 @@ class SellingController(StockController):
 	def validate(self):
 		super(SellingController, self).validate()
 		self.validate_items()
+		self.validate_marketing_expense()
 		self.validate_max_discount()
 		self.validate_selling_price()
 		self.set_qty_as_per_stock_uom()
@@ -416,6 +417,14 @@ class SellingController(StockController):
 		# validate items to see if they have is_sales_item enabled
 		from erpnext.controllers.buying_controller import validate_item_type
 		validate_item_type(self, "is_sales_item", "sales")
+
+	def validate_marketing_expense(self):
+		# set discount 100% for marketing order
+		percentage_discount = 0
+		if hasattr(self, "order_type") and self.order_type == "Marketing":
+			self.apply_discount_on = "Grand Total"
+			percentage_discount = 100
+		self.additional_discount_percentage = percentage_discount
 
 def set_default_income_account_for_item(obj):
 	for d in obj.get("items"):

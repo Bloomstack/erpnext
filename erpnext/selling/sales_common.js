@@ -151,7 +151,25 @@ erpnext.selling.SellingController = erpnext.TransactionController.extend({
 	order_type: function() {
 		if (this.frm.doc.order_type) {
 			this.set_and_update_excise_tax();
+			this.frm.trigger("set_expense_discount");
 		}
+	},
+
+	set_expense_discount: function(frm) {
+		let me = this;
+		let percentage_discount = 0;
+
+		if (me.frm.doc.order_type === "Marketing") {
+			me.frm.set_value("apply_discount_on", "Grand Total");
+			percentage_discount = 100;
+		}
+
+		me.frm.set_value("additional_discount_percentage", percentage_discount);
+
+		frappe.show_alert({
+			indicator: 'green',
+			message: __(`${percentage_discount}% discount applied`)
+		});
 	},
 
 	customer_address: function() {
@@ -534,23 +552,25 @@ erpnext.selling.SellingController = erpnext.TransactionController.extend({
 	}
 });
 
-frappe.ui.form.on(cur_frm.doctype,"project", function(frm) {
-	if(in_list(["Delivery Note", "Sales Invoice"], frm.doc.doctype)) {
-		if(frm.doc.project) {
-			frappe.call({
-				method:'erpnext.projects.doctype.project.project.get_cost_center_name' ,
-				args: {	project: frm.doc.project	},
-				callback: function(r, rt) {
-					if(!r.exc) {
-						$.each(frm.doc["items"] || [], function(i, row) {
-							if(r.message) {
-								frappe.model.set_value(row.doctype, row.name, "cost_center", r.message);
-								frappe.msgprint(__("Cost Center For Item with Item Code '"+row.item_name+"' has been Changed to "+ r.message));
-							}
-						})
+frappe.ui.form.on(cur_frm.doctype, {
+	project: function(frm) {
+		if(in_list(["Delivery Note", "Sales Invoice"], frm.doc.doctype)) {
+			if(frm.doc.project) {
+				frappe.call({
+					method:'erpnext.projects.doctype.project.project.get_cost_center_name' ,
+					args: {	project: frm.doc.project	},
+					callback: function(r, rt) {
+						if(!r.exc) {
+							$.each(frm.doc["items"] || [], function(i, row) {
+								if(r.message) {
+									frappe.model.set_value(row.doctype, row.name, "cost_center", r.message);
+									frappe.msgprint(__("Cost Center For Item with Item Code '"+row.item_name+"' has been Changed to "+ r.message));
+								}
+							})
+						}
 					}
-				}
-			})
+				})
+			}
 		}
 	}
 })
