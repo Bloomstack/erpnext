@@ -2,10 +2,19 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on('Job Card', {
+	setup: function(frm) {
+		frm.custom_make_buttons = {
+			'Quality Inspection': 'Quality Inspection'
+		}
+	},
+
 	refresh: function(frm) {
 
 		if(frm.doc.docstatus == 0) {
 			frm.set_df_property("operation", "read_only", frm.doc.operation_id ? 1 : 0);
+			frm.add_custom_button(__("Quality Inspection"), function() {
+				frm.trigger("make_quality_inspection");
+			}, __("Create"));
 		}
 		frappe.flags.pause_job = 0;
 		frappe.flags.resume_job = 0;
@@ -30,6 +39,12 @@ frappe.ui.form.on('Job Card', {
 		}
 	},
 
+	make_quality_inspection: function(frm) {
+		frappe.model.open_mapped_doc({
+			method: "erpnext.stock.doctype.quality_inspection.quality_inspection.make_quality_inspection",
+			frm: frm
+		})
+	},
 	bom_no: (frm) => {
 		return frm.call({
 			method: "get_scrap_items",

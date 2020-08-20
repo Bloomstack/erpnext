@@ -7,7 +7,7 @@ def get_data():
 		'transactions': [
 			{
 				'label': _('Transactions'),
-				'items': ['Material Request', 'Stock Entry']
+				'items': ['Material Request', 'Stock Entry', 'Quality Inspection']
 			}
 		]
 	}

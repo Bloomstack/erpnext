@@ -131,19 +131,14 @@ def quality_inspection_query(doctype, txt, searchfield, start, page_len, filters
 def make_quality_inspection(source_name, target_doc=None):
 	def postprocess(source, doc):
 		doc.inspected_by = frappe.session.user
-		doc.get_quality_inspection_template()
-
-	doc = get_mapped_doc("BOM", source_name, {
-		'BOM': {
+		# doc.get_quality_inspection_template()
+	print("ssssssssssssssssssssssssssssssssssssssssssssssss", source_name)
+	doc = get_mapped_doc("Job Card", source_name, {
+		'Job Card': {
 			"doctype": "Quality Inspection",
-			"validation": {
-				"docstatus": ["=", 1]
-			},
 			"field_map": {
-				"name": "bom_no",
-				"item": "item_code",
-				"stock_uom": "uom",
-				"stock_qty": "qty"
+				"name": "reference_name",
+				"production_item":"item_code",
 			},
 		}
 	}, target_doc, postprocess)
