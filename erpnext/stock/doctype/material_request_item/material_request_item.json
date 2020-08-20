@@ -15,12 +15,12 @@
   "brand",
   "image_section",
   "image",
-  "batch_details_sb",
+  "sb_batch",
   "batch_item",
   "batch_item_name",
   "batch_details_cb",
   "batch_no",
-  "table_sb",
+  "sb_sticker",
   "sticker_details",
   "manufacture_details",
   "manufacturer",
@@ -452,12 +452,6 @@
    "label": "Label Quantity"
   },
   {
-   "collapsible": 1,
-   "fieldname": "batch_details_sb",
-   "fieldtype": "Section Break",
-   "label": "Batch Details"
-  },
-  {
    "fieldname": "batch_item",
    "fieldtype": "Link",
    "label": "Batch Item",
@@ -488,14 +482,22 @@
   },
   {
    "collapsible": 1,
-   "fieldname": "table_sb",
+   "collapsible_depends_on": "eval:doc.request_for!=\"Stickers\"",
+   "fieldname": "sb_batch",
    "fieldtype": "Section Break",
-   "label": "Table"
+   "label": "Batch Details"
+  },
+  {
+   "collapsible": 1,
+   "collapsible_depends_on": "eval:doc.request_for!=\"Stickers\"",
+   "fieldname": "sb_sticker",
+   "fieldtype": "Section Break",
+   "label": "Sticker Details"
   }
  ],
  "idx": 1,
  "istable": 1,
- "modified": "2020-08-19 00:18:24.774934",
+ "modified": "2020-08-20 05:22:52.448892",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Material Request Item",

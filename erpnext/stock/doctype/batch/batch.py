@@ -340,20 +340,20 @@ def validate_serial_no_with_batch(serial_nos, item_code):
 
 @frappe.whitelist()
 def update_batch_doc(batch_no, qi_name, item_code):
-	batch_doc = get_batch_fields(batch_no)
-	qi_doc = get_qi_fields(qi_name)
-	ci_doc = get_ci_fields(item_code)
-	reading_doc = get_readings_for_qi(qi_name)
+	batch_data = get_batch_fields(batch_no)
+	quality_data = get_qi_fields(qi_name)
+	compliance_data = get_ci_fields(item_code)
+	readings_data = get_readings_for_qi(qi_name)
 
 	frappe.db.set_value("Batch", batch_no, {
-		"thc": qi_doc.thc,
-		"cbd": qi_doc.cbd,
+		"thc": quality_data.thc,
+		"cbd": quality_data.cbd,
 		"sticker_details": frappe.render_template(
 			"templates/includes/sticker_order_material_request.html", dict(
-				qi_doc=qi_doc,
-				ci_doc=ci_doc,
-				reading_doc=reading_doc,
-				batch_doc=batch_doc)
+				quality_data=quality_data,
+				compliance_data=compliance_data,
+				readings_data=readings_data,
+				batch_data=batch_data)
 		)
 	})
 

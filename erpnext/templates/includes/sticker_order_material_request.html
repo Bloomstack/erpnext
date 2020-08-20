@@ -1,31 +1,31 @@
 <div class="tax-break-up" style="overflow-x: auto;">
 	<table class="table table-bordered table-hover">
 		<tbody>
-			{% for item in batch_doc %}
+			{% for field, value in batch_data.items() %}
 			<tr>
-				<td>{{ frappe.get_meta("Batch").get_label(item) }}</td>
-				<td>{{ batch_doc.get(item) or "--"}}</td>
+				<td>{{ frappe.get_meta("Batch").get_label(field) }}</td>
+				<td>{{ value or "--"}}</td>
 			</tr>
 			{% endfor %}
 
-			{% for item in ci_doc %}
+			{% for field, value in compliance_data.items() %}
 			<tr>
-				<td>{{ frappe.get_meta("Compliance Item").get_label(item) }}</td>
-				<td>{{ ci_doc.get(item) or "--"}}</td>
+				<td>{{ frappe.get_meta("Compliance Item").get_label(field) }}</td>
+				<td>{{ value or "--"}}</td>
 			</tr>
 			{% endfor %}
 
-			{% for item in reading_doc %}
+			{% for field, value in readings_data.items() %}
 			<tr>
-				<td>{{ item }}</td>
-				<td>{{ reading_doc.get(item) or "--" }}</td>
+				<td>{{ field }}</td>
+				<td>{{ value or "--" }}</td>
 			</tr>
 			{% endfor %}
 
-			{% for item in qi_doc %}
+			{% for field, value in quality_data.items() %}
 			<tr>
-				<td>{{ frappe.get_meta("Quality Inspection").get_label(item) }}</td>
-				<td>{{ qi_doc.get(item) or "--" }}</td>
+				<td>{{ frappe.get_meta("Quality Inspection").get_label(field) }}</td>
+				<td>{{ value or "--" }}</td>
 			</tr>
 			{% endfor %}
 		</tbody>
