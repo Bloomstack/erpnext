@@ -721,6 +721,14 @@ $(document).on('app_ready', function() {
 										});
 									}
 								});
+								data.push({
+									// "docname": item.name,
+									"reference_type": item.parenttype,
+									"reference_name": item.parent,
+									"item_code": item.item_code,
+									"item_name": item.item_name,
+									"inspection_type": inspection_type
+								});
 							});
 
 							const dialog = new frappe.ui.Dialog({
