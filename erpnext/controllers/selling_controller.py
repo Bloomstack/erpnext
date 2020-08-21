@@ -419,12 +419,11 @@ class SellingController(StockController):
 		validate_item_type(self, "is_sales_item", "sales")
 
 	def validate_marketing_expense(self):
-		# set discount 100% for marketing order
-		percentage_discount = 0
 		if hasattr(self, "order_type") and self.order_type == "Marketing":
+			# set discount 100% for marketing order
 			self.apply_discount_on = "Grand Total"
-			percentage_discount = 100
-		self.additional_discount_percentage = percentage_discount
+			self.additional_discount_percentage = 100
+
 
 def set_default_income_account_for_item(obj):
 	for d in obj.get("items"):

@@ -316,6 +316,8 @@ class Item(WebsiteGenerator):
 		context.search_link = '/product_search'
 
 		context.parents = get_parent_item_groups(self.item_group)
+		from erpnext.stock.doctype.batch.batch import get_active_batch
+		context['coa'] = get_active_batch(self.name).certificate_of_analysis
 
 		self.set_variant_context(context)
 		self.set_attribute_context(context)
