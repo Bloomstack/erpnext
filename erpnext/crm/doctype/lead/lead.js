@@ -9,7 +9,8 @@ erpnext.LeadController = frappe.ui.form.Controller.extend({
 		this.frm.make_methods = {
 			'Customer': this.make_customer,
 			'Quotation': this.make_quotation,
-			'Opportunity': this.make_opportunity
+			'Opportunity': this.make_opportunity,
+			'Investor': this.make_investor
 		};
 
 		this.frm.toggle_reqd("lead_name", !this.frm.doc.organization_lead);

@@ -12,6 +12,7 @@
  "field_order": [
   "investor_name",
   "investor_from",
+  "column_break_3",
   "party_name",
   "address_contacts",
   "address_html",
@@ -102,11 +103,15 @@
    "fieldtype": "Dynamic Link",
    "label": "Party Name",
    "options": "investor_from"
+  },
+  {
+   "fieldname": "column_break_3",
+   "fieldtype": "Column Break"
   }
  ],
  "icon": "fa fa-user",
  "image_field": "image",
- "modified": "2020-08-20 00:46:28.483388",
+ "modified": "2020-08-21 08:08:24.297827",
  "modified_by": "Administrator",
  "module": "CRM",
  "name": "Investor",
@@ -126,7 +131,6 @@
    "write": 1
   }
  ],
- "quick_entry": 1,
  "show_name_in_global_search": 1,
  "sort_field": "modified",
  "sort_order": "DESC",

@@ -46,30 +46,29 @@ class Investor(Document):
 				if not address.has_link('Investor', self.name):
 					address.append('links', dict(link_doctype='Investor', link_name=self.name))
 					address.save()
-			
-				contact_names = frappe.get_all('Dynamic Link', filters={
-					"parenttype":"Contact",
-					"link_doctype":"Lead",
-					"link_name":self.party_name
-				}, fields=["parent as name"])
 
-				for contact_name in contact_names:
-					contact = frappe.get_doc('Contact', contact_name.get('name'))
-					if not contact.has_link('Investor', self.name):
-						contact.append('links', dict(link_doctype='Investor', link_name=self.name))
-						contact.save()
+			contact_names = frappe.get_all('Dynamic Link', filters={
+				"parenttype":"Contact",
+				"link_doctype":"Lead",
+				"link_name":self.party_name
+			}, fields=["parent as name"])
+			for contact_name in contact_names:
+				contact = frappe.get_doc('Contact', contact_name.get('name'))
+				if not contact.has_link('Investor', self.name):
+					contact.append('links', dict(link_doctype='Investor', link_name=self.name))
+					contact.save()
 
 	def create_opportunity_address_contact(self):
 		if self.party_name:
-			party_info = frappe.db.get_value("Opportunity", {"name":self.party_name}, ["customer_address", "contact_person"],as_dict=True)
-			address = frappe.get_doc('Address', party_info.get("customer_address"))
-			if not address.has_link('Investor', self.name):
-				address.append('links', dict(link_doctype='Investor', link_name=self.name))
-				address.save()
+			party_info = frappe.db.get_value("Opportunity", self.party_name, ["customer_address", "contact_person"], as_dict=True)
+			if party_info.get("customer_address"):
+				address = frappe.get_doc('Address', party_info.get("customer_address"))
+				if not address.has_link('Investor', self.name):
+					address.append('links', dict(link_doctype='Investor', link_name=self.name))
+					address.save()
 
-			contact = frappe.get_doc('Contact', party_info.get('contact_person'))
-			if not contact.has_link('Investor', self.name):
-				contact.append('links', dict(link_doctype='Investor', link_name=self.name))
-				contact.save()
-
-	
+			if party_info.get('contact_person'):
+				contact = frappe.get_doc('Contact', party_info.get('contact_person'))
+				if not contact.has_link('Investor', self.name):
+					contact.append('links', dict(link_doctype='Investor', link_name=self.name))
+					contact.save()

@@ -145,6 +145,12 @@ frappe.ui.form.on("Opportunity", {
 
 // TODO commonify this code
 erpnext.crm.Opportunity = frappe.ui.form.Controller.extend({
+	setup: function(frm) {
+		this.frm.make_methods = {
+			'Investor': this.create_investor
+		};
+	},
+
 	onload: function() {
 
 		if(!this.frm.doc.status) {

@@ -11,6 +11,11 @@ def get_data():
 			'Opportunity': 'party_name'
 		},
 		'dynamic_links': {
-			'party_name': ['Lead', 'Opporunity']
+			'party_name': ['Investor','Opportunity']
 		},
+		'transactions': [
+			{
+				'items': ['Lead', 'Opportunity']
+			}
+		]
 	}
