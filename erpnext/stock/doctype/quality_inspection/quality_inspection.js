@@ -25,7 +25,7 @@ frappe.ui.form.on("Quality Inspection", {
 									if (supplier.message) {
 										frm.set_value("manufacturer_website", supplier.message.website);
 									}
-								})
+								});
 						}
 					})
 				}
@@ -82,9 +82,9 @@ frappe.ui.form.on("Quality Inspection", {
 	before_save: (frm) => {
 		if (frm.doc.item_code && frm.doc.inspection_by == "External") {
 			frappe.db.get_value("Compliance Item", { "item_code": frm.doc.item_code }, "item_code")
-			.then(item => {
+				.then(item => {
 					frm.toggle_reqd('certificate_of_analysis', !!item.message);
-			})
+				})
 		}
 		else {
 			frm.toggle_reqd('certificate_of_analysis', 0);
@@ -115,9 +115,9 @@ cur_frm.fields_dict['item_serial_no'].get_query = function (doc, cdt, cdn) {
 	if (doc.item_code) {
 		filters = {
 			'item_code': doc.item_code
-		}
+		};
 	}
-	return { filters: filters }
+	return { filters: filters };
 }
 
 cur_frm.set_query("batch_no", function (doc) {

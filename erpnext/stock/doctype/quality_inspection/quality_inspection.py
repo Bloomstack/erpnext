@@ -4,6 +4,7 @@
 import frappe
 from erpnext.stock.doctype.batch.batch import update_batch_doc
 from erpnext.stock.doctype.quality_inspection_template.quality_inspection_template import get_template_details
+from frappe import _
 from frappe.model.document import Document
 from frappe.model.mapper import get_mapped_doc
 

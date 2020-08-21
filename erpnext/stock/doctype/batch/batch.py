@@ -3,7 +3,7 @@
 
 from __future__ import unicode_literals
 
-from six import string_types, text_type
+from six import text_type
 
 import frappe
 from frappe import _
