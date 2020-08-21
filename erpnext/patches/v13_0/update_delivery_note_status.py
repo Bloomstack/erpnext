@@ -3,6 +3,7 @@ import frappe
 def execute():
 	frappe.reload_doc("stock", "doctype", "delivery_note")
 	frappe.reload_doc("stock", "doctype", "delivery_trip")
+	frappe.reload_doc("stock", "doctype", "delivery_stop")
 	stops = frappe.get_all("Delivery Stop", fields=["visited", "sales_invoice", "delivery_note", "parent"])
 	for stop in stops:
 		if stop.delivery_note:
@@ -25,3 +26,7 @@ def execute():
 						"delivered": 0,
 						"status": "Out for Delivery"
 					}, update_modified=False)
+
+	frappe.delete_doc('Custom Field', "Delivery Stop-paid_amount")
+	frappe.delete_doc('Custom Field', "Delivery Stop-make_payment_entry")
+	frappe.delete_doc('Custom Field', "Delivery Stop-sales_invoice")
