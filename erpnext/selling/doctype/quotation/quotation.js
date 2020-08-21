@@ -62,10 +62,11 @@ erpnext.selling.QuotationController = erpnext.selling.SellingController.extend({
 			me.frm.trigger("get_lead_details");
 		} else if (me.frm.doc.quotation_to === "Customer" && me.frm.doc.party_name) {
 			frappe.call({
-				method: "erpnext.compliance.doctype.compliance_info.compliance_info.validate_entity_license",
+				method: "erpnext.compliance.doctype.compliance_info.compliance_info.get_entity_license",
 				args: {
 					party_type: me.frm.doc.quotation_to,
-					party_name: me.frm.doc.party_name
+					party_name: me.frm.doc.party_name,
+					doc: me.frm.doc
 				},
 				callback: (r) => {
 					me.frm.set_value("license", r.message);

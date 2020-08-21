@@ -1,18 +1,18 @@
 # Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
 # License: GNU General Public License v3. See license.txt
 
-from __future__ import unicode_literals
 import frappe
+from erpnext.stock.doctype.batch.batch import update_batch_doc
+from erpnext.stock.doctype.quality_inspection_template.quality_inspection_template import get_template_details
+from frappe import _
 from frappe.model.document import Document
-from erpnext.stock.doctype.quality_inspection_template.quality_inspection_template \
-	import get_template_details
 from frappe.model.mapper import get_mapped_doc
+
 
 class QualityInspection(Document):
 	def validate(self):
 		if not self.readings and self.item_code:
 			self.get_item_specification_details()
-		
 
 	def get_item_specification_details(self):
 		if not self.quality_inspection_template:
@@ -52,6 +52,8 @@ class QualityInspection(Document):
 		self.update_qc_reference()
 		if self.batch_no:
 			self.set_batch_coa()
+		if self.thc or self.cbd:
+			update_batch_doc(self.batch_no, self.name, self.item_code)
 
 	def on_cancel(self):
 		self.update_qc_reference()
@@ -146,4 +148,3 @@ def get_purchase_item_details(doctype, name, item_code):
 				"qty": item.qty
 			}
 			return data
-

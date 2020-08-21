@@ -4,11 +4,13 @@
  "creation": "2013-03-07 14:48:38",
  "doctype": "DocType",
  "document_type": "Document",
+ "engine": "InnoDB",
  "field_order": [
   "type_section",
   "naming_series",
   "title",
   "material_request_type",
+  "request_for",
   "customer",
   "column_break_2",
   "schedule_date",
@@ -270,12 +272,18 @@
    "options": "Job Card",
    "print_hide": 1,
    "read_only": 1
+  },
+  {
+   "fieldname": "request_for",
+   "fieldtype": "Select",
+   "label": "Request For",
+   "options": "\nStickers"
   }
  ],
  "icon": "fa fa-ticket",
  "idx": 70,
  "is_submittable": 1,
- "modified": "2019-04-29 11:45:07.570292",
+ "modified": "2020-08-18 23:06:43.624872",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Material Request",

@@ -143,10 +143,11 @@ erpnext.buying.BuyingController = erpnext.TransactionController.extend({
 		if (this.frm.fields_dict.license) {
 			if (this.frm.doc.supplier) {
 				frappe.call({
-					method: "erpnext.compliance.doctype.compliance_info.compliance_info.validate_entity_license",
+					method: "erpnext.compliance.doctype.compliance_info.compliance_info.get_entity_license",
 					args: {
 						party_type: "Supplier",
-						party_name: this.frm.doc.supplier
+						party_name: this.frm.doc.supplier,
+						doc: this.frm.doc
 					},
 					callback: (r) => {
 						this.frm.set_value("license", r.message);
