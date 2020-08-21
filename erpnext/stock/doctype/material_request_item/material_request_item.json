@@ -477,12 +477,20 @@
   {
    "fieldname": "sticker_details",
    "fieldtype": "Long Text",
+   "label": "Sticker Details",
    "read_only": 1
+  },
+  {
+   "collapsible": 1,
+   "collapsible_depends_on": "eval:doc.request_for!='Stickers'",
+   "fieldname": "sb_batch",
+   "fieldtype": "Section Break",
+   "label": "Batch Details"
   }
  ],
  "idx": 1,
  "istable": 1,
- "modified": "2020-08-21 00:47:35.465394",
+ "modified": "2020-08-21 03:19:27.783433",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Material Request Item",
