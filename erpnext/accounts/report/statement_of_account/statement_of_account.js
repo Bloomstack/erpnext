@@ -50,12 +50,6 @@ frappe.query_reports["Statement of Account"] = {
 			}
 		},
 		{
-			"fieldname":"tax_id",
-			"label": __("Tax Id"),
-			"fieldtype": "Data",
-			"hidden": 1
-		},
-		{
 			"fieldtype": "Break",
 		},
 		{
@@ -89,7 +83,6 @@ frappe.query_reports["Statement of Account"] = {
 
 				if(!party_type || parties.length === 0 || parties.length > 1) {
 					frappe.query_report.set_filter_value('party_name', "");
-					frappe.query_report.set_filter_value('tax_id', "");
 					return;
 				} else {
 					var party = parties[0];
@@ -97,12 +90,6 @@ frappe.query_reports["Statement of Account"] = {
 					frappe.db.get_value(party_type, party, fieldname, function(value) {
 						frappe.query_report.set_filter_value('party_name', value[fieldname]);
 					});
-
-					if (party_type === "Customer" || party_type === "Supplier") {
-						frappe.db.get_value(party_type, party, "tax_id", function(value) {
-							frappe.query_report.set_filter_value('tax_id', value["tax_id"]);
-						});
-					}
 				}
 			}
 		},

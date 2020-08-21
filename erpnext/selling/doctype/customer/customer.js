@@ -122,7 +122,7 @@ frappe.ui.form.on("Customer", {
 					{party_type:'Customer', party:frm.doc.name});
 			});
 
-			frm.add_custom_button(__('Stament of Account'), function() {
+			frm.add_custom_button(__('Statement of Account'), function() {
 				frappe.set_route('query-report', 'Statement of Account',
 					{party_type:'Customer', party:frm.doc.name});
 			});

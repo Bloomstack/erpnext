@@ -10,6 +10,7 @@ from frappe import _, _dict
 from erpnext.accounts.utils import get_account_currency
 from erpnext.accounts.doctype.accounting_dimension.accounting_dimension import get_accounting_dimensions, get_dimension_with_children
 from collections import OrderedDict
+from erpnext.accounts.report.general_ledger.general_ledger import validate_party, set_account_currency, get_totals_dict, get_balance
 
 def execute(filters=None):
 	if not filters:
@@ -49,46 +50,6 @@ def validate_filters(filters, account_details):
 
 	if filters.from_date > filters.to_date:
 		frappe.throw(_("From Date must be before To Date"))
-
-
-def validate_party(filters):
-	party_type, party = filters.get("party_type"), filters.get("party")
-
-	if party:
-		if not party_type:
-			pass
-			# frappe.throw(_("To filter based on Party, select Party Type first"))
-		else:
-			for d in party:
-				if not frappe.db.exists(party_type, d):
-					frappe.throw(_("Invalid {0}: {1}").format(party_type, d))
-
-def set_account_currency(filters):
-	if filters.get("account") or (filters.get('party') and len(filters.party) == 1):
-		filters["company_currency"] = frappe.get_cached_value('Company',  filters.company,  "default_currency")
-		account_currency = None
-
-		if filters.get("account"):
-			account_currency = get_account_currency(filters.account)
-		elif filters.get("party"):
-			gle_currency = frappe.db.get_value(
-				"GL Entry", {
-					"party_type": filters.party_type, "party": filters.party[0], "company": filters.company
-				},
-				"account_currency"
-			)
-
-			if gle_currency:
-				account_currency = gle_currency
-			else:
-				account_currency = (None if filters.party_type in ["Employee", "Student", "Shareholder", "Member"] else
-					frappe.db.get_value(filters.party_type, filters.party[0], "default_currency"))
-
-		filters["account_currency"] = account_currency or filters.company_currency
-		if filters.account_currency != filters.company_currency and not filters.presentation_currency:
-			filters.presentation_currency = filters.account_currency
-
-	return filters
 
 def get_result(filters, account_details):
 	gl_entries = get_gl_entries(filters)
@@ -183,21 +144,6 @@ def get_data_with_opening_closing(filters, account_details, gl_entries):
 	data.append(totals.closing)
 	return data
 
-def get_totals_dict():
-	def _get_debit_credit_dict(label):
-		return _dict(
-			account="'{0}'".format(label),
-			debit=0.0,
-			credit=0.0,
-			debit_in_account_currency=0.0,
-			credit_in_account_currency=0.0
-		)
-	return _dict(
-		opening = _get_debit_credit_dict(_('Opening')),
-		total = _get_debit_credit_dict(_('Total')),
-		closing = _get_debit_credit_dict(_('Closing (Opening + Total)'))
-	)
-
 def initialize_gle_map(gl_entries, filters):
 	gle_map = OrderedDict()
 	group_by = 'account'
@@ -262,11 +208,6 @@ def get_result_as_list(data, filters):
 		d['balance'] = balance
 
 	return data
-
-def get_balance(row, balance, debit_field, credit_field):
-	balance += (row.get(debit_field, 0) -  row.get(credit_field, 0))
-
-	return balance
 
 def get_columns(filters):
 	if filters.get("presentation_currency"):
