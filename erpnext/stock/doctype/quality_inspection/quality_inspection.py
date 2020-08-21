@@ -40,8 +40,10 @@ class QualityInspection(Document):
 
 	def get_quality_inspection_template(self):
 		template = ''
-		if self.bom_no:
+		if not self.reference_type == "Job Card" and self.bom_no:
 			template = frappe.db.get_value('BOM', self.bom_no, 'quality_inspection_template')
+		elif self.refernce_type == "Job Card" and self.job_card:
+			template = frappe.db.get_value('Job Card', self.job_card, 'quality_inspection_template')
 
 		if not template:
 			template = frappe.db.get_value('BOM', self.item_code, 'quality_inspection_template')
@@ -67,13 +69,22 @@ class QualityInspection(Document):
 		doctype = self.reference_type + ' Item'
 		if self.reference_type == 'Stock Entry':
 			doctype = 'Stock Entry Detail'
+		elif self.reference_type == 'Job Card':
+			doctype = 'Job Card'
 
 		if self.reference_type and self.reference_name:
-			frappe.db.sql("""update `tab{child_doc}` t1, `tab{parent_doc}` t2
-				set t1.quality_inspection = %s, t2.modified = %s
-				where t1.parent = %s and t1.item_code = %s and t1.parent = t2.name"""
-				.format(parent_doc=self.reference_type, child_doc=doctype),
-				(quality_inspection, self.modified, self.reference_name, self.item_code))
+			if not doctype == "Job Card":
+				frappe.db.sql("""update `tab{child_doc}` t1, `tab{parent_doc}` t2
+					set t1.quality_inspection = %s, t2.modified = %s
+					where t1.parent = %s and t1.item_code = %s and t1.parent = t2.name"""
+					.format(parent_doc=self.reference_type, child_doc=doctype),
+					(quality_inspection, self.modified, self.reference_name, self.item_code))
+			else:
+				frappe.db.sql("""update `tab{doctype}` t1
+					set t1.quality_inspection = %s
+					where t1.name = %s and t1.production_item = %s"""
+					.format(doctype=self.reference_type),
+					(quality_inspection, self.reference_name, self.item_code))
 
 	def set_batch_coa(self):
 		if self.certificate_of_analysis:
@@ -131,8 +142,7 @@ def quality_inspection_query(doctype, txt, searchfield, start, page_len, filters
 def make_quality_inspection(source_name, target_doc=None):
 	def postprocess(source, doc):
 		doc.inspected_by = frappe.session.user
-		# doc.get_quality_inspection_template()
-	print("ssssssssssssssssssssssssssssssssssssssssssssssss", source_name)
+		doc.get_quality_inspection_template()
 	doc = get_mapped_doc("Job Card", source_name, {
 		'Job Card': {
 			"doctype": "Quality Inspection",

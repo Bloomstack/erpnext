@@ -8,13 +8,26 @@ frappe.ui.form.on('Job Card', {
 		}
 	},
 
+	onload: function(frm) {
+		frm.set_query('quality_inspection', function(doc) {
+			return {
+				filters: {
+					"item_code": frm.doc.production_item,
+					"reference_type": frm.doc.doctype
+				}
+			};
+		});
+	},
+
 	refresh: function(frm) {
 
 		if(frm.doc.docstatus == 0) {
 			frm.set_df_property("operation", "read_only", frm.doc.operation_id ? 1 : 0);
-			frm.add_custom_button(__("Quality Inspection"), function() {
-				frm.trigger("make_quality_inspection");
-			}, __("Create"));
+			if (frm.doc.inspection_required) {
+				frm.add_custom_button(__("Quality Inspection"), function() {
+					frm.trigger("make_quality_inspection");
+				}, __("Create"));
+			}
 		}
 		frappe.flags.pause_job = 0;
 		frappe.flags.resume_job = 0;

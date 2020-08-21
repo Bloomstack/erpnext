@@ -9,10 +9,15 @@ from frappe.utils import flt, time_diff_in_hours, get_datetime, time_diff, get_l
 from frappe.model.mapper import get_mapped_doc
 from frappe.model.document import Document
 
+class QualityInspectionRequiredError(frappe.ValidationError): pass
+class QualityInspectionRejectedError(frappe.ValidationError): pass
+class QualityInspectionNotSubmittedError(frappe.ValidationError): pass
+
 class JobCard(Document):
 	def validate(self):
 		self.validate_time_logs()
 		self.set_status()
+		self.validate_inspection()
 
 	def validate_time_logs(self):
 		self.total_completed_qty = 0.0
@@ -216,6 +221,31 @@ class JobCard(Document):
 
 		if update_status:
 			self.db_set('status', self.status)
+
+	def validate_inspection(self):
+		if self.inspection_required:
+			reference_type = reference_name = ''
+			if self.docstatus == 1:
+				reference_name = self.name
+				reference_type = 'Job Card'
+			if self.quality_inspection:
+				frappe.db.set_value("Quality Inspection", self.quality_inspection, {
+							'reference_type': reference_type,
+							'reference_name': reference_name
+					})
+
+				qa_doc = frappe.get_doc("Quality Inspection", self.quality_inspection)
+				if qa_doc.docstatus == 0:
+					link = frappe.utils.get_link_to_form('Quality Inspection', self.quality_inspection)
+					frappe.throw(_("Quality Inspection: {0} is not submitted for the item: {1}").format(link, self.production_item), QualityInspectionNotSubmittedError)
+
+				qa_failed = any([r.status=="Rejected" for r in qa_doc.readings])
+				if qa_failed:
+					frappe.throw(_("Quality Inspection rejected for item {1}")
+						.format(d.idx, d.item_code), QualityInspectionRejectedError)
+			else:
+				frappe.throw(_("Quality Inspection required for Item {0} to submit").format(frappe.bold(self.production_item)),
+						exc=QualityInspectionRequiredError)
 
 @frappe.whitelist()
 def make_material_request(source_name, target_doc=None):
