@@ -687,3 +687,4 @@ erpnext.patches.v12_0.update_sales_taxes_and_charges_template
 erpnext.patches.v13_0.update_customer_total_sales
 erpnext.patches.v13_0.setup_remove_assignment_on_task
 erpnext.patches.v13_0.set_values_in_production_plan_items
+erpnext.patches.v13_0.set_values_in_pick_list
