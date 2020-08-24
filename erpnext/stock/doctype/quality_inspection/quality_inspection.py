@@ -143,6 +143,29 @@ def make_quality_inspection(source_name, target_doc=None):
 	def postprocess(source, doc):
 		doc.inspected_by = frappe.session.user
 		doc.get_quality_inspection_template()
+
+	doc = get_mapped_doc("BOM", source_name, {
+		'BOM': {
+			"doctype": "Quality Inspection",
+			"validation": {
+				"docstatus": ["=", 1]
+			},
+			"field_map": {
+				"name": "bom_no",
+				"item": "item_code",
+				"stock_uom": "uom",
+				"stock_qty": "qty"
+			},
+		}
+	}, target_doc, postprocess)
+
+	return doc
+
+@frappe.whitelist()
+def make_quality_inspection_from_job_card(source_name, target_doc=None):
+	def postprocess(source, doc):
+		doc.inspected_by = frappe.session.user
+		doc.get_quality_inspection_template()
 	doc = get_mapped_doc("Job Card", source_name, {
 		'Job Card': {
 			"doctype": "Quality Inspection",

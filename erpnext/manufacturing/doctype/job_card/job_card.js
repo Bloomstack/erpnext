@@ -8,17 +8,6 @@ frappe.ui.form.on('Job Card', {
 		}
 	},
 
-	onload: function(frm) {
-		frm.set_query('quality_inspection', function(doc) {
-			return {
-				filters: {
-					"item_code": frm.doc.production_item,
-					"reference_type": frm.doc.doctype
-				}
-			};
-		});
-	},
-
 	refresh: function(frm) {
 
 		if(frm.doc.docstatus == 0) {
@@ -54,7 +43,7 @@ frappe.ui.form.on('Job Card', {
 
 	make_quality_inspection: function(frm) {
 		frappe.model.open_mapped_doc({
-			method: "erpnext.stock.doctype.quality_inspection.quality_inspection.make_quality_inspection",
+			method: "erpnext.stock.doctype.quality_inspection.quality_inspection.make_quality_inspection_from_job_card",
 			frm: frm
 		})
 	},

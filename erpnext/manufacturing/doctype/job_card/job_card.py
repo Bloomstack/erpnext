@@ -8,11 +8,7 @@ from frappe import _
 from frappe.utils import flt, time_diff_in_hours, get_datetime, time_diff, get_link_to_form
 from frappe.model.mapper import get_mapped_doc
 from frappe.model.document import Document
-
-class QualityInspectionRequiredError(frappe.ValidationError): pass
-class QualityInspectionRejectedError(frappe.ValidationError): pass
-class QualityInspectionNotSubmittedError(frappe.ValidationError): pass
-
+from erpnext.controllers.stock_controller import QualityInspectionRequiredError, QualityInspectionRejectedError, QualityInspectionNotSubmittedError
 class JobCard(Document):
 	def validate(self):
 		self.validate_time_logs()
