@@ -17,7 +17,7 @@ frappe.ui.form.on("Job Offer", {
 				method: 'erpnext.hr.doctype.job_offer.job_offer.make_employee',
 				frm: frm
 			})
-		}
+		};
 	},
 
 	select_terms: function (frm) {
