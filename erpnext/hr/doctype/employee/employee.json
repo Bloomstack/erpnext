@@ -38,7 +38,7 @@
   "job_applicant",
   "scheduled_confirmation_date",
   "final_confirmation_date",
-  "job_offer_letter",
+  "job_offer",
   "col_break_22",
   "contract_end_date",
   "notice_number_of_days",
@@ -780,16 +780,16 @@
    "options": "User"
   },
   {
-   "fieldname": "job_offer_letter",
+   "fieldname": "job_offer",
    "fieldtype": "Link",
-   "label": "Job Offer Letter",
+   "label": "Job Offer",
    "options": "Job Offer"
   }
  ],
  "icon": "fa fa-user",
  "idx": 24,
  "image_field": "image",
- "modified": "2020-08-21 02:08:35.261890",
+ "modified": "2020-08-23 11:09:44.852180",
  "modified_by": "Administrator",
  "module": "HR",
  "name": "Employee",
