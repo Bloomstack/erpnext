@@ -39,15 +39,12 @@ class PurchaseOrder(BuyingController):
 			'percent_join_field': 'material_request'
 		}]
 	
-	def on_update(self):
-		self.title = self.supplier
-		frappe.db.set_value("Purchase Order",self.name,'title',self.supplier)
-
 	def validate(self):
 		super(PurchaseOrder, self).validate()
 
 		self.set_status()
 
+		self.set_title()
 		self.validate_supplier()
 		self.validate_schedule_date()
 		validate_for_items(self)
@@ -90,6 +87,9 @@ class PurchaseOrder(BuyingController):
 
 		if cint(frappe.db.get_single_value('Buying Settings', 'maintain_same_rate')):
 			self.validate_rate_with_reference_doc([["Supplier Quotation", "supplier_quotation", "supplier_quotation_item"]])
+
+	def set_title(self):
+		self.title = self.supplier
 
 	def validate_supplier(self):
 		prevent_po = frappe.db.get_value("Supplier", self.supplier, 'prevent_pos')

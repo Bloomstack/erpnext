@@ -77,6 +77,7 @@ class SalesInvoice(SellingController):
 		if not self.is_pos:
 			self.so_dn_required()
 
+		self.set_title()
 		self.validate_proj_cust()
 		self.validate_pos_return()
 		self.validate_with_previous_doc()
@@ -371,10 +372,8 @@ class SalesInvoice(SellingController):
 				(not sales_invoice and data.sales_invoice == self.name):
 				data.sales_invoice = sales_invoice
 
-	def on_update(self):
+	def set_title(self):
 		self.title = self.customer
-		frappe.db.set_value("Sales Invoice",self.name,'title',self.customer)
-		self.set_paid_amount()
 
 	def set_paid_amount(self):
 		paid_amount = 0.0

@@ -34,6 +34,7 @@ class SalesOrder(SellingController):
 
 	def validate(self):
 		super(SalesOrder, self).validate()
+		self.set_title()
 		self.validate_delivery_date()
 		self.validate_proj_cust()
 		self.validate_po()
@@ -305,10 +306,8 @@ class SalesOrder(SellingController):
 				"reserved_qty": get_reserved_qty(item_code, warehouse)
 			})
 
-	def on_update(self):
+	def set_title(self):
 		self.title = self.customer
-		frappe.db.set_value("Sales Order",self.name,'title',self.customer)
-
 
 	def before_update_after_submit(self):
 		self.validate_po()
