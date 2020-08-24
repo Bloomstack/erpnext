@@ -88,6 +88,9 @@ class PurchaseOrder(BuyingController):
 		if cint(frappe.db.get_single_value('Buying Settings', 'maintain_same_rate')):
 			self.validate_rate_with_reference_doc([["Supplier Quotation", "supplier_quotation", "supplier_quotation_item"]])
 
+	def on_update(self):
+		pass
+
 	def set_title(self):
 		self.title = self.supplier
 

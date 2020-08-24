@@ -34,7 +34,6 @@ class SalesOrder(SellingController):
 
 	def validate(self):
 		super(SalesOrder, self).validate()
-		self.set_title()
 		self.validate_delivery_date()
 		self.validate_proj_cust()
 		self.validate_po()
@@ -305,6 +304,9 @@ class SalesOrder(SellingController):
 			update_bin_qty(item_code, warehouse, {
 				"reserved_qty": get_reserved_qty(item_code, warehouse)
 			})
+
+	def on_update(self):
+		pass
 
 	def set_title(self):
 		self.title = self.customer
