@@ -34,6 +34,7 @@ class SalesOrder(SellingController):
 
 	def validate(self):
 		super(SalesOrder, self).validate()
+		set_title()
 		self.validate_delivery_date()
 		self.validate_proj_cust()
 		self.validate_po()
