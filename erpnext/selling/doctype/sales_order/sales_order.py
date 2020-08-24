@@ -306,7 +306,9 @@ class SalesOrder(SellingController):
 			})
 
 	def on_update(self):
-		pass
+		self.title = self.customer
+		frappe.db.set_value("Sales Order",self.name,'title',self.customer)
+
 
 	def before_update_after_submit(self):
 		self.validate_po()

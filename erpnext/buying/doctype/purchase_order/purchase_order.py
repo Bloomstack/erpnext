@@ -38,6 +38,10 @@ class PurchaseOrder(BuyingController):
 			'source_field': 'stock_qty',
 			'percent_join_field': 'material_request'
 		}]
+	
+	def on_update(self):
+		self.title = self.supplier
+		frappe.db.set_value("Purchase Order",self.name,'title',self.supplier)
 
 	def validate(self):
 		super(PurchaseOrder, self).validate()
@@ -258,9 +262,6 @@ class PurchaseOrder(BuyingController):
 		self.update_blanket_order()
 
 		unlink_inter_company_doc(self.doctype, self.name, self.inter_company_order_reference)
-
-	def on_update(self):
-		pass
 
 	def update_status_updater(self):
 		self.status_updater.append({

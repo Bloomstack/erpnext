@@ -372,6 +372,8 @@ class SalesInvoice(SellingController):
 				data.sales_invoice = sales_invoice
 
 	def on_update(self):
+		self.title = self.customer
+		frappe.db.set_value("Sales Invoice",self.name,'title',self.customer)
 		self.set_paid_amount()
 
 	def set_paid_amount(self):

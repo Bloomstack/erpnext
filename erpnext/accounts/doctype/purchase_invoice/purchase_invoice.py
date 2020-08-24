@@ -56,9 +56,12 @@ class PurchaseInvoice(BuyingController):
 		if not self.on_hold:
 			self.release_date = ''
 
-
 	def invoice_is_blocked(self):
 		return self.on_hold and (not self.release_date or self.release_date > getdate(nowdate()))
+	
+	def on_update(self):
+		self.title = self.supplier
+		frappe.db.set_value("Purchase Invoice",self.name,'title',self.supplier)
 
 	def validate(self):
 		if not self.is_opening:
