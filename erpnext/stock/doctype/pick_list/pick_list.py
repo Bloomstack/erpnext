@@ -27,7 +27,6 @@ class PickList(Document):
 		pass
 
 	def before_submit(self):
-
 		for item in self.locations:
 			if not frappe.get_cached_value('Item', item.item_code, 'has_serial_no'):
 				continue
