@@ -8,13 +8,12 @@ frappe.ui.form.on('Investor', {
 				"filters": {
 					"name": ["in", ["Opportunity", "Lead"]],
 				}
-			}
+			};
 		});
 	},
-	
-	refresh: function(frm) {
 
-		frappe.dynamic_link = {doc: frm.doc, fieldname: 'investor_name', doctype: 'Investor'}
+	refresh: function(frm) {
+		frappe.dynamic_link = {doc: frm.doc, fieldname: 'investor_name', doctype: 'Investor'};
 		frm.toggle_display(['address_html','contact_html'], !frm.doc.__islocal);
 
 		if(!frm.doc.__islocal) {

@@ -320,6 +320,7 @@ def auto_close_opportunity():
 		doc.flags.ignore_mandatory = True
 		doc.save()
 
+
 @frappe.whitelist()
 def make_opportunity_from_communication(communication, ignore_communication_links=False):
 	from erpnext.crm.doctype.lead.lead import make_lead_from_communication
@@ -341,18 +342,20 @@ def make_opportunity_from_communication(communication, ignore_communication_link
 
 	return opportunity.name
 
+
 @frappe.whitelist()
 def make_investor(source_name, target_doc=None):
 	def set_missing_values(source, target):
 		_set_missing_values(source, target)
 
-	data= frappe.get_doc("Opportunity",source_name).as_dict()
 	target_doc = get_mapped_doc("Opportunity", source_name, {
 		"Opportunity": {
 			"doctype": "Investor",
 			"field_map": {
 				"customer_name": "investor_name",
 				"doctype": "investor_from",
-				"name":"party_name"
-		}}}, target_doc,set_missing_values)
+				"name": "party_name"
+			}
+		}
+	}, target_doc, set_missing_values)
 	return target_doc
