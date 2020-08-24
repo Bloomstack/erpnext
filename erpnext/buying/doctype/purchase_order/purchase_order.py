@@ -38,7 +38,7 @@ class PurchaseOrder(BuyingController):
 			'source_field': 'stock_qty',
 			'percent_join_field': 'material_request'
 		}]
-	
+
 	def validate(self):
 		super(PurchaseOrder, self).validate()
 

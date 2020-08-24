@@ -375,6 +375,9 @@ class SalesInvoice(SellingController):
 	def set_title(self):
 		self.title = self.customer
 
+	def on_update(self):
+		self.set_paid_amount()
+
 	def set_paid_amount(self):
 		paid_amount = 0.0
 		base_paid_amount = 0.0
