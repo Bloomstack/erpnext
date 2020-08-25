@@ -308,6 +308,8 @@ erpnext.accounts.PurchaseInvoice = erpnext.buying.BuyingController.extend({
 	},
 
 	is_paid: function() {
+		this.frm.toggle_reqd('mode_of_payment', cint(this.frm.doc.is_paid) === 1);
+		this.frm.toggle_reqd('cash_bank_account', cint(this.frm.doc.is_paid) === 1);
 		hide_fields(this.frm.doc);
 		if(cint(this.frm.doc.is_paid)) {
 			this.frm.set_value("allocate_advances_automatically", 0);
@@ -365,12 +367,8 @@ function hide_fields(doc) {
 	var parent_fields = ['due_date', 'is_opening', 'advances_section', 'from_date', 'to_date'];
 
 	if(cint(doc.is_paid) == 1) {
-		cur_frm.set_df_property('mode_of_payment', 'reqd', 1)
-		cur_frm.set_df_property('cash_bank_account', 'reqd', 1)
 		hide_field(parent_fields);
 	} else {
-		cur_frm.set_df_property('mode_of_payment', 'reqd', 0)
-		cur_frm.set_df_property('cash_bank_account', 'reqd', 0)
 		for (var i in parent_fields) {
 			var docfield = frappe.meta.docfield_map[doc.doctype][parent_fields[i]];
 			if(!docfield.hidden) unhide_field(parent_fields[i]);
