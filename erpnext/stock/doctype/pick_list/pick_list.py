@@ -40,11 +40,9 @@ class PickList(Document):
 		self.set_picked_qty()
 
 	def validate_delivery_date(self):
-		order_delivery_dates = []
-		for location in self.locations:
-			order_delivery_dates.append(frappe.db.get_value("Sales Order Item", location.get("sales_order_item"), "delivery_date"))
-		if order_delivery_dates:
-			self.delivery_date = min(order_delivery_dates)		
+		order_delivery_dates = [frappe.db.get_value("Sales Order Item", location.get("sales_order_item"), "delivery_date")
+			for location in self.locations if location.get("sales_order_item")]
+		self.delivery_date = min(order_delivery_dates)		
 
 	def on_submit(self):
 		self.update_order_package_tag()
