@@ -1,5 +1,4 @@
 {
- "actions": [],
  "autoname": "hash",
  "creation": "2013-02-22 01:28:02",
  "doctype": "DocType",
@@ -16,6 +15,11 @@
   "brand",
   "image_section",
   "image",
+  "sb_batch",
+  "batch_item",
+  "batch_item_name",
+  "batch_details_cb",
+  "batch_no",
   "manufacture_details",
   "manufacturer",
   "column_break_12",
@@ -34,9 +38,10 @@
   "section_break_label",
   "label_qty",
   "jar_type",
-  "column_break_label",
   "labels_needed",
   "unwind_direction",
+  "column_break_label",
+  "sticker_details",
   "more_info",
   "lead_time_date",
   "sales_order",
@@ -444,12 +449,48 @@
    "fieldname": "label_qty",
    "fieldtype": "Int",
    "label": "Label Quantity"
+  },
+  {
+   "fieldname": "batch_item",
+   "fieldtype": "Link",
+   "label": "Batch Item",
+   "options": "Item",
+   "read_only": 1
+  },
+  {
+   "fieldname": "batch_item_name",
+   "fieldtype": "Data",
+   "label": "Batch Item Name",
+   "read_only": 1
+  },
+  {
+   "fieldname": "batch_details_cb",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "batch_no",
+   "fieldtype": "Link",
+   "label": "Batch No.",
+   "options": "Batch",
+   "read_only": 1
+  },
+  {
+   "fieldname": "sticker_details",
+   "fieldtype": "Long Text",
+   "label": "Sticker Details",
+   "read_only": 1
+  },
+  {
+   "collapsible": 1,
+   "collapsible_depends_on": "eval:doc.request_for!='Stickers'",
+   "fieldname": "sb_batch",
+   "fieldtype": "Section Break",
+   "label": "Batch Details"
   }
  ],
  "idx": 1,
  "istable": 1,
- "links": [],
- "modified": "2020-08-04 04:58:39.294760",
+ "modified": "2020-08-21 03:19:27.783433",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Material Request Item",

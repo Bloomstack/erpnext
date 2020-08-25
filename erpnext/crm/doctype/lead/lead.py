@@ -360,6 +360,7 @@ def make_lead_from_communication(communication, ignore_communication_links=False
 	link_communication_to_document(doc, "Lead", lead_name, ignore_communication_links)
 	return lead_name
 
+
 def get_lead_with_phone_number(number):
 	if not number: return
 
@@ -371,3 +372,21 @@ def get_lead_with_phone_number(number):
 	lead = leads[0].name if leads else None
 
 	return lead
+
+
+@frappe.whitelist()
+def make_investor(source_name, target_doc=None):
+	def set_missing_values(source, target):
+		_set_missing_values(source, target)
+
+	target_doc = get_mapped_doc("Lead", source_name, {
+		"Lead": {
+			"doctype": "Investor",
+			"field_map": {
+				"lead_name": "investor_name",
+				"doctype": "investor_from",
+				"name": "party_name"
+			}
+		}
+	}, target_doc, set_missing_values)
+	return target_doc

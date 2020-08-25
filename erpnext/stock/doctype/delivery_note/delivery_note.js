@@ -92,6 +92,23 @@ frappe.ui.form.on("Delivery Note", {
 			}, __('Create'));
 			frm.page.set_inner_btn_group_as_primary(__('Create'));
 		}
+	},
+
+	email_coas: function(frm) {
+		frappe.call({
+			method: "erpnext.stock.doctype.delivery_note.delivery_note.email_coas",
+			args: {
+				docname: frm.doc.name
+			},
+			callback: (r) => {
+				if(r.message == "success"){
+					frappe.show_alert({
+						indicator: 'green',
+						message: __('Email Queued')
+					});
+				}
+			}
+		})
 	}
 });
 

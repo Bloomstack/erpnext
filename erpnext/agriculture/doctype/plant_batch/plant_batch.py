@@ -39,10 +39,7 @@ class PlantBatch(Document):
 		for doctype in linked_doctypes:
 			output[doctype] = frappe.get_all(doctype, fields=required_fields)
 
-		output['Location'] = []
-
-		for location in self.linked_location:
-			output['Location'].append(frappe.get_doc('Location', location.location))
+		output['Location'] = frappe.get_doc('Location', self.location)
 
 		frappe.publish_realtime("List of Linked Docs",
 								output, user=frappe.session.user)

@@ -10,6 +10,7 @@ from erpnext.setup.utils import get_exchange_rate
 from erpnext.utilities.transaction_base import TransactionBase
 from erpnext.accounts.party import get_party_account_currency
 from frappe.email.inbox import link_communication_to_document
+from erpnext.crm.doctype.lead.lead import _set_missing_values
 
 subject_field = "title"
 sender_field = "contact_email"
@@ -192,7 +193,6 @@ class Opportunity(TransactionBase):
 			for key in item_fields:
 				if not d.get(key): d.set(key, item.get(key))
 
-
 @frappe.whitelist()
 def get_item_details(item_code):
 	item = frappe.db.sql("""select item_name, stock_uom, image, description, item_group, brand
@@ -320,6 +320,7 @@ def auto_close_opportunity():
 		doc.flags.ignore_mandatory = True
 		doc.save()
 
+
 @frappe.whitelist()
 def make_opportunity_from_communication(communication, ignore_communication_links=False):
 	from erpnext.crm.doctype.lead.lead import make_lead_from_communication
@@ -340,3 +341,21 @@ def make_opportunity_from_communication(communication, ignore_communication_link
 	link_communication_to_document(doc, "Opportunity", opportunity.name, ignore_communication_links)
 
 	return opportunity.name
+
+
+@frappe.whitelist()
+def make_investor(source_name, target_doc=None):
+	def set_missing_values(source, target):
+		_set_missing_values(source, target)
+
+	target_doc = get_mapped_doc("Opportunity", source_name, {
+		"Opportunity": {
+			"doctype": "Investor",
+			"field_map": {
+				"customer_name": "investor_name",
+				"doctype": "investor_from",
+				"name": "party_name"
+			}
+		}
+	}, target_doc, set_missing_values)
+	return target_doc

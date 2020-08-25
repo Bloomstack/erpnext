@@ -77,6 +77,7 @@ class SalesInvoice(SellingController):
 		if not self.is_pos:
 			self.so_dn_required()
 
+		self.set_title()
 		self.validate_proj_cust()
 		self.validate_pos_return()
 		self.validate_with_previous_doc()
@@ -370,6 +371,9 @@ class SalesInvoice(SellingController):
 				(not self.project and not data.sales_invoice) or \
 				(not sales_invoice and data.sales_invoice == self.name):
 				data.sales_invoice = sales_invoice
+
+	def set_title(self):
+		self.title = self.customer
 
 	def on_update(self):
 		self.set_paid_amount()

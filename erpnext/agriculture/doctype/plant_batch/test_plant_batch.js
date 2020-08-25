@@ -15,6 +15,7 @@ QUnit.test("test: Plant Batch", function (assert) {
 			{ title: 'Basil from seed 2017' },
 			{ strain: 'Basil from seed' },
 			{ start_date: '2017-11-11' },
+			{ location: 'Basil Farm'},
 			{ cycle_type: 'Less than a year' }
 		]),
 		() => assert.equal(cur_frm.doc.name, 'Basil from seed 2017'),

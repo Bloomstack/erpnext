@@ -3,7 +3,7 @@
 
 from __future__ import unicode_literals
 
-from six import string_types, text_type
+from six import text_type
 
 import frappe
 from frappe import _
@@ -339,11 +339,59 @@ def validate_serial_no_with_batch(serial_nos, item_code):
 
 
 @frappe.whitelist()
-def save_thc_cbd(batch_no, thc, cbd):
-	doc = frappe.get_doc('Batch', batch_no)
-	doc.thc = thc
-	doc.cbd = cbd
-	doc.save()
+def update_batch_doc(batch_no, qi_name, item_code):
+	batch_data = get_batch_fields(batch_no) or frappe._dict()
+	quality_data = get_qi_fields(qi_name) or frappe._dict()
+	compliance_data = get_ci_fields(item_code) or frappe._dict()
+	readings_data = get_readings_for_qi(qi_name) or frappe._dict()
+
+	frappe.db.set_value("Batch", batch_no, {
+		"thc": quality_data.thc,
+		"cbd": quality_data.cbd,
+		"sticker_details": frappe.render_template(
+			"templates/includes/sticker_order_material_request.html", dict(
+				quality_data=quality_data,
+				compliance_data=compliance_data,
+				readings_data=readings_data,
+				batch_data=batch_data)
+		)
+	})
+
+
+def get_batch_fields(batch_no):
+	return frappe.db.get_value("Batch", batch_no, [
+		"manufacturing_date",
+		"harvest_date",
+		"packaged_date",
+	], as_dict=1)
+
+
+def get_qi_fields(qi_name):
+	return frappe.db.get_value("Quality Inspection", qi_name, [
+		"thc",
+		"cbd",
+		"testing_lab",
+		"testing_result_link",
+		"package_tag",
+		"testing_date",
+		"manufacturer_name",
+		"manufacturer_website",
+		"qty",
+		"uom",
+		"strain_notes",
+		"verified_by",
+	], as_dict=1)
+
+
+def get_ci_fields(item_code):
+	return frappe.db.get_value("Compliance Item", item_code, "strain_type", as_dict=1)
+
+
+def get_readings_for_qi(qi_name):
+	readings = frappe.get_all("Quality Inspection Reading",
+		filters={"parent": qi_name}, fields=["specification", "reading_1"])
+	readings_info = {reading.specification: reading.reading_1 for reading in readings}
+	return readings_info
 
 
 @frappe.whitelist(allow_guest=True)
@@ -366,7 +414,7 @@ def get_active_batch(item_code):
 				"certificate_of_analysis": "/files/coa.pdf"
 			}
 	"""
-	
+
 	fields = ["name", "item", "item_name", "stock_uom", "thc", "cbd", "certificate_of_analysis"]
 	active_batch = frappe.get_all("Batch", filters={"item": item_code, "display_on_website": 1}, fields=fields)
 	active_batch = active_batch[0] if active_batch else {}

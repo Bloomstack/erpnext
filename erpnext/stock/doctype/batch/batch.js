@@ -10,7 +10,7 @@ frappe.ui.form.on('Batch', {
 					'is_stock_item': 1,
 					'has_batch_no': 1
 				}
-			}
+			};
 		}
 	},
 	refresh: (frm) => {
@@ -22,8 +22,19 @@ frappe.ui.form.on('Batch', {
 				frappe.set_route("query-report", "Stock Ledger");
 			});
 			frm.trigger('make_dashboard');
+			frm.add_custom_button(__('Material Request'), () => {
+				frm.trigger("make_material_request");
+			}, __("Create"));
+			this.frm.page.set_inner_btn_group_as_primary(__('Create'));
 		}
 	},
+	make_material_request: function (frm) {
+		frappe.model.open_mapped_doc({
+			method: "erpnext.stock.doctype.material_request.material_request.make_material_request",
+			frm: frm
+		});
+	},
+
 	item: (frm) => {
 		// frappe.db.get_value('Item', {name: frm.doc.item}, 'has_expiry_date', (r) => {
 		// 	frm.toggle_reqd('expiry_date', r.has_expiry_date);

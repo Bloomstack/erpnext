@@ -6,11 +6,12 @@ def get_data():
 		'fieldname': 'prevdoc_docname',
 		'non_standard_fieldnames': {
 			'Supplier Quotation': 'opportunity',
-			'Quotation': 'opportunity'
+			'Quotation': 'opportunity',
+			'Investor': 'party_name'
 		},
 		'transactions': [
 			{
-				'items': ['Quotation', 'Supplier Quotation']
+				'items': ['Quotation', 'Supplier Quotation', 'Investor']
 			},
 		]
 	}

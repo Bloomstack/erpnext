@@ -1,0 +1,139 @@
+{
+ "allow_events_in_timeline": 1,
+ "allow_import": 1,
+ "allow_rename": 1,
+ "autoname": "field:investor_name",
+ "creation": "2020-08-12 00:06:53.393641",
+ "description": "Investor",
+ "doctype": "DocType",
+ "document_type": "Setup",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "investor_name",
+  "investor_from",
+  "column_break_3",
+  "party_name",
+  "address_contacts",
+  "address_html",
+  "column_break1",
+  "contact_html",
+  "sb_break",
+  "no_of_shares",
+  "column_break_9",
+  "money_invested",
+  "amended_from",
+  "image"
+ ],
+ "fields": [
+  {
+   "fieldname": "investor_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Name",
+   "unique": 1
+  },
+  {
+   "collapsible_depends_on": "eval:!doc.__islocal",
+   "fieldname": "address_contacts",
+   "fieldtype": "Section Break",
+   "label": "Address and Contact"
+  },
+  {
+   "fieldname": "address_html",
+   "fieldtype": "HTML",
+   "label": "Address HTML",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "contact_html",
+   "fieldtype": "HTML",
+   "label": "Contact HTML"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "sb_break",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "no_of_shares",
+   "fieldtype": "Int",
+   "label": "No. of Shares"
+  },
+  {
+   "fieldname": "money_invested",
+   "fieldtype": "Currency",
+   "label": "Money Invested"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Investor",
+   "print_hide": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_9",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "image",
+   "fieldtype": "Attach Image",
+   "hidden": 1,
+   "label": "Image",
+   "print_hide": 1
+  },
+  {
+   "bold": 1,
+   "fieldname": "investor_from",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Investor From",
+   "options": "DocType",
+   "reqd": 1
+  },
+  {
+   "fieldname": "party_name",
+   "fieldtype": "Dynamic Link",
+   "label": "Party Name",
+   "options": "investor_from"
+  },
+  {
+   "fieldname": "column_break_3",
+   "fieldtype": "Column Break"
+  }
+ ],
+ "icon": "fa fa-user",
+ "image_field": "image",
+ "modified": "2020-08-21 08:08:24.297827",
+ "modified_by": "Administrator",
+ "module": "CRM",
+ "name": "Investor",
+ "name_case": "Title Case",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "All",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "show_name_in_global_search": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "title_field": "investor_name",
+ "track_changes": 1
+}

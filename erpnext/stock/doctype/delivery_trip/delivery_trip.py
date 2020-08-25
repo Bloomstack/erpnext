@@ -8,9 +8,11 @@ import datetime
 
 import frappe
 from frappe import _
+from erpnext.accounts.doctype.payment_entry.payment_entry import get_payment_entry
+from erpnext.accounts.party import get_due_date
 from frappe.contacts.doctype.address.address import get_address_display
 from frappe.model.document import Document
-from frappe.utils import cint, get_datetime, get_link_to_form
+from frappe.utils import cint, get_datetime, get_link_to_form, flt
 
 
 class DeliveryTrip(Document):
@@ -88,6 +90,10 @@ class DeliveryTrip(Document):
 			for field, value in update_fields.items():
 				value = None if delete else value
 				setattr(note_doc, field, value)
+
+			if delete:
+				setattr(note_doc, "delivered", 0)
+				setattr(note_doc, "status", "To Deliver")
 
 			note_doc.flags.ignore_validate_update_after_submit = True
 			note_doc.save()
@@ -436,3 +442,100 @@ def get_driver_email(driver):
 	employee = frappe.db.get_value("Driver", driver, "employee")
 	email = frappe.db.get_value("Employee", employee, "prefered_email")
 	return {"email": email}
+
+@frappe.whitelist()
+def create_or_update_timesheet(trip, action, odometer_value=None):
+	delivery_trip = frappe.get_doc("Delivery Trip", trip)
+	time = frappe.utils.now()
+
+	def get_timesheet():
+		timesheet_list = frappe.get_all("Timesheet", filters={'docstatus': 0, 'delivery_trip': delivery_trip.name})
+		if timesheet_list:
+			return frappe.get_doc("Timesheet", timesheet_list[0].name)
+
+	if action == "start":
+		employee = frappe.get_value("Driver", delivery_trip.driver, "employee")
+		timesheet = frappe.new_doc("Timesheet")
+		timesheet.company = delivery_trip.company
+		timesheet.employee = employee
+		timesheet.delivery_trip = delivery_trip.name
+		timesheet.append("time_logs", {
+			"from_time": time,
+			"activity_type": frappe.db.get_single_value("Delivery Settings", "default_activity_type")
+		})
+		timesheet.save()
+
+		frappe.db.set_value("Delivery Trip", trip, "status", "In Transit", update_modified=False) # Because we can't status as allow on submit
+		frappe.db.set_value("Delivery Trip", trip, "odometer_start_value", odometer_value, update_modified=False)
+		frappe.db.set_value("Delivery Trip", trip, "odometer_start_time", time, update_modified=False)
+	elif action == "pause":
+		timesheet = get_timesheet()
+
+		if timesheet and len(timesheet.time_logs) > 0:
+			last_timelog = timesheet.time_logs[-1]
+
+			if last_timelog.activity_type == frappe.db.get_single_value("Delivery Settings", "default_activity_type"):
+				if last_timelog.from_time and not last_timelog.to_time:
+					last_timelog.to_time = time
+					timesheet.save()
+
+		frappe.db.set_value("Delivery Trip", trip, "status", "Paused", update_modified=False)
+	elif action == "continue":
+		timesheet = get_timesheet()
+
+		if timesheet and len(timesheet.time_logs) > 0:
+			last_timelog = timesheet.time_logs[-1]
+
+			if last_timelog.activity_type == frappe.db.get_single_value("Delivery Settings", "default_activity_type"):
+				if last_timelog.from_time and last_timelog.to_time:
+					timesheet.append("time_logs", {
+						"from_time": time,
+						"activity_type": frappe.db.get_single_value("Delivery Settings", "default_activity_type")
+					})
+					timesheet.save()
+
+		frappe.db.set_value("Delivery Trip", trip, "status", "In Transit", update_modified=False)
+	elif action == "end":
+		timesheet = get_timesheet()
+
+		if timesheet and len(timesheet.time_logs) > 0:
+			last_timelog = timesheet.time_logs[-1]
+
+			if last_timelog.activity_type == frappe.db.get_single_value("Delivery Settings", "default_activity_type"):
+				last_timelog.to_time = time
+				timesheet.save()
+				timesheet.submit()
+
+		frappe.db.set_value("Delivery Trip", trip, "status", "Completed", update_modified=False)
+		frappe.db.set_value("Delivery Trip", trip, "odometer_end_value", odometer_value, update_modified=False)
+		frappe.db.set_value("Delivery Trip", trip, "odometer_end_time", time, update_modified=False)
+
+		start_value = frappe.db.get_value("Delivery Trip", trip, "odometer_start_value")
+		frappe.db.set_value("Delivery Trip", trip, "actual_distance_travelled", flt(odometer_value) - start_value, update_modified=False)
+
+@frappe.whitelist()
+def make_payment_entry(payment_amount, sales_invoice):
+	payment_entry = get_payment_entry("Sales Invoice", sales_invoice, party_amount=flt(payment_amount))
+	payment_entry.paid_amount = payment_amount
+	payment_entry.reference_date = today()
+	payment_entry.reference_no = sales_invoice
+	payment_entry.flags.ignore_permissions = True
+	payment_entry.save()
+
+	return payment_entry.name
+
+@frappe.whitelist()
+def update_payment_due_date(sales_invoice):
+	invoice = frappe.get_doc("Sales Invoice", sales_invoice)
+
+	if not invoice.payment_terms_template:
+		return
+
+	due_date = get_due_date(invoice.posting_date, "Customer", invoice.customer, bill_date=frappe.utils.add_days(nowdate(), 7))
+
+	# Update due date in both parent and child documents
+	invoice.due_date = due_date
+	for term in invoice.payment_schedule:
+		term.due_date = due_date
+
+	invoice.save()
