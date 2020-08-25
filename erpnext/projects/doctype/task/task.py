@@ -37,14 +37,15 @@ class Task(NestedSet):
 
 	def before_save(self):
 		change_idx = False
-		parent_task = frappe.get_value("Task", filters={"name": self.name}, fieldname=["parent_task"])
+		parent_task = frappe.get_value("Task", self.name, "parent_task")
 		if parent_task and not self.parent_task:
-			dependent_task = frappe.get_value("Task", filters={"name": parent_task}, fieldname=["depends_on_tasks"])
+			dependent_task = frappe.get_value("Task", parent_task, "depends_on_tasks")
 			dependent_task_list = dependent_task.split(',')
 			for depended_task in dependent_task_list:
 				if depended_task:
-					dependent_task_name = frappe.get_value("Task Depends On", filters={"task": depended_task, "parent": parent_task}, fieldname=["name"])
-					dependent_task_idx = frappe.get_value("Task Depends On", filters={"task": depended_task, "parent": parent_task}, fieldname=["idx"])
+					dependent_task_name, dependent_task_idx = frappe.get_value("Task Depends On",
+						filters={"task": depended_task, "parent": parent_task},
+						fieldname=["name", "idx"])
 					if depended_task == self.name:
 						frappe.delete_doc('Task Depends On', dependent_task_name)
 						change_idx = True
