@@ -365,8 +365,12 @@ function hide_fields(doc) {
 	var parent_fields = ['due_date', 'is_opening', 'advances_section', 'from_date', 'to_date'];
 
 	if(cint(doc.is_paid) == 1) {
+		cur_frm.set_df_property('mode_of_payment', 'reqd', 1)
+		cur_frm.set_df_property('cash_bank_account', 'reqd', 1)
 		hide_field(parent_fields);
 	} else {
+		cur_frm.set_df_property('mode_of_payment', 'reqd', 0)
+		cur_frm.set_df_property('cash_bank_account', 'reqd', 0)
 		for (var i in parent_fields) {
 			var docfield = frappe.meta.docfield_map[doc.doctype][parent_fields[i]];
 			if(!docfield.hidden) unhide_field(parent_fields[i]);
