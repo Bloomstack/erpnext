@@ -8,24 +8,11 @@ frappe.ui.form.on("Quality Inspection", {
 		if (frm.doc.item_code) {
 			if (["Purchase Invoice", "Purchase Receipt"].includes(frm.doc.reference_type)) {
 				if (frm.doc.reference_name) {
-					frappe.call({
-						method: "erpnext.stock.doctype.quality_inspection.quality_inspection.get_purchase_item_details",
-						args: {
-							"doctype": frm.doc.reference_type,
-							"name": frm.doc.reference_name,
-							"item_code": frm.doc.item_code
-						},
+					frm.call({
+						method: "get_purchase_item_details",
+						doc: frm.doc,
 						callback: function (data) {
-							frm.set_value("uom", data.message.uom);
-							frm.set_value("qty", data.message.qty);
-							frm.set_value("manufacturer_name", data.message.supplier);
-
-							frappe.db.get_value("Supplier", { "supplier_name": data.message.supplier }, "website")
-								.then(supplier => {
-									if (supplier.message) {
-										frm.set_value("manufacturer_website", supplier.message.website);
-									}
-								});
+							refresh_field(["manufacturer_name", "manufacturer_website", "uom", "qty"])
 						}
 					})
 				}

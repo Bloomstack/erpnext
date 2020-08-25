@@ -75,6 +75,17 @@ class QualityInspection(Document):
 		if self.certificate_of_analysis:
 			frappe.db.set_value("Batch", self.batch_no, "certificate_of_analysis", self.certificate_of_analysis)
 
+	def get_purchase_item_details(self):
+		doc = frappe.get_doc(self.reference_type, self.reference_name)
+		for item in doc.items:
+			if item.item_code == self.item_code:
+				website = frappe.db.get_value("Supplier", doc.supplier, "website")
+				self.set("manufacturer_name", doc.supplier)
+				self.set("uom", item.uom)
+				self.set("qty", item.qty)
+				if website:
+					self.set("manufacturer_website", website)
+
 def item_query(doctype, txt, searchfield, start, page_len, filters):
 	if filters.get("from"):
 		from frappe.desk.reportview import get_match_cond
@@ -136,15 +147,3 @@ def make_quality_inspection(source_name, target_doc=None):
 	}, target_doc, postprocess)
 
 	return doc
-
-@frappe.whitelist()
-def get_purchase_item_details(doctype, name, item_code):
-	doc = frappe.get_doc(doctype, name)
-	for item in doc.items:
-		if item.item_code == item_code:
-			data = {
-				"supplier": doc.supplier,
-				"uom": item.uom,
-				"qty": item.qty
-			}
-			return data
