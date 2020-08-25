@@ -37,12 +37,13 @@ class PickList(Document):
 				continue
 			frappe.throw(_('For item {0} at row {1}, count of serial numbers does not match with the picked quantity')
 				.format(frappe.bold(item.item_code), frappe.bold(item.idx)))
+
 		self.set_picked_qty()
 
 	def validate_delivery_date(self):
 		order_delivery_dates = [frappe.db.get_value("Sales Order Item", location.get("sales_order_item"), "delivery_date")
 			for location in self.locations if location.get("sales_order_item")]
-		self.delivery_date = min(order_delivery_dates)		
+		self.delivery_date = min(order_delivery_dates)
 
 	def on_submit(self):
 		self.update_order_package_tag()
