@@ -12,7 +12,7 @@ frappe.ui.form.on("Quality Inspection", {
 						method: "get_purchase_item_details",
 						doc: frm.doc,
 						callback: function (data) {
-							refresh_field(["manufacturer_name", "manufacturer_website", "uom", "qty"])
+							refresh_field(["manufacturer_name", "manufacturer_website", "uom", "qty"]);
 						}
 					})
 				}
