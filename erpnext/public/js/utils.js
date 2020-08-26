@@ -749,6 +749,11 @@ $(document).on('app_ready', function() {
 											],
 											primary_action: function () {
 												const values = dialog.get_values().items;
+												values.forEach(item=>{
+													if(item.qty < item.sample_size) {
+														frappe.throw(__("Row #{0}: The sample size: {1} should be less than available qty: {2}", [item.idx, item.sample_size, item.qty]));
+													}
+												})
 												frappe.call({
 													method: "erpnext.stock.doctype.quality_inspection.quality_inspection.make_quality_inspections",
 													freeze: true,
