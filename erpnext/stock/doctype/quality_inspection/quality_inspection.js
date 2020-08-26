@@ -6,18 +6,6 @@ cur_frm.cscript.refresh = cur_frm.cscript.inspection_type;
 frappe.ui.form.on("Quality Inspection", {
 	item_code: function (frm) {
 		if (frm.doc.item_code) {
-			if (["Purchase Invoice", "Purchase Receipt"].includes(frm.doc.reference_type)) {
-				if (frm.doc.reference_name) {
-					frm.call({
-						method: "get_purchase_item_details",
-						doc: frm.doc,
-						callback: function (data) {
-							refresh_field(["manufacturer_name", "manufacturer_website", "uom", "qty"]);
-						}
-					})
-				}
-			}
-
 			frm.trigger("check_compliance_item");
 			frappe.db.get_value('Item', { name: frm.doc.item_code }, ['has_batch_no', 'has_serial_no'], (r) => {
 				frm.toggle_reqd("batch_no", r.has_batch_no);

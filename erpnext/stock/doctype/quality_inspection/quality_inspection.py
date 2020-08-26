@@ -14,6 +14,10 @@ class QualityInspection(Document):
 		if not self.readings and self.item_code:
 			self.get_item_specification_details()
 
+		if self.reference_type == "Purchase Invoice" or self.reference_type == "Purchase Receipt":
+			if self.reference_name:
+				self.get_purchase_item_details()
+
 	def get_item_specification_details(self):
 		if not self.quality_inspection_template:
 			self.quality_inspection_template = frappe.db.get_value('Item',
