@@ -365,3 +365,27 @@ def add_additional_uom_columns(columns, result, include_uom, conversion_factors)
 				row[data.converted_col] = flt(value_before_conversion) / conversion_factor
 
 		result[row_idx] = row
+
+@frappe.whitelist()
+def validate_quality_inspection_item(doc, items):
+	data = []
+	items = json.loads(items)
+	doc = json.loads(doc)
+	inspection_type_map = {
+		"Purchase Receipt": ["Incoming", "inspection_required_before_purchase"],
+		"Delivery Note": ["Outgoing", "inspection_required_before_delivery"],
+		"Stock Entry": ["In Process", "inspection_required_before_manufacturing"]
+	}
+
+	for item in items:
+		quality_inspection_item = frappe.db.get_value("Item", item.get("item_code"), inspection_type_map[doc.get("doctype")][1])
+		if quality_inspection_item:
+			data.append({
+				"docname": item.get("name"),
+				"reference_type": item.get("parenttype"),
+				"reference_name": item.get("parent"),
+				"item_code": item.get("item_code"),
+				"item_name": item.get("item_name"),
+				"inspection_type": inspection_type_map[doc.get("doctype")][0]
+			})
+	return data
