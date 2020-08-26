@@ -79,12 +79,10 @@ class QualityInspection(Document):
 		doc = frappe.get_doc(self.reference_type, self.reference_name)
 		for item in doc.items:
 			if item.item_code == self.item_code:
-				website = frappe.db.get_value("Supplier", doc.supplier, "website")
 				self.set("manufacturer_name", doc.supplier)
 				self.set("uom", item.uom)
 				self.set("qty", item.qty)
-				if website:
-					self.set("manufacturer_website", website)
+				self.set("manufacturer_website", frappe.db.get_value("Supplier", doc.supplier, "website"))
 
 def item_query(doctype, txt, searchfield, start, page_len, filters):
 	if filters.get("from"):
