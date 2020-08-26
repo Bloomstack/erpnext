@@ -15,7 +15,7 @@ class QualityInspection(Document):
 			self.get_item_specification_details()
 
 		if self.reference_type in ["Purchase Invoice", "Purchase Receipt"] and self.reference_name:
-				self.get_purchase_item_details()
+			self.get_purchase_item_details()
 
 	def get_item_specification_details(self):
 		if not self.quality_inspection_template:
