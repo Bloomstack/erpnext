@@ -3,9 +3,7 @@ from frappe import _
 
 def get_data():
 	return {
-		'heatmap': True,
-		'heatmap_message': _('This is based on the transaction of this Investor'),
-		'fieldname': 'name',
+		'fieldname': 'investor_name',
 		'non_standard_fieldnames': {
 			'Lead': 'lead_name',
 			'Opportunity': 'customer_name'
