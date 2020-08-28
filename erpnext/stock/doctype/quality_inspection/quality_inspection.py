@@ -42,7 +42,7 @@ class QualityInspection(Document):
 		template = ''
 		if not self.reference_type == "Job Card" and self.bom_no:
 			template = frappe.db.get_value('BOM', self.bom_no, 'quality_inspection_template')
-		elif self.refernce_type == "Job Card" and self.job_card:
+		elif self.reference_type == "Job Card" and self.job_card:
 			template = frappe.db.get_value('Job Card', self.job_card, 'quality_inspection_template')
 
 		if not template:
@@ -171,7 +171,8 @@ def make_quality_inspection_from_job_card(source_name, target_doc=None):
 			"doctype": "Quality Inspection",
 			"field_map": {
 				"name": "reference_name",
-				"production_item":"item_code",
+				"doctype": "reference_type",
+				"production_item":"item_code"
 			},
 		}
 	}, target_doc, postprocess)

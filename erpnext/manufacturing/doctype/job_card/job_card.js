@@ -44,7 +44,8 @@ frappe.ui.form.on('Job Card', {
 	make_quality_inspection: function(frm) {
 		frappe.model.open_mapped_doc({
 			method: "erpnext.stock.doctype.quality_inspection.quality_inspection.make_quality_inspection_from_job_card",
-			frm: frm
+			frm: frm,
+			run_link_triggers: true
 		})
 	},
 	bom_no: (frm) => {
