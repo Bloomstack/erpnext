@@ -147,13 +147,14 @@ def make_quality_inspection(source_name, target_doc=None):
 
 	return doc
 
+
 @frappe.whitelist()
 def make_quality_inspections(items):
 	items = json.loads(items)
 	quality_inspections = []
+
 	for item in items:
 		qi = frappe.new_doc("Quality Inspection")
-
 		qi.update({
 			"inspection_type": item.get("inspection_type"),
 			"reference_type": item.get("reference_type"),
@@ -165,5 +166,7 @@ def make_quality_inspections(items):
 			"inspection_by": "Internal",
 			"quality_inspection_template": frappe.db.get_value('BOM', item.get("item_code"), 'quality_inspection_template')
 		}).save()
+
 		quality_inspections.append(frappe.utils.get_link_to_form("Quality Inspection", qi.name))
+
 	return quality_inspections
