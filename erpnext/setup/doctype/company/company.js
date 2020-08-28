@@ -284,13 +284,11 @@ var disbale_coa_fields = function(frm, bool=true) {
 }
 
 const show_indicator = function(frm) {
-	const info = frm.doc;
-	if(info.monthly_sales_target){
-		let percentage = 0;
-		frm.dashboard.add_indicator(__('This month: {0}', [format_currency(info.total_monthly_sales)]), 'green');
-		frm.dashboard.add_indicator(__('Goal: {0}', [format_currency(info.monthly_sales_target)]), 'blue');
-		if(info.monthly_sales_target > 0 && info.total_monthly_sales > 0)
-			percentage = Math.round((info.total_monthly_sales / info.monthly_sales_target) * 100);
+	frm.dashboard.add_indicator(__('This month: {0}', [format_currency(frm.doc.total_monthly_sales)]), 'green');
+
+	if (frm.doc.monthly_sales_target && frm.doc.monthly_sales_target > 0) {
+		frm.dashboard.add_indicator(__('Goal: {0}', [format_currency(frm.doc.monthly_sales_target)]), 'blue');
+		let percentage = Math.round((frm.doc.total_monthly_sales / frm.doc.monthly_sales_target) * 100);
 		if (percentage)
 			frm.dashboard.add_indicator(__('Completed: {0} %', [percentage]), 'green');
 	}
