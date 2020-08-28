@@ -60,6 +60,7 @@ frappe.ui.form.on("Company", {
 			frm.doc.abbr && frm.set_df_property("abbr", "read_only", 1);
 			frm.set_df_property("parent_company", "read_only", 1);
 			disbale_coa_fields(frm);
+			show_indicator(frm);
 		}
 
 		frm.toggle_display('address_html', !frm.doc.__islocal);
@@ -282,3 +283,13 @@ var disbale_coa_fields = function(frm, bool=true) {
 	frm.set_df_property("existing_company", "read_only", bool);
 }
 
+var show_indicator = function(frm) {
+	var info = frm.doc;
+	var percentage = 0;
+	frm.dashboard.add_indicator(__('This month: {0}', [format_currency(info.total_monthly_sales)]), 'green');
+	frm.dashboard.add_indicator(__('Goal: {0}', [format_currency(info.monthly_sales_target)]), 'blue');
+	if(info.monthly_sales_target > 0 && info.total_monthly_sales > 0)
+		percentage = Math.round((info.total_monthly_sales / info.monthly_sales_target) * 100);
+	if (percentage)
+		frm.dashboard.add_indicator(__('Completed: {0} %', [percentage]), 'green');
+}
