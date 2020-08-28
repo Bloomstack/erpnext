@@ -2,12 +2,10 @@
 # License: GNU General Public License v3. See license.txt
 
 from __future__ import unicode_literals
-import frappe, erpnext
+import frappe
 from erpnext import get_company_currency, get_default_company
-from erpnext.accounts.report.utils import get_currency
 from frappe.utils import getdate, cstr, flt
 from frappe import _, _dict
-from erpnext.accounts.utils import get_account_currency
 from erpnext.accounts.doctype.accounting_dimension.accounting_dimension import get_accounting_dimensions, get_dimension_with_children
 from collections import OrderedDict
 from erpnext.accounts.report.general_ledger.general_ledger import validate_party, set_account_currency, get_totals_dict, get_balance
