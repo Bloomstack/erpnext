@@ -386,6 +386,7 @@ def validate_quality_inspection_item(doc, items):
 				"reference_name": item.get("parent"),
 				"item_code": item.get("item_code"),
 				"item_name": item.get("item_name"),
+				"batch_no": item.get('batch_no'),
 				"qty": item.get("qty"),
 				"inspection_type": inspection_type_map[doc.get("doctype")][0]
 			})

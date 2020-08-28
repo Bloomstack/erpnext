@@ -148,18 +148,6 @@ def make_quality_inspection(source_name, target_doc=None):
 	return doc
 
 @frappe.whitelist()
-def get_purchase_item_details(doctype, name, item_code):
-	doc = frappe.get_doc(doctype, name)
-	for item in doc.items:
-		if item.item_code == item_code:
-			data = {
-				"supplier": doc.supplier,
-				"uom": item.uom,
-				"qty": item.qty
-			}
-			return data
-
-@frappe.whitelist()
 def make_quality_inspections(items):
 	items = json.loads(items)
 	quality_inspections = []
