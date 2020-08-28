@@ -69,6 +69,7 @@ def make_sales_and_purchase_tax_templates(accounts, template_name=None):
 	for account in accounts:
 		sales_tax_template['taxes'].append({
 			"category": "Total",
+			"add_deduct_tax": "Add",
 			"charge_type": "On Net Total",
 			"account_head": account.name,
 			"description": "{0} @ {1}".format(account.account_name, account.tax_rate),
