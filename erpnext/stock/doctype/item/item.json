@@ -1,5 +1,4 @@
 {
- "actions": [],
  "allow_guest_to_view": 1,
  "allow_import": 1,
  "allow_rename": 1,
@@ -1065,9 +1064,8 @@
  "icon": "fa fa-tag",
  "idx": 2,
  "image_field": "image",
- "links": [],
  "max_attachments": 1,
- "modified": "2020-07-22 04:52:56.418021",
+ "modified": "2020-08-28 02:56:08.776776",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Item",
