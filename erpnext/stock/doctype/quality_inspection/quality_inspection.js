@@ -69,8 +69,8 @@ frappe.ui.form.on("Quality Inspection", {
 
 // item code based on GRN/DN
 cur_frm.fields_dict['item_code'].get_query = function (doc, cdt, cdn) {
-	const doctype = (doc.reference_type == "Stock Entry") ?
-		"Stock Entry Detail" : doc.reference_type + " Item";
+	const doctype = (doc.reference_type == "Stock Entry") ? "Stock Entry Detail"
+	: (doc.reference_type == "Job Card") ? "Job Card" : doc.reference_type + " Item";
 
 	if (doc.reference_type && doc.reference_name) {
 		return {
