@@ -40,10 +40,10 @@ class QualityInspection(Document):
 
 	def get_quality_inspection_template(self):
 		template = ''
-		if not self.reference_type == "Job Card" and self.bom_no:
-			template = frappe.db.get_value('BOM', self.bom_no, 'quality_inspection_template')
-		elif self.reference_type == "Job Card" and self.job_card:
+		if self.reference_type == "Job Card" and self.job_card:
 			template = frappe.db.get_value('Job Card', self.job_card, 'quality_inspection_template')
+		elif self.bom_no:
+			template = frappe.db.get_value('BOM', self.bom_no, 'quality_inspection_template')
 
 		if not template:
 			template = frappe.db.get_value('BOM', self.item_code, 'quality_inspection_template')
@@ -73,7 +73,7 @@ class QualityInspection(Document):
 			doctype = 'Job Card'
 
 		if self.reference_type and self.reference_name:
-			if not doctype == "Job Card":
+			if doctype != "Job Card":
 				frappe.db.sql("""update `tab{child_doc}` t1, `tab{parent_doc}` t2
 					set t1.quality_inspection = %s, t2.modified = %s
 					where t1.parent = %s and t1.item_code = %s and t1.parent = t2.name"""
