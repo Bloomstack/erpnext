@@ -30,8 +30,8 @@
   "reference_doctype",
   "reference_name",
   "certificate_of_analysis",
-  "sticker_details_sb",
-  "sticker_details",
+  "label_details_sb",
+  "label_details",
   "section_break_7",
   "description"
  ],
@@ -204,13 +204,13 @@
   },
   {
    "collapsible": 1,
-   "fieldname": "sticker_details_sb",
+   "fieldname": "label_details_sb",
    "fieldtype": "Section Break"
   },
   {
-   "fieldname": "sticker_details",
+   "fieldname": "label_details",
    "fieldtype": "Long Text",
-   "label": "Sticker Details",
+   "label": "Label Details",
    "read_only": 1
   }
  ],
@@ -218,7 +218,7 @@
  "idx": 1,
  "image_field": "image",
  "max_attachments": 5,
- "modified": "2020-08-19 05:53:06.438191",
+ "modified": "2020-09-01 02:27:03.853936",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Batch",
