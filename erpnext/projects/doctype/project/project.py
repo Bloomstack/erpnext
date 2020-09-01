@@ -13,6 +13,7 @@ from erpnext.controllers.queries import get_filters_cond
 from frappe.desk.reportview import get_match_cond
 from erpnext.hr.doctype.daily_work_summary.daily_work_summary import get_users_email
 from erpnext.hr.doctype.holiday_list.holiday_list import is_holiday
+from frappe.desk.form.assign_to import add
 from frappe.model.document import Document
 
 class Project(Document):
@@ -56,7 +57,7 @@ class Project(Document):
 
 			# create tasks from template
 			for task in template.tasks:
-				frappe.get_doc(dict(
+				task_doc = frappe.get_doc(dict(
 					doctype = 'Task',
 					subject = task.subject,
 					project = self.name,
@@ -66,6 +67,13 @@ class Project(Document):
 					description = task.description,
 					task_weight = task.task_weight
 				)).insert()
+				if task.assigned_user:
+					args = {
+						'doctype': 'Task',
+						'name': task_doc.name,
+						'assign_to' : task.assigned_user,
+					}
+					add(args)
 
 	def is_row_updated(self, row, existing_task_data, fields):
 		if self.get("__islocal") or not existing_task_data: return True
