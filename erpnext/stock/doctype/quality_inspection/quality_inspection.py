@@ -118,6 +118,7 @@ def item_query(doctype, txt, searchfield, start, page_len, filters):
 
 		if filters.get('from') in ['Supplier Quotation Item']:
 			qi_condition = ""
+
 		if filters.get('from') not in ['Job Card']:
 			return frappe.db.sql(""" select item_code from `tab{doc}`
 				where parent=%(parent)s and docstatus < 2 and item_code like %(txt)s
@@ -128,12 +129,12 @@ def item_query(doctype, txt, searchfield, start, page_len, filters):
 				{'parent': filters.get('parent'), 'txt': "%%%s%%" % txt})
 		else:
 			return frappe.db.sql(""" select production_item from `tab{doc}`
-				where docstatus < 2 and production_item like %(txt)s
+				where name = %(parent)s and docstatus < 2 and production_item like %(txt)s
 				{qi_condition} {cond} {mcond}
 				order by production_item limit {start}, {page_len}""".format(doc=filters.get('from'),
 				cond = cond, mcond = mcond, start = start,
 				page_len = page_len, qi_condition = qi_condition),
-				{'txt': "%%%s%%" % txt})
+				{'parent': filters.get('parent'), 'txt': "%%%s%%" % txt})
 
 def quality_inspection_query(doctype, txt, searchfield, start, page_len, filters):
 	return frappe.get_all('Quality Inspection',
