@@ -78,7 +78,6 @@ cur_frm.fields_dict['item_code'].get_query = function (doc, cdt, cdn) {
 		doctype = doc.reference_type + " Item";
 	}
 
-	console.log("doctype", doctype)
 	if (doc.reference_type && doc.reference_name) {
 		return {
 			query: "erpnext.stock.doctype.quality_inspection.quality_inspection.item_query",
