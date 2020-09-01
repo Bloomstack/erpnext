@@ -107,7 +107,7 @@ frappe.ui.form.on("Customer", {
 		let days_of_week = moment.weekdays()
 		days_of_week.forEach(day => {
 			let html = `
-				<div class="col-sm-3">
+				<div class="col-sm-2" >
 					<div class="checkbox">
 						<label><input type="checkbox" day="%(day)s" value="%(day)s"/>\%(day)s</label>
 					</div>
@@ -202,6 +202,6 @@ frappe.ui.form.on("Customer", {
 			}
 		});
 		frm.set_value("delivery_days", days_selected.toString())
-		
+
 	}
 });

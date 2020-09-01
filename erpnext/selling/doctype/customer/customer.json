@@ -58,6 +58,7 @@
   "delivery_start_time",
   "column_break_42",
   "delivery_end_time",
+  "delivery_days_section",
   "delivery_days_html",
   "delivery_days",
   "credit_limit_section",
@@ -543,12 +544,17 @@
    "fieldname": "delivery_days_html",
    "fieldtype": "HTML",
    "label": "Days of the week"
+  },
+  {
+   "fieldname": "delivery_days_section",
+   "fieldtype": "Section Break",
+   "label": "Delivery Days"
   }
  ],
  "icon": "fa fa-user",
  "idx": 363,
  "image_field": "image",
- "modified": "2020-08-24 07:09:48.663696",
+ "modified": "2020-08-31 05:45:22.578947",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Customer",
