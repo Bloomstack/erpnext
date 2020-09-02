@@ -9,6 +9,7 @@ from datetime import date
 from six import iteritems
 from erpnext.regional.doctype.gstr_3b_report.gstr_3b_report import get_period
 from erpnext.regional.india.utils import get_gst_accounts
+from erpnext import get_company_currency
 
 def execute(filters=None):
 	return Gstr1Report(filters).run()
@@ -18,6 +19,7 @@ class Gstr1Report(object):
 		self.filters = frappe._dict(filters or {})
 		self.columns = []
 		self.data = []
+		self.company_currency = get_company_currency(filters["company"])
 		self.doctype = "Sales Invoice"
 		self.tax_doctype = "Sales Taxes and Charges"
 		self.select_columns = """
@@ -98,6 +100,7 @@ class Gstr1Report(object):
 					for item_code, net_amount in self.invoice_items.get(inv).items() if item_code in items])
 				row["cess_amount"] += flt(self.invoice_cess.get(inv), 2)
 				row["type"] = "E" if ecommerce_gstin else "OE"
+				row["currency"] = self.company_currency
 
 		for key, value in iteritems(b2cs_output):
 			self.data.append(value)
@@ -282,7 +285,14 @@ class Gstr1Report(object):
 				"fieldname": "taxable_value",
 				"label": "Taxable Value",
 				"fieldtype": "Currency",
+				"options": "currency",
 				"width": 100
+			},
+			{
+				"label":_("Currency"),
+				"fieldname":"currency",
+				"fieldtype":"Data",
+				"hidden" : 1
 			}
 		]
 		self.other_columns = []
@@ -318,6 +328,7 @@ class Gstr1Report(object):
 					"fieldname": "invoice_value",
 					"label": "Invoice Value",
 					"fieldtype": "Currency",
+					"options": "currency",
 					"width":100
 				},
 				{
@@ -348,6 +359,7 @@ class Gstr1Report(object):
 						"fieldname": "cess_amount",
 						"label": "Cess Amount",
 						"fieldtype": "Currency",
+						"options": "currency",
 						"width": 100
 					}
 				]
@@ -371,6 +383,7 @@ class Gstr1Report(object):
 					"fieldname": "invoice_value",
 					"label": "Invoice Value",
 					"fieldtype": "Currency",
+					"options": "currency",
 					"width": 100
 				},
 				{
@@ -391,6 +404,7 @@ class Gstr1Report(object):
 						"fieldname": "cess_amount",
 						"label": "Cess Amount",
 						"fieldtype": "Currency",
+						"options": "currency",
 						"width": 100
 					}
 				]
@@ -444,6 +458,7 @@ class Gstr1Report(object):
 					"fieldname": "invoice_value",
 					"label": "Invoice Value",
 					"fieldtype": "Currency",
+					"options": "currency",
 					"width": 120
 				}
 			]
@@ -452,6 +467,7 @@ class Gstr1Report(object):
 						"fieldname": "cess_amount",
 						"label": "Cess Amount",
 						"fieldtype": "Currency",
+						"options": "currency",
 						"width": 100
 				},
 				{
@@ -487,6 +503,7 @@ class Gstr1Report(object):
 						"fieldname": "cess_amount",
 						"label": "Cess Amount",
 						"fieldtype": "Currency",
+						"options": "currency",
 						"width": 100
 				},
 				{
@@ -521,6 +538,7 @@ class Gstr1Report(object):
 					"fieldname": "invoice_value",
 					"label": "Invoice Value",
 					"fieldtype": "Currency",
+					"options": "currency",
 					"width": 120
 				},
 				{

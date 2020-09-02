@@ -28,8 +28,9 @@ class PlantBatch(Document):
 
 	def create_plant_batch_project(self):
 		strain = frappe.get_doc('Strain', self.strain)
-		self.project = create_project(self.title, self.start_date, strain.period)
-		create_tasks(strain.cultivation_task, self.project, self.start_date)
+		if strain.cultivation_task:
+			self.project = create_project(self.title, self.start_date, strain.period)
+			create_tasks(strain.cultivation_task, self.project, self.start_date)
 
 	def reload_linked_analysis(self):
 		linked_doctypes = ['Soil Texture', 'Soil Analysis', 'Plant Analysis']
@@ -39,10 +40,7 @@ class PlantBatch(Document):
 		for doctype in linked_doctypes:
 			output[doctype] = frappe.get_all(doctype, fields=required_fields)
 
-		output['Location'] = []
-
-		for location in self.linked_location:
-			output['Location'].append(frappe.get_doc('Location', location.location))
+		output['Location'] = frappe.get_doc('Location', self.location)
 
 		frappe.publish_realtime("List of Linked Docs",
 								output, user=frappe.session.user)

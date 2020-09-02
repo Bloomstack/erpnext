@@ -1,0 +1,33 @@
+<div class="tax-break-up" style="overflow-x: auto;">
+	<table class="table table-bordered table-hover">
+		<tbody>
+			{% for field, value in batch_data.items() %}
+			<tr>
+				<td>{{ frappe.get_meta("Batch").get_label(field) }}</td>
+				<td>{{ value or "--"}}</td>
+			</tr>
+			{% endfor %}
+
+			{% for field, value in compliance_data.items() %}
+			<tr>
+				<td>{{ frappe.get_meta("Compliance Item").get_label(field) }}</td>
+				<td>{{ value or "--"}}</td>
+			</tr>
+			{% endfor %}
+
+			{% for field, value in readings_data.items() %}
+			<tr>
+				<td>{{ field }}</td>
+				<td>{{ value or "--" }}</td>
+			</tr>
+			{% endfor %}
+
+			{% for field, value in quality_data.items() %}
+			<tr>
+				<td>{{ frappe.get_meta("Quality Inspection").get_label(field) }}</td>
+				<td>{{ value or "--" }}</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+</div>

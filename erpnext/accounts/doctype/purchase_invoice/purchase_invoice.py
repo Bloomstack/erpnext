@@ -56,11 +56,12 @@ class PurchaseInvoice(BuyingController):
 		if not self.on_hold:
 			self.release_date = ''
 
-
 	def invoice_is_blocked(self):
 		return self.on_hold and (not self.release_date or self.release_date > getdate(nowdate()))
 
 	def validate(self):
+		self.set_title()
+
 		if not self.is_opening:
 			self.is_opening = 'No'
 
@@ -102,6 +103,9 @@ class PurchaseInvoice(BuyingController):
 		self.set_status()
 		self.validate_purchase_receipt_if_update_stock()
 		validate_inter_company_party(self.doctype, self.supplier, self.company, self.inter_company_invoice_reference)
+
+	def set_title(self):
+		self.title = self.supplier
 
 	def validate_release_date(self):
 		if self.release_date and getdate(nowdate()) >= getdate(self.release_date):

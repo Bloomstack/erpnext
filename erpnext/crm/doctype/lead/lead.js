@@ -9,7 +9,8 @@ erpnext.LeadController = frappe.ui.form.Controller.extend({
 		this.frm.make_methods = {
 			'Customer': this.make_customer,
 			'Quotation': this.make_quotation,
-			'Opportunity': this.make_opportunity
+			'Opportunity': this.make_opportunity,
+			'Investor': this.make_investor
 		};
 
 		this.frm.toggle_reqd("lead_name", !this.frm.doc.organization_lead);
@@ -38,6 +39,7 @@ erpnext.LeadController = frappe.ui.form.Controller.extend({
 			this.frm.add_custom_button(__("Customer"), this.make_customer, __("Create"));
 			this.frm.add_custom_button(__("Opportunity"), this.make_opportunity, __("Create"));
 			this.frm.add_custom_button(__("Quotation"), this.make_quotation, __("Create"));
+			this.frm.add_custom_button(__("Investor"), this.make_investor, __("Create"));
 		}
 
 		if (!this.frm.is_new()) {
@@ -45,6 +47,13 @@ erpnext.LeadController = frappe.ui.form.Controller.extend({
 		} else {
 			frappe.contacts.clear_address_and_contact(this.frm);
 		}
+	},
+
+	make_investor: function(){
+		frappe.model.open_mapped_doc({
+			method: "erpnext.crm.doctype.lead.lead.make_investor",
+			frm: cur_frm
+		})
 	},
 
 	make_customer: function () {

@@ -38,6 +38,7 @@
   "job_applicant",
   "scheduled_confirmation_date",
   "final_confirmation_date",
+  "job_offer",
   "col_break_22",
   "contract_end_date",
   "notice_number_of_days",
@@ -777,12 +778,18 @@
    "fieldtype": "Link",
    "label": "Leave Approver",
    "options": "User"
+  },
+  {
+   "fieldname": "job_offer",
+   "fieldtype": "Link",
+   "label": "Job Offer",
+   "options": "Job Offer"
   }
  ],
  "icon": "fa fa-user",
  "idx": 24,
  "image_field": "image",
- "modified": "2020-01-09 04:23:55.611366",
+ "modified": "2020-08-23 11:09:44.852180",
  "modified_by": "Administrator",
  "module": "HR",
  "name": "Employee",

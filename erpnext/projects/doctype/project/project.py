@@ -5,6 +5,7 @@ from __future__ import unicode_literals
 import frappe
 from frappe import _
 from six import iteritems
+import copy
 from email_reply_parser import EmailReplyParser
 from frappe.utils import (flt, getdate, get_url, now,
 	nowtime, get_time, today, get_datetime, add_days)
@@ -338,6 +339,8 @@ def create_duplicate_project(prev_doc, project_name):
 	project.name = project_name
 	project.project_template = ''
 	project.project_name = project_name
+	project.status = 'Open'
+	project.percent_complete = 0
 	project.insert()
 
 	# fetch all the task linked with the old project
@@ -346,13 +349,42 @@ def create_duplicate_project(prev_doc, project_name):
 	}, fields=['name'])
 
 	# Create duplicate task for all the task
+	new_task_list = []
 	for task in task_list:
 		task = frappe.get_doc('Task', task)
 		new_task = frappe.copy_doc(task)
 		new_task.project = project.name
+		new_task.parent_task = None
+		new_task.depends_on = None
+		new_task.status = 'Open'
+		new_task.completed_by = ''
+		new_task.progress = 0
 		new_task.insert()
+		task_dict = {
+			'previous_task_name':task.name,
+			'new_task_name':new_task.name,
+		}
+		new_task_list.append(task_dict)
+
+	handle_task_linking(new_task_list)
 
 	project.db_set('project_template', prev_doc.get('project_template'))
+
+def handle_task_linking(new_task_list):
+	for task in new_task_list:
+		old_task = frappe.get_doc('Task', task['previous_task_name'])
+		new_task = frappe.get_doc('Task', task['new_task_name'])
+		if old_task.parent_task:
+			for item in new_task_list:
+				if old_task.parent_task == item['previous_task_name']:
+					new_task.parent_task = item['new_task_name']
+		if old_task.depends_on:
+			new_task.depends_on = copy.deepcopy(old_task.depends_on)
+			for sub_task in (new_task.depends_on):
+				for item in new_task_list:
+					if sub_task.task == item['previous_task_name']:
+						sub_task.task = item['new_task_name']
+		new_task.save()
 
 def get_projects_for_collect_progress(frequency, fields):
 	fields.extend(["name"])

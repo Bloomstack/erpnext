@@ -313,8 +313,20 @@ def get_data():
 					"is_query_report": True,
 					"name": "Sales Partners Commission",
 					"doctype": "Customer"
-				}
+				},
+				{
+					"type": "report",
+					"is_query_report": True,
+					"name": "Customer-wise Total Sales and Expenses",
+					"doctype": "Customer"
+				},
+				{
+					"type": "report",
+					"is_query_report": True,
+					"name": "Unmet Customer Sales Targets",
+					"doctype": "Customer"
+				},
 			]
 		},
-		
+
 	]

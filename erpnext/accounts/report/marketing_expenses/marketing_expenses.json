@@ -1,0 +1,28 @@
+{
+ "add_total_row": 1,
+ "creation": "2020-08-08 20:17:15.211118",
+ "disable_prepared_report": 0,
+ "disabled": 0,
+ "docstatus": 0,
+ "doctype": "Report",
+ "idx": 0,
+ "is_standard": "Yes",
+ "modified": "2020-08-17 02:49:30.638694",
+ "modified_by": "Administrator",
+ "module": "Accounts",
+ "name": "Marketing Expenses",
+ "owner": "Administrator",
+ "prepared_report": 0,
+ "query": "SELECT\n    name as \"ID:Link/Sales Invoice:150\",\n    posting_date as \"Posting Date:Date:100\",\n    customer as \"Customer:Link/Customer:150\",\n    company as \"Company:Link/Company:150\",\n    discount_amount as \"Marketing Expense:Currency:150\",\n    status as \"Status:Data:100\"\nFROM\n    `tabSales Invoice`\nWHERE\n    order_type = \"Marketing\"\n    AND company = %(company)s\n    AND posting_date BETWEEN %(from_date)s AND %(to_date)s\n",
+ "ref_doctype": "Sales Invoice",
+ "report_name": "Marketing Expenses",
+ "report_type": "Query Report",
+ "roles": [
+  {
+   "role": "Accounts Manager"
+  },
+  {
+   "role": "Accounts User"
+  }
+ ]
+}

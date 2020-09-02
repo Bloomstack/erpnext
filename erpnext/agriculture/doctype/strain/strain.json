@@ -149,8 +149,7 @@
    "fieldname": "cultivation_task",
    "fieldtype": "Table",
    "label": "Cultivation Task",
-   "options": "Cultivation Task",
-   "reqd": 1
+   "options": "Cultivation Task"
   },
   {
    "fieldname": "strain_id",
@@ -179,7 +178,7 @@
    "fieldtype": "Section Break"
   }
  ],
- "modified": "2020-07-20 05:10:15.066703",
+ "modified": "2020-08-25 07:14:38.767079",
  "modified_by": "Administrator",
  "module": "Agriculture",
  "name": "Strain",

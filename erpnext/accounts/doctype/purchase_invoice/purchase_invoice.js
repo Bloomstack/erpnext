@@ -308,6 +308,8 @@ erpnext.accounts.PurchaseInvoice = erpnext.buying.BuyingController.extend({
 	},
 
 	is_paid: function() {
+		this.frm.toggle_reqd('mode_of_payment', cint(this.frm.doc.is_paid) === 1);
+		this.frm.toggle_reqd('cash_bank_account', cint(this.frm.doc.is_paid) === 1);
 		hide_fields(this.frm.doc);
 		if(cint(this.frm.doc.is_paid)) {
 			this.frm.set_value("allocate_advances_automatically", 0);

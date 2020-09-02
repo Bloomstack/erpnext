@@ -44,6 +44,7 @@ class PurchaseOrder(BuyingController):
 
 		self.set_status()
 
+		self.set_title()
 		self.validate_supplier()
 		self.validate_schedule_date()
 		validate_for_items(self)
@@ -86,6 +87,12 @@ class PurchaseOrder(BuyingController):
 
 		if cint(frappe.db.get_single_value('Buying Settings', 'maintain_same_rate')):
 			self.validate_rate_with_reference_doc([["Supplier Quotation", "supplier_quotation", "supplier_quotation_item"]])
+
+	def on_update(self):
+		pass
+
+	def set_title(self):
+		self.title = self.supplier
 
 	def validate_supplier(self):
 		prevent_po = frappe.db.get_value("Supplier", self.supplier, 'prevent_pos')
@@ -258,9 +265,6 @@ class PurchaseOrder(BuyingController):
 		self.update_blanket_order()
 
 		unlink_inter_company_doc(self.doctype, self.name, self.inter_company_order_reference)
-
-	def on_update(self):
-		pass
 
 	def update_status_updater(self):
 		self.status_updater.append({

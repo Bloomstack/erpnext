@@ -1105,6 +1105,7 @@ class StockEntry(StockController):
 
 			if remaining_qty > flt(self.fg_completed_qty):
 				if self.purpose == "Material Consumption for Manufacture":
+					required_qty  = flt(frappe.db.get_value("Work Order Item", {'parent': self.work_order, 'item_code': item_code}, "required_qty"))
 					if transferred_qty >= required_qty:
 						transferred_qty = (required_qty / material_transferred_qty) * flt(self.fg_completed_qty)
 					else:

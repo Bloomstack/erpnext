@@ -6,34 +6,6 @@ cur_frm.cscript.refresh = cur_frm.cscript.inspection_type;
 frappe.ui.form.on("Quality Inspection", {
 	item_code: function (frm) {
 		if (frm.doc.item_code) {
-			if (["Purchase Invoice", "Purchase Receipt"].includes(frm.doc.reference_type)) {
-				if (frm.doc.reference_name) {
-					frappe.call({
-						method: "erpnext.stock.doctype.quality_inspection.quality_inspection.get_purchase_item_details",
-						args: {
-							"doctype": frm.doc.reference_type,
-							"name": frm.doc.reference_name,
-							"item_code": frm.doc.item_code
-						},
-						callback: function (data) {
-							frm.set_value("uom", data.message.uom);
-							frm.set_value("qty", data.message.qty);
-							frm.set_value("manufacturer_name", data.message.supplier);
-							frm.refresh();
-
-							frappe.db.get_value("Supplier", { "supplier_name": data.message.supplier }, "website")
-								.then(supplier => {
-									if (supplier.message) {
-										frm.set_value("manufacturer_website", supplier.message.website);
-										frm.refresh();
-									}
-								})
-						}
-					})
-				}
-			}
-
-			frm.trigger("check_compliance_item");
 			frappe.db.get_value('Item', { name: frm.doc.item_code }, ['has_batch_no', 'has_serial_no'], (r) => {
 				frm.toggle_reqd("batch_no", r.has_batch_no);
 				frm.toggle_reqd("item_serial_no", r.has_serial_no);
@@ -60,30 +32,23 @@ frappe.ui.form.on("Quality Inspection", {
 			});
 		}
 	},
-	on_submit: function (frm) {
-		if (frm.doc.thc || frm.doc.cbd) {
-			frappe.call({
-				method: "erpnext.stock.doctype.batch.batch.save_thc_cbd",
-				args: {
-					"batch_no": frm.doc.batch_no,
-					"thc": frm.doc.thc,
-					"cbd": frm.doc.cbd
-				},
-			})
-		}
-	},
-	onload: (frm) => {
-		if (frm.doc.item_code) {
-			frm.trigger("check_compliance_item");
-		}
-	},
 	check_compliance_item: function (frm) {
 		frappe.db.get_value("Compliance Item", { "item_code": frm.doc.item_code }, "item_code")
 			.then(item => {
-				frm.toggle_reqd('batch_no', !!item.message);
+				frm.toggle_reqd('certificate_of_analysis', !!item.message);
 				frm.toggle_display('thc', !!item.message);
 				frm.toggle_display('cbd', !!item.message);
 			})
+	},
+	inspection_by: function (frm) {
+		if (frm.doc.item_code && frm.doc.inspection_by == "External") {
+			frm.trigger("check_compliance_item");
+		}
+		else {
+			frm.toggle_reqd('certificate_of_analysis', 0);
+			frm.toggle_display('thc', 0);
+			frm.toggle_display('cbd', 0);
+		}
 	},
 	package_tag: (frm) => {
 		// set package tag from the selected batch, even if empty
@@ -92,13 +57,19 @@ frappe.ui.form.on("Quality Inspection", {
 				frm.set_value("batch_no", r.batch_no);
 			});
 		}
-	}
+	},
 })
 
 // item code based on GRN/DN
 cur_frm.fields_dict['item_code'].get_query = function (doc, cdt, cdn) {
-	const doctype = (doc.reference_type == "Stock Entry") ?
-		"Stock Entry Detail" : doc.reference_type + " Item";
+	let doctype;
+	if (doc.reference_type == "Stock Entry") {
+		doctype = "Stock Entry Detail";
+	} else if (doc.reference_type == "Job Card") {
+		doctype = "Job Card";
+	} else {
+		doctype = doc.reference_type + " Item";
+	}
 
 	if (doc.reference_type && doc.reference_name) {
 		return {
@@ -118,9 +89,9 @@ cur_frm.fields_dict['item_serial_no'].get_query = function (doc, cdt, cdn) {
 	if (doc.item_code) {
 		filters = {
 			'item_code': doc.item_code
-		}
+		};
 	}
-	return { filters: filters }
+	return { filters: filters };
 }
 
 cur_frm.set_query("batch_no", function (doc) {

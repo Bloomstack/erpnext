@@ -30,6 +30,8 @@
   "reference_doctype",
   "reference_name",
   "certificate_of_analysis",
+  "label_details_sb",
+  "label_details",
   "section_break_7",
   "description"
  ],
@@ -199,13 +201,24 @@
    "fieldtype": "Attach",
    "label": " Certificate of Analysis",
    "read_only": 1
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "label_details_sb",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "label_details",
+   "fieldtype": "Long Text",
+   "label": "Label Details",
+   "read_only": 1
   }
  ],
  "icon": "fa fa-archive",
  "idx": 1,
  "image_field": "image",
  "max_attachments": 5,
- "modified": "2020-08-13 01:30:44.584458",
+ "modified": "2020-09-01 02:27:03.853936",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Batch",
@@ -222,6 +235,75 @@
    "report": 1,
    "role": "Item Manager",
    "set_user_permissions": 1,
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Sales Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Sales User",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Purchase Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Purchase User",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Stock Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Stock User",
    "share": 1,
    "write": 1
   }

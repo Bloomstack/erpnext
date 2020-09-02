@@ -5,7 +5,7 @@
         <p>ERP made simple</p>
     </p>
 
-[![Build Status](https://travis-ci.com/frappe/erpnext.svg)](https://travis-ci.com/frappe/erpnext)
+[![Build Status](https://travis-ci.com/DigiThinkIT/erpnext.svg)](https://travis-ci.com/DigiThinkIT/erpnext)
 [![Open Source Helpers](https://www.codetriage.com/frappe/erpnext/badges/users.svg)](https://www.codetriage.com/frappe/erpnext)
 [![Coverage Status](https://coveralls.io/repos/github/frappe/erpnext/badge.svg?branch=develop)](https://coveralls.io/github/frappe/erpnext?branch=develop)
 
@@ -24,7 +24,7 @@ ERPNext is built on the [Frappe](https://github.com/frappe/frappe) Framework, a 
 
 ### Full Install
 
-The Easy Way: our install script for bench will install all dependencies (e.g. MariaDB). See https://github.com/frappe/bench for more details.
+The Easy Way: our install script for bench will install all dependencies (e.g. MariaDB). See https://github.com/DigiThinkIT/bench for more details.
 
 New passwords will be created for the ERPNext "Administrator" user, the MariaDB root user, and the frappe user (the script displays the passwords and saves them to ~/frappe_passwords.txt).
 
