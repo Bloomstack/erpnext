@@ -368,6 +368,14 @@ def create_duplicate_project(prev_doc, project_name):
 		new_task.completed_by = ''
 		new_task.progress = 0
 		new_task.insert()
+		assigned_user = frappe.db.get_value("ToDo", filters={'reference_name' : task.name}, fieldname="owner")
+		if assigned_user:
+			args = {
+				'doctype': 'Task',
+				'name': new_task.name,
+				'assign_to' : assigned_user,
+			}
+			add(args)
 		task_dict = {
 			'previous_task_name':task.name,
 			'new_task_name':new_task.name,
