@@ -476,7 +476,7 @@
   },
   {
    "collapsible": 1,
-   "collapsible_depends_on": "eval:doc.request_for!='Labes'",
+   "collapsible_depends_on": "eval:doc.request_for!='Labels'",
    "fieldname": "sb_batch",
    "fieldtype": "Section Break",
    "label": "Batch Details"
@@ -490,7 +490,7 @@
  ],
  "idx": 1,
  "istable": 1,
- "modified": "2020-09-01 02:35:35.908571",
+ "modified": "2020-09-01 03:21:37.597686",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Material Request Item",

@@ -3,6 +3,7 @@ import frappe
 from erpnext.stock.doctype.batch.batch import update_batch_doc
 
 def execute():
+	frappe.db.sql("alter table `tabBatch` drop column sticker_details")
 	frappe.reload_doc("stock", "doctype", "quality_inspection")
 	frappe.reload_doc("stock", "doctype", "batch")
 	quality_inspection = frappe.get_all("Quality Inspection", filters={"docstatus": 1}, fields=["name", "item_code", "batch_no", "thc", "cbd"])
