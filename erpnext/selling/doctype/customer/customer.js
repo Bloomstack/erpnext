@@ -105,16 +105,30 @@ frappe.ui.form.on("Customer", {
 
 	onload: function(frm) {
 		let days_of_week = moment.weekdays()
-		days_of_week.forEach(day => {
-			let html = `
-				<div class="col-sm-2" >
-					<div class="checkbox">
-						<label><input type="checkbox" day="%(day)s" value="%(day)s"/>\%(day)s</label>
+		if(frm.doc.delivery_days) {
+			frm.doc.delivery_days.split(",").forEach(day => {
+				let html = `
+					<div class="col-sm-2" >
+						<div class="checkbox">
+							<label><input type="checkbox" day="%(day)s" value="%(day)s"/ checked>\%(day)s</label>
+						</div>
 					</div>
-				</div>
-			`
-			$(repl(html, {day: day})).appendTo(frm.fields_dict.delivery_days_html.wrapper);
-		});
+				`
+				$(repl(html, {day: day})).appendTo(frm.fields_dict.delivery_days_html.wrapper);
+			});
+		}
+		else {
+			days_of_week.forEach(day => {
+				let html = `
+					<div class="col-sm-2" >
+						<div class="checkbox">
+							<label><input type="checkbox" day="%(day)s" value="%(day)s"/>\%(day)s</label>
+						</div>
+					</div>
+				`
+				$(repl(html, {day: day})).appendTo(frm.fields_dict.delivery_days_html.wrapper);
+			});
+		}
 	},
 
 	refresh: function(frm) {
