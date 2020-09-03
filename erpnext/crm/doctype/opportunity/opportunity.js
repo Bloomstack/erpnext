@@ -61,7 +61,7 @@ frappe.ui.form.on("Opportunity", {
 				});
 			}
 
-			if (frm.perm[0].write && frm.doc.docstatus == 0) {
+			if (frm.perm[0].write && frm.doc.docstatus === 0) {
 				if (frm.doc.status === "Open") {
 					frm.add_custom_button(__("Close"), function () {
 						frm.set_value("status", "Closed");
@@ -120,7 +120,7 @@ frappe.ui.form.on("Opportunity", {
 	with_items: function(frm) {
 		frm.trigger("toggle_fee_display");
 		frm.toggle_reqd("items", !!frm.doc.with_items);
-		if (frm.doc.with_items == 1) {
+		if (frm.doc.with_items === 1) {
 			frm.trigger("calculate_amount");
 		} else {
 			frm.trigger("calculate_opportunity_cost");
