@@ -123,8 +123,8 @@ frappe.ui.form.on("BOM", {
 
 	item: function(frm) {
 		if (frm.doc.item) {
-			frappe.db.get_value('Item', {name: frm.doc.item}, ['inspection_required_before_manufacturing','quality_inspection_template'], (r) => {
-				frm.set_value("inspection_required", r.inspection_required_before_manufacturing);
+			frappe.db.get_value('Item', {name: frm.doc.item}, ['inspection_required_during_manufacturing','quality_inspection_template'], (r) => {
+				frm.set_value("inspection_required", r.inspection_required_during_manufacturing);
 				frm.set_value("quality_inspection_template", r.quality_inspection_template);
 			});
 		}
