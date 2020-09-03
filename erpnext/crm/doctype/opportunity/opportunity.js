@@ -132,7 +132,7 @@ frappe.ui.form.on("Opportunity", {
 	},
 
 	calculate_opportunity_cost: function (frm) {
-		let amount = frm.doc.service_fee + frm.doc.software_fee;
+		let amount = flt(frm.doc.service_fee) + flt(frm.doc.software_fee);
 		frm.set_value("opportunity_amount", amount);
 	},
 
