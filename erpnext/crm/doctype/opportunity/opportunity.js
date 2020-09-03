@@ -61,14 +61,11 @@ frappe.ui.form.on("Opportunity", {
 
 	with_items: function(frm) {
 		frm.trigger('toggle_mandatory');
-		if(frm.doc.with_items == 1) {
-			frm.toggle_display('service_fee', 0);
-			frm.toggle_display('software_fee', 0);
+		frm.toggle_display('service_fee', !frm.doc.with_items);
+		frm.toggle_display('software_fee', !frm.doc.with_items);
+		if (frm.doc.with_items == 1) {
 			frm.trigger("calculate_amount");
-		}
-		else {
-			frm.toggle_display('service_fee', 1);
-			frm.toggle_display('software_fee', 1);
+		} else {
 			frm.trigger("calculate_opportunity_cost");
 		}
 	},
