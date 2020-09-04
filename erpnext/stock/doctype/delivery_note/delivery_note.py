@@ -193,10 +193,12 @@ class DeliveryNote(SellingController):
 					d.actual_qty = flt(bin_qty.actual_qty)
 					d.projected_qty = flt(bin_qty.projected_qty)
 
-	def on_submit(self):
-		self.validate_packed_qty()
+	def before_submit(self):
 		if frappe.db.get_single_value("Accounts Settings", "auto_create_invoice_on_delivery_note") == "Submit":
 			self.make_sales_invoice_for_delivery()
+
+	def on_submit(self):
+		self.validate_packed_qty()
 
 		# Check for Approving Authority
 		frappe.get_doc('Authorization Control').validate_approving_authority(self.doctype, self.company, self.base_grand_total, self)
