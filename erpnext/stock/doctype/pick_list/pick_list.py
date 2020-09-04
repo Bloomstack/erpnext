@@ -117,6 +117,9 @@ class PickList(Document):
 		for row in self.locations:
 			if not row.picked_qty:
 				row.picked_qty = row.stock_qty
+			
+			if row.picked_qty > row.stock_qty:
+				frappe.throw(_("Row {0} : Picked Qty should be less or equal to Stock Qty").format(row.idx))
 
 	def update_order_package_tag(self, reset=False):
 		package_tags = [item.package_tag for item in self.locations if item.package_tag]
