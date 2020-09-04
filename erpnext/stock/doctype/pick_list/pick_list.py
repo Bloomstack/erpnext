@@ -48,9 +48,10 @@ class PickList(Document):
 
 	def validate_stock_qty(self):
 		for row in self.locations:
-			order_qty = frappe.db.get_value("Sales Order Item", row.get("sales_order_item"), "qty")
-			if row.qty > order_qty:
-				frappe.throw(_("Row #{0}: Picked List item {1} Qty should be less than or equal to Order Qty {2}").format(frappe.bold(row.idx), frappe.bold(row.item_code), frappe.bold(order_qty)))
+			if row.get("sales_order_item"):
+				order_qty = frappe.db.get_value("Sales Order Item", row.get("sales_order_item"), "qty")
+				if row.qty > order_qty:
+					frappe.throw(_("Row #{0}: Picked List item {1} Qty should be less than or equal to Order Qty {2}").format(frappe.bold(row.idx), frappe.bold(row.item_code), frappe.bold(order_qty)))
 
 	def on_submit(self):
 		self.update_order_package_tag()
@@ -126,7 +127,7 @@ class PickList(Document):
 				row.picked_qty = row.stock_qty
 			
 			if row.picked_qty > row.stock_qty:
-				frappe.throw(_("Row #{0} : Picked Qty should be less or equal to Stock Qty").format(frappe.bold(row.idx), frappe.bold(row.stock_qty)))
+				frappe.throw(_("Row #{0} : Picked Qty should be less or equal to Stock Qty {1}").format(frappe.bold(row.idx), frappe.bold(row.stock_qty)))
 
 	def update_order_package_tag(self, reset=False):
 		package_tags = [item.package_tag for item in self.locations if item.package_tag]
