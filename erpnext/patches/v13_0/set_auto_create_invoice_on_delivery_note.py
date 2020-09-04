@@ -1,7 +1,7 @@
 import frappe
 
 def execute():
-	frappe.reload_doc("stock", "doctype", "accounts_settings")
+	frappe.reload_doc("accounts", "doctype", "accounts_settings")
 
 	create_invoice_on_submit = frappe.db.get_single_value("Accounts Settings", "auto_create_invoice_on_delivery_note_submit")
 	if create_invoice_on_submit:
