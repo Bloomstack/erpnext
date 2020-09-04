@@ -31,7 +31,8 @@ def execute(filters=None):
 
 	validate_filters(filters, account_details)
 
-	validate_party(filters)
+	if filters.get('Party_type'):
+		validate_party(filters)
 
 	filters = set_account_currency(filters)
 
