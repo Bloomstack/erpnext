@@ -550,10 +550,10 @@ def make_material_request(source_name, target_doc=None):
 		},
 	}, target_doc)
 
-	target_doc.request_for = "Stickers"
-	batch_fields = frappe.get_value("Batch", source_name, ["item", "item_name", "sticker_details"],as_dict=1)
+	target_doc.request_for = "Labels"
+	batch_fields = frappe.get_value("Batch", source_name, ["item", "item_name", "label_details"],as_dict=1)
 	target_doc.append("items", {
-		"sticker_details": batch_fields.sticker_details,
+		"label_details": batch_fields.label_details,
 		"batch_item": batch_fields.item,
 		"batch_item_name": batch_fields.item_name,
 		"batch_no": source_name

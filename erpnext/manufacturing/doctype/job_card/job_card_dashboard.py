@@ -8,6 +8,10 @@ def get_data():
 			{
 				'label': _('Transactions'),
 				'items': ['Material Request', 'Stock Entry']
+			},
+			{
+				'label': _('Quality'),
+				'items': ['Quality Inspection']
 			}
 		]
 	}

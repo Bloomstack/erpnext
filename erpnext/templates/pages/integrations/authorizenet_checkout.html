@@ -4,10 +4,7 @@
 
 {% block script %}
 <script>
-	{
-		%
-		include "templates/includes/integrations/authorizenet_checkout.js" %
-	}
+	{% include "templates/includes/integrations/authorizenet_checkout.js" %}
 </script>
 <script>
 	context = "{{ payment_context }}"

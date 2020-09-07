@@ -312,7 +312,7 @@ frappe.ui.form.on('Material Request', {
 	},
 
 	request_for: function (frm) {
-		if (frm.doc.request_for === "Stickers") {
+		if (frm.doc.request_for === "Labels") {
 			frm.fields_dict.items.grid.set_column_disp("section_break_label", true);
 		}
 		else{

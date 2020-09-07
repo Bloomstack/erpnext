@@ -10,10 +10,13 @@
   "bom_no",
   "workstation",
   "operation",
+  "inspection_required",
+  "quality_inspection_template",
   "column_break_4",
   "posting_date",
   "company",
   "remarks",
+  "quality_inspection",
   "production_section",
   "production_item",
   "item_name",
@@ -300,10 +303,30 @@
    "fieldtype": "Table",
    "label": "Scrap Items",
    "options": "BOM Scrap Item"
+  },
+  {
+   "depends_on": "inspection_required",
+   "fieldname": "quality_inspection_template",
+   "fieldtype": "Link",
+   "label": "Quality Inspection Template",
+   "options": "Quality Inspection Template"
+  },
+  {
+   "default": "0",
+   "fieldname": "inspection_required",
+   "fieldtype": "Check",
+   "label": "Quality Inspection Required"
+  },
+  {
+   "fieldname": "quality_inspection",
+   "fieldtype": "Link",
+   "label": "Quality Inspection",
+   "options": "Quality Inspection",
+   "read_only": 1
   }
  ],
  "is_submittable": 1,
- "modified": "2020-07-30 03:11:12.040459",
+ "modified": "2020-08-24 09:54:30.599633",
  "modified_by": "Administrator",
  "module": "Manufacturing",
  "name": "Job Card",

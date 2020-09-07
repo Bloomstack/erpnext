@@ -40,7 +40,9 @@ class QualityInspection(Document):
 
 	def get_quality_inspection_template(self):
 		template = ''
-		if self.bom_no:
+		if self.reference_type == "Job Card" and self.job_card:
+			template = frappe.db.get_value('Job Card', self.job_card, 'quality_inspection_template')
+		elif self.bom_no:
 			template = frappe.db.get_value('BOM', self.bom_no, 'quality_inspection_template')
 
 		if not template:
@@ -67,13 +69,22 @@ class QualityInspection(Document):
 		doctype = self.reference_type + ' Item'
 		if self.reference_type == 'Stock Entry':
 			doctype = 'Stock Entry Detail'
+		elif self.reference_type == 'Job Card':
+			doctype = 'Job Card'
 
 		if self.reference_type and self.reference_name:
-			frappe.db.sql("""update `tab{child_doc}` t1, `tab{parent_doc}` t2
-				set t1.quality_inspection = %s, t2.modified = %s
-				where t1.parent = %s and t1.item_code = %s and t1.parent = t2.name"""
-				.format(parent_doc=self.reference_type, child_doc=doctype),
-				(quality_inspection, self.modified, self.reference_name, self.item_code))
+			if doctype != "Job Card":
+				frappe.db.sql("""update `tab{child_doc}` t1, `tab{parent_doc}` t2
+					set t1.quality_inspection = %s, t2.modified = %s
+					where t1.parent = %s and t1.item_code = %s and t1.parent = t2.name"""
+					.format(parent_doc=self.reference_type, child_doc=doctype),
+					(quality_inspection, self.modified, self.reference_name, self.item_code))
+			else:
+				frappe.db.sql("""update `tab{doctype}` t1
+					set t1.quality_inspection = %s
+					where t1.name = %s and t1.production_item = %s"""
+					.format(doctype=self.reference_type),
+					(quality_inspection, self.reference_name, self.item_code))
 
 	def set_batch_coa(self):
 		if self.certificate_of_analysis:
@@ -108,13 +119,22 @@ def item_query(doctype, txt, searchfield, start, page_len, filters):
 		if filters.get('from') in ['Supplier Quotation Item']:
 			qi_condition = ""
 
-		return frappe.db.sql(""" select item_code from `tab{doc}`
-			where parent=%(parent)s and docstatus < 2 and item_code like %(txt)s
-			{qi_condition} {cond} {mcond}
-			order by item_code limit {start}, {page_len}""".format(doc=filters.get('from'),
-			parent=filters.get('parent'), cond = cond, mcond = mcond, start = start,
-			page_len = page_len, qi_condition = qi_condition),
-			{'parent': filters.get('parent'), 'txt': "%%%s%%" % txt})
+		if filters.get('from') not in ['Job Card']:
+			return frappe.db.sql(""" select item_code from `tab{doc}`
+				where parent=%(parent)s and docstatus < 2 and item_code like %(txt)s
+				{qi_condition} {cond} {mcond}
+				order by item_code limit {start}, {page_len}""".format(doc=filters.get('from'),
+				parent=filters.get('parent'), cond = cond, mcond = mcond, start = start,
+				page_len = page_len, qi_condition = qi_condition),
+				{'parent': filters.get('parent'), 'txt': "%%%s%%" % txt})
+		else:
+			return frappe.db.sql(""" select production_item from `tab{doc}`
+				where name = %(parent)s and docstatus < 2 and production_item like %(txt)s
+				{qi_condition} {cond} {mcond}
+				order by production_item limit {start}, {page_len}""".format(doc=filters.get('from'),
+				cond = cond, mcond = mcond, start = start,
+				page_len = page_len, qi_condition = qi_condition),
+				{'parent': filters.get('parent'), 'txt': "%%%s%%" % txt})
 
 def quality_inspection_query(doctype, txt, searchfield, start, page_len, filters):
 	return frappe.get_all('Quality Inspection',
@@ -144,6 +164,24 @@ def make_quality_inspection(source_name, target_doc=None):
 				"item": "item_code",
 				"stock_uom": "uom",
 				"stock_qty": "qty"
+			},
+		}
+	}, target_doc, postprocess)
+
+	return doc
+
+@frappe.whitelist()
+def make_quality_inspection_from_job_card(source_name, target_doc=None):
+	def postprocess(source, doc):
+		doc.inspected_by = frappe.session.user
+		doc.get_quality_inspection_template()
+	doc = get_mapped_doc("Job Card", source_name, {
+		'Job Card': {
+			"doctype": "Quality Inspection",
+			"field_map": {
+				"name": "reference_name",
+				"doctype": "reference_type",
+				"production_item":"item_code"
 			},
 		}
 	}, target_doc, postprocess)
