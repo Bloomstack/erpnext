@@ -41,7 +41,7 @@
   "labels_needed",
   "unwind_direction",
   "column_break_label",
-  "sticker_details",
+  "label_details",
   "more_info",
   "lead_time_date",
   "sales_order",
@@ -475,22 +475,22 @@
    "read_only": 1
   },
   {
-   "fieldname": "sticker_details",
-   "fieldtype": "Long Text",
-   "label": "Sticker Details",
-   "read_only": 1
-  },
-  {
    "collapsible": 1,
-   "collapsible_depends_on": "eval:doc.request_for!='Stickers'",
+   "collapsible_depends_on": "eval:doc.request_for!='Labels'",
    "fieldname": "sb_batch",
    "fieldtype": "Section Break",
    "label": "Batch Details"
+  },
+  {
+   "fieldname": "label_details",
+   "fieldtype": "Long Text",
+   "label": "Label Print Details",
+   "read_only": 1
   }
  ],
  "idx": 1,
  "istable": 1,
- "modified": "2020-08-21 03:19:27.783433",
+ "modified": "2020-09-01 03:21:37.597686",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Material Request Item",

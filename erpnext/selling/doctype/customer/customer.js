@@ -122,6 +122,11 @@ frappe.ui.form.on("Customer", {
 					{party_type:'Customer', party:frm.doc.name});
 			});
 
+			frm.add_custom_button(__('Statement of Account'), function() {
+				frappe.set_route('query-report', 'Statement of Account',
+					{party_type:'Customer', party:frm.doc.name});
+			});
+
 			frm.add_custom_button(__('Accounts Receivable'), function() {
 				frappe.set_route('query-report', 'Accounts Receivable', {customer:frm.doc.name});
 			});

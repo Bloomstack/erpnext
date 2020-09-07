@@ -348,8 +348,8 @@ def update_batch_doc(batch_no, qi_name, item_code):
 	frappe.db.set_value("Batch", batch_no, {
 		"thc": quality_data.thc,
 		"cbd": quality_data.cbd,
-		"sticker_details": frappe.render_template(
-			"templates/includes/sticker_order_material_request.html", dict(
+		"label_details": frappe.render_template(
+			"templates/includes/label_order_material_request.html", dict(
 				quality_data=quality_data,
 				compliance_data=compliance_data,
 				readings_data=readings_data,

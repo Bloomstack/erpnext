@@ -689,6 +689,7 @@ erpnext.patches.v13_0.setup_remove_assignment_on_task
 erpnext.patches.v13_0.set_values_in_production_plan_items
 erpnext.patches.v13_0.set_values_in_pick_list
 erpnext.patches.v13_0.create_investor_opportunity_type
-erpnext.patches.v13_0.update_sticker_details_in_batch
+erpnext.patches.v13_0.update_label_details_in_batch
 erpnext.patches.v13_0.update_delivery_note_status
 erpnext.patches.v13_0.delete_old_agri_doctypes
+erpnext.patches.v13_0.update_item_master_doctype_field

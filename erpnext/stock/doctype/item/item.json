@@ -107,7 +107,7 @@
   "inspection_criteria",
   "inspection_required_before_purchase",
   "inspection_required_before_delivery",
-  "inspection_required_before_manufacturing",
+  "inspection_required_during_manufacturing",
   "quality_inspection_template",
   "manufacturing",
   "default_bom",
@@ -812,7 +812,7 @@
    "label": "Inspection Required before Delivery"
   },
   {
-   "depends_on": "eval:(doc.inspection_required_before_purchase || doc.inspection_required_before_delivery || doc.inspection_required_before_manufacturing)",
+   "depends_on": "eval:(doc.inspection_required_before_purchase || doc.inspection_required_before_delivery || doc.inspection_required_during_manufacturing)",
    "fieldname": "quality_inspection_template",
    "fieldtype": "Link",
    "label": "Quality Inspection Template",
@@ -1055,9 +1055,9 @@
   },
   {
    "default": "0",
-   "fieldname": "inspection_required_before_manufacturing",
+   "fieldname": "inspection_required_during_manufacturing",
    "fieldtype": "Check",
-   "label": "Inspection Required before Manufacturing"
+   "label": "Inspection Required during Manufacturing"
   }
  ],
  "has_web_view": 1,
@@ -1065,7 +1065,7 @@
  "idx": 2,
  "image_field": "image",
  "max_attachments": 1,
- "modified": "2020-08-28 02:56:08.776776",
+ "modified": "2020-09-02 04:31:46.879086",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Item",

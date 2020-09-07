@@ -277,13 +277,13 @@
    "fieldname": "request_for",
    "fieldtype": "Select",
    "label": "Request For",
-   "options": "\nStickers"
+   "options": "\nLabels"
   }
  ],
  "icon": "fa fa-ticket",
  "idx": 70,
  "is_submittable": 1,
- "modified": "2020-08-18 23:06:43.624872",
+ "modified": "2020-09-01 02:27:53.068464",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Material Request",

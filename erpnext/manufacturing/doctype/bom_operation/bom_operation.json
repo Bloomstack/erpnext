@@ -15,7 +15,9 @@
   "operating_cost",
   "base_hour_rate",
   "base_operating_cost",
-  "image"
+  "image",
+  "inspection_required",
+  "quality_inspection_template"
  ],
  "fields": [
   {
@@ -106,11 +108,24 @@
    "fieldname": "batch_size",
    "fieldtype": "Int",
    "label": "Batch Size"
+  },
+  {
+   "default": "0",
+   "fieldname": "inspection_required",
+   "fieldtype": "Check",
+   "label": "Quality Inspection Required"
+  },
+  {
+   "depends_on": "inspection_required",
+   "fieldname": "quality_inspection_template",
+   "fieldtype": "Link",
+   "label": "Quality Inspection Template",
+   "options": "Quality Inspection Template"
   }
  ],
  "idx": 1,
  "istable": 1,
- "modified": "2020-06-16 17:01:11.128420",
+ "modified": "2020-08-21 00:24:24.279770",
  "modified_by": "Administrator",
  "module": "Manufacturing",
  "name": "BOM Operation",

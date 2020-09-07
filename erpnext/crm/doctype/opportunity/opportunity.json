@@ -33,6 +33,8 @@
   "with_items",
   "column_break_17",
   "probability",
+  "service_fee",
+  "software_fee",
   "items_section",
   "items",
   "contact_info",
@@ -409,11 +411,25 @@
    "fieldtype": "Link",
    "label": "Converted By",
    "options": "User"
+  },
+  {
+   "default": "0",
+   "fieldname": "service_fee",
+   "fieldtype": "Currency",
+   "label": "Service Fee",
+   "options": "currency"
+  },
+  {
+   "default": "0",
+   "fieldname": "software_fee",
+   "fieldtype": "Currency",
+   "label": "Software Fee",
+   "options": "currency"
   }
  ],
  "icon": "fa fa-info-sign",
  "idx": 195,
- "modified": "2020-08-17 12:51:30.774480",
+ "modified": "2020-09-02 23:11:52.248057",
  "modified_by": "Administrator",
  "module": "CRM",
  "name": "Opportunity",
