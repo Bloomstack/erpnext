@@ -24,6 +24,7 @@
   "ip_address",
   "sb_contract",
   "contract_template",
+  "letter_head",
   "contract_terms",
   "sb_fulfilment",
   "requires_fulfilment",
@@ -243,11 +244,17 @@
    "fieldname": "authorised_by_section",
    "fieldtype": "Section Break",
    "label": "Authorised By"
+  },
+  {
+   "fieldname": "letter_head",
+   "fieldtype": "Link",
+   "label": "Letter Head",
+   "options": "Letter Head"
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-03-30 06:56:07.257932",
+ "modified": "2020-09-07 01:30:44.953395",
  "modified_by": "Administrator",
  "module": "CRM",
  "name": "Contract",
