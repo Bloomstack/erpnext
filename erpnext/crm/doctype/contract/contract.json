@@ -24,7 +24,6 @@
   "ip_address",
   "sb_contract",
   "contract_template",
-  "letter_head",
   "contract_terms",
   "sb_fulfilment",
   "requires_fulfilment",
@@ -35,6 +34,7 @@
   "signed_by_company",
   "sb_references",
   "document_type",
+  "letter_head",
   "cb_links",
   "document_name",
   "amended_from"
@@ -246,6 +246,7 @@
    "label": "Authorised By"
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "letter_head",
    "fieldtype": "Link",
    "label": "Letter Head",
@@ -254,7 +255,7 @@
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-09-07 01:30:44.953395",
+ "modified": "2020-09-07 03:55:18.798485",
  "modified_by": "Administrator",
  "module": "CRM",
  "name": "Contract",
