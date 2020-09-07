@@ -105,7 +105,14 @@ frappe.ui.form.on("Customer", {
 
 	onload: function(frm) {
 		let days_of_week = moment.weekdays()
+		let days_unselected = [];
 		if(frm.doc.delivery_days) {
+			for(let day of days_of_week) {
+				if(!frm.doc.delivery_days.split(",").includes(day)){
+					days_unselected.push(day)
+				}
+			}
+			console.log(days_unselected)
 			frm.doc.delivery_days.split(",").forEach(day => {
 				let html = `
 					<div class="col-sm-2" >
@@ -116,6 +123,16 @@ frappe.ui.form.on("Customer", {
 				`
 				$(repl(html, {day: day})).appendTo(frm.fields_dict.delivery_days_html.wrapper);
 			});
+			days_unselected.forEach(day =>{
+				let html = `
+					<div class="col-sm-2" >
+						<div class="checkbox">
+							<label><input type="checkbox" day="%(day)s" value="%(day)s"/>\%(day)s</label>
+						</div>
+					</div>
+				`
+				$(repl(html, {day: day})).appendTo(frm.fields_dict.delivery_days_html.wrapper);
+			})
 		}
 		else {
 			days_of_week.forEach(day => {
@@ -210,9 +227,13 @@ frappe.ui.form.on("Customer", {
 	},
 	before_save: function(frm) {
 		let days_selected = [];
+		let days_unselected = [];
 		$(frm.fields_dict.delivery_days_html.wrapper).find('input[type="checkbox"]').each(function(i, check) {
 			if($(check).is(":checked")) {
 				days_selected.push(this.value);
+			}
+			else {
+				days_unselected.push(this.value);
 			}
 		});
 		frm.set_value("delivery_days", days_selected.toString())
