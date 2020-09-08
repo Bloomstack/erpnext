@@ -105,7 +105,6 @@ frappe.ui.form.on("Customer", {
 
 	onload: function (frm) {
 		let days_of_week = moment.weekdays();
-		console.log(JSON.parse(frm.doc.delivery_days.split(",")))
 		let fields = [];
 		days_of_week.forEach(day => {
 			fields.push(
