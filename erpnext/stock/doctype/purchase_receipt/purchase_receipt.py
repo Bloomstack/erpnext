@@ -171,12 +171,7 @@ class PurchaseReceipt(BuyingController):
 		self.update_package_tag_batch()
 
 	def before_cancel(self):
-		for item in self.items:
-			if item.batch_no and item.package_tag:
-				frappe.db.set_value("Package Tag", item.package_tag, "item_code", None)
-				frappe.db.set_value("Package Tag", item.package_tag, "item_name", None)
-				frappe.db.set_value("Package Tag", item.package_tag, "item_group", None)
-				frappe.db.set_value("Package Tag", item.package_tag, "batch_no", None)
+		self.update_package_tag_batch(reset=True)
 
 	def check_next_docstatus(self):
 		submit_rv = frappe.db.sql("""select t1.name
@@ -469,13 +464,32 @@ class PurchaseReceipt(BuyingController):
 						item.idx, frappe.bold(item.package_tag), frappe.bold(batch_no)
 					)))
 
-	def update_package_tag_batch(self):
+	def update_package_tag_batch(self, reset=False):
 		for item in self.items:
-			if item.batch_no and item.package_tag:
-				frappe.db.set_value("Package Tag", item.package_tag, "item_code", item.item_code)
-				frappe.db.set_value("Package Tag", item.package_tag, "item_name", item.item_name)
-				frappe.db.set_value("Package Tag", item.package_tag, "batch_no", item.batch_no)
-				frappe.db.set_value("Package Tag", item.package_tag, "coa_batch_no", item.batch_no)
+			if not item.package_tag:
+				continue
+
+			package_tag = frappe.get_doc("Package Tag", item.package_tag)
+			if reset:
+				package_tag.update({
+					"item_code": None,
+					"item_name": None,
+					"item_group": None,
+					"batch_no": None,
+					"coa_batch_no": None
+				})
+			else:
+				package_tag.update({
+					"item_code": item.item_code,
+					"item_name": item.item_name,
+					"item_group": frappe.db.get_value("Item", item.item_code, "item_group")
+				})
+				if item.batch_no:
+					package_tag.update({
+						"batch_no": item.batch_no,
+						"coa_batch_no": item.batch_no
+					})
+			package_tag.save()
 
 	def validate_duplicate_package_tags(self):
 		package_tags = [item.package_tag for item in self.items if item.package_tag]
