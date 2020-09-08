@@ -83,6 +83,7 @@ class PurchaseReceipt(BuyingController):
 		self.validate_uom_is_integer("uom", ["qty", "received_qty"])
 		self.validate_uom_is_integer("stock_uom", "stock_qty")
 		self.validate_cwip_accounts()
+		self.validate_package_tag_batch()
 		self.validate_duplicate_package_tags()
 
 		self.check_on_hold_or_closed_status()
@@ -167,13 +168,7 @@ class PurchaseReceipt(BuyingController):
 		update_serial_nos_after_submit(self, "items")
 
 		self.make_gl_entries()
-
-		for item in self.items:
-			if item.batch_no and item.package_tag:
-				frappe.db.set_value("Package Tag", item.package_tag, "item_code", item.item_code)
-				frappe.db.set_value("Package Tag", item.package_tag, "batch_no", item.batch_no)
-
-		self.update_coa_batch_no()
+		self.update_package_tag_batch()
 
 	def before_cancel(self):
 		for item in self.items:
@@ -465,16 +460,28 @@ class PurchaseReceipt(BuyingController):
 
 		self.load_from_db()
 
+	def validate_package_tag_batch(self):
+		for item in self.items:
+			if item.batch_no and item.package_tag:
+				batch_no = frappe.db.get_value("Package Tag", item.package_tag, "batch_no")
+				if item.batch_no != batch_no:
+					frappe.throw(_("Row {0}: Package Tag {1} is already attached to Batch {2}".format(
+						item.idx, frappe.bold(item.package_tag), frappe.bold(batch_no)
+					)))
+
+	def update_package_tag_batch(self):
+		for item in self.items:
+			if item.batch_no and item.package_tag:
+				frappe.db.set_value("Package Tag", item.package_tag, "item_code", item.item_code)
+				frappe.db.set_value("Package Tag", item.package_tag, "item_name", item.item_name)
+				frappe.db.set_value("Package Tag", item.package_tag, "batch_no", item.batch_no)
+				frappe.db.set_value("Package Tag", item.package_tag, "coa_batch_no", item.batch_no)
+
 	def validate_duplicate_package_tags(self):
 		package_tags = [item.package_tag for item in self.items if item.package_tag]
 		if len(package_tags) != len(set(package_tags)):
 			duplicate_tags = list(set([tag for tag in package_tags if package_tags.count(tag) > 1]))
 			frappe.throw("Package Tag(s) {0} cannot be same for multiple items".format(", ".join(duplicate_tags)))
-
-	def update_coa_batch_no(self):
-		for item in self.items:
-			if item.package_tag and item.batch_no:
-				frappe.db.set_value("Package Tag", item.package_tag, "coa_batch_no", item.batch_no)
 
 
 def update_billed_amount_based_on_po(po_detail, update_modified=True):
