@@ -546,6 +546,7 @@
    "label": "Days of the week"
   },
   {
+   "collapsible": 1,
    "fieldname": "delivery_days_section",
    "fieldtype": "Section Break",
    "label": "Delivery Days"
@@ -554,7 +555,7 @@
  "icon": "fa fa-user",
  "idx": 363,
  "image_field": "image",
- "modified": "2020-08-31 05:45:22.578947",
+ "modified": "2020-09-08 01:00:08.123104",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Customer",

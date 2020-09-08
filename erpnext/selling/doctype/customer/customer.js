@@ -107,13 +107,11 @@ frappe.ui.form.on("Customer", {
 		let days_of_week = moment.weekdays();
 		let fields = [];
 		days_of_week.forEach(day => {
-			fields.push(
-				{
+			fields.push({
 					"label": __(day),
 					"value": day,
 					"checked": frm.doc.delivery_days ? JSON.parse(frm.doc.delivery_days).includes(day) : 0
-				}
-			)
+				})
 		});
 		frm.days_selected = frappe.ui.form.make_control({
 			parent: frm.get_field('delivery_days_html').wrapper,
@@ -125,7 +123,6 @@ frappe.ui.form.on("Customer", {
 			},
 			render_input: true
 		});
-		refresh_field();
 	},
 
 	refresh: function(frm) {
