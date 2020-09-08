@@ -111,7 +111,7 @@ frappe.ui.form.on("Customer", {
 				{
 					"label": __(day),
 					"value": day,
-					"checked": frm.doc.delivery_days ? JSON.parse(frm.doc.delivery_days.split(",")).includes(day) : 0
+					"checked": frm.doc.delivery_days ? JSON.parse(frm.doc.delivery_days).includes(day) : 0
 				}
 			)
 		});
