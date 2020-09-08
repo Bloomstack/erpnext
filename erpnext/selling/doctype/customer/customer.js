@@ -103,6 +103,28 @@ frappe.ui.form.on("Customer", {
 		}
 	},
 
+	onload: function (frm) {
+		let days_of_week = moment.weekdays();
+		let fields = [];
+		days_of_week.forEach(day => {
+			fields.push({
+				"label": __(day),
+				"value": day,
+				"checked": frm.doc.delivery_days ? JSON.parse(frm.doc.delivery_days).includes(day) : 0
+			})
+		});
+		frm.days_selected = frappe.ui.form.make_control({
+			parent: frm.get_field('delivery_days_html').wrapper,
+			df: {
+				fieldname: 'days_of_week',
+				fieldtype: 'MultiCheck',
+				columns: 4,
+				options: fields
+			},
+			render_input: true
+		});
+	},
+
 	refresh: function(frm) {
 		if(frappe.defaults.get_default("cust_master_name")!="Naming Series") {
 			frm.toggle_display("naming_series", false);
@@ -153,7 +175,9 @@ frappe.ui.form.on("Customer", {
 	},
 	validate: function(frm) {
 		if(frm.doc.lead_name) frappe.model.clear_doc("Lead", frm.doc.lead_name);
-
+		if(frm.days_selected) {
+			frm.set_value("delivery_days", JSON.stringify(frm.days_selected.get_value()));
+		}
 	},
 	make_dashboard_and_show_progress: function(frm) {
 		let bars = [];

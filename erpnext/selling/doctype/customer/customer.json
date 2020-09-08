@@ -1,5 +1,4 @@
 {
- "actions": [],
  "allow_events_in_timeline": 1,
  "allow_import": 1,
  "allow_rename": 1,
@@ -59,6 +58,9 @@
   "delivery_start_time",
   "column_break_42",
   "delivery_end_time",
+  "delivery_days_section",
+  "delivery_days_html",
+  "delivery_days",
   "credit_limit_section",
   "payment_terms",
   "credit_limits",
@@ -490,10 +492,6 @@
    "label": "Allow Sales Invoice Creation Without Delivery Note"
   },
   {
-   "fieldname": "column_break_22",
-   "fieldtype": "Column Break"
-  },
-  {
    "fieldname": "delivery_end_time",
    "fieldtype": "Time",
    "label": "Delivery End Time"
@@ -502,7 +500,7 @@
    "collapsible": 1,
    "fieldname": "delivery_window",
    "fieldtype": "Section Break",
-   "label": "Delivery Window"
+   "label": "Delivery Preferences"
   },
   {
    "fieldname": "delivery_start_time",
@@ -535,13 +533,29 @@
    "fieldname": "sales_target_sb",
    "fieldtype": "Section Break",
    "label": "Sales Target"
+  },
+  {
+   "fieldname": "delivery_days",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Delivery Days"
+  },
+  {
+   "fieldname": "delivery_days_html",
+   "fieldtype": "HTML",
+   "label": "Days of the week"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "delivery_days_section",
+   "fieldtype": "Section Break",
+   "label": "Delivery Days"
   }
  ],
  "icon": "fa fa-user",
  "idx": 363,
  "image_field": "image",
- "links": [],
- "modified": "2020-06-30 22:24:37.691545",
+ "modified": "2020-09-08 01:00:08.123104",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Customer",
