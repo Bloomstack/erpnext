@@ -104,17 +104,18 @@ frappe.ui.form.on("Customer", {
 	},
 
 	onload: function (frm) {
-		let days_of_week = moment.weekdays()
-		let fields = []
+		let days_of_week = moment.weekdays();
+		console.log(JSON.parse(frm.doc.delivery_days.split(",")))
+		let fields = [];
 		days_of_week.forEach(day => {
 			fields.push(
 				{
 					"label": __(day),
 					"value": day,
-					"checked": frm.doc.delivery_days ? frm.doc.delivery_days.split(",").includes(day) : 0
+					"checked": frm.doc.delivery_days ? JSON.parse(frm.doc.delivery_days.split(",")).includes(day) : 0
 				}
 			)
-		})
+		});
 		frm.days_selected = frappe.ui.form.make_control({
 			parent: frm.get_field('delivery_days_html').wrapper,
 			df: {
@@ -124,8 +125,8 @@ frappe.ui.form.on("Customer", {
 				options: fields
 			},
 			render_input: true
-		})
-		refresh_field()
+		});
+		refresh_field();
 	},
 
 	refresh: function(frm) {
@@ -174,7 +175,7 @@ frappe.ui.form.on("Customer", {
 	validate: function(frm) {
 		if(frm.doc.lead_name) frappe.model.clear_doc("Lead", frm.doc.lead_name);
 		if(frm.days_selected) {
-			frm.set_value("delivery_days", frm.days_selected.get_value().toString())
+			frm.set_value("delivery_days", JSON.stringify(frm.days_selected.get_value()));
 		}
 	},
 	make_dashboard_and_show_progress: function(frm) {
