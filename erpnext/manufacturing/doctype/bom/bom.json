@@ -1,5 +1,4 @@
 {
- "actions": [],
  "allow_import": 1,
  "creation": "2013-01-22 15:11:38",
  "doctype": "DocType",
@@ -504,14 +503,14 @@
  "idx": 1,
  "image_field": "image",
  "is_submittable": 1,
- "links": [],
- "modified": "2020-05-05 14:29:32.634952",
+ "modified": "2020-09-04 03:16:03.025152",
  "modified_by": "Administrator",
  "module": "Manufacturing",
  "name": "BOM",
  "owner": "Administrator",
  "permissions": [
   {
+   "amend": 1,
    "cancel": 1,
    "create": 1,
    "delete": 1,
@@ -525,6 +524,7 @@
    "write": 1
   },
   {
+   "amend": 1,
    "cancel": 1,
    "create": 1,
    "delete": 1,

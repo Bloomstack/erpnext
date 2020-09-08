@@ -34,6 +34,7 @@
   "signed_by_company",
   "sb_references",
   "document_type",
+  "letter_head",
   "cb_links",
   "document_name",
   "amended_from"
@@ -243,11 +244,18 @@
    "fieldname": "authorised_by_section",
    "fieldtype": "Section Break",
    "label": "Authorised By"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "letter_head",
+   "fieldtype": "Link",
+   "label": "Letter Head",
+   "options": "Letter Head"
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-03-30 06:56:07.257932",
+ "modified": "2020-09-07 03:55:18.798485",
  "modified_by": "Administrator",
  "module": "CRM",
  "name": "Contract",
