@@ -83,6 +83,7 @@ class PurchaseReceipt(BuyingController):
 		self.validate_uom_is_integer("uom", ["qty", "received_qty"])
 		self.validate_uom_is_integer("stock_uom", "stock_qty")
 		self.validate_cwip_accounts()
+		self.validate_duplicate_package_tags()
 
 		self.check_on_hold_or_closed_status()
 
@@ -142,9 +143,6 @@ class PurchaseReceipt(BuyingController):
 				and d.purchase_order not in check_list):
 				check_list.append(d.purchase_order)
 				check_on_hold_or_closed_status('Purchase Order', d.purchase_order)
-
-	def before_submit(self):
-		self.create_package_tag()
 
 	def on_submit(self):
 		super(PurchaseReceipt, self).on_submit()
@@ -467,25 +465,11 @@ class PurchaseReceipt(BuyingController):
 
 		self.load_from_db()
 
-	def create_package_tag(self):
+	def validate_duplicate_package_tags(self):
 		package_tags = [item.package_tag for item in self.items if item.package_tag]
-
 		if len(package_tags) != len(set(package_tags)):
 			duplicate_tags = list(set([tag for tag in package_tags if package_tags.count(tag) > 1]))
-			frappe.throw("Package Tag {0} cannot be same for multiple Purchase Receipt Item".format(", ".join(duplicate_tags)))
-
-		for item in self.items:
-			if item.package_tag:
-				package_tag = frappe.db.exists("Package Tag", {"package_tag": item.package_tag})
-				if package_tag:
-					frappe.throw("Row #{0}: Package Tag '{1}' already exists".format(item.idx, frappe.utils.get_link_to_form("Package Tag", package_tag)))
-				else:
-					doc = frappe.new_doc("Package Tag")
-					doc.update({
-						"package_tag": item.package_tag,
-						"item_code": item.item_code
-					})
-					doc.save()
+			frappe.throw("Package Tag(s) {0} cannot be same for multiple items".format(", ".join(duplicate_tags)))
 
 	def update_coa_batch_no(self):
 		for item in self.items:
