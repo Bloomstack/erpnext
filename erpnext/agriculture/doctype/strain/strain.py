@@ -6,6 +6,7 @@ import frappe
 from frappe import _
 from frappe.model.document import Document
 from frappe.model.mapper import get_mapped_doc
+from frappe.utils import cint
 
 
 class Strain(Document):
@@ -19,7 +20,7 @@ class Strain(Document):
 
 		# Verify that the strain period is correct
 		max_strain_period = max([task.end_day for task in self.cultivation_task], default=0)
-		self.period = max(self.period, max_strain_period)
+		self.period = max(cint(self.period), max_strain_period)
 
 		# Sort the strain tasks based on start days,
 		# maintaining the order for same-day tasks
