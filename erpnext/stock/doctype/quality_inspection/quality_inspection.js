@@ -67,7 +67,7 @@ frappe.ui.form.on("Quality Inspection Reading", {
 			frappe.confirm(__("'" + row.specification + "' Parameter in Readings has 'Rejected' status, Are you sure you want to proceed?"),
 				() => { frm.set_value("status", row.status); },
 				() => { }
-			)
+			);
 		}
 	}
 })
