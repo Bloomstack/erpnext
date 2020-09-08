@@ -7,3 +7,4 @@ def execute():
 		create_invoice_on_submit = frappe.db.get_single_value("Accounts Settings", "auto_create_invoice_on_delivery_note_submit")
 		if create_invoice_on_submit:
 			frappe.db.set_value("Accounts Settings", None, "auto_create_invoice_on_delivery_note", "Submit")
+			frappe.delete_doc("Custom Field", "Accounts Settings-auto_create_invoice_on_delivery_note_submit")
