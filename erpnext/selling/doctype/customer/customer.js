@@ -108,10 +108,10 @@ frappe.ui.form.on("Customer", {
 		let fields = [];
 		days_of_week.forEach(day => {
 			fields.push({
-					"label": __(day),
-					"value": day,
-					"checked": frm.doc.delivery_days ? JSON.parse(frm.doc.delivery_days).includes(day) : 0
-				})
+				"label": __(day),
+				"value": day,
+				"checked": frm.doc.delivery_days ? JSON.parse(frm.doc.delivery_days).includes(day) : 0
+			})
 		});
 		frm.days_selected = frappe.ui.form.make_control({
 			parent: frm.get_field('delivery_days_html').wrapper,
