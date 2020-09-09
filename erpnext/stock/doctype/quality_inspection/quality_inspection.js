@@ -33,11 +33,11 @@ frappe.ui.form.on("Quality Inspection", {
 		}
 	},
 	check_compliance_item: function (frm) {
-		frappe.db.get_value("Compliance Item", { "item_code": frm.doc.item_code }, "item_code")
+		frappe.db.get_value("Item", { "item_code": frm.doc.item_code }, "is_compliance_item")
 			.then(item => {
-				frm.toggle_reqd('certificate_of_analysis', !!item.message);
-				frm.toggle_display('thc', !!item.message);
-				frm.toggle_display('cbd', !!item.message);
+				frm.toggle_reqd('certificate_of_analysis', item.message.is_compliance_item);
+				frm.toggle_display('thc', item.message.is_compliance_item);
+				frm.toggle_display('cbd', item.message.is_compliance_item);
 			})
 	},
 	inspection_by: function (frm) {

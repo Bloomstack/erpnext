@@ -33,11 +33,6 @@ class QualityInspection(Document):
 			child.value = d.value
 			child.status = "Accepted"
 
-	def validate_certificate_of_analysis(self):
-		compliance_item = frappe.db.exists("Compliance Item", self.item_code)
-		if compliance_item and self.inspection_by == "External" and not self.certificate_of_analysis:
-			frappe.throw(_("Please attach a Certificate of Analysis"))
-
 	def get_quality_inspection_template(self):
 		template = ''
 		if self.reference_type == "Job Card" and self.job_card:
@@ -63,6 +58,11 @@ class QualityInspection(Document):
 
 	def on_cancel(self):
 		self.update_qc_reference()
+
+	def validate_certificate_of_analysis(self):
+		is_compliance_item = frappe.db.get_value("Item", self.item_code, "is_compliance_item")
+		if is_compliance_item and self.inspection_by == "External" and not self.certificate_of_analysis:
+			frappe.throw(_("Please attach a Certificate of Analysis"))
 
 	def update_qc_reference(self):
 		quality_inspection = self.name if self.docstatus == 1 else ""

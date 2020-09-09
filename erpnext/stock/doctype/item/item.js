@@ -121,23 +121,7 @@ frappe.ui.form.on("Item", {
 			frm.set_df_property(fieldname, 'read_only', stock_exists);
 		});
 
-		frm.toggle_reqd('customer', frm.doc.is_customer_provided_item ? 1:0);
-
-		if (frappe.boot.compliance_enabled && !frm.is_new()) {
-			frappe.db.get_value("Compliance Item", { "item_code": frm.doc.item_code }, "name", (r) => {
-				if (!r || !r.name) {
-					frm.add_custom_button(__("Create"), () => {
-						frm.make_new("Compliance Item");
-					}, __("Compliance"));
-				}
-
-				if (r && r.name) {
-					frm.add_custom_button(__("View / Update"), () => {
-						frappe.set_route("Form", "Compliance Item", r.name);
-					}, __("Compliance"));
-				}
-			})
-		}
+		frm.toggle_reqd('customer', frm.doc.is_customer_provided_item ? 1 : 0);
 	},
 
 	validate: function(frm){
@@ -149,7 +133,7 @@ frappe.ui.form.on("Item", {
 	},
 
 	is_customer_provided_item: function(frm) {
-		frm.toggle_reqd('customer', frm.doc.is_customer_provided_item ? 1:0);
+		frm.toggle_reqd('customer', frm.doc.is_customer_provided_item ? 1 : 0);
 	},
 
 	gst_hsn_code: function(frm) {
