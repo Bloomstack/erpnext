@@ -22,3 +22,13 @@ def execute():
 		for field in fields:
 			if item.get(field):
 				frappe.db.set_value("Item", item.item_code, field, item.get(field), update_modified=False)
+
+	frappe.delete_doc_if_exists("Custom Field", "Compliance Item-enable_metrc")
+	frappe.delete_doc_if_exists("Custom Field", "Compliance Item-sb_item_details")
+	frappe.delete_doc_if_exists("Custom Field", "Compliance Item-metrc_id")
+	frappe.delete_doc_if_exists("Custom Field", "Compliance Item-metrc_item_category")
+	frappe.delete_doc_if_exists("Custom Field", "Compliance Item-metrc_unit_value")
+	frappe.delete_doc_if_exists("Custom Field", "Compliance Item-cb_item_details")
+	frappe.delete_doc_if_exists("Custom Field", "Compliance Item-metrc_uom")
+	frappe.delete_doc_if_exists("Custom Field", "Compliance Item-metrc_unit_uom")
+	frappe.delete_doc_if_exists("Custom Field", "Compliance Item-bloomtrace_id")
