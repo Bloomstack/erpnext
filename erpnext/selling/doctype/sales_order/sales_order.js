@@ -105,16 +105,18 @@ frappe.ui.form.on("Sales Order", {
 			d.delivery_date = frm.doc.delivery_date;
 		});
 		refresh_field("items");
-		frappe.db.get_value("Customer", { "name": frm.doc.customer }, "delivery_days", (r) => {
-			if (r.delivery_days) {
-				let day = moment(frm.doc.delivery_date).format('dddd');
-				let weekdays = JSON.parse(r.delivery_days);
-				if (!weekdays.includes(day)) {
-					frappe.msgprint(__("This order is set to be delivered on a '{0}', but {1} only accepts deliveries on {2}",
-						[day, frm.doc.customer, weekdays]));
+		if (frm.doc.delivery_date) {
+			frappe.db.get_value("Customer", { "name": frm.doc.customer }, "delivery_days", (r) => {
+				if (r.delivery_days) {
+					let day = moment(frm.doc.delivery_date).format('dddd');
+					let weekdays = JSON.parse(r.delivery_days);
+					if (!weekdays.includes(day)) {
+						frappe.msgprint(__("This order is set to be delivered on a '{0}', but {1} only accepts deliveries on {2}",
+							[day, frm.doc.customer, weekdays]));
+					}
 				}
-			}
-		})
+			})
+		}
 	}
 });
 
