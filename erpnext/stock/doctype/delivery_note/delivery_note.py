@@ -13,7 +13,7 @@ from frappe.contacts.doctype.address.address import get_company_address
 from frappe.desk.notifications import clear_doctype_notifications
 from frappe.model.mapper import get_mapped_doc
 from frappe.model.utils import get_fetch_values
-from frappe.utils import cint, flt
+from frappe.utils import cint, flt, get_link_to_form
 
 form_grid_templates = {
 	"items": "templates/form_grid/item_grid.html"
@@ -193,6 +193,10 @@ class DeliveryNote(SellingController):
 					d.actual_qty = flt(bin_qty.actual_qty)
 					d.projected_qty = flt(bin_qty.projected_qty)
 
+	def before_submit(self):
+		if frappe.db.get_single_value("Accounts Settings", "auto_create_invoice_on_delivery_note") == "Submit":
+			self.make_sales_invoice_for_delivery()
+
 	def on_submit(self):
 		self.validate_packed_qty()
 
@@ -225,6 +229,8 @@ class DeliveryNote(SellingController):
 
 	def on_update_after_submit(self):
 		self.status = "Delivered" if self.delivered else "To Deliver"
+		if self.delivered and frappe.db.get_single_value("Accounts Settings", "auto_create_invoice_on_delivery_note") == "Delivered":
+			self.make_sales_invoice_for_delivery()
 
 	def on_cancel(self):
 		super(DeliveryNote, self).on_cancel()
@@ -277,6 +283,37 @@ class DeliveryNote(SellingController):
 				has_error = True
 		if has_error:
 			raise frappe.ValidationError
+
+	def make_sales_invoice_for_delivery(self):
+		from erpnext.selling.doctype.sales_order import sales_order
+
+		# If the delivery is already billed, don't create a Sales Invoice
+		if self.per_billed == 100:
+			return
+
+		# Picking up sales orders for 2 reasons:
+		# 1. A Delivery Note can be made against multiple orders, so they all need to be invoiced
+		# 2. Using the `make_sales_invoice` in `delivery_note.py` doesn't consider already invoiced orders
+		sales_orders = [item.against_sales_order for item in self.items if item.against_sales_order]
+		sales_orders = list(set(sales_orders))
+
+		new_invoices = []
+		for order in sales_orders:
+			invoice = sales_order.make_sales_invoice(order)
+
+			if len(invoice.items) > 0:
+				invoice.set_posting_time = True
+				invoice.posting_date = self.posting_date
+				invoice.posting_time = self.posting_time
+
+				invoice.save()
+				invoice.submit()
+
+				new_invoices.append(get_link_to_form("Sales Invoice", invoice.name))
+
+		if new_invoices:
+			new_invoices = ", ".join(str(invoice) for invoice in new_invoices)
+			frappe.msgprint(_("The following Sales Invoice(s) were automatically created: {0}".format(new_invoices)))
 
 	def check_next_docstatus(self):
 		submit_rv = frappe.db.sql("""select t1.name

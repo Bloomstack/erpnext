@@ -83,6 +83,8 @@ class PurchaseReceipt(BuyingController):
 		self.validate_uom_is_integer("uom", ["qty", "received_qty"])
 		self.validate_uom_is_integer("stock_uom", "stock_qty")
 		self.validate_cwip_accounts()
+		self.validate_package_tag_batch()
+		self.validate_duplicate_package_tags()
 
 		self.check_on_hold_or_closed_status()
 
@@ -143,9 +145,6 @@ class PurchaseReceipt(BuyingController):
 				check_list.append(d.purchase_order)
 				check_on_hold_or_closed_status('Purchase Order', d.purchase_order)
 
-	def before_submit(self):
-		self.create_package_tag()
-
 	def on_submit(self):
 		super(PurchaseReceipt, self).on_submit()
 
@@ -169,21 +168,10 @@ class PurchaseReceipt(BuyingController):
 		update_serial_nos_after_submit(self, "items")
 
 		self.make_gl_entries()
-
-		for item in self.items:
-			if item.batch_no and item.package_tag:
-				frappe.db.set_value("Package Tag", item.package_tag, "item_code", item.item_code)
-				frappe.db.set_value("Package Tag", item.package_tag, "batch_no", item.batch_no)
-
-		self.update_coa_batch_no()
+		self.update_package_tag_batch()
 
 	def before_cancel(self):
-		for item in self.items:
-			if item.batch_no and item.package_tag:
-				frappe.db.set_value("Package Tag", item.package_tag, "item_code", None)
-				frappe.db.set_value("Package Tag", item.package_tag, "item_name", None)
-				frappe.db.set_value("Package Tag", item.package_tag, "item_group", None)
-				frappe.db.set_value("Package Tag", item.package_tag, "batch_no", None)
+		self.update_package_tag_batch(reset=True)
 
 	def check_next_docstatus(self):
 		submit_rv = frappe.db.sql("""select t1.name
@@ -467,30 +455,47 @@ class PurchaseReceipt(BuyingController):
 
 		self.load_from_db()
 
-	def create_package_tag(self):
-		package_tags = [item.package_tag for item in self.items if item.package_tag]
+	def validate_package_tag_batch(self):
+		for item in self.items:
+			if item.batch_no and item.package_tag:
+				batch_no = frappe.db.get_value("Package Tag", item.package_tag, "batch_no")
+				if batch_no and item.batch_no != batch_no:
+					frappe.throw(_("Row {0}: Package Tag {1} is already attached to Batch {2}".format(
+						item.idx, frappe.bold(item.package_tag), frappe.bold(batch_no)
+					)))
 
+	def update_package_tag_batch(self, reset=False):
+		for item in self.items:
+			if not item.package_tag:
+				continue
+
+			package_tag = frappe.get_doc("Package Tag", item.package_tag)
+			if reset:
+				package_tag.update({
+					"item_code": None,
+					"item_name": None,
+					"item_group": None,
+					"batch_no": None,
+					"coa_batch_no": None
+				})
+			else:
+				package_tag.update({
+					"item_code": item.item_code,
+					"item_name": item.item_name,
+					"item_group": frappe.db.get_value("Item", item.item_code, "item_group")
+				})
+				if item.batch_no:
+					package_tag.update({
+						"batch_no": item.batch_no,
+						"coa_batch_no": item.batch_no
+					})
+			package_tag.save()
+
+	def validate_duplicate_package_tags(self):
+		package_tags = [item.package_tag for item in self.items if item.package_tag]
 		if len(package_tags) != len(set(package_tags)):
 			duplicate_tags = list(set([tag for tag in package_tags if package_tags.count(tag) > 1]))
-			frappe.throw("Package Tag {0} cannot be same for multiple Purchase Receipt Item".format(", ".join(duplicate_tags)))
-
-		for item in self.items:
-			if item.package_tag:
-				package_tag = frappe.db.exists("Package Tag", {"package_tag": item.package_tag})
-				if package_tag:
-					frappe.throw("Row #{0}: Package Tag '{1}' already exists".format(item.idx, frappe.utils.get_link_to_form("Package Tag", package_tag)))
-				else:
-					doc = frappe.new_doc("Package Tag")
-					doc.update({
-						"package_tag": item.package_tag,
-						"item_code": item.item_code
-					})
-					doc.save()
-
-	def update_coa_batch_no(self):
-		for item in self.items:
-			if item.package_tag and item.batch_no:
-				frappe.db.set_value("Package Tag", item.package_tag, "coa_batch_no", item.batch_no)
+			frappe.throw("Package Tag(s) {0} cannot be same for multiple items".format(", ".join(duplicate_tags)))
 
 
 def update_billed_amount_based_on_po(po_detail, update_modified=True):
