@@ -56,6 +56,9 @@ class QualityInspection(Document):
 		if self.thc or self.cbd:
 			update_batch_doc(self.batch_no, self.name, self.item_code)
 
+		if self.readings:
+			self.validate_reading_status()
+
 	def on_cancel(self):
 		self.update_qc_reference()
 
@@ -63,6 +66,12 @@ class QualityInspection(Document):
 		is_compliance_item = frappe.db.get_value("Item", self.item_code, "is_compliance_item")
 		if is_compliance_item and self.inspection_by == "External" and not self.certificate_of_analysis:
 			frappe.throw(_("Please attach a Certificate of Analysis"))
+
+  def validate_reading_status(self):
+		for reading in self.readings:
+			if reading.status == 'Rejected':
+				self.status = "Rejected"
+				return
 
 	def update_qc_reference(self):
 		quality_inspection = self.name if self.docstatus == 1 else ""
