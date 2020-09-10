@@ -513,7 +513,7 @@ frappe.ui.form.on('Delivery Stop', {
 			if (data.payment_amount === 0) {
 				frappe.confirm(
 					__("Are you sure you want to complete this delivery without a payment?"),
-					() => { console.log("YES"); frm.events.make_payment_entry(frm, row, data.payment_amount); }
+					() => { frm.events.make_payment_entry(frm, row, data.payment_amount); }
 				);
 			} else {
 				frm.events.make_payment_entry(frm, row, data.payment_amount);
