@@ -240,7 +240,7 @@ frappe.ui.form.on('Delivery Trip', {
 							}
 						})
 					} else {
-						frappe.msgprint(__("'Odometer End Value' should be greater then 'Odometer Start value'"));
+						frappe.msgprint(__("'Odometer End Value' should be greater then 'Odometer Start Value'"));
 					}
 				},
 				__("Enter Odometer Value"));
