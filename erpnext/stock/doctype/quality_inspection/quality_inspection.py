@@ -67,7 +67,7 @@ class QualityInspection(Document):
 		if is_compliance_item and self.inspection_by == "External" and not self.certificate_of_analysis:
 			frappe.throw(_("Please attach a Certificate of Analysis"))
 
-  def validate_reading_status(self):
+	def validate_reading_status(self):
 		for reading in self.readings:
 			if reading.status == 'Rejected':
 				self.status = "Rejected"
