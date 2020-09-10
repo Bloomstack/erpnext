@@ -10,7 +10,6 @@ from erpnext.accounts.doctype.payment_entry.payment_entry import get_payment_ent
 from erpnext.accounts.party import get_due_date
 from frappe import _
 from frappe.contacts.doctype.address.address import get_address_display
-from frappe.core.utils import find
 from frappe.model.document import Document
 from frappe.utils import cint, flt, get_datetime, get_link_to_form, nowdate, today, unique
 
