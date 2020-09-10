@@ -227,17 +227,21 @@ frappe.ui.form.on('Delivery Trip', {
 				"default": frm.doc.odometer_start_value
 			},
 				(data) => {
-					frappe.call({
-						method: "erpnext.stock.doctype.delivery_trip.delivery_trip.create_or_update_timesheet",
-						args: {
-							"trip": frm.doc.name,
-							"action": "end",
-							"odometer_value": data.odometer_end_value,
-						},
-						callback: (r) => {
-							frm.reload_doc();
-						}
-					})
+					if (data.odometer_end_value > frm.doc.odometer_start_value) {
+						frappe.call({
+							method: "erpnext.stock.doctype.delivery_trip.delivery_trip.create_or_update_timesheet",
+							args: {
+								"trip": frm.doc.name,
+								"action": "end",
+								"odometer_value": data.odometer_end_value,
+							},
+							callback: (r) => {
+								frm.reload_doc();
+							}
+						})
+					} else {
+						frappe.msgprint(__("'Odometer End Value' should be greater then 'Odometer Start value'"));
+					}
 				},
 				__("Enter Odometer Value"));
 		}).addClass("btn-primary");
