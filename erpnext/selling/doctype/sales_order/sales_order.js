@@ -36,6 +36,7 @@ frappe.ui.form.on("Sales Order", {
 		})
 	},
 	customer: function (frm) {
+		frm.set_value("delivery_date", "")
 		frappe.call({
 			method: "erpnext.stock.doctype.delivery_trip.delivery_trip.get_delivery_window",
 			args: { customer: frm.doc.customer },
