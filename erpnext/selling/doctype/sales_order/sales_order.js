@@ -36,7 +36,6 @@ frappe.ui.form.on("Sales Order", {
 		})
 	},
 	customer: function (frm) {
-		frm.set_value("delivery_date", "")
 		frappe.call({
 			method: "erpnext.stock.doctype.delivery_trip.delivery_trip.get_delivery_window",
 			args: { customer: frm.doc.customer },
@@ -99,26 +98,11 @@ frappe.ui.form.on("Sales Order", {
 	},
 
 	delivery_date: function(frm) {
-		if (!frm.doc.customer) {
-			frappe.throw(__('Please select a customer'));
-		}
 		$.each(frm.doc.items || [], function(i, d) {
 			d.delivery_date = frm.doc.delivery_date;
 		});
 		refresh_field("items");
-		if (frm.doc.delivery_date) {
-			frappe.db.get_value("Customer", { "name": frm.doc.customer }, "delivery_days", (r) => {
-				if (r.delivery_days) {
-					let day = moment(frm.doc.delivery_date).format('dddd');
-					let weekdays = JSON.parse(r.delivery_days);
-					if (!weekdays.includes(day)) {
-						frappe.msgprint(__("This order is set to be delivered on a '{0}', but {1} only accepts deliveries on {2}",
-							[day, frm.doc.customer, weekdays]));
-					}
-				}
-			})
-		}
-	}
+	},
 });
 
 frappe.ui.form.on("Sales Order Item", {

@@ -4,6 +4,7 @@
 from __future__ import unicode_literals
 import frappe
 import json
+import calendar
 import frappe.utils
 from frappe.utils import cstr, flt, getdate, cint, nowdate, add_days, get_link_to_form
 from frappe import _
@@ -36,6 +37,7 @@ class SalesOrder(SellingController):
 		super(SalesOrder, self).validate()
 		self.set_title()
 		self.validate_delivery_date()
+		self.validate_delivery_day()
 		self.validate_proj_cust()
 		self.validate_po()
 		self.validate_uom_is_integer("stock_uom", "stock_qty")
@@ -113,6 +115,15 @@ class SalesOrder(SellingController):
 				frappe.throw(_("Please enter Delivery Date"))
 
 		self.validate_sales_mntc_quotation()
+
+	def validate_delivery_day(self):
+		delivery_days = frappe.db.get_value("Customer", self.customer, "delivery_days")
+		if delivery_days:
+			day = calendar.day_name[getdate(self.delivery_date).weekday()]
+			weekdays = json.loads(delivery_days)
+			if not day in weekdays:
+				frappe.msgprint(_("This order is set to be delivered on a '{0}', but {1} only accepts deliveries on {2}").
+							format(day, self.customer, ', '.join(weekdays)))
 
 	def validate_proj_cust(self):
 		if self.project and self.customer_name:
