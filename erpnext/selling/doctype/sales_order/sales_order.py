@@ -6,7 +6,7 @@ import frappe
 import json
 import calendar
 import frappe.utils
-from frappe.utils import cstr, flt, getdate, cint, nowdate, add_days, get_link_to_form
+from frappe.utils import cstr, flt, getdate, cint, nowdate, add_days, get_link_to_form, comma_and
 from frappe import _
 from six import string_types
 from frappe.model.utils import get_fetch_values
@@ -121,9 +121,9 @@ class SalesOrder(SellingController):
 		if delivery_days:
 			day = calendar.day_name[getdate(self.delivery_date).weekday()]
 			weekdays = json.loads(delivery_days)
-			if not day in weekdays:
+			if day not in weekdays:
 				frappe.msgprint(_("This order is set to be delivered on a '{0}', but {1} only accepts deliveries on {2}").
-							format(day, self.customer, ', '.join(weekdays)))
+							format(day, self.customer, comma_and(weekdays)))
 
 	def validate_proj_cust(self):
 		if self.project and self.customer_name:

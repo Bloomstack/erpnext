@@ -102,7 +102,7 @@ frappe.ui.form.on("Sales Order", {
 			d.delivery_date = frm.doc.delivery_date;
 		});
 		refresh_field("items");
-	},
+	}
 });
 
 frappe.ui.form.on("Sales Order Item", {
