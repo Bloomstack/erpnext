@@ -5,6 +5,7 @@
 from __future__ import unicode_literals
 import frappe
 import json
+from frappe.utils import cstr, cint
 from six import iteritems
 from frappe.model.document import Document
 from frappe import _
@@ -47,11 +48,24 @@ class PickList(Document):
 		self.delivery_date = min(order_delivery_dates)
 
 	def validate_stock_qty(self):
+		"""User should not allowed to create pick list if sales order item qty exceed"""
+		pick_list_items = frappe.get_all("Pick List Item", fields=["*"])
 		for item in self.locations:
 			if item.get("sales_order_item"):
+				pick_list_qty = 0
+				item_sales_order_qty = frappe.db.get_value("Sales Order Item", item.get("sales_order_item"), "qty")
+				used_qty = frappe.get_all("Pick List Item", filters={"sales_order_item":item.get("sales_order_item"), "docstatus":1}, fields=['sum(qty) as used_qty'])
+
+				for val in used_qty:
+					used_qty = val.used_qty
+
+				if used_qty:
+					pick_list_qty = item_sales_order_qty - used_qty
+					if pick_list_qty > 0 and item.qty > pick_list_qty:
+						frappe.throw(_("Row #{0}: Pick List thershold qty exceed for {1}'s . you are allowed to create pick list of {2} qty").format(item.idx, frappe.bold(item.item_name), frappe.bold(pick_list_qty)))
 				order_qty = frappe.db.get_value("Sales Order Item", item.get("sales_order_item"), "qty")
 				if item.qty > order_qty:
-					frappe.throw(_("Row #{0}: {1}'s quantity ({2}) should be less than or equal to the ordered quantity ({3})").format(
+					frappe.throw(_("Row #{0}: {1}'s quantity {2} should be less than or equal to the ordered quantity {3}").format(
 						item.idx, frappe.bold(item.item_name), frappe.bold(item.qty), frappe.bold(order_qty)))
 
 	def on_submit(self):
