@@ -39,6 +39,15 @@ frappe.ui.form.on('Plant Batch', {
 				obj_to_append: obj_to_append
 			});
 		});
+
+		frm.set_df_property("untracked_count", "read_only", frm.is_new() ? 0 : 1);
+
+		if (!frm.is_new()) {
+			frm.add_custom_button(__("Split Plant Batch"), () => {
+				frm.trigger("split_plant_batch");
+			}, __("Create"));
+		}
+
 	},
 
 	destroy_plant_batch: (frm) => {
@@ -68,7 +77,44 @@ frappe.ui.form.on('Plant Batch', {
 		__('Destroyed Plant Log'),
 		__('Destroy')
 		);
-	}
+	},
+
+	split_plant_batch: function(frm) {
+		frappe.prompt([{
+			fieldname: 'split_count',
+			label: __('New Batch Qty'),
+			fieldtype: 'Int',
+		},
+		{
+			fieldname: 'new_batch_id',
+			label: __('New Batch ID (Optional)'),
+			fieldtype: 'Data',
+		}],
+		(data) => {
+			if (frm.doc.untracked_count < data.split_count) {
+				frappe.throw(__("The Split count ({0}) should be less or equal than the untracked quantity ({1})",
+					[data.split_count, frm.doc.untracked_count]));
+			}
+			frappe.call({
+				method: 'erpnext.agriculture.doctype.plant_batch.plant_batch.split_plant_batch',
+				args: {
+					untracked_count: frm.doc.untracked_count,
+					strain: frm.doc.strain,
+					start_date: frm.doc.start_date,
+					location: frm.doc.location,
+					split_count: data.split_count,
+					new_batch_id: data.new_batch_id,
+					reference_name: frm.doc.name
+				},
+				callback: (r) => {
+					frm.refresh();
+				},
+			});
+		},
+		__('Split Batch'),
+		__('Split')
+		);
+	},
 });
 
 function is_in_land_unit(point, vs) {
