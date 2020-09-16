@@ -5,7 +5,6 @@
 from __future__ import unicode_literals
 import frappe
 import json
-from frappe.utils import cstr, cint
 from six import iteritems
 from frappe.model.document import Document
 from frappe import _
@@ -48,7 +47,7 @@ class PickList(Document):
 		self.delivery_date = min(order_delivery_dates)
 
 	def validate_stock_qty(self):
-		"""User should not allowed to create pick list if sales order item qty exceed"""
+		"""User should not allowed to create pick list if sales order item qty exceed."""
 		for item in self.locations:
 			if item.get("sales_order_item"):
 				ordered_item_qty = frappe.db.get_value("Sales Order Item", item.get("sales_order_item"), "qty")
