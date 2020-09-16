@@ -40,14 +40,13 @@ frappe.ui.form.on('Plant Batch', {
 			});
 		});
 
-		frm.set_df_property("untracked_count", "read_only", frm.is_new() ? 0 : 1);
-
+		frm.toggle_enable("untracked_count", frm.is_new())
+		// frm.set_df_property("untracked_count", "read_only", frm.is_new() ? 0 : 1);
 		if (!frm.is_new()) {
-			frm.add_custom_button(__("Split Plant Batch"), () => {
+			frm.add_custom_button(__("Plant Batch"), () => {
 				frm.trigger("split_plant_batch");
 			}, __("Create"));
 		}
-
 	},
 
 	destroy_plant_batch: (frm) => {

@@ -30,7 +30,7 @@ class PlantBatch(Document):
 		if strain.cultivation_task:
 			self.project = create_project(self.title, self.start_date, strain.period)
 			create_tasks(strain.cultivation_task, self.project, self.start_date)
-	
+
 	def reload_linked_analysis(self):
 		linked_doctypes = ['Soil Texture', 'Soil Analysis', 'Plant Analysis']
 		required_fields = ['location', 'name', 'collection_datetime']
