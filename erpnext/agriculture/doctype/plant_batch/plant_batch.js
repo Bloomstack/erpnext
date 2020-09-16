@@ -82,19 +82,16 @@ frappe.ui.form.on('Plant Batch', {
 	split_plant_batch: function(frm) {
 		frappe.prompt([{
 			fieldname: 'split_count',
-			label: __('New Batch Qty'),
+			label: __('New Plant Batch Untracked Count'),
 			fieldtype: 'Int',
 		},
 		{
-			fieldname: 'new_batch_id',
-			label: __('New Batch ID (Optional)'),
+			fieldname: 'new_plant_batch_id',
+			label: __('New Plant Batch ID'),
 			fieldtype: 'Data',
+			reqd: 1
 		}],
 		(data) => {
-			if (frm.doc.untracked_count < data.split_count) {
-				frappe.throw(__("The Split count ({0}) should be less or equal than the untracked quantity ({1})",
-					[data.split_count, frm.doc.untracked_count]));
-			}
 			frappe.call({
 				method: 'erpnext.agriculture.doctype.plant_batch.plant_batch.split_plant_batch',
 				args: {
@@ -103,11 +100,12 @@ frappe.ui.form.on('Plant Batch', {
 					start_date: frm.doc.start_date,
 					location: frm.doc.location,
 					split_count: data.split_count,
-					new_batch_id: data.new_batch_id,
+					new_plant_batch_id: data.new_plant_batch_id,
 					reference_name: frm.doc.name
 				},
 				callback: (r) => {
 					frm.refresh();
+					frappe.set_route('Form', "Plant Batch", r.message);
 				},
 			});
 		},
