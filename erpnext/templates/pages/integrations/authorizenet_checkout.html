@@ -6,13 +6,9 @@
 <script>
 	{% include "templates/includes/integrations/authorizenet_checkout.js" %}
 </script>
-<script>
-	context = "{{ payment_context }}"
-</script>
 {% endblock %}
 
 {%- block page_content -%}
-
 <div class="authorizenet">
 	<div class="col-md-12">
 		<h2 class="text-center">{{ payment_context.description }}</h2>
@@ -25,8 +21,8 @@
 							<label>{{ _("Name") }}</label>
 						</div>
 						<div class="col-md-8 col-sm-6">
-							<input id="cardholder-name" name="cardholder-name" class="field" placeholder="{{ _('John Doe') }}"
-								value="{{ payment_context.payer_name }}" />
+							<input id="cardholder-name" name="cardholder-name" class="field"
+								placeholder="{{ _('John Doe') }}" value="{{ payment_context.payer_name }}" />
 						</div>
 					</div>
 
@@ -35,8 +31,8 @@
 							<label>{{ _("Email") }}</label>
 						</div>
 						<div class="col-md-8 col-sm-6">
-							<input id="cardholder-email" name="cardholder-email" class="field" placeholder="{{ _('john@doe.com') }}"
-								value="{{ payment_context.payer_email }}" />
+							<input id="cardholder-email" name="cardholder-email" class="field"
+								placeholder="{{ _('john@doe.com') }}" value="{{ payment_context.payer_email }}" />
 						</div>
 					</div>
 
@@ -70,13 +66,11 @@
 				</div>
 				<div class="col-md-8 col-sm-12 submit_row">
 					<div class="row">
-					<button type="submit" class="submit" id="submit">{{_('Pay')}} {{ amount }}</button>
-				</div>
+						<button type="submit" class="submit" id="submit">{{_('Pay')}} {{ amount }}</button>
+					</div>
 				</div>
 			</div>
 		</form>
 	</div>
 </div>
-
-
 {% endblock %}
