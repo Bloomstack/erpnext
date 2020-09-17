@@ -51,7 +51,7 @@ frappe.ui.form.on('Plant Batch', {
 					frm: frm
 				});
 			}, __("Create"));
-			frm.add_custom_button(__("Destroy Plant Batch"), () => {
+			frm.add_custom_button(__("Destroy"), () => {
 				frm.trigger(
 					"destroy_plant_batch"
 				);
