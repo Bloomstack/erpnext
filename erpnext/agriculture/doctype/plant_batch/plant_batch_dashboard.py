@@ -9,7 +9,7 @@ def get_data():
 		'transactions': [
 			{
 				'label': _('Cultivation & Harvesting'),
-				'items': ['Plant', 'Harvest']
+				'items': ['Plant', 'Harvest', 'Destroy Plant Batch']
 			},
 			{
 				'label': _('Diseases & Additives'),

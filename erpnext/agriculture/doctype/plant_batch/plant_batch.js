@@ -2,6 +2,12 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on('Plant Batch', {
+	setup: function (frm) {
+		frm.make_methods = {
+			'Destroy Plant Batch':() => {frm.trigger("destroy_plant_batch")}
+		};
+	},
+
 	refresh: (frm) => {
 		if (!frm.doc.__islocal)
 			frm.add_custom_button(__('Reload Linked Analysis'), () => frm.call("reload_linked_analysis"));
@@ -45,8 +51,42 @@ frappe.ui.form.on('Plant Batch', {
 					frm: frm
 				});
 			}, __("Create"));
+			frm.add_custom_button(__("Destroy Plant Batch"), () => {
+				frm.trigger(
+					"destroy_plant_batch"
+				);
+			});
 		}
 
+	},
+	destroy_plant_batch: (frm) => {
+		frappe.prompt([{
+			fieldname: 'destroy_count',
+			label: __('Destroy Count'),
+			fieldtype: 'Int',
+		},
+		{
+			fieldname: 'reason_note',
+			label: __('Reason Note'),
+			fieldtype: 'Data',
+		}],
+		(data) => {
+			frappe.call({
+				method: 'erpnext.agriculture.doctype.plant_batch.plant_batch.destroy_plant_batch',
+				args: {
+					destroy_count:data.destroy_count,
+					reason_note: data.reason_note,
+					reference_name: frm.doc.name
+				},
+				callback: (r) => {
+					frm.refresh();
+					frappe.set_route('Form', "Destroy Plant Batch", r.message);
+				},
+			});
+		},
+		__('Destroy Plant Batch'),
+		__('Destroy')
+		);
 	}
 });
 
