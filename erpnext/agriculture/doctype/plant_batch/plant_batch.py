@@ -9,7 +9,7 @@ import ast
 import frappe
 from frappe import _
 from frappe.model.document import Document
-from frappe.utils import add_days
+from frappe.utils import add_days, getdate, nowdate
 from erpnext.agriculture.utils import create_project, create_tasks
 from frappe.model.mapper import get_mapped_doc
 
@@ -133,7 +133,8 @@ def destroy_plant_batch(destroy_count, reason_note, reference_name=None):
 		dict(doctype='Destroy Plant Batch',
 			plant_batch = reference_name,
 			destroy_count = destroy_count,
-			reason_note = reason_note
+			reason_note = reason_note,
+			actual_date = getdate(nowdate())
 			)
 			).insert()
 	destroy_plant_batch.submit()
