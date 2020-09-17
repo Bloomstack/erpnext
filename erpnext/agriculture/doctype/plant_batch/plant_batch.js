@@ -4,7 +4,7 @@
 frappe.ui.form.on('Plant Batch', {
 	setup: function (frm) {
 		frm.make_methods = {
-			'Destroy Plant Batch':() => {frm.trigger("destroy_plant_batch")}
+			'Destroy Plant Batch': () => { frm.trigger("destroy_plant_batch"); }
 		};
 	},
 
@@ -70,22 +70,22 @@ frappe.ui.form.on('Plant Batch', {
 			label: __('Reason Note'),
 			fieldtype: 'Data',
 		}],
-		(data) => {
-			frappe.call({
-				method: 'erpnext.agriculture.doctype.plant_batch.plant_batch.destroy_plant_batch',
-				args: {
-					destroy_count:data.destroy_count,
-					reason_note: data.reason_note,
-					reference_name: frm.doc.name
-				},
-				callback: (r) => {
-					frm.refresh();
-					frappe.set_route('Form', "Destroy Plant Batch", r.message);
-				},
-			});
-		},
-		__('Destroy Plant Batch'),
-		__('Destroy')
+			(data) => {
+				frappe.call({
+					method: 'erpnext.agriculture.doctype.plant_batch.plant_batch.destroy_plant_batch',
+					args: {
+						destroy_count: data.destroy_count,
+						reason_note: data.reason_note,
+						reference_name: frm.doc.name
+					},
+					callback: (r) => {
+						frm.refresh();
+						frappe.set_route('Form', "Destroy Plant Batch", r.message);
+					},
+				});
+			},
+			__('Destroy Plant Batch'),
+			__('Destroy')
 		);
 	}
 });
