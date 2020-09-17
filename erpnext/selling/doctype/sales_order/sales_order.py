@@ -118,9 +118,9 @@ class SalesOrder(SellingController):
 
 	def validate_delivery_day(self):
 		delivery_days = frappe.db.get_value("Customer", self.customer, "delivery_days")
-		if delivery_days:
+		customer_delivery_days = json.loads(delivery_days)
+		if customer_delivery_days:
 			delivery_day = calendar.day_name[getdate(self.delivery_date).weekday()]
-			customer_delivery_days = json.loads(delivery_days)
 			if delivery_day not in customer_delivery_days:
 				frappe.msgprint(_("This order is set to be delivered on a '{0}', but {1} only accepts deliveries on {2}").format(
 					frappe.bold(delivery_day), frappe.bold(self.customer), comma_and(customer_delivery_days)))
