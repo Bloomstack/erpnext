@@ -331,7 +331,7 @@ frappe.ui.form.on('Delivery Trip', {
 				if (!r.exc) {
 					frm.reload_doc();
 					if (r.message) {
-						frappe.msgprint(__(`Payment Entry ${r.message} created.`));
+						frappe.msgprint(__(`Payment Entry {0} created.`, [r.message]));
 					} else {
 						frappe.msgprint(__("The stop was marked as visited without payment"));
 					}
