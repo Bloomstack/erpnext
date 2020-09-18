@@ -118,10 +118,10 @@ def make_disease_diagnosis(source_name, target_doc=None):
 	return target_doc
 
 @frappe.whitelist()
-def destroy_plant_batch(destroy_count, reason_note, reference_name):
-	plant_batch = frappe.get_doc("Plant Batch",reference_name)
-	if plant_batch.untracked_count == 0 :
-		frappe.throw(_("Cannot Destroy Plant Batch as there is no untracked count."))
+def destroy_plant_batch(destroy_count, reason, reference_name):
+	plant_batch = frappe.get_doc("Plant Batch", reference_name)
+	if plant_batch.untracked_count == 0:
+		frappe.throw(_("Cannot destroy Plant Batch as there is no untracked count."))
 
 	if int(destroy_count) < 0 :
 		frappe.throw(_("The Destroy Count ({0}) should be more than 0").format(destroy_count))
@@ -130,15 +130,13 @@ def destroy_plant_batch(destroy_count, reason_note, reference_name):
 		frappe.throw(_("The Destroy Count ({0}) should be less than or equal to the untracked count ({1})").format(destroy_count,plant_batch.untracked_count))
 
 	destroyed_plant_log = frappe.get_doc(
-		dict(doctype='Destroyed Plant Log',
+		dict(
+			doctype='Destroyed Plant Log',
 			plant_batch = reference_name,
 			destroy_count = destroy_count,
-			reason_note = reason_note,
+			reason = reason,
 			actual_date = getdate(nowdate())
-			)
-			).insert()
+		)
+	).insert()
 	destroyed_plant_log.submit()
-	plant_batch.untracked_count = plant_batch.untracked_count - int(destroy_count)
-	plant_batch.destroyed_count = plant_batch.destroyed_count + int(destroy_count)
-	plant_batch.save()
 	return destroyed_plant_log.name

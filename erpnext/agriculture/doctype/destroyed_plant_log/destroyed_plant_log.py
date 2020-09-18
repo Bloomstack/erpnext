@@ -11,12 +11,12 @@ class DestroyedPlantLog(Document):
 	def on_submit(self):
 		doc = frappe.get_doc('Plant Batch',self.plant_batch)
 		if doc.untracked_count == 0:
-			frappe.throw(_("'{0}' Plant Batch have 0 untracked count").format(self.plant_batch))
-		elif self.destroy_count <= 0:
-			frappe.throw(_("Destroy Count cannot be less than and equals to 0"))
-		elif doc.untracked_count < self.destroy_count:
-			frappe.throw(_("The Destroy Count ({0}) should be less than or equals to {1}").format(self.destroy_count,doc.untracked_count))
+			frappe.throw(_("The plant batch must have an untracked count"))
+		elif int(self.destroy_count) <= 0:
+			frappe.throw(_("Destroy count cannot be less than 0"))
+		elif doc.untracked_count < int(self.destroy_count):
+			frappe.throw(_("The destroyed plant count ({0}) should be less than or equal to the untracked count ({1})").format(self.destroy_count, doc.untracked_count))
 		else:
-			doc.untracked_count = doc.untracked_count - self.destroy_count
-			doc.destroyed_count = doc.destroyed_count + self.destroy_count
+			doc.untracked_count = doc.untracked_count - int(self.destroy_count)
+			doc.destroyed_count = doc.destroyed_count + int(self.destroy_count)
 			doc.save()

@@ -7,7 +7,7 @@
  "field_order": [
   "plant_batch",
   "destroy_count",
-  "reason_note",
+  "reason",
   "actual_date",
   "amended_from"
  ],
@@ -15,18 +15,17 @@
   {
    "fieldname": "plant_batch",
    "fieldtype": "Link",
+   "in_list_view": 1,
    "label": "Plant Batch",
-   "options": "Plant Batch"
+   "options": "Plant Batch",
+   "reqd": 1
   },
   {
    "fieldname": "destroy_count",
    "fieldtype": "Int",
-   "label": "Destroy Count"
-  },
-  {
-   "fieldname": "reason_note",
-   "fieldtype": "Data",
-   "label": "Reason Note"
+   "in_list_view": 1,
+   "label": "Destroy Count",
+   "reqd": 1
   },
   {
    "fieldname": "actual_date",
@@ -50,10 +49,17 @@
    "options": "Destroyed Plant Log",
    "print_hide": 1,
    "read_only": 1
+  },
+  {
+   "fieldname": "reason",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Reason",
+   "reqd": 1
   }
  ],
  "is_submittable": 1,
- "modified": "2020-09-17 12:17:02.223900",
+ "modified": "2020-09-18 02:56:23.081578",
  "modified_by": "Administrator",
  "module": "Agriculture",
  "name": "Destroyed Plant Log",
