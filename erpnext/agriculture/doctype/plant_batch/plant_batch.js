@@ -4,7 +4,7 @@
 frappe.ui.form.on('Plant Batch', {
 	setup: function (frm) {
 		frm.make_methods = {
-			'Destroy Plant Batch': () => { frm.trigger("destroy_plant_batch"); }
+			'Destroyed Plant Log': () => { frm.trigger("destroy_plant_batch"); }
 		};
 	},
 
@@ -52,9 +52,7 @@ frappe.ui.form.on('Plant Batch', {
 				});
 			}, __("Create"));
 			frm.add_custom_button(__("Destroy"), () => {
-				frm.trigger(
-					"destroy_plant_batch"
-				);
+				frm.trigger("destroy_plant_batch");
 			});
 		}
 
@@ -80,11 +78,11 @@ frappe.ui.form.on('Plant Batch', {
 				},
 				callback: (r) => {
 					frm.refresh();
-					frappe.set_route('Form', "Destroy Plant Batch", r.message);
+					frappe.set_route('Form', "Destroyed Plant Log", r.message);
 				},
 			});
 		},
-		__('Destroy Plant Batch'),
+		__('Destroyed Plant Log'),
 		__('Destroy')
 		);
 	}

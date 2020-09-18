@@ -1,5 +1,6 @@
 {
- "creation": "2020-09-16 16:25:55.866077",
+ "autoname": "DPL.#####",
+ "creation": "2020-09-17 10:37:41.370040",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
@@ -23,6 +24,11 @@
    "label": "Destroy Count"
   },
   {
+   "fieldname": "reason_note",
+   "fieldtype": "Data",
+   "label": "Reason Note"
+  },
+  {
    "fieldname": "actual_date",
    "fieldtype": "Date",
    "label": "Actual Date"
@@ -32,21 +38,25 @@
    "fieldtype": "Link",
    "label": "Amended From",
    "no_copy": 1,
-   "options": "Destroy Plant Batch",
+   "options": "Destroyed Plant Log",
    "print_hide": 1,
    "read_only": 1
   },
   {
-   "fieldname": "reason_note",
-   "fieldtype": "Data",
-   "label": "Reason Note"
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Destroyed Plant Log",
+   "print_hide": 1,
+   "read_only": 1
   }
  ],
  "is_submittable": 1,
- "modified": "2020-09-16 14:25:25.677135",
+ "modified": "2020-09-17 12:17:02.223900",
  "modified_by": "Administrator",
  "module": "Agriculture",
- "name": "Destroy Plant Batch",
+ "name": "Destroyed Plant Log",
  "owner": "Administrator",
  "permissions": [
   {

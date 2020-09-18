@@ -9,11 +9,11 @@ def get_data():
 		'transactions': [
 			{
 				'label': _('Cultivation & Harvesting'),
-				'items': ['Plant', 'Harvest', 'Destroy Plant Batch']
+				'items': ['Plant', 'Harvest']
 			},
 			{
-				'label': _('Diseases & Additives'),
-				'items': ['Plant Disease Diagnosis', 'Plant Additive Log']
+				'label': _('Plant Log'),
+				'items': ['Plant Additive Log', 'Plant Disease Diagnosis', 'Destroyed Plant Log']
 			}
 		]
 	}
