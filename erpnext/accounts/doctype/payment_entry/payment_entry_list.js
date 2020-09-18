@@ -17,9 +17,11 @@ frappe.listview_settings['Payment Entry'] = {
 						frappe.throw(__("Cannot Print Check 'Submitted' or 'Cancelled' documents"));
 					}
 					if (doc.mode_of_payment !== "Check") {
-						frappe.throw(__("Select Only 'Check' type Payment Mode"));
+						frappe.throw(__("{0}: Please Select Only 'Check' type Payment Mode",
+							[doc.title])
+						);
 					}
-				};
+				}
 				let d = new frappe.ui.Dialog({
 					title: 'Enter details',
 					fields: [
@@ -35,10 +37,10 @@ frappe.listview_settings['Payment Entry'] = {
 						frappe.call({
 							method: "erpnext.accounts.doctype.payment_entry.payment_entry.init_print_check",
 							args: { "values": values.starting_check_number, "selected_docs": selected_docs, "doctype": doctype },
-							callback: function (r) {
-								frappe.msgprint("Done!")
+							callback: function () {
+								frappe.msgprint("Done!");
 							}
-						})
+						});
 						d.hide();
 					}
 				});
