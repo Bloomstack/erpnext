@@ -1175,11 +1175,12 @@ def make_payment_order(source_name, target_doc=None):
 
 
 @frappe.whitelist()
-def init_print_check(values, selected_docs, doctype):
+def init_print_check(start, selected_docs, doctype):
+	series = int(start)
 	docs = json.loads(selected_docs)
 	for doc in docs:
 		frappe.db.set_value(doctype, doc.get("name"), {
-			"reference_no": values,
+			"reference_no": series,
 			"reference_date": nowdate()
 		})
-		values = int(values)+1
+		series += 1

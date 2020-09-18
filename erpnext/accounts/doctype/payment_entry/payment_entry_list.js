@@ -14,10 +14,10 @@ frappe.listview_settings['Payment Entry'] = {
 			if (selected_docs.length > 0) {
 				for (let doc of selected_docs) {
 					if (doc.docstatus !== 0) {
-						frappe.throw(__("Cannot Print Check 'Submitted' or 'Cancelled' documents"));
+						frappe.throw(__("Cannot print checks for 'Submitted' or 'Cancelled' documents"));
 					}
 					if (doc.mode_of_payment !== "Check") {
-						frappe.throw(__("{0}: Please Select Only 'Check' type Payment Mode",
+						frappe.throw(__("{0}: The payment mode should be 'Check'",
 							[doc.title])
 						);
 					}
@@ -26,7 +26,7 @@ frappe.listview_settings['Payment Entry'] = {
 					title: 'Enter details',
 					fields: [
 						{
-							label: 'Starting check Number',
+							label: 'Starting Check Number',
 							fieldname: 'starting_check_number',
 							fieldtype: 'Int',
 							reqd: 1
@@ -36,9 +36,9 @@ frappe.listview_settings['Payment Entry'] = {
 					primary_action(values) {
 						frappe.call({
 							method: "erpnext.accounts.doctype.payment_entry.payment_entry.init_print_check",
-							args: { "values": values.starting_check_number, "selected_docs": selected_docs, "doctype": doctype },
+							args: { "start": values.starting_check_number, "selected_docs": selected_docs, "doctype": doctype },
 							callback: function () {
-								frappe.msgprint("Done!");
+								frappe.msgprint(__("Checks have been assigned to the selected payments"));
 							}
 						});
 						d.hide();
