@@ -68,17 +68,19 @@ frappe.ui.form.on('Plant Batch', {
 			reqd: 1,
 		}],
 		(data) => {
-			frappe.call({
-				method: 'erpnext.agriculture.doctype.plant_batch.plant_batch.destroy_plant_batch',
+			return frm.call({
+				method: 'destroy_plant_batch',
 				args: {
 					destroy_count: data.destroy_count,
 					reason: data.reason,
 					reference_name: frm.doc.name
 				},
-				callback: (r) => {
-					frm.refresh();
-					frappe.set_route('Form', "Destroyed Plant Log", r.message);
-				},
+				callback: function(r) {
+					if(r.message) {
+						frm.refresh();
+						frappe.set_route('Form', "Destroyed Plant Log", r.message);
+					}
+				}
 			});
 		},
 		__('Destroyed Plant Log'),
