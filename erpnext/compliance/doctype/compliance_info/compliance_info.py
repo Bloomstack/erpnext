@@ -83,7 +83,7 @@ def get_entity_license(doc, party_type, party_name):
 		if not license_expiry_date:
 			frappe.msgprint(_("We could not verify the status of license number {0}. Proceed with caution.").format(
 				frappe.bold(license_number)))
-		elif license_expiry_date < getdate(nowdate()):
+		elif getdate(license_expiry_date) < getdate(nowdate()):
 			frappe.msgprint(_("Our records indicate that the license number {0} has expired on {1}. Proceed with caution.").format(
 				frappe.bold(license_number), frappe.bold(license_expiry_date)))
 
