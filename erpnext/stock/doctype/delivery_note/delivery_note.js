@@ -11,6 +11,7 @@ frappe.provide("erpnext.stock.delivery_note");
 frappe.ui.form.on("Delivery Note", {
 	setup: function(frm) {
 		frm.custom_make_buttons = {
+			'Quality Inspection': 'Quality Inspection',
 			'Packing Slip': 'Packing Slip',
 			'Installation Note': 'Installation Note',
 			'Sales Invoice': 'Invoice',

@@ -13,6 +13,7 @@ from frappe.model.document import Document
 from erpnext.utilities.transaction_base import delete_events
 from frappe.utils.nestedset import NestedSet
 from erpnext.hr.doctype.job_offer.job_offer import get_staffing_plan_detail
+from frappe.model.mapper import get_mapped_doc
 
 class EmployeeUserDisabledError(frappe.ValidationError): pass
 class EmployeeLeftValidationError(frappe.ValidationError): pass
@@ -426,3 +427,16 @@ def has_user_permission_for_employee(user_name, employee_name):
 		'allow': 'Employee',
 		'for_value': employee_name
 	})
+
+@frappe.whitelist()
+def make_contract(source_name, target_doc=None):
+	target_doc = get_mapped_doc("Employee", source_name,
+		{"Employee": {
+			"doctype": "Contract",
+			"field_map": {
+				"employee_name": "party_name",
+				"doctype": "party_type",
+			}
+		}}, target_doc)
+
+	return target_doc

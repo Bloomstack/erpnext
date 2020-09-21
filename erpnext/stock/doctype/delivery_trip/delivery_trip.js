@@ -128,12 +128,6 @@ frappe.ui.form.on('Delivery Trip', {
 			frm.reload_doc();
 		});
 	},
-	force_save_or_update: function (frm, cdt, cdn) {
-		// `model.set_value` doesn't trigger a form change, so
-		// force-dirty to allow the form to be saved or updated
-		frm.dirty();
-		frm.save_or_update();
-	},
 
 	start: (frm) => {
 		frm.add_custom_button(__("Start"), () => {
@@ -227,17 +221,21 @@ frappe.ui.form.on('Delivery Trip', {
 				"default": frm.doc.odometer_start_value
 			},
 				(data) => {
-					frappe.call({
-						method: "erpnext.stock.doctype.delivery_trip.delivery_trip.create_or_update_timesheet",
-						args: {
-							"trip": frm.doc.name,
-							"action": "end",
-							"odometer_value": data.odometer_end_value,
-						},
-						callback: (r) => {
-							frm.reload_doc();
-						}
-					})
+					if (data.odometer_end_value > frm.doc.odometer_start_value) {
+						frappe.call({
+							method: "erpnext.stock.doctype.delivery_trip.delivery_trip.create_or_update_timesheet",
+							args: {
+								"trip": frm.doc.name,
+								"action": "end",
+								"odometer_value": data.odometer_end_value,
+							},
+							callback: (r) => {
+								frm.reload_doc();
+							}
+						})
+					} else {
+						frappe.msgprint(__("'Odometer End Value' should be greater then 'Odometer Start Value'"));
+					}
 				},
 				__("Enter Odometer Value"));
 		}).addClass("btn-primary");
@@ -324,6 +322,26 @@ frappe.ui.form.on('Delivery Trip', {
 		}, () => {
 			frm.reload_doc();
 		});
+	},
+
+	make_payment_entry: function (frm, row, amount) {
+		frappe.call({
+			method: "erpnext.stock.doctype.delivery_trip.delivery_trip.make_payment_entry",
+			args: {
+				"payment_amount": amount,
+				"sales_invoice": row.sales_invoice
+			},
+			callback: function (r) {
+				if (!r.exc) {
+					frm.reload_doc();
+					if (r.message) {
+						frappe.msgprint(__(`Payment Entry {0} created.`, [r.message]));
+					} else {
+						frappe.msgprint(__("The stop was marked as visited without payment"));
+					}
+				}
+			}
+		})
 	},
 
 	notify_customers: function (frm) {
@@ -487,7 +505,7 @@ frappe.ui.form.on('Delivery Stop', {
 	},
 
 	make_payment_entry: function (frm, cdt, cdn) {
-		var row = locals[cdt][cdn];
+		const row = frm.selected_doc || locals[cdt][cdn];
 
 		let dialog = frappe.prompt({
 			"label": "Payment Amount",
@@ -495,37 +513,17 @@ frappe.ui.form.on('Delivery Stop', {
 			"fieldname": "payment_amount",
 			"reqd": 1
 		},
-			function (data) {
-				if (data.payment_amount === 0) {
-					frappe.confirm(
-						__("Are you sure you want to complete this delivery without a payment?"),
-						() => {
-							frappe.model.set_value(cdt, cdn, "visited", true);
-							frappe.model.set_value(cdt, cdn, "paid_amount", 0);
-							frappe.db.set_value("Delivery Note", row.delivery_note, "status", "Completed")
-							frm.trigger("force_save_or_update");
-						}
-					);
-				} else {
-					frappe.call({
-						method: "erpnext.stock.doctype.delivery_trip.delivery_trip.make_payment_entry",
-						args: {
-							"payment_amount": data.payment_amount,
-							"sales_invoice": row.sales_invoice
-						},
-						callback: function (r) {
-							if (!r.exc) {
-								frappe.msgprint(__(`Payment Entry ${r.message} created.`));
-								frappe.model.set_value(cdt, cdn, "visited", true);
-								frappe.model.set_value(cdt, cdn, "paid_amount", data.payment_amount);
-								frappe.db.set_value("Delivery Note", row.delivery_note, "status", "Completed")
-								frm.trigger("force_save_or_update");
-							}
-						}
-					})
-				}
-			},
-			__("Make Payment Entry"));
+		function (data) {
+			if (data.payment_amount === 0) {
+				frappe.confirm(
+					__("Are you sure you want to complete this delivery without a payment?"),
+					() => { frm.events.make_payment_entry(frm, row, data.payment_amount); }
+				);
+			} else {
+				frm.events.make_payment_entry(frm, row, data.payment_amount);
+			}
+		},
+		__("Make Payment Entry"));
 
 		dialog.$wrapper.on("shown.bs.modal", function () {
 			if (frappe.is_mobile()) {

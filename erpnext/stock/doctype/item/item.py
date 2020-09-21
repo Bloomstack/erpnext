@@ -138,7 +138,7 @@ class Item(WebsiteGenerator):
 		self.validate_name_with_item_group()
 		self.update_variants()
 		self.update_item_price()
-		self.update_template_item()
+		self.update_variants_website_display()
 
 	def validate_description(self):
 		'''Clean HTML description if set'''
@@ -489,6 +489,10 @@ class Item(WebsiteGenerator):
 		if self.disabled:
 			self.show_in_website = False
 
+	def update_variants_website_display(self):
+		if self.has_variants:
+			frappe.enqueue(toggle_variants_website_display, item_name=self.name, value=self.show_in_website if not self.disabled else False, timeout=600)
+
 	def update_template_tables(self):
 		template = frappe.get_doc("Item", self.variant_of)
 
@@ -711,23 +715,6 @@ class Item(WebsiteGenerator):
 				set description = %s
 				where item_code = %s and docstatus < 2
 			""", (self.description, self.name))
-
-	def update_template_item(self):
-		"""Set Show in Website for Template Item if True for its Variant"""
-		if self.variant_of:
-			if self.show_in_website:
-				self.show_variant_in_website = 1
-				self.show_in_website = 0
-
-			if self.show_variant_in_website:
-				# show template
-				template_item = frappe.get_doc("Item", self.variant_of)
-
-				if not template_item.show_in_website:
-					template_item.show_in_website = 1
-					template_item.flags.dont_update_variants = True
-					template_item.flags.ignore_permissions = True
-					template_item.save()
 
 	def validate_item_defaults(self):
 		companies = list(set([row.company for row in self.item_defaults]))
@@ -1134,6 +1121,13 @@ def update_variants(variants, template, publish_progress=True):
 		count+=1
 		if publish_progress:
 				frappe.publish_progress(count*100/len(variants), title = _("Updating Variants..."))
+
+def toggle_variants_website_display(item_name, value):
+
+	for item in frappe.get_all("Item", filters={"variant_of": item_name}, fields=["item_code"]):
+		item_doc = frappe.get_doc("Item", item.get("item_code"))
+		item_doc.show_variant_in_website = value
+		item_doc.save()
 
 def on_doctype_update():
 	# since route is a Text column, it needs a length for indexing

@@ -318,6 +318,7 @@ class LeaveApplication(Document):
 		if self.leave_approver:
 			parent_doc = frappe.get_doc('Leave Application', self.name)
 			args = parent_doc.as_dict()
+			args.link = get_link_to_form('Leave Application', self.name)
 
 			template = frappe.db.get_single_value('HR Settings', 'leave_approval_notification_template')
 			if not template:

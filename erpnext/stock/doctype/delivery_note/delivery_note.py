@@ -578,13 +578,16 @@ def make_sales_invoice(source_name, target_doc=None):
 
 	return doc
 
+
 @frappe.whitelist()
 def make_delivery_trip(source_name, target_doc=None):
 	def update_total(source, target):
-		target.package_total = sum([stop.grand_total for stop in target.delivery_stops])
+		target.package_total = sum([flt(stop.grand_total) for stop in target.delivery_stops])
 
 	def update_stop_details(source_doc, target_doc, source_parent):
-		from erpnext.stock.doctype.delivery_trip.delivery_trip import get_delivery_window #To resolve Cyclic Dependency, Please Keep it inside the function
+		# to avoid cyclic dependencies with delivery trip
+		from erpnext.stock.doctype.delivery_trip.delivery_trip import get_delivery_window
+
 		delivery_window = get_delivery_window(source_parent.doctype, source_parent.name)
 		target_doc.delivery_start_time = delivery_window.delivery_start_time
 		target_doc.delivery_end_time = delivery_window.delivery_end_time
@@ -619,6 +622,7 @@ def make_delivery_trip(source_name, target_doc=None):
 
 	return doclist
 
+
 @frappe.whitelist()
 def make_installation_note(source_name, target_doc=None):
 	def update_item(obj, target, source_parent):
@@ -645,6 +649,7 @@ def make_installation_note(source_name, target_doc=None):
 	}, target_doc)
 
 	return doclist
+
 
 @frappe.whitelist()
 def make_packing_slip(source_name, target_doc=None):
@@ -675,13 +680,16 @@ def update_delivery_note_status(docname, status):
 	dn = frappe.get_doc("Delivery Note", docname)
 	dn.update_status(status)
 
+
 @frappe.whitelist()
 def email_coas(docname):
 	delivery_note = frappe.get_doc("Delivery Note", docname).as_dict()
 	if not delivery_note.get("contact_email"):
 		frappe.throw(_("No contact email found"))
 
-	coas = [item.get("certificate_of_analysis") for item in delivery_note.get("items") if item.get("certificate_of_analysis")]
+	coas = [item.get("certificate_of_analysis") for item in delivery_note.get("items")
+		if item.get("certificate_of_analysis")]
+
 	if not coas:
 		frappe.msgprint(_("No Certificates of Analysis attached"))
 		return
@@ -691,6 +699,10 @@ def email_coas(docname):
 		coa_file_id = frappe.db.get_value("File", {"file_url": item.certificate_of_analysis}, "name")
 		attachments.append({"fid": coa_file_id})
 
-	frappe.sendmail(recipients = delivery_note.get("contact_email"), subject = "Certificate of Analysis" , attachments = attachments)
-	status = "success"
-	return status
+	frappe.sendmail(
+		recipients=delivery_note.get("contact_email"),
+		subject="Certificate of Analysis",
+		attachments=attachments
+	)
+
+	return "success"

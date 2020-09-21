@@ -268,6 +268,19 @@ def make_opportunity(source_name, target_doc=None):
 
 	return target_doc
 
+@frappe.whitelist()
+def make_contract(source_name, target_doc=None):
+	target_doc = get_mapped_doc("Customer", source_name,
+		{"Customer": {
+			"doctype": "Contract",
+			"field_map": {
+				"name": "party_name",
+				"doctype": "party_type",
+			}
+		}}, target_doc)
+
+	return target_doc
+
 def _set_missing_values(source, target):
 	address = frappe.get_all('Dynamic Link', {
 			'link_doctype': source.doctype,

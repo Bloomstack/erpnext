@@ -22,8 +22,9 @@ frappe.ui.form.on("Purchase Receipt", {
 				frappe.set_route("Form", lcv.doctype, lcv.name);
 			},
 		}
-		
+
 		frm.custom_make_buttons = {
+			'Quality Inspection': 'Quality Inspection',
 			'Stock Entry': 'Return',
 			'Purchase Invoice': 'Purchase Invoice'
 		};

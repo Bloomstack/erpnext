@@ -9,6 +9,7 @@ from frappe.model.naming import set_name_by_naming_series
 from frappe.contacts.address_and_contact import load_address_and_contact, delete_contact_and_address
 from erpnext.utilities.transaction_base import TransactionBase
 from erpnext.accounts.party import validate_party_accounts, get_dashboard_info, get_timeline_data # keep this
+from frappe.model.mapper import get_mapped_doc
 
 
 class Supplier(TransactionBase):
@@ -56,3 +57,16 @@ class Supplier(TransactionBase):
 	def after_rename(self, olddn, newdn, merge=False):
 		if frappe.defaults.get_global_default('supp_master_name') == 'Supplier Name':
 			frappe.db.set(self, "supplier_name", newdn)
+
+@frappe.whitelist()
+def make_contract(source_name, target_doc=None):
+	target_doc = get_mapped_doc("Supplier", source_name,
+		{"Supplier": {
+			"doctype": "Contract",
+			"field_map": {
+				"supplier_name": "party_name",
+				"doctype": "party_type",
+			}
+		}}, target_doc)
+
+	return target_doc

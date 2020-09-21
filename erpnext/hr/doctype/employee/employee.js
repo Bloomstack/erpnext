@@ -38,6 +38,13 @@ erpnext.hr.EmployeeController = frappe.ui.form.Controller.extend({
 });
 frappe.ui.form.on('Employee',{
 	setup: function(frm) {
+		frm.make_methods = {
+			'Contract': () => frappe.model.open_mapped_doc({
+				method: 'erpnext.hr.doctype.employee.employee.make_contract',
+				frm: cur_frm
+			})
+		}
+
 		frm.set_query("leave_policy", function() {
 			return {
 				"filters": {

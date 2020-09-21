@@ -6,6 +6,9 @@ def get_data():
 		'heatmap': True,
 		'heatmap_message': _('This is based on the attendance of this Employee'),
 		'fieldname': 'employee',
+		'non_standard_fieldnames': {
+			'Contract': 'party_name'
+		},
 		'transactions': [
 			{
 				'label': _('Leave and Attendance'),
@@ -39,5 +42,9 @@ def get_data():
 				'label': _('Training'),
 				'items': ['Training Event', 'Training Result', 'Training Feedback', 'Employee Skill Map']
 			},
+			{
+				'label': _('Contracts'),
+				'items': ['Contract']
+			}
 		]
 	}
