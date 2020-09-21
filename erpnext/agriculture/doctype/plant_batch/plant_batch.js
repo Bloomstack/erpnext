@@ -41,7 +41,6 @@ frappe.ui.form.on('Plant Batch', {
 		});
 
 		frm.toggle_enable("untracked_count", frm.is_new())
-		// frm.set_df_property("untracked_count", "read_only", frm.is_new() ? 0 : 1);
 		if (!frm.is_new()) {
 			frm.add_custom_button(__("Plant Batch"), () => {
 				frm.trigger("split_plant_batch");
@@ -83,6 +82,7 @@ frappe.ui.form.on('Plant Batch', {
 			fieldname: 'split_count',
 			label: __('New Plant Batch Untracked Count'),
 			fieldtype: 'Int',
+			reqd: 1
 		},
 		{
 			fieldname: 'new_plant_batch_id',
@@ -91,21 +91,17 @@ frappe.ui.form.on('Plant Batch', {
 			reqd: 1
 		}],
 		(data) => {
-			frappe.call({
-				method: 'erpnext.agriculture.doctype.plant_batch.plant_batch.split_plant_batch',
-				args: {
-					untracked_count: frm.doc.untracked_count,
-					strain: frm.doc.strain,
-					start_date: frm.doc.start_date,
-					location: frm.doc.location,
-					split_count: data.split_count,
-					new_plant_batch_id: data.new_plant_batch_id,
-					reference_name: frm.doc.name
-				},
-				callback: (r) => {
-					frm.refresh();
-					frappe.set_route('Form', "Plant Batch", r.message);
-				},
+			if (frm.doc.untracked_count < data.split_count) {
+				frappe.throw(__("The Split count ({0}) should be less than or equal to the untracked quantity ({1})", [data.split_count.bold(), frm.doc.untracked_count.bold()]));
+			}
+			frm.call('split_plant_batch', {
+				split_count: data.split_count,
+				new_plant_batch_id: data.new_plant_batch_id,
+			}).then(r => {
+				frappe.run_serially([
+					() => frm.reload_doc(),
+					() => frappe.set_route('Form', "Plant Batch", r.message)
+				]);
 			});
 		},
 		__('Split Batch'),
