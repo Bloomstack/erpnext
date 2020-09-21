@@ -64,7 +64,7 @@ class PlantBatch(Document):
 
 		destroyed_plant_log = frappe.get_doc(
 			dict(
-				doctype='Destroyed Plant Log',
+				doctype = 'Destroyed Plant Log',
 				plant_batch = self.name,
 				destroy_count = destroy_count,
 				reason = reason,
