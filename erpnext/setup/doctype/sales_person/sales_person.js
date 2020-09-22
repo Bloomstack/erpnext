@@ -10,6 +10,18 @@ frappe.ui.form.on('Sales Person', {
 		}
 	},
 
+	employee: function(frm) {
+		console.log("aaya");
+		if (frm.doc.employee){
+			frm.set_df_property('sales_person_name', 'read_only', 1);
+			console.log("in");}
+		else{
+			console.log("out");
+			frm.set_df_property('sales_person_name', 'read_only', 0);
+			frappe.model.set_value(frm.doctype, frm.docname, 'sales_person_name', "");
+		}
+	},
+
 	setup: function(frm) {
 		frm.fields_dict["targets"].grid.get_field("distribution_id").get_query = function(doc, cdt, cdn){
 			var row = locals[cdt][cdn];
@@ -34,7 +46,7 @@ cur_frm.cscript.refresh = function(doc, cdt, cdn) {
 cur_frm.cscript.set_root_readonly = function(doc) {
 	// read-only for root
 	if(!doc.parent_sales_person) {
-		cur_frm.set_read_only();
+		// cur_frm.set_read_only();
 		cur_frm.set_intro(__("This is a root sales person and cannot be edited."));
 	} else {
 		cur_frm.set_intro(null);
