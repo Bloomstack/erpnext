@@ -9,7 +9,7 @@ import ast
 import frappe
 from frappe import _
 from frappe.model.document import Document
-from frappe.utils import add_days, getdate, nowdate
+from frappe.utils import getdate, nowdate
 from erpnext.agriculture.utils import create_project, create_tasks
 from frappe.model.mapper import get_mapped_doc
 
