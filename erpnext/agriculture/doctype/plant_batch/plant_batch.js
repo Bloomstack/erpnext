@@ -39,8 +39,7 @@ frappe.ui.form.on('Plant Batch', {
 				obj_to_append: obj_to_append
 			});
 		});
-
-		frm.toggle_enable("untracked_count", frm.is_new())
+		frm.toggle_enable("untracked_count", frm.is_new());
 		if (!frm.is_new()) {
 			frm.add_custom_button(__("Plant Batch"), () => {
 				frm.trigger("split_plant_batch");
