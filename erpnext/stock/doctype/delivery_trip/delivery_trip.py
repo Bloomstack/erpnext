@@ -11,7 +11,7 @@ from erpnext.accounts.party import get_due_date
 from frappe import _
 from frappe.contacts.doctype.address.address import get_address_display
 from frappe.model.document import Document
-from frappe.utils import cint, flt, get_datetime, get_link_to_form, nowdate, today
+from frappe.utils import cint, flt, get_datetime, get_link_to_form, nowdate, today, unique
 
 
 class DeliveryTrip(Document):
@@ -538,12 +538,16 @@ def create_or_update_timesheet(trip, action, odometer_value=None):
 
 @frappe.whitelist()
 def make_payment_entry(payment_amount, sales_invoice):
-	payment_entry = get_payment_entry("Sales Invoice", sales_invoice, party_amount=flt(payment_amount))
-	payment_entry.paid_amount = payment_amount
-	payment_entry.reference_date = today()
-	payment_entry.reference_no = sales_invoice
-	payment_entry.flags.ignore_permissions = True
-	payment_entry.save()
+	payment_entry = frappe._dict()
+	if flt(payment_amount) > 0:
+		payment_entry = get_payment_entry("Sales Invoice", sales_invoice, party_amount=flt(payment_amount))
+		payment_entry.paid_amount = payment_amount
+		payment_entry.reference_date = today()
+		payment_entry.reference_no = sales_invoice
+		payment_entry.flags.ignore_permissions = True
+		payment_entry.save()
+
+	update_delivery_trip_status(payment_amount, sales_invoice)
 
 	return payment_entry.name
 
@@ -563,3 +567,22 @@ def update_payment_due_date(sales_invoice):
 		term.due_date = due_date
 
 	invoice.save()
+
+
+def update_delivery_trip_status(payment_amount, sales_invoice):
+	delivery_stops = frappe.get_all("Delivery Stop",
+		filters={"sales_invoice": sales_invoice, "docstatus": 1},
+		fields=["parent", "name"])
+
+	delivery_trips = unique([stop.parent for stop in delivery_stops])
+	delivery_stops = unique([stop.name for stop in delivery_stops])
+
+	for trip in delivery_trips:
+		trip_doc = frappe.get_doc("Delivery Trip", trip)
+		for stop in trip_doc.delivery_stops:
+			if stop.name in delivery_stops:
+				stop.visited = True
+				stop.paid_amount = payment_amount
+				if stop.delivery_note:
+					frappe.db.set_value("Delivery Note", stop.delivery_note, "status", "Completed")
+		trip_doc.save()

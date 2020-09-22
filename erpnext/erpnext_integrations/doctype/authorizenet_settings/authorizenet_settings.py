@@ -53,19 +53,16 @@ Example:
 Return payment status after processing the payment
 
 """
-from __future__ import unicode_literals
 
-import imp
 import json
-import os
 import re
-import sys
 
 from authorizenet import apicontractsv1
 from authorizenet.apicontrollers import createTransactionController
 from six.moves.urllib.parse import urlencode
 
 import frappe
+from frappe import _
 from frappe.integrations.utils import create_payment_gateway, create_request_log
 from frappe.model.document import Document
 from frappe.utils import call_hook_method, cstr, get_url
@@ -101,7 +98,8 @@ def charge_credit_card(data, card_number, expiration_date, card_code):
 	# Authenticate with Authorizenet
 	merchant_auth = apicontractsv1.merchantAuthenticationType()
 	merchant_auth.name = frappe.db.get_single_value("Authorizenet Settings", "api_login_id")
-	merchant_auth.transactionKey = get_decrypted_password('Authorizenet Settings', 'Authorizenet Settings', fieldname='api_transaction_key', raise_exception=False)
+	merchant_auth.transactionKey = get_decrypted_password('Authorizenet Settings', 'Authorizenet Settings',
+		fieldname='api_transaction_key', raise_exception=False)
 
 	# Create the payment data for a credit card
 	credit_card = apicontractsv1.creditCardType()
@@ -154,14 +152,12 @@ def charge_credit_card(data, card_number, expiration_date, card_code):
 	create_transaction_request.transactionRequest = transaction_request
 
 	# Create the controller
-	createtransactioncontroller = createTransactionController(
-		create_transaction_request)
+	createtransactioncontroller = createTransactionController(create_transaction_request)
 	createtransactioncontroller.execute()
 
 	response = createtransactioncontroller.getresponse()
 
 	status = "Failed"
-
 	if response is not None:
 		# Check to see if the API request was successfully received and acted upon
 		if response.messages.resultCode == "Ok" and hasattr(response.transactionResponse, 'messages') is True:
@@ -174,8 +170,8 @@ def charge_credit_card(data, card_number, expiration_date, card_code):
 			raise ex
 
 	response_dict = to_dict(response)
-
 	integration_request.update_status(data, status)
+	description = "Something went wrong while trying to complete the transaction. Please try again."
 
 	if status == "Completed":
 		description = response_dict.get("transactionResponse").get("messages").get("message").get("description")
@@ -186,8 +182,9 @@ def charge_credit_card(data, card_number, expiration_date, card_code):
 
 	return frappe._dict({
 		"status": status,
-		"description" : description
+		"description": description
 	})
+
 
 def to_dict(response):
 	response_dict = {}

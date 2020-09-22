@@ -1,5 +1,4 @@
 $('#submit').on("click", function(e) {
-
     let data = context.replace(/'/g, '"');
     e.preventDefault();
 
@@ -23,12 +22,13 @@ $('#submit').on("click", function(e) {
             "card_code": cardCode,
             "data": data
         },
-
         callback: function(r) {
             if (r.message.status === "Completed") {
                 window.location.href = "/integrations/payment-success";
             } else {
-                frappe.throw(__(`${r.message.description}`));
+                frappe.msgprint(__(`${r.message.description}`));
+                $('#submit').prop('disabled', false);
+                $('#submit').html(__('Retry'));
             }
         }
     })

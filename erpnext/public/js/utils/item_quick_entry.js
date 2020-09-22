@@ -1,8 +1,8 @@
 frappe.provide('frappe.ui.form');
 
 frappe.ui.form.ItemQuickEntryForm = frappe.ui.form.QuickEntryForm.extend({
-	init: function(doctype, after_insert) {
-		this._super(doctype, after_insert);
+	init: function(doctype, after_insert, init_callback, doc) {
+		this._super(doctype, after_insert, init_callback, doc);
 	},
 
 	render_dialog: function() {
