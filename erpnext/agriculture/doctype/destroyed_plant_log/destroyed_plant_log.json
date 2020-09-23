@@ -1,0 +1,91 @@
+{
+ "autoname": "DPL.#####",
+ "creation": "2020-09-17 10:37:41.370040",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "plant_batch",
+  "destroy_count",
+  "reason",
+  "actual_date",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "plant_batch",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Plant Batch",
+   "options": "Plant Batch",
+   "reqd": 1
+  },
+  {
+   "fieldname": "destroy_count",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Destroy Count",
+   "reqd": 1
+  },
+  {
+   "fieldname": "actual_date",
+   "fieldtype": "Date",
+   "label": "Actual Date"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Destroyed Plant Log",
+   "print_hide": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "reason",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Reason",
+   "reqd": 1
+  }
+ ],
+ "is_submittable": 1,
+ "modified": "2020-09-20 22:53:52.106268",
+ "modified_by": "Administrator",
+ "module": "Agriculture",
+ "name": "Destroyed Plant Log",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Administrator",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "quick_entry": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "title_field": "plant_batch",
+ "track_changes": 1
+}

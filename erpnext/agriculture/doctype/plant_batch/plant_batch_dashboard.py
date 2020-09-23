@@ -12,8 +12,8 @@ def get_data():
 				'items': ['Plant', 'Harvest']
 			},
 			{
-				'label': _('Diseases & Additives'),
-				'items': ['Plant Disease Diagnosis', 'Plant Additive Log']
+				'label': _('Plant Log'),
+				'items': ['Plant Additive Log', 'Plant Disease Diagnosis', 'Destroyed Plant Log']
 			}
 		]
 	}
