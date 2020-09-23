@@ -74,6 +74,7 @@ class PlantBatch(Document):
 		).insert()
 		destroyed_plant_log.submit()
 		return destroyed_plant_log.name
+
 	def split_plant_batch(self, split_count, new_plant_batch_id):
 		if self.untracked_count == 0:
 			frappe.throw(_("Cannot split Plant Batch as there is no untracked count."))
