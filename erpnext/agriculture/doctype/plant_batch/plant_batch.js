@@ -2,6 +2,12 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on('Plant Batch', {
+	setup: function (frm) {
+		frm.make_methods = {
+			'Destroyed Plant Log': () => { frm.trigger("destroy_plant_batch"); }
+		};
+	},
+
 	refresh: (frm) => {
 		if (!frm.doc.__islocal)
 			frm.add_custom_button(__('Reload Linked Analysis'), () => frm.call("reload_linked_analysis"));
@@ -47,6 +53,34 @@ frappe.ui.form.on('Plant Batch', {
 			}, __("Create"));
 		}
 
+	},
+	destroy_plant_batch: (frm) => {
+		frappe.prompt([{
+			fieldname: 'destroy_count',
+			label: __('Destroy Count'),
+			fieldtype: 'Int',
+			reqd: 1,
+		},
+		{
+			fieldname: 'reason',
+			label: __('Reason'),
+			fieldtype: 'Data',
+			reqd: 1,
+		}],
+		(data) => {
+			frm.call('destroy_plant_batch', {
+				destroy_count: data.destroy_count,
+				reason: data.reason
+			}).then(r => {
+				frappe.run_serially([
+					() => frm.reload_doc(),
+					() => frappe.set_route('Form', "Destroyed Plant Log", r.message)
+				]);
+			});
+		},
+		__('Destroyed Plant Log'),
+		__('Destroy')
+		);
 	}
 });
 

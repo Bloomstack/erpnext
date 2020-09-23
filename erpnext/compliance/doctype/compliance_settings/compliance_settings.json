@@ -14,7 +14,9 @@
   "metrc_user_key",
   "sb_sync",
   "metrc_push_data",
-  "metrc_pull_data"
+  "metrc_pull_data",
+  "column_break_12",
+  "pull_incoming_transfer"
  ],
  "fields": [
   {
@@ -77,10 +79,20 @@
    "fieldname": "metrc_pull_data",
    "fieldtype": "Check",
    "label": "Pull Data"
+  },
+  {
+   "fieldname": "column_break_12",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "pull_incoming_transfer",
+   "fieldtype": "Check",
+   "label": "Pull Incoming Transfer"
   }
  ],
  "issingle": 1,
- "modified": "2020-08-06 02:46:44.850015",
+ "modified": "2020-09-18 16:19:41.043751",
  "modified_by": "Administrator",
  "module": "Compliance",
  "name": "Compliance Settings",

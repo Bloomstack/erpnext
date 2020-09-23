@@ -96,7 +96,7 @@ def validate_doc_compliance(doc):
 		doc = frappe._dict(json.loads(doc))
 
 	is_compliance_item = False
-	compliance_items = frappe.get_all('Compliance Item', fields=['item_code'])
+	compliance_items = frappe.get_all('Item', filters={'is_compliance_item': True}, fields=['item_code'])
 	if not compliance_items:
 		return
 

@@ -39,8 +39,13 @@ def get_data():
 			]
 		},
 		{
-			"label": _("Diseases & Additives"),
+			"label": _("Plant Log"),
 			"items": [
+				{
+					"type": "doctype",
+					"name": "Plant Additive Log",
+					"onboard": 1,
+				},
 				{
 					"type": "doctype",
 					"name": "Plant Disease Diagnosis",
@@ -48,7 +53,7 @@ def get_data():
 				},
 				{
 					"type": "doctype",
-					"name": "Plant Additive Log",
+					"name": "Destroyed Plant Log",
 					"onboard": 1,
 				},
 				{

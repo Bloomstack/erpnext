@@ -9,7 +9,7 @@ import ast
 import frappe
 from frappe import _
 from frappe.model.document import Document
-from frappe.utils import add_days
+from frappe.utils import getdate, nowdate
 from erpnext.agriculture.utils import create_project, create_tasks
 from frappe.model.mapper import get_mapped_doc
 
@@ -52,6 +52,29 @@ class PlantBatch(Document):
 
 		self.save()
 
+	def validate_plant_batch_quantities(self, destroy_count):
+		if self.untracked_count == 0:
+			frappe.throw(_("The plant batch must have an untracked count."))
+
+		if int(destroy_count) <= 0 :
+			frappe.throw(_("Destroy count cannot be less than or equal to 0."))
+
+		if self.untracked_count < int(destroy_count):
+			frappe.throw(_("The Destroy Count ({0}) should be less than or equal to the untracked count ({1})").format(destroy_count,self.untracked_count))
+
+	def destroy_plant_batch(self, destroy_count, reason):
+		self.validate_plant_batch_quantities(destroy_count)
+		destroyed_plant_log = frappe.get_doc(
+			dict(
+				doctype = 'Destroyed Plant Log',
+				plant_batch = self.name,
+				destroy_count = destroy_count,
+				reason = reason,
+				actual_date = getdate(nowdate())
+			)
+		).insert()
+		destroyed_plant_log.submit()
+		return destroyed_plant_log.name
 
 def get_coordinates(doc):
 	return ast.literal_eval(doc.location).get('features')[0].get('geometry').get('coordinates')

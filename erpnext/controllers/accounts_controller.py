@@ -873,8 +873,8 @@ def get_tax_rate(account_head):
 
 
 @frappe.whitelist()
-def get_default_taxes_and_charges(master_doctype, tax_template=None, company=None):
-	if not company: return {}
+def get_default_taxes_and_charges(master_doctype, tax_template=None, company=None, doctype=None):
+	if not company or (doctype == "Purchase Receipt" and frappe.db.get_single_value("Buying Settings", "disable_cultivation_tax_for_purchase_receipt")): return {}
 
 	if tax_template and company:
 		tax_template_company = frappe.db.get_value(master_doctype, tax_template, "company")

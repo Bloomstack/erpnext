@@ -394,12 +394,6 @@ def handle_task_linking(new_task_list):
 			for item in new_task_list:
 				if old_task.parent_task == item['previous_task_name']:
 					new_task.parent_task = item['new_task_name']
-		if old_task.depends_on:
-			new_task.depends_on = copy.deepcopy(old_task.depends_on)
-			for sub_task in (new_task.depends_on):
-				for item in new_task_list:
-					if sub_task.task == item['previous_task_name']:
-						sub_task.task = item['new_task_name']
 		new_task.save()
 
 def get_projects_for_collect_progress(frequency, fields):

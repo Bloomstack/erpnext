@@ -61,6 +61,13 @@
   "column_break_37",
   "has_serial_no",
   "serial_no_series",
+  "sb_compliance",
+  "is_compliance_item",
+  "requires_lab_tests",
+  "enable_cultivation_tax",
+  "cb_compliance",
+  "strain_type",
+  "item_category",
   "variants_section",
   "has_variants",
   "variant_based_on",
@@ -345,8 +352,7 @@
   {
    "fieldname": "shelf_life_in_days",
    "fieldtype": "Int",
-   "label": "Shelf Life In Days",
-   "mandatory_depends_on": "eval:doc.has_batch_no && doc.has_expiry_date"
+   "label": "Shelf Life In Days"
   },
   {
    "default": "2099-12-31",
@@ -1058,6 +1064,50 @@
    "fieldname": "inspection_required_during_manufacturing",
    "fieldtype": "Check",
    "label": "Inspection Required during Manufacturing"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "sb_compliance",
+   "fieldtype": "Section Break",
+   "label": "Compliance"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_compliance_item",
+   "fieldtype": "Check",
+   "in_standard_filter": 1,
+   "label": "Is Compliance Item"
+  },
+  {
+   "depends_on": "eval:doc.is_compliance_item",
+   "fieldname": "strain_type",
+   "fieldtype": "Data",
+   "label": "Strain Type"
+  },
+  {
+   "depends_on": "eval:doc.enable_cultivation_tax && doc.is_compliance_item",
+   "fieldname": "item_category",
+   "fieldtype": "Select",
+   "label": "Item Category",
+   "options": "\nDry Flower\nDry Leaf\nFresh Plant\nBased on Raw Materials"
+  },
+  {
+   "fieldname": "cb_compliance",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "depends_on": "eval:doc.is_compliance_item",
+   "fieldname": "requires_lab_tests",
+   "fieldtype": "Check",
+   "label": "Requires Lab Tests"
+  },
+  {
+   "default": "0",
+   "depends_on": "eval:doc.is_compliance_item",
+   "fieldname": "enable_cultivation_tax",
+   "fieldtype": "Check",
+   "label": "Enable Cultivation Tax"
   }
  ],
  "has_web_view": 1,
@@ -1065,7 +1115,7 @@
  "idx": 2,
  "image_field": "image",
  "max_attachments": 1,
- "modified": "2020-09-02 04:31:46.879086",
+ "modified": "2020-09-09 03:07:32.055534",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Item",
