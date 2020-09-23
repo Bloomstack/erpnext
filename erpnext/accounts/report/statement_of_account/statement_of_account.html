@@ -38,23 +38,14 @@
 				<td>{%= frappe.datetime.str_to_user(data[i].posting_date) %}</td>
 				<td>{%= data[i].voucher_type %}
 					<br>{%= data[i].voucher_no %}</td>
-					<td style="text-align: right">
-						{%= format_currency(data[i].debit, filters.presentation_currency) %}</td>
-					<td style="text-align: right">
+				<td style="text-align: right">
+					{%= format_currency(data[i].debit, filters.presentation_currency) %}</td>
+				<td style="text-align: right">
 						{%= format_currency(data[i].credit, filters.presentation_currency) %}</td>
-			{% } else { %}
-				<td></td>
-				<td><b>{%= frappe.format(data[i].account, {fieldtype: "Link"}) || "&nbsp;" %}</b></td>
-				<td style="text-align: right">
-					{%= data[i].account && format_currency(data[i].debit, filters.presentation_currency) %}
-				</td>
-				<td style="text-align: right">
-					{%= data[i].account && format_currency(data[i].credit, filters.presentation_currency) %}
-				</td>
-			{% } %}
 				<td style="text-align: right">
 					{%= format_currency(data[i].balance, filters.presentation_currency) %}
 				</td>
+			{% } %}
 			</tr>
 		{% } %}
 	</tbody>
