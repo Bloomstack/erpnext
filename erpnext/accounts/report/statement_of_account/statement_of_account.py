@@ -132,15 +132,11 @@ def get_data_with_opening_closing(filters, account_details, gl_entries):
 
 	totals, entries = get_accountwise_gle(filters, gl_entries, gle_map)
 
-	# Opening for filtered account
-	data.append(totals.opening)
 	data += entries
 
 	# totals
 	data.append(totals.total)
 
-	# closing
-	data.append(totals.closing)
 	return data
 
 def initialize_gle_map(gl_entries, filters):
