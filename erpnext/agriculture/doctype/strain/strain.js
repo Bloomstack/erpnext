@@ -4,6 +4,15 @@
 frappe.provide("erpnext.strain");
 
 frappe.ui.form.on('Strain', {
+	setup: function (frm) {
+		frm.make_methods = {
+			'Plant Batch': () => frappe.model.open_mapped_doc({
+				method: "erpnext.agriculture.doctype.strain.strain.make_plant_batch",
+				frm: frm
+			})
+		}
+	},
+
 	refresh: function(frm) {
 		frm.set_query("item_code", "materials_required", function() {
 			return {
@@ -11,15 +20,6 @@ frappe.ui.form.on('Strain', {
 			};
 		});
 		frm.fields_dict.materials_required.grid.set_column_disp('bom_no', false);
-
-		if (!frm.is_new()) {
-			frm.add_custom_button(__("Plant Batch"), () => {
-				frappe.model.open_mapped_doc({
-					method: "erpnext.agriculture.doctype.strain.strain.make_plant_batch",
-					frm: frm
-				});
-			}, __("Create"));
-		}
 	},
 
 	onload_post_render: function(frm) {

@@ -1,0 +1,72 @@
+{
+ "creation": "2020-09-22 23:08:12.609566",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "plant",
+  "plant_tag",
+  "plant_batch",
+  "cb_harvest",
+  "actual_date",
+  "strain"
+ ],
+ "fields": [
+  {
+   "fieldname": "plant",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Plant",
+   "options": "Plant",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "plant.plant_tag",
+   "fieldname": "plant_tag",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Plant Tag",
+   "options": "Plant Tag",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "plant.plant_batch",
+   "fieldname": "plant_batch",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Plant Batch",
+   "options": "Plant Batch",
+   "reqd": 1
+  },
+  {
+   "fieldname": "cb_harvest",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Today",
+   "fieldname": "actual_date",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Actual Date",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "plant.strain",
+   "fieldname": "strain",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Strain",
+   "options": "Strain"
+  }
+ ],
+ "istable": 1,
+ "modified": "2020-09-22 23:09:20.509052",
+ "modified_by": "Administrator",
+ "module": "Agriculture",
+ "name": "Harvest Plant",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

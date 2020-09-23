@@ -2,6 +2,19 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on('Plant Batch', {
+	setup: function (frm) {
+		frm.make_methods = {
+			'Plant': () => frappe.model.open_mapped_doc({
+				method: "erpnext.agriculture.doctype.plant_batch.plant_batch.make_plant",
+				frm: frm
+			}),
+			'Harvest': () => frappe.model.open_mapped_doc({
+				method: "erpnext.agriculture.doctype.plant_batch.plant_batch.make_harvest",
+				frm: frm
+			})
+		}
+	},
+
 	refresh: (frm) => {
 		if (!frm.doc.__islocal)
 			frm.add_custom_button(__('Reload Linked Analysis'), () => frm.call("reload_linked_analysis"));
@@ -25,28 +38,6 @@ frappe.ui.form.on('Plant Batch', {
 				obj_to_append: obj_to_append
 			});
 		});
-
-		if (!frm.is_new()) {
-			frm.add_custom_button(__("Plant"), () => {
-				frappe.model.open_mapped_doc({
-					method: "erpnext.agriculture.doctype.plant_batch.plant_batch.make_plant",
-					frm: frm
-				});
-			}, __("Create"));
-			frm.add_custom_button(__("Additive Log"), () => {
-				frappe.model.open_mapped_doc({
-					method: "erpnext.agriculture.doctype.plant_batch.plant_batch.make_additive_log",
-					frm: frm
-				});
-			}, __("Create"));
-			frm.add_custom_button(__("Disease Diagnosis"), () => {
-				frappe.model.open_mapped_doc({
-					method: "erpnext.agriculture.doctype.plant_batch.plant_batch.make_disease_diagnosis",
-					frm: frm
-				});
-			}, __("Create"));
-		}
-
 	}
 });
 
