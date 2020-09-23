@@ -90,9 +90,6 @@ frappe.ui.form.on('Plant Batch', {
 			reqd: 1
 		}],
 		(data) => {
-			if (frm.doc.untracked_count < data.split_count) {
-				frappe.throw(__("The Split count ({0}) should be less than or equal to the untracked quantity ({1})", [data.split_count.bold(), frm.doc.untracked_count.bold()]));
-			}
 			frm.call('split_plant_batch', {
 				split_count: data.split_count,
 				new_plant_batch_id: data.new_plant_batch_id,
