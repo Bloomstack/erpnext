@@ -1,5 +1,5 @@
 {
- "autoname": "field:title",
+ "autoname": "field:plant_tag",
  "creation": "2020-07-18 06:47:59.662640",
  "doctype": "DocType",
  "editable_grid": 1,
@@ -61,7 +61,7 @@
    "fieldname": "growth_phase",
    "fieldtype": "Select",
    "label": "Growth Phase",
-   "options": "\nVegetative\nFlowering"
+   "options": "\nYoung\nVegetative\nFlowering"
   },
   {
    "fieldname": "location",
@@ -174,7 +174,7 @@
    "reqd": 1
   }
  ],
- "modified": "2020-08-24 07:11:28.909053",
+ "modified": "2020-09-22 22:51:34.495709",
  "modified_by": "Administrator",
  "module": "Agriculture",
  "name": "Plant",
@@ -206,5 +206,6 @@
  "restrict_to_domain": "Agriculture",
  "sort_field": "modified",
  "sort_order": "DESC",
+ "title_field": "plant_tag",
  "track_changes": 1
 }
