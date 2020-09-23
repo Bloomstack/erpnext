@@ -1,5 +1,4 @@
 {
- "actions": [],
  "allow_import": 1,
  "allow_rename": 1,
  "autoname": "field:sales_person_name",
@@ -17,6 +16,7 @@
   "enabled",
   "cb0",
   "employee",
+  "employee_name",
   "department",
   "lft",
   "rgt",
@@ -139,13 +139,19 @@
    "oldfieldname": "target_details",
    "oldfieldtype": "Table",
    "options": "Target Detail"
+  },
+  {
+   "fetch_from": "employee.employee_name",
+   "fieldname": "employee_name",
+   "fieldtype": "Data",
+   "label": "Employee Name",
+   "read_only": 1
   }
  ],
  "icon": "icon-user",
  "idx": 1,
  "is_tree": 1,
- "links": [],
- "modified": "2020-03-18 18:26:01.076203",
+ "modified": "2020-09-21 01:36:36.094926",
  "modified_by": "Administrator",
  "module": "Setup",
  "name": "Sales Person",

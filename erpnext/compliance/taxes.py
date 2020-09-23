@@ -23,6 +23,8 @@ def calculate_cannabis_tax(doc):
 		return
 
 	if doc.doctype in ("Purchase Order", "Purchase Invoice", "Purchase Receipt"):
+		if doc.doctype == "Purchase Receipt" and frappe.db.get_single_value("Buying Settings", "disable_cultivation_tax_for_purchase_receipt"):
+			return
 		# calculate cultivation tax for buying cycle
 		cultivation_taxes = calculate_cultivation_tax(doc)
 		for account, tax in cultivation_taxes.items():
@@ -143,6 +145,7 @@ def calculate_excise_tax(doc, compliance_items):
 			# fetch either the transaction rate or price list rate, whichever is higher
 			price_list_rate = item.get("price_list_rate") or 0
 			rate = item.get("rate") or 0
+			qty = item.get("qty") or 0
 			max_item_rate = max([price_list_rate, rate])
 			if max_item_rate == 0:
 				continue
@@ -151,8 +154,8 @@ def calculate_excise_tax(doc, compliance_items):
 				return
 
 			# calculate the total excise tax for each item
-			item_shipping_charge = (total_shipping_charge / doc.net_total) * (max_item_rate * item.get("qty"))
-			item_cost_with_shipping = (max_item_rate * item.get("qty")) + item_shipping_charge
+			item_shipping_charge = (total_shipping_charge / doc.net_total) * (max_item_rate * qty)
+			item_cost_with_shipping = (max_item_rate * qty) + item_shipping_charge
 			item_cost_after_markup = item_cost_with_shipping + (item_cost_with_shipping * MARKUP_PERCENTAGE / 100)
 			total_excise_tax += item_cost_after_markup * EXCISE_TAX_RATE / 100
 

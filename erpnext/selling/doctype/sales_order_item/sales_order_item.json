@@ -68,7 +68,6 @@
   "warehouse",
   "target_warehouse",
   "prevdoc_docname",
-  "package_tag",
   "col_break4",
   "blanket_order",
   "blanket_order_rate",
@@ -762,17 +761,11 @@
    "fieldname": "item_ignore_pricing_rule",
    "fieldtype": "Check",
    "label": "Ignore Pricing Rule"
-  },
-  {
-   "fieldname": "package_tag",
-   "fieldtype": "Link",
-   "label": "Package Tag",
-   "options": "Package Tag"
   }
  ],
  "idx": 1,
  "istable": 1,
- "modified": "2020-08-06 04:11:55.917576",
+ "modified": "2020-09-21 03:48:33.813779",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sales Order Item",
