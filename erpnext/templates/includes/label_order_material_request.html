@@ -10,7 +10,7 @@
 
 			{% for field, value in compliance_data.items() %}
 			<tr>
-				<td>{{ frappe.get_meta("Compliance Item").get_label(field) }}</td>
+				<td>{{ frappe.get_meta("Item").get_label(field) }}</td>
 				<td>{{ value or "--"}}</td>
 			</tr>
 			{% endfor %}

@@ -2,16 +2,15 @@
 # Copyright (c) 2017, Frappe Technologies Pvt. Ltd. and contributors
 # For license information, please see license.txt
 
-from __future__ import unicode_literals
-
 import ast
 
 import frappe
+from erpnext.agriculture.utils import create_project, create_tasks
 from frappe import _
 from frappe.model.document import Document
-from frappe.utils import add_days
-from erpnext.agriculture.utils import create_project, create_tasks
 from frappe.model.mapper import get_mapped_doc
+from frappe.utils import getdate, nowdate, today
+
 
 class PlantBatch(Document):
 	def validate(self):
@@ -52,6 +51,29 @@ class PlantBatch(Document):
 
 		self.save()
 
+	def validate_plant_batch_quantities(self, destroy_count):
+		if self.untracked_count == 0:
+			frappe.throw(_("The plant batch must have an untracked count."))
+
+		if int(destroy_count) <= 0 :
+			frappe.throw(_("Destroy count cannot be less than or equal to 0."))
+
+		if self.untracked_count < int(destroy_count):
+			frappe.throw(_("The Destroy Count ({0}) should be less than or equal to the untracked count ({1})").format(destroy_count,self.untracked_count))
+
+	def destroy_plant_batch(self, destroy_count, reason):
+		self.validate_plant_batch_quantities(destroy_count)
+		destroyed_plant_log = frappe.get_doc(
+			dict(
+				doctype = 'Destroyed Plant Log',
+				plant_batch = self.name,
+				destroy_count = destroy_count,
+				reason = reason,
+				actual_date = getdate(nowdate())
+			)
+		).insert()
+		destroyed_plant_log.submit()
+		return destroyed_plant_log.name
 
 def get_coordinates(doc):
 	return ast.literal_eval(doc.location).get('features')[0].get('geometry').get('coordinates')
@@ -83,6 +105,7 @@ def is_in_location(point, vs):
 
 	return inside
 
+
 @frappe.whitelist()
 def make_plant(source_name, target_doc=None):
 	target_doc = get_mapped_doc("Plant Batch", source_name,
@@ -95,24 +118,23 @@ def make_plant(source_name, target_doc=None):
 
 	return target_doc
 
-@frappe.whitelist()
-def make_additive_log(source_name, target_doc=None):
-	target_doc = get_mapped_doc("Plant Batch", source_name,
-		{"Plant Batch": {
-			"doctype": "Plant Additive Log",
-			"field_map": {
-			}
-		}}, target_doc)
-
-	return target_doc
 
 @frappe.whitelist()
-def make_disease_diagnosis(source_name, target_doc=None):
+def make_harvest(source_name, target_doc=None):
+	def update_plant(source, target):
+		target.append("plants", {
+			"plant_tag": source.plant_tag,
+			"plant_batch": source.name,
+			"strain": source.strain,
+			"actual_date": today()
+		})
+
 	target_doc = get_mapped_doc("Plant Batch", source_name,
 		{"Plant Batch": {
-			"doctype": "Plant Disease Diagnosis",
+			"doctype": "Harvest",
 			"field_map": {
+				"location": "harvest_location"
 			}
-		}}, target_doc)
+		}}, target_doc, update_plant)
 
 	return target_doc

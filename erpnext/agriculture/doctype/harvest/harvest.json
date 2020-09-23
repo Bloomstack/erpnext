@@ -5,21 +5,16 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "plant",
-  "plant_tag",
-  "plant_batch",
-  "column_break_3",
   "harvest_type",
-  "actual_date",
-  "strain",
-  "section_break_3",
   "harvest_location",
   "drying_location",
   "drying_warehouse",
   "column_break_11",
   "harvest_weight",
   "harvest_uom",
-  "amended_from"
+  "amended_from",
+  "sb_plants",
+  "plants"
  ],
  "fields": [
   {
@@ -27,39 +22,6 @@
    "fieldtype": "Select",
    "label": "Harvest Type",
    "options": "Manicure\nHarvest"
-  },
-  {
-   "fetch_from": "plant.plant_tag",
-   "fieldname": "plant_tag",
-   "fieldtype": "Link",
-   "label": "Plant Tag",
-   "options": "Plant Tag",
-   "reqd": 1
-  },
-  {
-   "fetch_from": "plant.strain",
-   "fieldname": "strain",
-   "fieldtype": "Link",
-   "label": "Strain",
-   "options": "Strain",
-   "reqd": 1
-  },
-  {
-   "fetch_from": "plant.plant_batch",
-   "fieldname": "plant_batch",
-   "fieldtype": "Link",
-   "in_list_view": 1,
-   "label": "Plant Batch",
-   "options": "Plant Batch",
-   "reqd": 1
-  },
-  {
-   "fieldname": "column_break_3",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "section_break_3",
-   "fieldtype": "Section Break"
   },
   {
    "fieldname": "column_break_11",
@@ -75,24 +37,10 @@
    "read_only": 1
   },
   {
-   "fieldname": "plant",
-   "fieldtype": "Link",
-   "label": "Plant",
-   "options": "Plant",
-   "reqd": 1
-  },
-  {
-   "default": "Today",
-   "fieldname": "actual_date",
-   "fieldtype": "Date",
-   "in_list_view": 1,
-   "label": "Actual Date",
-   "reqd": 1
-  },
-  {
    "fetch_from": "plant.location",
    "fieldname": "harvest_location",
    "fieldtype": "Link",
+   "in_list_view": 1,
    "label": "Harvest Location",
    "options": "Location",
    "reqd": 1
@@ -112,19 +60,31 @@
   {
    "fieldname": "harvest_weight",
    "fieldtype": "Float",
+   "in_list_view": 1,
    "label": "Harvest Weight",
    "reqd": 1
   },
   {
    "fieldname": "harvest_uom",
    "fieldtype": "Link",
+   "in_list_view": 1,
    "label": "Harvest UOM",
    "options": "UOM",
    "reqd": 1
+  },
+  {
+   "fieldname": "plants",
+   "fieldtype": "Table",
+   "options": "Harvest Plant"
+  },
+  {
+   "fieldname": "sb_plants",
+   "fieldtype": "Section Break",
+   "label": "Plants"
   }
  ],
  "is_submittable": 1,
- "modified": "2020-08-24 05:00:21.214636",
+ "modified": "2020-09-22 23:12:24.760724",
  "modified_by": "Administrator",
  "module": "Agriculture",
  "name": "Harvest",
@@ -160,6 +120,5 @@
  "restrict_to_domain": "Agriculture",
  "sort_field": "modified",
  "sort_order": "DESC",
- "title_field": "plant",
  "track_changes": 1
 }
