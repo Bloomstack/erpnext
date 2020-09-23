@@ -11,11 +11,9 @@ frappe.ui.form.on('Sales Person', {
 	},
 
 	employee: function(frm) {
-		if (frm.doc.employee)
-			frm.set_df_property('sales_person_name', 'read_only', 1);
-		else{
-			frm.set_df_property('sales_person_name', 'read_only', 0);
-			frappe.model.set_value(frm.doctype, frm.docname, 'sales_person_name', "");
+		frm.toggle_enable("sales_person_name", !frm.doc.employee);
+		if (!frm.doc.employee) {
+			frm.set_value("sales_person_name", "");
 		}
 	},
 
