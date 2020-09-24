@@ -87,6 +87,13 @@ class PurchaseInvoice(BuyingController):
 		if self._action=="submit" and self.update_stock:
 			self.make_batches('warehouse')
 
+		check_overbilling_against = frappe.db.get_single_value("Buying Settings", "check_overbilling_against")
+		overbilling_based_on = "amount"
+		if check_overbilling_against == "Quantity":
+			overbilling_based_on = "qty"
+		elif check_overbilling_against == "Amount":
+			overbilling_based_on = "amount"
+
 		self.validate_release_date()
 		self.check_conversion_rate()
 		self.validate_credit_to_acc()
@@ -98,7 +105,7 @@ class PurchaseInvoice(BuyingController):
 		self.set_expense_account(for_validate=True)
 		self.set_against_expense_account()
 		self.validate_write_off_account()
-		self.validate_multiple_billing("Purchase Receipt", "pr_detail", "amount", "items")
+		self.validate_multiple_billing("Purchase Receipt", "pr_detail", overbilling_based_on, "items")
 		self.create_remarks()
 		self.set_status()
 		self.validate_purchase_receipt_if_update_stock()

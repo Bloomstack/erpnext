@@ -3,10 +3,12 @@
  "description": "Settings for Buying Module",
  "doctype": "DocType",
  "document_type": "Other",
+ "engine": "InnoDB",
  "field_order": [
   "supp_master_name",
   "supplier_group",
   "buying_price_list",
+  "check_overbilling_against",
   "column_break_3",
   "po_required",
   "pr_required",
@@ -94,12 +96,19 @@
    "fieldname": "disable_cultivation_tax_for_purchase_receipt",
    "fieldtype": "Check",
    "label": "Disable cultivation tax for Purchase Receipt"
+  },
+  {
+   "default": "Amount",
+   "fieldname": "check_overbilling_against",
+   "fieldtype": "Select",
+   "label": "Check Overbilling Against",
+   "options": "Amount\nQuantity"
   }
  ],
  "icon": "fa fa-cog",
  "idx": 1,
  "issingle": 1,
- "modified": "2020-09-21 22:15:32.017216",
+ "modified": "2020-09-24 04:43:52.270309",
  "modified_by": "Administrator",
  "module": "Buying",
  "name": "Buying Settings",
@@ -114,5 +123,7 @@
    "share": 1,
    "write": 1
   }
- ]
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC"
 }
