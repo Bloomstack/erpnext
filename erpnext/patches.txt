@@ -694,3 +694,4 @@ erpnext.patches.v13_0.update_delivery_note_status
 erpnext.patches.v13_0.delete_old_agri_doctypes
 erpnext.patches.v13_0.set_auto_create_invoice_on_delivery_note
 erpnext.patches.v13_0.update_item_master_doctype_field
+erpnext.patches.v13_0.update_billed_qty_in_purchase_receipt
