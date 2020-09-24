@@ -10,6 +10,13 @@ frappe.ui.form.on('Sales Person', {
 		}
 	},
 
+	employee: function(frm) {
+		frm.toggle_enable("sales_person_name", !frm.doc.employee);
+		if (!frm.doc.employee) {
+			frm.set_value("sales_person_name", "");
+		}
+	},
+
 	setup: function(frm) {
 		frm.fields_dict["targets"].grid.get_field("distribution_id").get_query = function(doc, cdt, cdn){
 			var row = locals[cdt][cdn];

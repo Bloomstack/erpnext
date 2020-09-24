@@ -16,7 +16,6 @@
   "enabled",
   "cb0",
   "employee",
-  "employee_name",
   "department",
   "lft",
   "rgt",
@@ -32,6 +31,7 @@
    "options": "icon-user"
   },
   {
+   "fetch_from": "employee.employee_name",
    "fieldname": "sales_person_name",
    "fieldtype": "Data",
    "in_list_view": 1,
@@ -139,19 +139,12 @@
    "oldfieldname": "target_details",
    "oldfieldtype": "Table",
    "options": "Target Detail"
-  },
-  {
-   "fetch_from": "employee.employee_name",
-   "fieldname": "employee_name",
-   "fieldtype": "Data",
-   "label": "Employee Name",
-   "read_only": 1
   }
  ],
  "icon": "icon-user",
  "idx": 1,
  "is_tree": 1,
- "modified": "2020-09-21 01:36:36.094926",
+ "modified": "2020-09-22 02:39:08.864190",
  "modified_by": "Administrator",
  "module": "Setup",
  "name": "Sales Person",
