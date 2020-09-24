@@ -1180,12 +1180,12 @@ def init_print_cheque(start, selected_docs, doctype):
 	series = int(start)
 	docs = json.loads(selected_docs)
 	for doc in docs:
-		if not frappe.db.get_value(doctype, doc.get("name"), "reference_no"):
-			frappe.db.set_value(doctype, doc.get("name"), {
-				"reference_no": series,
-				"reference_date": nowdate()
-			})
-			assigned_doc.append({"name": frappe.utils.get_link_to_form(
-				doctype, doc.get("name")), "series": series})
-			series += 1
+		frappe.db.set_value(doctype, doc.get("name"), {
+			"reference_no": series,
+			"reference_date": nowdate()
+		})
+		assigned_doc.append({"name": frappe.utils.get_link_to_form(
+			doctype, doc.get("name"), doc.get("title")),
+			"series": series})
+		series += 1
 	return assigned_doc

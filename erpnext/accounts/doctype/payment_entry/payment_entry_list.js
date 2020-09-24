@@ -38,16 +38,11 @@ frappe.listview_settings['Payment Entry'] = {
 							method: "erpnext.accounts.doctype.payment_entry.payment_entry.init_print_cheque",
 							args: { "start": values.starting_cheque_number, "selected_docs": selected_docs, "doctype": doctype },
 							callback: function (r) {
-								if (r.message.length) {
-									let data = []
-									r.message.forEach(element => {
-										data.push(element["name"] + " : " + element["series"])
-									});
-									frappe.msgprint(__("Cheques have been assigned to the selected payments:<br><ul><li>{0}</li></ul>", [data.join("<br><li>")]));
-								}
-								else {
-									frappe.msgprint(__("The Cheque Numbers are already assigned"))
-								}
+								let data = []
+								r.message.forEach(element => {
+									data.push(element["name"] + " : " + element["series"])
+								});
+								frappe.msgprint(__("Cheques have been assigned to the selected payments:<br><ul><li>{0}</li></ul>", [data.join("<br><li>")]));
 							}
 						});
 						d.hide();
