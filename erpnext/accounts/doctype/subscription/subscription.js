@@ -8,7 +8,7 @@ frappe.ui.form.on('Subscription', {
 				filters : {
 					name: ['in', ['Customer', 'Supplier']]
 				}
-			}
+			};
 		});
 	},
 

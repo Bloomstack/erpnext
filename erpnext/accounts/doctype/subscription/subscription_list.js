@@ -5,7 +5,7 @@ frappe.listview_settings['Subscription'] = {
 		} else if(doc.status === 'Active') {
 			return [__("Active"), "green"];
 		} else if(doc.status === 'Completed') {
-				return [__("Completed"), "green"];
+			return [__("Completed"), "green"];
 		} else if(doc.status === 'Past Due Date') {
 			return [__("Past Due Date"), "orange"];
 		} else if(doc.status === 'Unpaid') {
