@@ -408,11 +408,10 @@ class SalesOrder(SellingController):
 							"sales_order_item": row.name,
 							"docstatus": ["<", 2]
 						},
-						fields=["qty"])
+						fields=["sum(qty) as qty"])
 
 					if total_work_order_qty:
-						total_work_order_qty = sum([order.qty for order in total_work_order_qty if order.qty])
-						pending_qty -= total_work_order_qty
+						pending_qty -= flt(total_work_order_qty[0].qty)
 
 				if pending_qty and row.item_code not in product_bundle_parents:
 					items.append({
