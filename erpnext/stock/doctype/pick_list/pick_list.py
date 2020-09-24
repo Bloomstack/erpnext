@@ -55,8 +55,8 @@ class PickList(Document):
 				prev_picked_qty = frappe.get_all("Pick List Item", filters={"sales_order_item":item.get("sales_order_item"), "docstatus":1}, fields=['sum(qty) as prev_picked_qty'])
 
 				if prev_picked_qty:
-					prev_picked_qty = flt(prev_picked_qty[0].prev_picked_qty)
-					pick_list_qty = ordered_item_qty - prev_picked_qty
+					prev_picked_qty = prev_picked_qty[0].prev_picked_qty
+					pick_list_qty = flt(ordered_item_qty) - flt(prev_picked_qty)
 					if pick_list_qty > 0 and item.qty > pick_list_qty:
 						frappe.throw(_("Row #{0}: Picked quantity ({1}) for {2} cannot exceed unused ordered qty ({3})").format(item.idx, frappe.bold(item.qty), frappe.bold(item.item_name), frappe.bold(pick_list_qty)))
 
