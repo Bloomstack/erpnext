@@ -1048,6 +1048,7 @@ def create_pick_list(source_name, target_doc=None):
 			'condition': lambda doc: abs(doc.delivered_qty) < abs(doc.qty) and doc.delivered_by_supplier != 1
 		},
 	}, target_doc)
+
 	doc.purpose = 'Delivery'
 	# doc.set_item_locations()
 
