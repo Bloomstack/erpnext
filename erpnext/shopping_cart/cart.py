@@ -133,7 +133,14 @@ def update_cart(item_code, qty, row=None, additional_notes=None, with_items=Fals
 	quotation.flags.ignore_permissions = True
 	quotation.payment_schedule = []
 	if not empty_card:
-		quotation.save()
+		try:
+			quotation.save()
+		except frappe.MandatoryError as err:
+			# handle case where items could be removed during save
+			# case: JHA removing grouped items while removing custom IEMs
+			frappe.log_error(err)
+			quotation.delete()
+			quotation = None
 	else:
 		quotation.delete()
 		quotation = None
