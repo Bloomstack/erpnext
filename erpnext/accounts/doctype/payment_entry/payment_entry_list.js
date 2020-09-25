@@ -38,9 +38,9 @@ frappe.listview_settings['Payment Entry'] = {
 							method: "erpnext.accounts.doctype.payment_entry.payment_entry.init_print_cheque",
 							args: { "start": values.starting_cheque_number, "selected_docs": selected_docs, "doctype": doctype },
 							callback: function (r) {
-								let data = []
+								let data = [];
 								r.message.forEach(element => {
-									data.push(element["name"] + " : " + element["series"])
+									data.push(element["name"] + " : " + element["series"]);
 								});
 								frappe.msgprint(__("Cheques have been assigned to the selected payments:<br><ul><li>{0}</li></ul>", [data.join("<br><li>")]));
 							}
