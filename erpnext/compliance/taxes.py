@@ -70,8 +70,8 @@ def calculate_item_cultivation_tax(doc, item, cultivation_taxes=None):
 		filters={'is_compliance_item': True},
 		fields=['item_code', 'enable_cultivation_tax', 'item_category'])
 
-	item = next((data for data in compliance_items if data.get("item_code") == item.get("item_code")), None)
-	if not item or not item.enable_cultivation_tax:
+	compliance_item = next((data for data in compliance_items if data.get("item_code") == item.get("item_code")), None)
+	if not compliance_item or not compliance_item.enable_cultivation_tax:
 		return cultivation_taxes
 
 	flower_tax_account = get_company_default(doc.get("company"), "default_cultivation_tax_account_flower")
@@ -83,16 +83,16 @@ def calculate_item_cultivation_tax(doc, item, cultivation_taxes=None):
 
 	qty_in_ounces = convert_to_ounces(item.get("uom"), item.get("qty"))
 
-	if item.item_category == "Dry Flower":
+	if compliance_item.item_category == "Dry Flower":
 		cultivation_tax = qty_in_ounces * DRY_FLOWER_TAX_RATE
 		cultivation_taxes[flower_tax_account] += cultivation_tax
-	elif item.item_category == "Dry Leaf":
+	elif compliance_item.item_category == "Dry Leaf":
 		cultivation_tax = qty_in_ounces * DRY_LEAF_TAX_RATE
 		cultivation_taxes[leaf_tax_account] += cultivation_tax
-	elif item.item_category == "Fresh Plant":
+	elif compliance_item.item_category == "Fresh Plant":
 		cultivation_tax = qty_in_ounces * FRESH_PLANT_TAX_RATE
 		cultivation_taxes[plant_tax_account] += cultivation_tax
-	elif item.item_category == "Based on Raw Materials":
+	elif compliance_item.item_category == "Based on Raw Materials":
 		# calculate cultivation tax based on weight of raw materials
 		if not item.get("cultivation_weight_uom"):
 			frappe.throw(_("Row #{0}: Please set a cultivation weight UOM".format(item.get("idx"))))

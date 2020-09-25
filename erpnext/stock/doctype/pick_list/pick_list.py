@@ -44,7 +44,8 @@ class PickList(Document):
 	def validate_delivery_date(self):
 		order_delivery_dates = [frappe.db.get_value("Sales Order Item", location.get("sales_order_item"), "delivery_date")
 			for location in self.locations if location.get("sales_order_item")]
-		self.delivery_date = min(order_delivery_dates)
+		if order_delivery_dates:
+			self.delivery_date = min(order_delivery_dates)
 
 	def validate_stock_qty(self):
 		"""User should not allowed to create pick list if sales order item qty exceed."""
@@ -55,7 +56,7 @@ class PickList(Document):
 
 				if prev_picked_qty:
 					prev_picked_qty = prev_picked_qty[0].prev_picked_qty
-					pick_list_qty = ordered_item_qty - prev_picked_qty
+					pick_list_qty = flt(ordered_item_qty) - flt(prev_picked_qty)
 					if pick_list_qty > 0 and item.qty > pick_list_qty:
 						frappe.throw(_("Row #{0}: Picked quantity ({1}) for {2} cannot exceed unused ordered qty ({3})").format(item.idx, frappe.bold(item.qty), frappe.bold(item.item_name), frappe.bold(pick_list_qty)))
 
