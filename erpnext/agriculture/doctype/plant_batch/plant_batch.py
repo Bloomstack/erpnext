@@ -161,25 +161,3 @@ def make_harvest(source_name, target_doc=None):
 		}}, target_doc, update_plant)
 
 	return target_doc
-
-@frappe.whitelist()
-def split_plant_batch(strain, start_date, location, split_count, new_plant_batch_id=None, reference_name=None):
-	"""Split the plant batch into a new plant batch."""
-	prev_plant_batch = frappe.get_doc('Plant Batch', reference_name)
-
-	if prev_plant_batch.untracked_count < int(split_count):
-		frappe.throw(_("The Split count ({0}) should be less or equal to the untracked quantity ({1})").format(split_count, prev_plant_batch.untracked_count))
-
-	plant_batch = frappe.get_doc(
-		dict(doctype='Plant Batch', 
-			title=new_plant_batch_id,
-			strain = strain,
-			start_date = start_date,
-			untracked_count = split_count,
-			location = location)
-			).insert()
-
-	prev_plant_batch.untracked_count = prev_plant_batch.untracked_count - int(split_count)
-	prev_plant_batch.save()
-
-	return plant_batch.name
