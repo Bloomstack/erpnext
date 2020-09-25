@@ -37,7 +37,9 @@ frappe.ui.form.on("Warehouse", {
 				function() { convert_to_group_or_ledger(frm); }, 'fa fa-retweet', 'btn-default')
 		}
 		
-		frm.toggle_enable(['is_group', 'company'], false);
+		frm.toggle_enable(['is_group'], false);
+		frm.toggle_enable(['company'], true);
+
 
 		frappe.dynamic_link = {doc: frm.doc, fieldname: 'name', doctype: 'Warehouse'};
 		
