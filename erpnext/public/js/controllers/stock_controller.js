@@ -100,9 +100,9 @@ erpnext.stock.StockController = frappe.ui.form.Controller.extend({
 		} else {
 			let filters = {
 				'item_code': item.item_code
-			}
+			};
 			if (item.batch_no) {
-				filters["batch_no"] = item.batch_no
+				filters["batch_no"] = item.batch_no;
 			}
 			return {
 				filters: filters
