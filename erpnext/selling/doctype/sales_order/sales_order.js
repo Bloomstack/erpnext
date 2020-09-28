@@ -264,15 +264,7 @@ erpnext.selling.SalesOrderController = erpnext.selling.SellingController.extend(
 				if(!r.message) {
 					frappe.msgprint({
 						title: __('Work Order not created'),
-						message: __('No Items with Bill of Materials to Manufacture'),
-						indicator: 'orange'
-					});
-					return;
-				}
-				else if(!r.message) {
-					frappe.msgprint({
-						title: __('Work Order not created'),
-						message: __('Work Order already created for all items with BOM'),
+						message: __('No items left to manufacture'),
 						indicator: 'orange'
 					});
 					return;

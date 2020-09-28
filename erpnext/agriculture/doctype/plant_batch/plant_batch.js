@@ -39,6 +39,12 @@ frappe.ui.form.on('Plant Batch', {
 				obj_to_append: obj_to_append
 			});
 		});
+		frm.toggle_enable("untracked_count", frm.is_new());
+		if (!frm.is_new()) {
+			frm.add_custom_button(__("Plant Batch"), () => {
+				frm.trigger("split_plant_batch");
+			}, __("Create"));
+		}
 	},
 
 	destroy_plant_batch: (frm) => {
@@ -68,7 +74,36 @@ frappe.ui.form.on('Plant Batch', {
 		__('Destroyed Plant Log'),
 		__('Destroy')
 		);
-	}
+	},
+
+	split_plant_batch: function(frm) {
+		frappe.prompt([{
+			fieldname: 'split_count',
+			label: __('New Plant Batch Untracked Count'),
+			fieldtype: 'Int',
+			reqd: 1
+		},
+		{
+			fieldname: 'new_plant_batch_id',
+			label: __('New Plant Batch ID'),
+			fieldtype: 'Data',
+			reqd: 1
+		}],
+		(data) => {
+			frm.call('split_plant_batch', {
+				split_count: data.split_count,
+				new_plant_batch_id: data.new_plant_batch_id,
+			}).then(r => {
+				frappe.run_serially([
+					() => frm.reload_doc(),
+					() => frappe.set_route('Form', "Plant Batch", r.message)
+				]);
+			});
+		},
+		__('Split Batch'),
+		__('Split')
+		);
+	},
 });
 
 function is_in_land_unit(point, vs) {

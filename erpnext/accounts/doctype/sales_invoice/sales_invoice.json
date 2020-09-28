@@ -1,5 +1,4 @@
 {
- "actions": [],
  "allow_import": 1,
  "autoname": "naming_series:",
  "creation": "2013-05-24 19:29:05",
@@ -76,9 +75,9 @@
   "base_total",
   "base_net_total",
   "column_break_32",
-  "total_net_weight",
   "total",
   "net_total",
+  "total_net_weight",
   "taxes_section",
   "taxes_and_charges",
   "column_break_38",
@@ -150,9 +149,9 @@
   "edit_printing_settings",
   "letter_head",
   "group_same_items",
-  "select_print_heading",
-  "column_break_84",
   "language",
+  "column_break_84",
+  "select_print_heading",
   "more_information",
   "inter_company_invoice_reference",
   "customer_group",
@@ -398,7 +397,8 @@
   {
    "allow_on_submit": 1,
    "fieldname": "po_no",
-   "fieldtype": "Small Text",
+   "fieldtype": "Data",
+   "in_list_view": 1,
    "label": "Customer's Purchase Order",
    "no_copy": 1,
    "print_hide": 1
@@ -600,6 +600,7 @@
    "print_hide": 1
   },
   {
+   "description": "Scan item barcodes, serial numbers and batch numbers",
    "fieldname": "scan_barcode",
    "fieldtype": "Data",
    "label": "Scan Barcode"
@@ -1576,8 +1577,7 @@
  "icon": "fa fa-file-text",
  "idx": 181,
  "is_submittable": 1,
- "links": [],
- "modified": "2020-07-16 06:13:14.139976",
+ "modified": "2020-09-24 06:18:55.305060",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Sales Invoice",

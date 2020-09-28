@@ -75,6 +75,29 @@ class PlantBatch(Document):
 		destroyed_plant_log.submit()
 		return destroyed_plant_log.name
 
+	def split_plant_batch(self, split_count, new_plant_batch_id):
+		if self.untracked_count == 0:
+			frappe.throw(_("Cannot split Plant Batch as there is no untracked count."))
+
+		if self.untracked_count < int(split_count):
+			frappe.throw(_("The split count ({0}) should be less or equal to the untracked quantity ({1})").format(split_count, self.untracked_count))
+
+		plant_batch = frappe.get_doc(
+			dict(
+				doctype='Plant Batch',
+				title=new_plant_batch_id,
+				strain=self.strain,
+				start_date=getdate(nowdate()),
+				untracked_count=split_count,
+				location=self.location
+			)
+		).insert()
+		self.untracked_count -= int(split_count)
+		self.save()
+
+		return plant_batch.name
+
+
 def get_coordinates(doc):
 	return ast.literal_eval(doc.location).get('features')[0].get('geometry').get('coordinates')
 
