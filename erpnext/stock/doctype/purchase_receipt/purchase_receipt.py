@@ -541,18 +541,15 @@ def update_billed_amount_based_on_po(po_detail, update_modified=True):
 
 
 def update_billed_qty_based_on_po(po_detail, update_modified=True):
-	po_billed_qty = frappe.db.sql("""
-		SELECT
-			SUM(qty)
-		FROM
-			`tabPurchase Invoice Item`
-		WHERE
-			po_detail = %s
-				AND (pr_detail IS NULL OR pr_detail = '')
-				AND docstatus = 1
-	""", po_detail)
+	po_billed_qty = frappe.get_all("Purchase Invoice Item",
+		filters={"docstatus": 1, "po_detail": po_detail},
+		or_filters=[
+			{"pr_detail": ""},
+			{"pr_detail": None}
+		],
+		fields=["sum(qty) as qty"])
 
-	po_billed_qty = po_billed_qty and po_billed_qty[0][0] or 0
+	po_billed_qty = po_billed_qty and po_billed_qty[0].qty or 0
 
 	# Get all Delivery Note Item rows against the Purchase Order Item row
 	pr_details = frappe.db.sql("""

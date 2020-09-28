@@ -91,8 +91,6 @@ class PurchaseInvoice(BuyingController):
 		overbilling_based_on = "amount"
 		if check_overbilling_against == "Quantity":
 			overbilling_based_on = "qty"
-		elif check_overbilling_against == "Amount":
-			overbilling_based_on = "amount"
 
 		self.validate_release_date()
 		self.check_conversion_rate()

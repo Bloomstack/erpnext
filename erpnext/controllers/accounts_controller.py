@@ -620,7 +620,7 @@ class AccountsController(TransactionBase):
 
 			if not ref_val:
 				frappe.msgprint(_("Warning: System will not check overbilling since {0} for Item {1} in {2} is zero").format(
-					based_on, item.item_code, ref_dt))
+					frappe.bold(based_on), frappe.bold(item.item_code), frappe.bold(ref_dt)))
 				return
 
 			already_billed = frappe.get_all(self.doctype + " Item",
