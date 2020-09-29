@@ -106,7 +106,7 @@ erpnext.stock.StockController = frappe.ui.form.Controller.extend({
 			}
 			return {
 				filters: filters
-			}
+			};
 		}
 	},
 });
