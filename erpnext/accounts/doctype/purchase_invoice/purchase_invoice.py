@@ -12,7 +12,7 @@ from erpnext.assets.doctype.asset_category.asset_category import get_asset_categ
 from erpnext.controllers.buying_controller import BuyingController
 from erpnext.accounts.party import get_party_account, get_due_date
 from erpnext.accounts.utils import get_account_currency, get_fiscal_year
-from erpnext.stock.doctype.purchase_receipt.purchase_receipt import update_billed_amount_based_on_po
+from erpnext.stock.doctype.purchase_receipt.purchase_receipt import update_billed_amount_based_on_po, update_billed_qty_based_on_po
 from erpnext.stock import get_warehouse_account_map
 from erpnext.accounts.general_ledger import make_gl_entries, merge_similar_entries, delete_gl_entries
 from erpnext.accounts.doctype.gl_entry.gl_entry import update_outstanding_amt
@@ -87,6 +87,11 @@ class PurchaseInvoice(BuyingController):
 		if self._action=="submit" and self.update_stock:
 			self.make_batches('warehouse')
 
+		check_overbilling_against = frappe.db.get_single_value("Buying Settings", "check_overbilling_against")
+		overbilling_based_on = "amount"
+		if check_overbilling_against == "Quantity":
+			overbilling_based_on = "qty"
+
 		self.validate_release_date()
 		self.check_conversion_rate()
 		self.validate_credit_to_acc()
@@ -98,7 +103,7 @@ class PurchaseInvoice(BuyingController):
 		self.set_expense_account(for_validate=True)
 		self.set_against_expense_account()
 		self.validate_write_off_account()
-		self.validate_multiple_billing("Purchase Receipt", "pr_detail", "amount", "items")
+		self.validate_multiple_billing("Purchase Receipt", "pr_detail", overbilling_based_on, "items")
 		self.create_remarks()
 		self.set_status()
 		self.validate_purchase_receipt_if_update_stock()
@@ -932,19 +937,28 @@ class PurchaseInvoice(BuyingController):
 					frappe.throw(_("Supplier Invoice No exists in Purchase Invoice {0}".format(pi)))
 
 	def update_billing_status_in_pr(self, update_modified=True):
-		updated_pr = []
-		for d in self.get("items"):
-			if d.pr_detail:
-				billed_amt = frappe.db.sql("""select sum(amount) from `tabPurchase Invoice Item`
-					where pr_detail=%s and docstatus=1""", d.pr_detail)
-				billed_amt = billed_amt and billed_amt[0][0] or 0
-				frappe.db.set_value("Purchase Receipt Item", d.pr_detail, "billed_amt", billed_amt, update_modified=update_modified)
-				updated_pr.append(d.purchase_receipt)
-			elif d.po_detail:
-				updated_pr += update_billed_amount_based_on_po(d.po_detail, update_modified)
+		updated_receipts = []
+		for item in self.get("items"):
+			if item.pr_detail:
+				billed_values = frappe.get_all("Purchase Invoice Item",
+					filters={"docstatus": 1, "pr_detail": item.pr_detail},
+					fields=["sum(amount) as amount", "sum(qty) as qty"])
+				billed_amt = billed_values and flt(billed_values[0].amount)
+				billed_qty = billed_values and flt(billed_values[0].qty)
 
-		for pr in set(updated_pr):
-			frappe.get_doc("Purchase Receipt", pr).update_billing_percentage(update_modified=update_modified)
+				frappe.db.set_value("Purchase Receipt Item", item.pr_detail, "billed_amt", billed_amt, update_modified=update_modified)
+				frappe.db.set_value("Purchase Receipt Item", item.pr_detail, "billed_qty", billed_qty, update_modified=update_modified)
+				updated_receipts.append(item.purchase_receipt)
+			elif item.po_detail:
+				updated_receipts += update_billed_amount_based_on_po(item.po_detail, update_modified)
+				updated_receipts += update_billed_qty_based_on_po(item.po_detail, update_modified)
+
+		for pr in set(updated_receipts):
+			frappe.get_doc("Purchase Receipt", pr).update_billing_percentage(
+				target_ref_field="qty",
+				target_field="billed_qty",
+				update_modified=update_modified
+			)
 
 	def on_recurring(self, reference_doc, auto_repeat_doc):
 		self.due_date = None
@@ -984,7 +998,7 @@ class PurchaseInvoice(BuyingController):
 
 		# calculate totals again after applying TDS
 		self.calculate_taxes_and_totals()
-	
+
 	def set_status(self, update=False, status=None, update_modified=True):
 		if self.is_new():
 			if self.get('amended_from'):

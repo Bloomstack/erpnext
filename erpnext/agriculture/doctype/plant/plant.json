@@ -34,7 +34,7 @@
   {
    "fieldname": "title",
    "fieldtype": "Data",
-   "label": "Title",
+   "label": "UID",
    "read_only": 1,
    "unique": 1
   },
@@ -174,7 +174,7 @@
    "reqd": 1
   }
  ],
- "modified": "2020-09-22 22:51:34.495709",
+ "modified": "2020-09-28 16:15:39.506193",
  "modified_by": "Administrator",
  "module": "Agriculture",
  "name": "Plant",

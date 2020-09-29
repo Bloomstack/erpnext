@@ -273,6 +273,19 @@ def _get_cart_quotation(party=None):
 		qdoc.contact_email = frappe.session.user
 
 		qdoc.flags.ignore_permissions = True
+
+		# Hook: Allows overriding cart quotation creation for shopping cart
+		#
+		# Signature:
+		#       override_shopping_cart_get_quotation(party, qdoc)
+		#
+		# Args:
+		#		party: A doctype object(ex: Customer)
+		#		qdoc: Quotation doctype
+		hooks = frappe.get_hooks("override_shopping_cart_get_quotation") or []
+		for method in hooks:
+			frappe.call(method, party=party, qdoc=qdoc)
+
 		qdoc.run_method("set_missing_values")
 		apply_cart_settings(party, qdoc)
 
@@ -381,6 +394,20 @@ def get_party(user=None):
 
 	contact_name = get_contact_name(user)
 	party = None
+
+	# Hook: Allows overriding the contact person used by the shopping cart
+	#
+	# Signature:
+	#       override_shopping_cart_get_party_contact(contact_name)
+	#
+	# Args:
+	#		contact_name: The contact name that will be used to fetch a party
+	#
+	# Returns:
+	#		Hook expects a string or None to override the contact_name
+	hooks = frappe.get_hooks("override_shopping_cart_get_party_contact") or []
+	for method in hooks:
+		contact_name = frappe.call(method, contact_name=contact_name) or contact_name
 
 	if contact_name:
 		contact = frappe.get_doc('Contact', contact_name)
