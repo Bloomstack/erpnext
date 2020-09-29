@@ -618,11 +618,9 @@ erpnext.stock.StockEntry = erpnext.stock.StockController.extend({
 			};
 		});
 
-		if(this.frm.fields_dict["items"].grid.get_field('package_tag')) {
-			this.frm.set_query("package_tag", "items", function(doc, cdt, cdn) {
-				return me.set_query_for_package_tag(doc, cdt, cdn);
-			});
-		}
+		this.frm.set_query("package_tag", "items", function(doc, cdt, cdn) {
+			return me.set_query_for_package_tag(doc, cdt, cdn);
+		});
 
 		if(me.frm.doc.company && erpnext.is_perpetual_inventory_enabled(me.frm.doc.company)) {
 			this.frm.add_fetch("company", "stock_adjustment_account", "expense_account");
