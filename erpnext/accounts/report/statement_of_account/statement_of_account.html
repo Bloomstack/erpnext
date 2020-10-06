@@ -1,53 +1,156 @@
-<h2 class="text-center">{%= __("Statement of Account") %}</h2>
-<h4 class="text-center">
-	{% if (filters.party_name) { %}
-		{%= filters.party_name %}
-	{% } else if (filters.party && filters.party.length) { %}
-		{%= filters.party %}
-	{% } else if (filters.account) { %}
-		{%= filters.account %}
-	{% } %}
-</h4>
+<style>
+	.print-format.landscape {
+		padding: 6rem;
+	}
 
-<h6 class="text-center">
-	{% if (filters.tax_id) { %}
-	{%= __("Tax Id: ")%}	{%= filters.tax_id %}
-	{% } %}
-</h6>
+	.print-format tr th {
+		vertical-align: bottom !important;
+		padding: 1rem 5rem !important;
+	}
 
-<h5 class="text-center">
-	{%= frappe.datetime.str_to_user(filters.from_date) %}
-	{%= __("to") %}
-	{%= frappe.datetime.str_to_user(filters.to_date) %}
-</h5>
-<hr>
+	.customer-info {
+		color: #366092;
+		margin: 20px 0;
+		text-align: center;
+	}
+
+	.print-format .customer-info p {
+		color: #366092;
+		font-size: 16px;
+	}
+
+	.customer-info h2 {
+		font-weight: bold;
+		margin: 0px;
+		text-transform: uppercase;
+	}
+
+	.table-bordered thead tr th,
+	.table-bordered tbody tr td {
+		border: 1px solid #0000ff;
+	}
+
+	.table-bordered thead tr th {
+		background-color: #0000ff !important;
+		color: #ffffff;
+		font-size: 15px;
+		text-align: center;
+		text-transform: uppercase;
+	}
+
+	.table-bordered tbody tr:nth-child(odd) td {
+		background-color: #cfe2f3;
+	}
+
+	.address,
+	.statement-date {
+		display: inline-block;
+	}
+
+	.address {
+		width: 50%;
+	}
+
+	.statement-date {
+		float: right;
+		width: 50%;
+	}
+
+	.address .company {
+		font-size: 15px;
+		color: #595959;
+		font-weight: bold;
+	}
+
+	.address p,
+	.statement-date .row label,
+	.statement-date .row .value,
+	.print-date {
+		color: #948a8a;
+		font-size: 15px;
+	}
+</style>
+
+<div class="row">
+	<div class="col-xs-6 address">
+		<p class="company">
+			{{ report.addresses.company.name }}<br>
+			{{ report.addresses.company.address_line1 }}, {{ report.addresses.company.pincode }}<br>
+			{{ report.addresses.company.city }}, {{ report.addresses.company.state }}
+		</p>
+	</div>
+	<div class="col-xs-6 statement-date ">
+		<div class="row">
+			<div class="col-xs-6 text-right">
+				<label>Statement Date: </label>
+			</div>
+			<div class="col-xs-6 value text-right">
+				{{ frappe.datetime.str_to_user(filters.from_date) }} {{ __("to") }}
+				{{ frappe.datetime.str_to_user(filters.to_date) }}
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="customer-info">
+	<h2>{{ __("Statement of Account") }}</h2>
+	<p>
+		{% if (filters.party_name) { %}
+			{%= filters.party_name %}
+		{% } else if (filters.party && filters.party.length) { %}
+			{%= filters.party %}
+		{% } else if (filters.account) { %}
+			{%= filters.account %}
+		{% } %}
+	</p>
+
+	<p>
+		{% if (filters.tax_id) { %}
+			{%= __("Tax ID: ")%} {%= filters.tax_id %}
+		{% } %}
+	</p>
+
+	<p>
+		{{ report.addresses.party.address_line1 }},<br>
+		{{ report.addresses.party.city }}, {{ report.addresses.party.state }}
+	</p>
+</div>
+
 <table class="table table-bordered">
 	<thead>
 		<tr>
-			<th style="width: 12%">{%= __("Date") %}</th>
-			<th style="width: 15%">{%= __("Description") %}</th>
-			<th style="width: 15%">{%= __("Invoice") %}</th>
-			<th style="width: 15%">{%= __("Payment/Credit") %}</th>
-			<th style="width: 18%">{%= __("Balance (Dr - Cr)") %}</th>
+			<th>{{ __("Date") }}</th>
+			<th style="width: 33%;">{{ __("Description") }}</th>
+			<th>{{ __("Charges") }}</th>
+			<th>{{ __("Credits") }}</th>
+			<th style="width: 13%;">{{ __("Account Balance") }}</th>
 		</tr>
 	</thead>
+
 	<tbody>
-		{% for(var i=0, l=data.length; i<l; i++) { %}
+		{% for row in data %}
 			<tr>
-			{% if(data[i].posting_date) { %}
-				<td>{%= frappe.datetime.str_to_user(data[i].posting_date) %}</td>
-				<td>{%= data[i].voucher_type %}
-					<br>{%= data[i].voucher_no %}</td>
-				<td style="text-align: right">
-					{%= format_currency(data[i].debit, filters.presentation_currency) %}</td>
-				<td style="text-align: right">
-						{%= format_currency(data[i].credit, filters.presentation_currency) %}</td>
-				<td style="text-align: right">
-					{%= format_currency(data[i].balance, filters.presentation_currency) %}
-				</td>
-			{% } %}
+				{% if row.posting_date %}
+					<td class="text-center">
+						{{ frappe.datetime.str_to_user(row.posting_date) }}
+					</td>
+					<td>
+						{{ row.voucher_type }}<br>{{ row.voucher_no }}
+					</td>
+					<td class="text-right">
+						{{ format_currency(row.debit, filters.presentation_currency) }}
+					</td>
+					<td class="text-right">
+						{{ format_currency(row.credit, filters.presentation_currency) }}
+					</td>
+					<td class="text-right">
+						{{ format_currency(row.balance, filters.presentation_currency) }}
+					</td>
+				{% endif %}
 			</tr>
-		{% } %}
+		{% endfor %}
 	</tbody>
 </table>
-<p class="text-right text-muted">Printed On {%= frappe.datetime.str_to_user(frappe.datetime.get_datetime_as_string()) %}</p>
+
+<p class="text-right print-date">Printed On
+	{{ frappe.datetime.str_to_user(frappe.datetime.get_datetime_as_string()) }}</p>

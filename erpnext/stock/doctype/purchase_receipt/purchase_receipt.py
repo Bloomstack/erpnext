@@ -444,14 +444,19 @@ class PurchaseReceipt(BuyingController):
 		clear_doctype_notifications(self)
 
 	def update_billing_status(self, update_modified=True):
-		updated_pr = [self.name]
-		for d in self.get("items"):
-			if d.purchase_order_item:
-				updated_pr += update_billed_amount_based_on_po(d.purchase_order_item, update_modified)
+		updated_receipts = [self.name]
+		for item in self.get("items"):
+			if item.purchase_order_item:
+				updated_receipts += update_billed_amount_based_on_po(item.purchase_order_item, update_modified)
+				updated_receipts += update_billed_qty_based_on_po(item.purchase_order_item, update_modified)
 
-		for pr in set(updated_pr):
+		for pr in set(updated_receipts):
 			pr_doc = self if (pr == self.name) else frappe.get_doc("Purchase Receipt", pr)
-			pr_doc.update_billing_percentage(update_modified=update_modified)
+			pr_doc.update_billing_percentage(
+				target_ref_field="qty",
+				target_field="billed_qty",
+				update_modified=update_modified
+			)
 
 		self.load_from_db()
 
@@ -533,6 +538,62 @@ def update_billed_amount_based_on_po(po_detail, update_modified=True):
 		updated_pr.append(pr_item.parent)
 
 	return updated_pr
+
+
+def update_billed_qty_based_on_po(po_detail, update_modified=True):
+	po_billed_qty = frappe.get_all("Purchase Invoice Item",
+		filters={"docstatus": 1, "po_detail": po_detail},
+		or_filters=[
+			{"pr_detail": ""},
+			{"pr_detail": None}
+		],
+		fields=["sum(qty) as qty"])
+
+	po_billed_qty = po_billed_qty and po_billed_qty[0].qty or 0
+
+	# Get all Delivery Note Item rows against the Purchase Order Item row
+	pr_details = frappe.db.sql("""
+		SELECT
+			pr_item.name,
+			pr_item.qty,
+			pr_item.parent
+		FROM
+			`tabPurchase Receipt Item` pr_item,
+			`tabPurchase Receipt` pr
+		WHERE
+			pr.name = pr_item.parent
+				AND pr_item.purchase_order_item = %s
+				AND pr.docstatus = 1
+				AND pr.is_return = 0
+		ORDER BY
+			pr.posting_date asc,
+			pr.posting_time asc,
+			pr.name asc
+	""", po_detail, as_dict=1)
+
+	updated_receipts = []
+	for pr_item in pr_details:
+		# Get billed qty directly against Purchase Receipt
+		pr_billed_qty = frappe.get_all("Purchase Invoice Item",
+			filters={"docstatus": 1, "pr_detail": pr_item.name},
+			fields=["sum(qty) as qty"])
+		pr_billed_qty = pr_billed_qty and pr_billed_qty[0].qty or 0
+
+		# Distribute billed qty directly against PO between PRs based on FIFO
+		if po_billed_qty and pr_billed_qty < pr_item.qty:
+			pending_qty_to_bill = flt(pr_item.qty) - pr_billed_qty
+			if pending_qty_to_bill <= po_billed_qty:
+				pr_billed_qty += pending_qty_to_bill
+				po_billed_qty -= pending_qty_to_bill
+			else:
+				pr_billed_qty += po_billed_qty
+				po_billed_qty = 0
+
+		frappe.db.set_value("Purchase Receipt Item", pr_item.name, "billed_qty", pr_billed_qty, update_modified=update_modified)
+		updated_receipts.append(pr_item.parent)
+
+	return updated_receipts
+
 
 @frappe.whitelist()
 def make_purchase_invoice(source_name, target_doc=None):

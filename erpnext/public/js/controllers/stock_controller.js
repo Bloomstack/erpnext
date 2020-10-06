@@ -91,5 +91,22 @@ erpnext.stock.StockController = frappe.ui.form.Controller.extend({
 				frappe.set_route("query-report", "General Ledger");
 			}, __("View"));
 		}
-	}
+	},
+
+	set_query_for_package_tag: function(doc, cdt, cdn) {
+		let item = frappe.get_doc(cdt, cdn);
+		if(!item.item_code) {
+			frappe.throw(__("Please enter Item Code to get Package Tag Number"));
+		} else {
+			let filters = {
+				'item_code': item.item_code
+			};
+			if (item.batch_no) {
+				filters["batch_no"] = item.batch_no;
+			}
+			return {
+				filters: filters
+			};
+		}
+	},
 });

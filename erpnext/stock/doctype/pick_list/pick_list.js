@@ -15,6 +15,14 @@ frappe.ui.form.on('Pick List', {
 				}
 			};
 		});
+		frm.set_query('source_package_tag', 'locations', (cdt, cdn) => {
+			const row = frm.selected_doc || locals[cdt][cdn];
+			return {
+				filters: {
+					'item_code': row.item_code
+				}
+			};
+		});
 		frm.set_query('work_order', () => {
 			return {
 				query: 'erpnext.stock.doctype.pick_list.pick_list.get_pending_work_orders',

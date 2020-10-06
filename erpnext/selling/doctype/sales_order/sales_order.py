@@ -386,44 +386,45 @@ class SalesOrder(SellingController):
 
 	def get_work_order_items(self, for_raw_material_request=0):
 		'''Returns items with BOM that already do not have a linked work order'''
+
 		items = []
 		item_codes = [i.item_code for i in self.items]
 		product_bundle_parents = [pb.new_item_code for pb in frappe.get_all("Product Bundle", {"new_item_code": ["in", item_codes]}, ["new_item_code"])]
 
 		for table in [self.items, self.packed_items]:
-			for i in table:
-				bom = get_default_bom_item(i.item_code)
-				stock_qty = i.qty if i.doctype == 'Packed Item' else i.stock_qty
-				if not for_raw_material_request:
-					total_work_order_qty = flt(frappe.db.sql('''select sum(qty) from `tabWork Order`
-						where production_item=%s and sales_order=%s and sales_order_item = %s and docstatus<2''', (i.item_code, self.name, i.name))[0][0])
-					pending_qty = stock_qty - total_work_order_qty
-				else:
-					pending_qty = stock_qty
+			for row in table:
+				bom = get_default_bom_item(row.item_code)
+				if not bom:
+					continue
 
-				if pending_qty and i.item_code not in product_bundle_parents:
-					if bom:
-						items.append(dict(
-							name= i.name,
-							item_code= i.item_code,
-							description= i.description,
-							bom = bom,
-							warehouse = i.warehouse,
-							pending_qty = pending_qty,
-							required_qty = pending_qty if for_raw_material_request else 0,
-							sales_order_item = i.name
-						))
-					else:
-						items.append(dict(
-							name= i.name,
-							item_code= i.item_code,
-							description= i.description,
-							bom = '',
-							warehouse = i.warehouse,
-							pending_qty = pending_qty,
-							required_qty = pending_qty if for_raw_material_request else 0,
-							sales_order_item = i.name
-						))
+				stock_qty = row.qty if row.doctype == 'Packed Item' else row.stock_qty
+				pending_qty = stock_qty
+
+				if not for_raw_material_request:
+					total_work_order_qty = frappe.get_all("Work Order",
+						filters={
+							"production_item": row.item_code,
+							"sales_order": self.name,
+							"sales_order_item": row.name,
+							"docstatus": ["<", 2]
+						},
+						fields=["sum(qty) as qty"])
+
+					if total_work_order_qty:
+						pending_qty -= flt(total_work_order_qty[0].qty)
+
+				if pending_qty and row.item_code not in product_bundle_parents:
+					items.append({
+						"name": row.name,
+						"item_code": row.item_code,
+						"description": row.description,
+						"bom": bom,
+						"warehouse": row.warehouse,
+						"pending_qty": pending_qty,
+						"required_qty": pending_qty if for_raw_material_request else 0,
+						"sales_order_item": row.name
+					})
+
 		return items
 
 	def on_recurring(self, reference_doc, auto_repeat_doc):
