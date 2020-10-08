@@ -610,41 +610,45 @@ class AccountsController(TransactionBase):
 
 	def validate_multiple_billing(self, ref_dt, item_ref_dn, based_on, parentfield):
 		from erpnext.controllers.status_updater import get_allowance_for
-		item_allowance = {}
-		global_qty_allowance, global_amount_allowance = None, None
 
-		for item in self.get("items"):
-			if item.get(item_ref_dn):
-				ref_amt = flt(frappe.db.get_value(ref_dt + " Item",
-					item.get(item_ref_dn), based_on), self.precision(based_on, item))
-				if not ref_amt:
-					frappe.msgprint(
-						_("Warning: System will not check overbilling since amount for Item {0} in {1} is zero")
-							.format(item.item_code, ref_dt))
-				else:
-					already_billed = frappe.db.sql("""
-						select sum(%s)
-						from `tab%s`
-						where %s=%s and docstatus=1 and parent != %s
-					""" % (based_on, self.doctype + " Item", item_ref_dn, '%s', '%s'),
-					   (item.get(item_ref_dn), self.name))[0][0]
+		for item in self.get(parentfield):
+			if not item.get(item_ref_dn):
+				return
 
-					total_billed_amt = flt(flt(already_billed) + flt(item.get(based_on)),
-						self.precision(based_on, item))
+			ref_dt_item = ref_dt + " Item"
+			ref_val = flt(frappe.db.get_value(ref_dt_item, item.get(item_ref_dn), based_on), self.precision(based_on, item))
 
-					allowance, item_allowance, global_qty_allowance, global_amount_allowance = \
-						get_allowance_for(item.item_code, item_allowance, global_qty_allowance, global_amount_allowance, "amount")
+			if not ref_val:
+				frappe.msgprint(_("Warning: System will not check overbilling since {0} for Item {1} in {2} is zero").format(
+					frappe.bold(based_on), frappe.bold(item.item_code), frappe.bold(ref_dt)))
+				return
 
-					max_allowed_amt = flt(ref_amt * (100 + allowance) / 100)
+			already_billed = frappe.get_all(self.doctype + " Item",
+				filters={
+					"docstatus": 1,
+					"parent": ["!=", self.name],
+					item_ref_dn: item.get(item_ref_dn)
+				},
+				fields=["sum({}) as billed_val".format(based_on)])
 
-					if total_billed_amt < 0 and max_allowed_amt < 0:
-						# while making debit note against purchase return entry(purchase receipt) getting overbill error
-						total_billed_amt = abs(total_billed_amt)
-						max_allowed_amt = abs(max_allowed_amt)
+			already_billed = already_billed and already_billed[0].billed_val
+			total_billed_val = flt(flt(already_billed) + flt(item.get(based_on)), self.precision(based_on, item))
 
-					if total_billed_amt - max_allowed_amt > 0.01:
-						frappe.throw(_("Cannot overbill for Item {0} in row {1} more than {2}. To allow over-billing, please set allowance in Accounts Settings")
-							.format(item.item_code, item.idx, max_allowed_amt))
+			allowance, *other_allowances = get_allowance_for(item_code=item.item_code, qty_or_amount=based_on)
+
+			max_allowed_val = flt(ref_val * (100 + allowance) / 100)
+			if total_billed_val < 0 and max_allowed_val < 0:
+				# while making debit note against purchase return entry(purchase receipt) getting overbill error
+				total_billed_val = abs(total_billed_val)
+				max_allowed_val = abs(max_allowed_val)
+
+			if total_billed_val - max_allowed_val > 0.01:
+				settings_doc = "Stock Settings" if based_on == "qty" else "Accounts Settings"
+				settings_doc = get_link_to_form(settings_doc, settings_doc)
+
+				frappe.throw(_("""Row {0}: Cannot overbill item {1} for more than {2}.
+					To allow over-billing, please set an allowance in {3}.""").format(
+						item.idx, frappe.bold(item.item_code), frappe.bold(max_allowed_val), settings_doc))
 
 	def get_company_default(self, fieldname):
 		from erpnext.accounts.utils import get_company_default

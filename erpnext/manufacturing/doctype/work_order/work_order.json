@@ -1,5 +1,4 @@
 {
- "actions": [],
  "allow_import": 1,
  "autoname": "naming_series:",
  "creation": "2013-01-10 16:34:16",
@@ -14,8 +13,10 @@
   "item_name",
   "image",
   "bom_no",
+  "manufacturing_type",
   "column_break1",
   "company",
+  "raw_material_qty",
   "qty",
   "material_transferred_for_manufacturing",
   "produced_qty",
@@ -463,14 +464,25 @@
    "fieldname": "update_consumed_material_cost_in_project",
    "fieldtype": "Check",
    "label": "Update Consumed Material Cost In Project"
+  },
+  {
+   "fieldname": "manufacturing_type",
+   "fieldtype": "Select",
+   "label": "Manufacturing Type",
+   "options": "\nDiscrete\nProcess"
+  },
+  {
+   "depends_on": "eval:doc.manufacturing_type  == \"Process\"",
+   "fieldname": "raw_material_qty",
+   "fieldtype": "Float",
+   "label": "Raw Material Quantity"
   }
  ],
  "icon": "fa fa-cogs",
  "idx": 1,
  "image_field": "image",
  "is_submittable": 1,
- "links": [],
- "modified": "2019-12-04 11:20:04.695123",
+ "modified": "2020-08-21 00:52:31.345765",
  "modified_by": "Administrator",
  "module": "Manufacturing",
  "name": "Work Order",

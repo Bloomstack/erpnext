@@ -687,6 +687,7 @@ erpnext.patches.v12_0.update_sales_taxes_and_charges_template
 erpnext.patches.v13_0.update_customer_total_sales
 erpnext.patches.v13_0.setup_remove_assignment_on_task
 erpnext.patches.v13_0.set_values_in_production_plan_items
+erpnext.patches.v13_0.set_manufacturing_types
 erpnext.patches.v13_0.set_values_in_pick_list
 erpnext.patches.v13_0.create_investor_opportunity_type
 erpnext.patches.v13_0.update_label_details_in_batch
@@ -694,3 +695,6 @@ erpnext.patches.v13_0.update_delivery_note_status
 erpnext.patches.v13_0.delete_old_agri_doctypes
 erpnext.patches.v13_0.set_auto_create_invoice_on_delivery_note
 erpnext.patches.v13_0.update_item_master_doctype_field
+erpnext.patches.v13_0.update_billed_qty_in_purchase_receipt
+erpnext.patches.v13_0.update_subscription
+execute:frappe.delete_doc_if_exists('DocType', 'Compliance Item')

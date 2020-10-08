@@ -61,6 +61,7 @@ class BOM(WebsiteGenerator):
 		self.validate_materials()
 		self.validate_operations()
 		self.calculate_cost()
+		self.validate_raw_materials_table()
 		self.update_cost(update_parent=False, from_child_bom=True, save=False)
 
 	def get_context(self, context):
@@ -96,6 +97,11 @@ class BOM(WebsiteGenerator):
 			frappe.throw(_("Item: {0} does not exist in the system").format(item_code))
 
 		return item
+
+	def validate_raw_materials_table(self):
+		if self.manufacturing_type == "Process":
+			if len(self.items) > 1:
+				frappe.throw(_("For Process Manufacturing, only one item is allowed as raw material"))
 
 	def get_routing(self):
 		if self.routing:

@@ -54,9 +54,10 @@ def get_list_context(context):
 	context.title = _("Jobs")
 	context.introduction = _('Current Job Openings')
 	context.get_list = get_job_openings
+	context.result_heading_template = frappe.get_hooks('job_opening_result_heading_template') or None
 
 def get_job_openings(doctype, txt=None, filters=None, limit_start=0, limit_page_length=20, order_by=None):
-	fields = ['name', 'status', 'job_title', 'description']
+	fields = ['name', 'status', 'job_title', 'description', 'job_location', 'posting_date']
 
 	filters = filters or {}
 	filters.update({

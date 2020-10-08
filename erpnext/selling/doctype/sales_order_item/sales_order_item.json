@@ -86,7 +86,8 @@
   "section_break_63",
   "page_break",
   "item_tax_rate",
-  "transaction_date"
+  "transaction_date",
+  "package_tag"
  ],
  "fields": [
   {
@@ -761,11 +762,20 @@
    "fieldname": "item_ignore_pricing_rule",
    "fieldtype": "Check",
    "label": "Ignore Pricing Rule"
+  },
+  {
+   "fieldname": "package_tag",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Package Tag",
+   "options": "Package Tag",
+   "print_hide": 1,
+   "read_only": 1
   }
  ],
  "idx": 1,
  "istable": 1,
- "modified": "2020-09-21 03:48:33.813779",
+ "modified": "2020-10-05 03:15:29.578601",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sales Order Item",

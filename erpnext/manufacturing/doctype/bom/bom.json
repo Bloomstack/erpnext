@@ -9,6 +9,7 @@
   "company",
   "item_name",
   "uom",
+  "manufacturing_type",
   "cb0",
   "is_active",
   "is_default",
@@ -497,6 +498,12 @@
    "options": "Currency",
    "print_hide": 1,
    "read_only": 1
+  },
+  {
+   "fieldname": "manufacturing_type",
+   "fieldtype": "Select",
+   "label": "Manufacturing Type",
+   "options": "\nDiscrete\nProcess"
   }
  ],
  "icon": "fa fa-sitemap",

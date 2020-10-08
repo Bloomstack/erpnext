@@ -279,7 +279,7 @@ class PaymentEntry(AccountsController):
 				outstanding_amount, is_return = frappe.get_cached_value(d.reference_doctype, d.reference_name, ["outstanding_amount", "is_return"])
 				if outstanding_amount <= 0 and not is_return:
 					no_oustanding_refs.setdefault(d.reference_doctype, []).append(d)
-		
+
 		for k, v in no_oustanding_refs.items():
 			frappe.msgprint(_("{} - {} now have {} as they had no outstanding amount left before submitting the Payment Entry.<br><br>\
 					If this is undesirable please cancel the corresponding Payment Entry.")
@@ -1172,3 +1172,20 @@ def make_payment_order(source_name, target_doc=None):
 	}, target_doc, set_missing_values)
 
 	return doclist
+
+
+@frappe.whitelist()
+def init_print_cheque(start, selected_docs, doctype):
+	assigned_doc = []
+	series = int(start)
+	docs = json.loads(selected_docs)
+	for doc in docs:
+		frappe.db.set_value(doctype, doc.get("name"), {
+			"reference_no": series,
+			"reference_date": nowdate()
+		})
+		assigned_doc.append({"name": frappe.utils.get_link_to_form(
+			doctype, doc.get("name"), doc.get("title")),
+			"series": series})
+		series += 1
+	return assigned_doc

@@ -29,6 +29,7 @@
   "received_qty",
   "qty",
   "rejected_qty",
+  "billed_qty",
   "col_break2",
   "uom",
   "stock_uom",
@@ -830,13 +831,19 @@
   {
    "fieldname": "package_tag",
    "fieldtype": "Link",
-   "label": "Package Tag",
+   "label": "Incoming Package Tag",
    "options": "Package Tag"
+  },
+  {
+   "fieldname": "billed_qty",
+   "fieldtype": "Float",
+   "hidden": 1,
+   "label": "Billed Qty"
   }
  ],
  "idx": 1,
  "istable": 1,
- "modified": "2020-09-22 00:26:04.953070",
+ "modified": "2020-09-28 04:31:02.531616",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Purchase Receipt Item",

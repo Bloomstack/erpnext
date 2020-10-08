@@ -432,6 +432,10 @@ frappe.ui.form.on("Work Order", {
 		});
 	},
 
+	manufacturing_type: function(frm) {
+		frm.toggle_reqd("raw_material_qty", frm.doc.manufacturing_type == "Process");
+	},
+
 	use_multi_level_bom: function(frm) {
 		if(frm.doc.bom_no) {
 			frm.trigger("bom_no");

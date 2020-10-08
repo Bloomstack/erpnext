@@ -12,6 +12,7 @@
   "item_name": "_Test Item",
   "apply_warehouse_wise_reorder_level": 1,
   "gst_hsn_code": "999800",
+  "is_sales_item": 1,
   "valuation_rate": 100,
   "item_defaults": [{
     "company": "_Test Company",
@@ -58,6 +59,7 @@
   "show_in_website": 1,
   "website_warehouse": "_Test Warehouse - _TC",
   "gst_hsn_code": "999800",
+  "is_sales_item": 1,
   "item_defaults": [{
     "company": "_Test Company",
     "default_warehouse": "_Test Warehouse - _TC",
@@ -80,6 +82,7 @@
   "item_name": "_Test Item Home Desktop 100",
   "valuation_rate": 100,
   "gst_hsn_code": "999800",
+  "is_sales_item": 1,
   "item_defaults": [{
     "company": "_Test Company",
     "default_warehouse": "_Test Warehouse - _TC",
@@ -110,6 +113,7 @@
   "item_name": "_Test Item Home Desktop 200",
   "stock_uom": "_Test UOM 1",
   "gst_hsn_code": "999800",
+  "is_sales_item": 1,
   "item_defaults": [{
     "company": "_Test Company",
     "default_warehouse": "_Test Warehouse - _TC",
@@ -132,6 +136,7 @@
   "item_name": "_Test Product Bundle Item",
   "stock_uom": "_Test UOM",
   "gst_hsn_code": "999800",
+  "is_sales_item": 1,
   "item_defaults": [{
     "company": "_Test Company",
     "default_warehouse": "_Test Warehouse - _TC",
@@ -154,6 +159,7 @@
   "item_name": "_Test FG Item",
   "stock_uom": "_Test UOM",
   "gst_hsn_code": "999800",
+  "is_sales_item": 1,
   "item_defaults": [{
     "company": "_Test Company",
     "default_warehouse": "_Test Warehouse - _TC",
@@ -176,6 +182,7 @@
   "item_name": "_Test Non Stock Item",
   "stock_uom": "_Test UOM",
   "gst_hsn_code": "999800",
+  "is_sales_item": 1,
   "item_defaults": [{
     "company": "_Test Company",
     "default_warehouse": "_Test Warehouse - _TC",
@@ -198,6 +205,7 @@
   "item_name": "_Test Serialized Item",
   "stock_uom": "_Test UOM",
   "gst_hsn_code": "999800",
+  "is_sales_item": 1,
   "item_defaults": [{
     "company": "_Test Company",
     "default_warehouse": "_Test Warehouse - _TC",
@@ -221,6 +229,7 @@
   "serial_no_series": "ABCD.#####",
   "stock_uom": "_Test UOM",
   "gst_hsn_code": "999800",
+  "is_sales_item": 1,
   "item_defaults": [{
     "company": "_Test Company",
     "default_warehouse": "_Test Warehouse - _TC",
@@ -243,6 +252,7 @@
   "item_name": "_Test Item Home Desktop Manufactured",
   "stock_uom": "_Test UOM",
   "gst_hsn_code": "999800",
+  "is_sales_item": 1,
   "item_defaults": [{
     "company": "_Test Company",
     "default_warehouse": "_Test Warehouse - _TC",
@@ -265,6 +275,7 @@
   "item_name": "_Test FG Item 2",
   "stock_uom": "_Test UOM",
   "gst_hsn_code": "999800",
+  "is_sales_item": 1,
   "item_defaults": [{
     "company": "_Test Company",
     "default_warehouse": "_Test Warehouse - _TC",
@@ -287,6 +298,7 @@
   "item_name": "_Test Variant Item",
   "stock_uom": "_Test UOM",
   "gst_hsn_code": "999800",
+  "is_sales_item": 1,
   "has_variants": 1,
   "item_defaults": [{
     "company": "_Test Company",
@@ -325,6 +337,7 @@
   "item_name": "_Test Item Warehouse Group Wise Reorder",
   "apply_warehouse_wise_reorder_level": 1,
   "gst_hsn_code": "999800",
+  "is_sales_item": 1,
   "item_defaults": [{
     "company": "_Test Company",
     "default_warehouse": "_Test Warehouse Group-C1 - _TC",
@@ -359,6 +372,7 @@
   "item_name": "_Test Item With Item Tax Template",
   "stock_uom": "_Test UOM",
   "gst_hsn_code": "999800",
+  "is_sales_item": 1,
   "item_defaults": [{
     "company": "_Test Company",
     "default_warehouse": "_Test Warehouse - _TC",
@@ -395,6 +409,7 @@
   "item_name": "_Test Item Inherit Group Item Tax Template 1",
   "stock_uom": "_Test UOM",
   "gst_hsn_code": "999800",
+  "is_sales_item": 1,
   "item_defaults": [{
     "company": "_Test Company",
     "default_warehouse": "_Test Warehouse - _TC",
@@ -417,6 +432,7 @@
   "item_name": "_Test Item Inherit Group Item Tax Template 2",
   "stock_uom": "_Test UOM",
   "gst_hsn_code": "999800",
+  "is_sales_item": 1,
   "item_defaults": [{
     "company": "_Test Company",
     "default_warehouse": "_Test Warehouse - _TC",
@@ -439,6 +455,7 @@
   "item_name": "_Test Item Override Group Item Tax Template",
   "stock_uom": "_Test UOM",
   "gst_hsn_code": "999800",
+  "is_sales_item": 1,
   "item_defaults": [{
     "company": "_Test Company",
     "default_warehouse": "_Test Warehouse - _TC",
