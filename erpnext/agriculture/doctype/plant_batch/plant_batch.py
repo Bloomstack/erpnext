@@ -52,20 +52,14 @@ class PlantBatch(Document):
 		self.save()
 
 	def validate_plant_batch_quantities(self, destroy_count):
-		if self.untracked_count == 0:
-			frappe.throw(_("The plant batch must have an untracked count."))
-
-		if int(destroy_count) <= 0 :
-			frappe.throw(_("Destroy count cannot be less than or equal to 0."))
-
-		if self.untracked_count < int(destroy_count):
-			frappe.throw(_("The Destroy Count ({0}) should be less than or equal to the untracked count ({1})").format(destroy_count,self.untracked_count))
+		validate_quantities(self, destroy_count)
 
 	def destroy_plant_batch(self, destroy_count, reason):
 		self.validate_plant_batch_quantities(destroy_count)
 		destroyed_plant_log = frappe.get_doc(
 			dict(
 				doctype = 'Destroyed Plant Log',
+				category = "Plant Batch",
 				plant_batch = self.name,
 				destroy_count = destroy_count,
 				reason = reason,
@@ -104,6 +98,16 @@ def get_coordinates(doc):
 
 def get_geometry_type(doc):
 	return ast.literal_eval(doc.location).get('features')[0].get('geometry').get('type')
+
+def validate_quantities(self, destroy_count):
+		if self.untracked_count == 0:
+			frappe.throw(_("The plant batch must have an untracked count."))
+
+		if int(destroy_count) <= 0 :
+			frappe.throw(_("Destroy count cannot be less than or equal to 0."))
+
+		if self.untracked_count < int(destroy_count):
+			frappe.throw(_("The Destroy Count ({0}) should be less than or equal to the untracked count ({1})").format(destroy_count,self.untracked_count))
 
 
 def is_in_location(point, vs):
