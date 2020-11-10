@@ -115,7 +115,7 @@ class SellingController(StockController):
 		from frappe.utils import money_in_words
 
 		if self.meta.get_field("base_in_words"):
-			base_amount = abs(self.base_grand_total
+			base_amount = abs(self.base_grand_total)
 				if self.is_rounded_total_disabled() else self.base_rounded_total)
 			self.base_in_words = money_in_words(base_amount, self.company_currency)
 
