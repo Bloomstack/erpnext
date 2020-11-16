@@ -67,10 +67,12 @@ def place_order():
 	if not (quotation.shipping_address_name or quotation.customer_address):
 		frappe.throw(_("Set Shipping Address or Billing Address"))
 
+	#converts the quotation to a sales order in the shopping cart
 	from erpnext.selling.doctype.quotation.quotation import _make_sales_order
 	sales_order = frappe.get_doc(_make_sales_order(quotation.name, ignore_permissions=True))
 	sales_order.payment_schedule = []
 
+	#if making sales of out of stock items is not allowed, throw errors
 	if not cint(cart_settings.allow_items_not_in_stock):
 		for item in sales_order.get("items"):
 			item.reserved_warehouse, is_stock_item = frappe.db.get_value("Item",
@@ -243,6 +245,11 @@ def decorate_quotation_doc(doc):
 
 	return doc
 
+
+@frappe.whitelist
+def get_cart_quotation_doc(): 
+	"""returns the quotations in the user's cart """
+	return _get_cart_quotation()
 
 def _get_cart_quotation(party=None):
 	'''Return the open Quotation of type "Shopping Cart" or make a new one'''
