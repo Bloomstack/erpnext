@@ -144,17 +144,19 @@ class PaymentRequest(Document):
 		if frappe.session.user == "Guest":
 			frappe.set_user("Administrator")
 
+		#pass quotation/sales order to the create payment entry
 		payment_entry = self.create_payment_entry()
 		self.make_invoice()
 
 		return payment_entry
 
 	def create_payment_entry(self, submit=True):
-		"""create entry"""
+		"""Generate a payment entry against a quotation or sales order"""
 		frappe.flags.ignore_account_permission = True
 
 		ref_doc = frappe.get_doc(self.reference_doctype, self.reference_name)
 
+		#select debit_to or credit_to account depending on sales order or purchase order
 		if self.reference_doctype == "Sales Invoice":
 			party_account = ref_doc.debit_to
 		elif self.reference_doctype == "Purchase Invoice":
@@ -164,15 +166,28 @@ class PaymentRequest(Document):
 
 		party_account_currency = ref_doc.get("party_account_currency") or get_account_currency(party_account)
 
+		#get payment amount from the payment request document
 		bank_amount = self.grand_total
+
+		#If the currency of the customer matches with the currency of the quotation but not of the payment request
 		if party_account_currency == ref_doc.company_currency and party_account_currency != self.currency:
 			party_amount = ref_doc.base_grand_total
 		else:
 			party_amount = self.grand_total
 
-		payment_entry = get_payment_entry(self.reference_doctype, self.reference_name,
-			party_amount=party_amount, bank_account=self.payment_account, bank_amount=bank_amount)
+		#create a sales order if the payment request has been made against a quotation
+		if self.reference_doctype == "Quotation":
+			from erpnext.selling.doctype.quotation.quotation import _make_sales_order
+			sales_order = frappe.get_doc(_make_sales_order(quotation.name, ignore_permissions=True))
+			#reference document is the new sales order we just created
+			payment_entry = get_payment_entry("Sales Order", sales_order.name,
+				party_amount=party_amount, bank_account=self.payment_account, bank_amount=bank_amount)
+		else:
+			#reference document is the sales order in the payment request that was passed
+			payment_entry = get_payment_entry(self.reference_doctype, self.reference_name,
+				party_amount=party_amount, bank_account=self.payment_account, bank_amount=bank_amount)
 
+		#updating details about the payment request in the payment entry
 		payment_entry.update({
 			"reference_no": self.name,
 			"reference_date": nowdate(),
@@ -279,29 +294,36 @@ class PaymentRequest(Document):
 
 @frappe.whitelist(allow_guest=True)
 def make_payment_request(**args):
-	"""Make payment request"""
+	"""Opens API to frontend for generating a payment request"""
 
 	args = frappe._dict(args)
 
+	#collect details on the document against which a payment request is going to be generated, along with amount
 	ref_doc = frappe.get_doc(args.dt, args.dn)
 	grand_total = get_amount(ref_doc)
+
+	#collect details of loyalty points, if any
 	if args.loyalty_points and args.dt == "Sales Order":
 		from erpnext.accounts.doctype.loyalty_program.loyalty_program import validate_loyalty_points
 		loyalty_amount = validate_loyalty_points(ref_doc, int(args.loyalty_points))
-		frappe.db.set_value("Sales Order", args.dn, "loyalty_points", int(args.loyalty_points), update_modified=False)
-		frappe.db.set_value("Sales Order", args.dn, "loyalty_amount", loyalty_amount, update_modified=False)
+		frappe.db.set_value(args.dt, args.dn, "loyalty_points", int(args.loyalty_points), update_modified=False)
+		frappe.db.set_value(args.dt, args.dn, "loyalty_amount", loyalty_amount, update_modified=False)
 		grand_total = grand_total - loyalty_amount
 
+	#get details of the payment gateway and account from which the payment is going to be made
 	gateway_account = get_gateway_details(args) or frappe._dict()
 
 	bank_account = (get_party_bank_account(args.get('party_type'), args.get('party'))
 		if args.get('party_type') else '')
 
 	existing_payment_request = None
+
+	#collect details of any existing payment requests made if the order originates from a shopping cart
 	if args.order_type == "Shopping Cart":
 		existing_payment_request = frappe.db.get_value("Payment Request",
 			{"reference_doctype": args.dt, "reference_name": args.dn, "docstatus": ("!=", 2)})
 
+	#update payment details if the payment request already exists
 	if existing_payment_request:
 		frappe.db.set_value("Payment Request", existing_payment_request, "grand_total", grand_total, update_modified=False)
 		frappe.db.set_value("Payment Request", existing_payment_request, "payment_gateway", gateway_account.payment_gateway, update_modified=False)
@@ -309,6 +331,7 @@ def make_payment_request(**args):
 		frappe.db.set_value("Payment Request", existing_payment_request, "payment_account", gateway_account.payment_account, update_modified=False)
 		pr = frappe.get_doc("Payment Request", existing_payment_request)
 	else:
+		#get remaining payment amount if order not originating from a shopping cart
 		if args.order_type != "Shopping Cart":
 			existing_payment_request_amount = \
 				get_existing_payment_request_amount(args.dt, args.dn)
@@ -316,6 +339,7 @@ def make_payment_request(**args):
 			if existing_payment_request_amount:
 				grand_total -= existing_payment_request_amount
 
+		#create a new payment request 
 		pr = frappe.new_doc("Payment Request")
 		pr.update({
 			"payment_gateway_account": gateway_account.get("name"),
@@ -334,6 +358,7 @@ def make_payment_request(**args):
 			"bank_account": bank_account
 		})
 
+		#mute emails if the order originates in a shopping cart
 		if args.order_type == "Shopping Cart" or args.mute_email:
 			pr.flags.mute_email = True
 
@@ -341,6 +366,7 @@ def make_payment_request(**args):
 			pr.insert(ignore_permissions=True)
 			pr.submit()
 
+	#redirect to a payment url if the order is from a shopping cart
 	if args.order_type == "Shopping Cart":
 		frappe.db.commit()
 		frappe.local.response["type"] = "redirect"
@@ -450,18 +476,18 @@ def update_payment_req_status(doc, method):
 
 def get_dummy_message(doc):
 	return frappe.render_template("""{% if doc.contact_person -%}
-<p>Dear {{ doc.contact_person }},</p>
-{%- else %}<p>Hello,</p>{% endif %}
+		<p>Dear {{ doc.contact_person }},</p>
+		{%- else %}<p>Hello,</p>{% endif %}
 
-<p>{{ _("Requesting payment against {0} {1} for amount {2}").format(doc.doctype,
-	doc.name, doc.get_formatted("grand_total")) }}</p>
+		<p>{{ _("Requesting payment against {0} {1} for amount {2}").format(doc.doctype,
+		doc.name, doc.get_formatted("grand_total")) }}</p>
 
-<a href="{{ payment_url }}">{{ _("Make Payment") }}</a>
+		<a href="{{ payment_url }}">{{ _("Make Payment") }}</a>
 
-<p>{{ _("If you have any questions, please get back to us.") }}</p>
+		<p>{{ _("If you have any questions, please get back to us.") }}</p>
 
-<p>{{ _("Thank you for your business!") }}</p>
-""", dict(doc=doc, payment_url = '{{ payment_url }}'))
+		<p>{{ _("Thank you for your business!") }}</p>
+		""", dict(doc=doc, payment_url = '{{ payment_url }}'))
 
 @frappe.whitelist()
 def get_subscription_details(reference_doctype, reference_name):
