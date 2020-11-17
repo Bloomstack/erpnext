@@ -15,7 +15,7 @@ $.extend(shopping_cart, {
 
 	bind_events: function() {
 		shopping_cart.bind_address_select();
-		//shopping_cart.bind_place_order();
+		shopping_cart.bind_place_order();
 		shopping_cart.bind_request_quotation();
 		shopping_cart.bind_change_qty();
 		shopping_cart.bind_change_notes();
@@ -47,7 +47,7 @@ $.extend(shopping_cart, {
 
 	bind_place_order: function() {
 		$(".btn-place-order").on("click", function() {
-			//shopping_cart.place_order(this);
+			shopping_cart.place_order(this);
 		});
 	},
 
