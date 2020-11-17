@@ -297,7 +297,7 @@ def make_payment_request(**args):
 	"""Opens API to frontend for generating a payment request"""
 
 	args = frappe._dict(args)
-
+	print("Quotation Details: ", args.dn, args.dt)
 	#collect details on the document against which a payment request is going to be generated, along with amount
 	ref_doc = frappe.get_doc(args.dt, args.dn)
 	print("Reference Document: ", ref_doc.as_dict())
