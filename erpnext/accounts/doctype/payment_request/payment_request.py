@@ -153,7 +153,7 @@ class PaymentRequest(Document):
 	def create_payment_entry(self, submit=True):
 		"""Generate a payment entry against a quotation or sales order"""
 		frappe.flags.ignore_account_permission = True
-
+		print("Creating a payment entry: ", self.reference_doctype, self.reference_name)
 		ref_doc = frappe.get_doc(self.reference_doctype, self.reference_name)
 
 		#select debit_to or credit_to account depending on sales order or purchase order
