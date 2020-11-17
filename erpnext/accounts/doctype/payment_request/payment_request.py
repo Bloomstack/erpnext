@@ -183,6 +183,7 @@ class PaymentRequest(Document):
 			frappe.db.commit()
 			from erpnext.selling.doctype.quotation.quotation import _make_sales_order
 			sales_order = frappe.get_doc(_make_sales_order(ref_doc.get("name"), ignore_permissions=True))
+			print(sales_order.as_dict())
 			#reference document is the new sales order we just created
 			payment_entry = get_payment_entry("Sales Order", sales_order.get("name"),
 				party_amount=party_amount, bank_account=self.payment_account, bank_amount=bank_amount)
