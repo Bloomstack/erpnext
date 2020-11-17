@@ -300,6 +300,7 @@ def make_payment_request(**args):
 
 	#collect details on the document against which a payment request is going to be generated, along with amount
 	ref_doc = frappe.get_doc(args.dt, args.dn)
+	print("Reference Document: ", ref_doc.as_dict())
 	grand_total = get_amount(ref_doc)
 
 	#collect details of loyalty points, if any
