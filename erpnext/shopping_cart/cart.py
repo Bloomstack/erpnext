@@ -248,7 +248,7 @@ def decorate_quotation_doc(doc):
 	return doc
 
 
-@frappe.whitelist
+@frappe.whitelist()
 def get_cart_quotation_doc(): 
 	"""returns the quotations in the user's cart """
 	try: 
