@@ -179,7 +179,7 @@ class PaymentRequest(Document):
 		if self.reference_doctype == "Quotation":
 			#we submit the quotation
 			ref_doc.save(ignore_permissions=True)
-			ref_doc.submit(ignore_permissions=True)
+			ref_doc.submit()
 			frappe.db.commit()
 			from erpnext.selling.doctype.quotation.quotation import _make_sales_order
 			sales_order = frappe.get_doc(_make_sales_order(ref_doc.get("name"), ignore_permissions=True))
