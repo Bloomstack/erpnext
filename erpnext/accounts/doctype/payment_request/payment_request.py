@@ -178,7 +178,7 @@ class PaymentRequest(Document):
 		#create a sales order if the payment request has been made against a quotation
 		if self.reference_doctype == "Quotation":
 			from erpnext.selling.doctype.quotation.quotation import _make_sales_order
-			sales_order = frappe.get_doc(_make_sales_order(quotation.name, ignore_permissions=True))
+			sales_order = frappe.get_doc(_make_sales_order(self.reference_name, ignore_permissions=True))
 			#reference document is the new sales order we just created
 			payment_entry = get_payment_entry("Sales Order", sales_order.name,
 				party_amount=party_amount, bank_account=self.payment_account, bank_amount=bank_amount)
@@ -411,7 +411,6 @@ def get_amount(ref_doc):
 
 	if grand_total > 0 :
 		return grand_total
-
 	else:
 		frappe.throw(_("Payment Entry is already created"))
 
