@@ -178,7 +178,7 @@ class PaymentRequest(Document):
 		#create a sales order if the payment request has been made against a quotation
 		if self.reference_doctype == "Quotation":
 			#we submit the quotation
-			ref_doc.submit()
+			ref_doc.submit(ignore_permissions=True)
 			frappe.db.commit()
 			from erpnext.selling.doctype.quotation.quotation import _make_sales_order
 			sales_order = frappe.get_doc(_make_sales_order(ref_doc.get("name"), ignore_permissions=True))
