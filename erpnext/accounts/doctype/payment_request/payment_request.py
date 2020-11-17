@@ -391,6 +391,9 @@ def get_amount(ref_doc):
 
 	elif dt == "Fees":
 		grand_total = ref_doc.outstanding_amount
+		
+	elif dt == "Quotation": 
+		grand_total = flt(ref_doc.grand_total)
 
 	if grand_total > 0 :
 		return grand_total
