@@ -6,29 +6,22 @@ frappe.ui.form.on('Healthcare Service Unit', {
 		frm.list_route = "Tree/Healthcare Service Unit";
 
 		// get query select healthcare service unit
-		frm.fields_dict['parent_healthcare_service_unit'].get_query = function(doc) {
-			return{
-				filters:[
-					['Healthcare Service Unit', 'is_group', '=', 1],
-					['Healthcare Service Unit', 'name', '!=', doc.healthcare_service_unit_name]
-				]
+		frm.set_query('parent_healthcare_service_unit', function() {
+			return {
+				filters: {
+					is_group: 1,
+					name: ["!=", frm.doc.healthcare_service_unit_name]
+				}
 			};
-		};
+		});
 	},
 	refresh: function(frm) {
-		frm.trigger("set_root_readonly");
+		// read-only for root healthcare service unit
+		frm.set_root_read_only("parent_healthcare_service_unit");
 		frm.set_df_property("service_unit_type", "reqd", 1);
 		frm.add_custom_button(__("Healthcare Service Unit Tree"), function() {
 			frappe.set_route("Tree", "Healthcare Service Unit");
 		});
-	},
-	set_root_readonly: function(frm) {
-		// read-only for root healthcare service unit
-		frm.set_intro("");
-		if(!frm.doc.parent_healthcare_service_unit) {
-			frm.set_read_only();
-			frm.set_intro(__("This is a root healthcare service unit and cannot be edited."), true);
-		}
 	},
 	allow_appointments: function(frm) {
 		if(!frm.doc.allow_appointments){

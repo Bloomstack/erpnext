@@ -3,6 +3,8 @@
 
 frappe.ui.form.on('Sales Person', {
 	refresh: function(frm) {
+		// read-only for root sales group
+		frm.set_root_read_only("parent_sales_person");
 		if(frm.doc.__onload && frm.doc.__onload.dashboard_info) {
 			var info = frm.doc.__onload.dashboard_info;
 			frm.dashboard.add_indicator(__('Total Contribution Amount: {0}',
@@ -18,46 +20,33 @@ frappe.ui.form.on('Sales Person', {
 	},
 
 	setup: function(frm) {
-		frm.fields_dict["targets"].grid.get_field("distribution_id").get_query = function(doc, cdt, cdn){
-			var row = locals[cdt][cdn];
+		frm.set_query('parent_sales_person', function() {
 			return {
 				filters: {
-					'fiscal_year': row.fiscal_year
+					is_group: 1,
+					name: ["!=", frm.doc.sales_person_name]
 				}
-			}
-		};
-	
+			};
+		});
+
+		frm.set_query('employee', function() {
+			return {
+				query:  "erpnext.controllers.queries.employee_query",
+			};
+		});
+
+		frm.set_query('distribution_id', 'targets', function(doc, cdt, cdn) {
+			let row  = locals[cdt][cdn];
+			return {
+				filters: {
+					fiscal_year: row.fiscal_year
+				}
+			};
+		});
+
 		frm.make_methods = {
 			'Sales Order': () => frappe.new_doc("Sales Order")
 				.then(() => frm.add_child("sales_team", {"sales_person": frm.doc.name}))
 		}
 	}
 });
-
-cur_frm.cscript.refresh = function(doc, cdt, cdn) {
-	cur_frm.cscript.set_root_readonly(doc);
-}
-
-cur_frm.cscript.set_root_readonly = function(doc) {
-	// read-only for root
-	if(!doc.parent_sales_person) {
-		cur_frm.set_read_only();
-		cur_frm.set_intro(__("This is a root sales person and cannot be edited."));
-	} else {
-		cur_frm.set_intro(null);
-	}
-}
-
-//get query select sales person
-cur_frm.fields_dict['parent_sales_person'].get_query = function(doc, cdt, cdn) {
-	return{
-		filters: [
-			['Sales Person', 'is_group', '=', 1],
-			['Sales Person', 'name', '!=', doc.sales_person_name]
-		]
-	}
-}
-
-cur_frm.fields_dict.employee.get_query = function(doc, cdt, cdn) {
-	return { query: "erpnext.controllers.queries.employee_query" }
-}

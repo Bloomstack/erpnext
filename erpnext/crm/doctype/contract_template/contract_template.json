@@ -1,5 +1,4 @@
 {
- "actions": [],
  "allow_rename": 1,
  "autoname": "field:title",
  "creation": "2018-04-16 06:44:48.791312",
@@ -8,6 +7,7 @@
  "engine": "InnoDB",
  "field_order": [
   "title",
+  "company",
   "contract_sections",
   "contract_terms",
   "sb_fulfilment",
@@ -50,10 +50,15 @@
    "fieldtype": "Table",
    "label": "Contract Sections",
    "options": "Contract Template Section"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company"
   }
  ],
- "links": [],
- "modified": "2020-03-27 09:02:33.364693",
+ "modified": "2020-11-09 03:47:36.205523",
  "modified_by": "Administrator",
  "module": "CRM",
  "name": "Contract Template",

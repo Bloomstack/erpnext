@@ -6,52 +6,55 @@ frappe.ui.form.on("Item Group", {
 		frm.list_route = "Tree/Item Group";
 
 		//get query select item group
-		frm.fields_dict['parent_item_group'].get_query = function(doc,cdt,cdn) {
-			return{
-				filters:[
-					['Item Group', 'is_group', '=', 1],
-					['Item Group', 'name', '!=', doc.item_group_name]
-				]
-			}
-		}
-		frm.fields_dict["item_group_defaults"].grid.get_field("expense_account").get_query = function(doc, cdt, cdn) {
-			const row = locals[cdt][cdn];
+		frm.set_query('parent_item_group', function() {
+			return {
+				filters: {
+					is_group: 1,
+					name: ["!=", frm.doc.item_group_name]
+				}
+			};
+		});
+
+		frm.set_query('expense_account', 'item_group_defaults', function(doc, cdt, cdn) {
+			let row  = locals[cdt][cdn];
 			return {
 				query: "erpnext.controllers.queries.get_expense_account",
 				filters: { company: row.company }
-			}
-		}
-		frm.fields_dict["item_group_defaults"].grid.get_field("income_account").get_query = function(doc, cdt, cdn) {
-			const row = locals[cdt][cdn];
+			};
+		});
+
+		frm.set_query('income_account', 'item_group_defaults', function(doc, cdt, cdn) {
+			let row  = locals[cdt][cdn];
 			return {
 				query: "erpnext.controllers.queries.get_income_account",
 				filters: { company: row.company }
-			}
-		}
+			};
+		});
 
-		frm.fields_dict["item_group_defaults"].grid.get_field("buying_cost_center").get_query = function(doc, cdt, cdn) {
-			const row = locals[cdt][cdn];
+		frm.set_query('buying_cost_center', 'item_group_defaults', function(doc, cdt, cdn) {
+			let row  = locals[cdt][cdn];
 			return {
 				filters: {
-					"is_group": 0,
-					"company": row.company
+					is_group: 0,
+					company: row.company
 				}
-			}
-		}
+			};
+		});
 
-		frm.fields_dict["item_group_defaults"].grid.get_field("selling_cost_center").get_query = function(doc, cdt, cdn) {
-			const row = locals[cdt][cdn];
+		frm.set_query('selling_cost_center', 'item_group_defaults', function(doc, cdt, cdn) {
+			let row  = locals[cdt][cdn];
 			return {
 				filters: {
-					"is_group": 0,
-					"company": row.company
+					is_group: 0,
+					company: row.company
 				}
-			}
-		}
+			};
+		});
 	},
 
 	refresh: function(frm) {
-		frm.trigger("set_root_readonly");
+		// read-only for root item group
+		frm.set_root_read_only("parent_item_group");
 		frm.add_custom_button(__("Item Group Tree"), function() {
 			frappe.set_route("Tree", "Item Group");
 		});
@@ -60,15 +63,6 @@ frappe.ui.form.on("Item Group", {
 			frm.add_custom_button(__("Items"), function() {
 				frappe.set_route("List", "Item", {"item_group": frm.doc.name});
 			});
-		}
-	},
-
-	set_root_readonly: function(frm) {
-		// read-only for root item group
-		frm.set_intro("");
-		if(!frm.doc.parent_item_group) {
-			frm.set_read_only();
-			frm.set_intro(__("This is a root item group and cannot be edited."), true);
 		}
 	},
 

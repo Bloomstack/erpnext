@@ -585,17 +585,21 @@ def apply_coupon_code(applied_code, applied_referral_sales_partner):
 	quotation = True
 
 	if not applied_code:
-		frappe.throw(_("Please enter a coupon code"))
+		frappe.throw(_("Please enter a coupon code"), title=_("Coupon Error"))
 
 	coupon_list = frappe.get_all('Coupon Code', filters={'coupon_code': applied_code})
 	if not coupon_list:
-		frappe.throw(_("Please enter a valid coupon code"))
+		frappe.throw(_("Please enter a valid coupon code"), title=_("Coupon Error"))
 
 	coupon_name = coupon_list[0].name
 
 	from erpnext.accounts.doctype.pricing_rule.utils import validate_coupon_code
 	validate_coupon_code(coupon_name)
 	quotation = _get_cart_quotation()
+
+	if quotation.coupon_code and quotation.coupon_code == coupon_name:
+		frappe.throw(_("Coupon Code '{0}' already applied").format(coupon_name), title=_("Coupon Error"))
+
 	quotation.coupon_code = coupon_name
 	quotation.flags.ignore_permissions = True
 	quotation.save()

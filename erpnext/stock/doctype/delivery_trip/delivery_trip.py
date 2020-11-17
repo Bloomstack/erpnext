@@ -80,11 +80,11 @@ class DeliveryTrip(Document):
 			2: "Cancelled"
 		}[self.docstatus]
 
-		if self.docstatus == 1:
+		if self.docstatus == 1 and self.odometer_start_time:
 			visited_stops = [stop.visited for stop in self.delivery_stops]
 			if all(visited_stops):
 				status = "Completed"
-			elif any(visited_stops):
+			else:
 				status = "In Transit"
 
 		self.status = status
