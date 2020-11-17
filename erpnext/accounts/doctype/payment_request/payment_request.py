@@ -178,14 +178,13 @@ class PaymentRequest(Document):
 		#create a sales order if the payment request has been made against a quotation
 		if self.reference_doctype == "Quotation":
 			#we submit the quotation
-			ref_doc.save(ignore_permissions=True)
-			ref_doc.submit()
+			frappe.db.set_value(self.reference_doctype, self.reference_name, "docstatus", 1)
 			frappe.db.commit()
 			from erpnext.selling.doctype.quotation.quotation import _make_sales_order
 			sales_order = frappe.get_doc(_make_sales_order(ref_doc.get("name"), ignore_permissions=True))
 			print(sales_order.as_dict())
 			#reference document is the new sales order we just created
-			payment_entry = get_payment_entry("Sales Order", sales_order.get("name"),
+			payment_entry = get_payment_entry("Sales Order", sales_order.name,
 				party_amount=party_amount, bank_account=self.payment_account, bank_amount=bank_amount)
 		else:
 			#reference document is the sales order in the payment request that was passed
