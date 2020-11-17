@@ -94,6 +94,7 @@ def place_order():
 	# 	frappe.local.cookie_manager.delete_cookie("cart_count")
 
 	# return sales_order.name
+	return quotation.name
 
 @frappe.whitelist()
 def request_for_quotation():
