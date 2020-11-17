@@ -68,13 +68,14 @@ def place_order():
 		frappe.throw(_("Set Shipping Address or Billing Address"))
 
 	#converts the quotation to a sales order in the shopping cart
-	from erpnext.selling.doctype.quotation.quotation import _make_sales_order
-	sales_order = frappe.get_doc(_make_sales_order(quotation.name, ignore_permissions=True))
-	sales_order.payment_schedule = []
+	# from erpnext.selling.doctype.quotation.quotation import _make_sales_order
+	# sales_order = frappe.get_doc(_make_sales_order(quotation.name, ignore_permissions=True))
+	# sales_order.payment_schedule = []
 
 	#if making sales of out of stock items is not allowed, throw errors
+	# TODO: Check this against quotation instead of sales order
 	if not cint(cart_settings.allow_items_not_in_stock):
-		for item in sales_order.get("items"):
+		for item in quotation.get("items"):
 			item.reserved_warehouse, is_stock_item = frappe.db.get_value("Item",
 				item.item_code, ["website_warehouse", "is_stock_item"])
 
@@ -85,14 +86,14 @@ def place_order():
 				if item.qty > item_stock.stock_qty[0][0]:
 					throw(_("Only {0} in Stock for item {1}").format(item_stock.stock_qty[0][0], item.item_code))
 
-	sales_order.flags.ignore_permissions = True
-	sales_order.insert()
-	#sales_order.submit()
+	# sales_order.flags.ignore_permissions = True
+	# sales_order.insert()
+	# #sales_order.submit()
 
-	if hasattr(frappe.local, "cookie_manager"):
-		frappe.local.cookie_manager.delete_cookie("cart_count")
+	# if hasattr(frappe.local, "cookie_manager"):
+	# 	frappe.local.cookie_manager.delete_cookie("cart_count")
 
-	return sales_order.name
+	# return sales_order.name
 
 @frappe.whitelist()
 def request_for_quotation():
