@@ -58,7 +58,7 @@ def place_order():
 	quotation.company = cart_settings.company
 
 	quotation.flags.ignore_permissions = True
-	quotation.submit()
+	# quotation.submit()
 
 	if quotation.quotation_to == 'Lead' and quotation.party_name:
 		# company used to create customer accounts
@@ -87,7 +87,7 @@ def place_order():
 
 	sales_order.flags.ignore_permissions = True
 	sales_order.insert()
-	sales_order.submit()
+	#sales_order.submit()
 
 	if hasattr(frappe.local, "cookie_manager"):
 		frappe.local.cookie_manager.delete_cookie("cart_count")
