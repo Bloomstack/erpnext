@@ -379,6 +379,7 @@ def make_payment_request(**args):
 
 def get_amount(ref_doc):
 	"""get amount based on doctype"""
+	grand_total = 0
 	dt = ref_doc.doctype
 	if dt in ["Sales Order", "Purchase Order"]:
 		grand_total = flt(ref_doc.grand_total) - flt(ref_doc.advance_paid)
@@ -391,7 +392,7 @@ def get_amount(ref_doc):
 
 	elif dt == "Fees":
 		grand_total = ref_doc.outstanding_amount
-		
+
 	elif dt == "Quotation": 
 		grand_total = flt(ref_doc.grand_total)
 
