@@ -83,6 +83,7 @@ class TestDeliveryTrip(unittest.TestCase):
 
 	def test_delivery_trip_status_in_transit(self):
 		self.delivery_trip.flags.ignore_validate_update_after_submit = True
+		self.delivery_trip.odometer_start_time = frappe.utils.now_datetime()
 		self.delivery_trip.submit()
 		self.delivery_trip.delivery_stops[0].visited = 1
 		self.delivery_trip.save()
@@ -90,6 +91,7 @@ class TestDeliveryTrip(unittest.TestCase):
 
 	def test_delivery_trip_status_completed(self):
 		self.delivery_trip.flags.ignore_validate_update_after_submit = True
+		self.delivery_trip.odometer_start_time = frappe.utils.now_datetime()
 		self.delivery_trip.submit()
 
 		for stop in self.delivery_trip.delivery_stops:

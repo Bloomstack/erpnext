@@ -61,6 +61,8 @@
   "salary_mode",
   "bank_name",
   "bank_ac_no",
+  "column_break_53",
+  "beneficiary_name",
   "health_insurance_section",
   "health_insurance_provider",
   "health_insurance_no",
@@ -78,6 +80,13 @@
   "current_address",
   "sb53",
   "bio",
+  "column_break_73",
+  "skills",
+  "interests",
+  "linkedin",
+  "facebook",
+  "twitter",
+  "github",
   "personal_details",
   "passport_number",
   "date_of_issue",
@@ -548,7 +557,7 @@
    "collapsible": 1,
    "fieldname": "sb53",
    "fieldtype": "Section Break",
-   "label": "Personal Bio"
+   "label": "About Me"
   },
   {
    "description": "Short biography for website and other publications.",
@@ -784,12 +793,55 @@
    "fieldtype": "Link",
    "label": "Job Offer",
    "options": "Job Offer"
+  },
+  {
+   "fieldname": "column_break_53",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "beneficiary_name",
+   "fieldtype": "Data",
+   "label": "Beneficiary Name"
+  },
+  {
+   "fieldname": "skills",
+   "fieldtype": "Small Text",
+   "label": "Skills"
+  },
+  {
+   "fieldname": "column_break_73",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "interests",
+   "fieldtype": "Small Text",
+   "label": "Interests"
+  },
+  {
+   "fieldname": "github",
+   "fieldtype": "Data",
+   "label": "Github"
+  },
+  {
+   "fieldname": "linkedin",
+   "fieldtype": "Data",
+   "label": "Linkedin"
+  },
+  {
+   "fieldname": "facebook",
+   "fieldtype": "Data",
+   "label": "Facebook"
+  },
+  {
+   "fieldname": "twitter",
+   "fieldtype": "Data",
+   "label": "Twitter"
   }
  ],
  "icon": "fa fa-user",
  "idx": 24,
  "image_field": "image",
- "modified": "2020-08-23 11:09:44.852180",
+ "modified": "2020-11-10 02:47:59.305149",
  "modified_by": "Administrator",
  "module": "HR",
  "name": "Employee",

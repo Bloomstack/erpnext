@@ -13,7 +13,7 @@ def get_data():
 			},
 			{
 				'label': _('Diseases & Additives'),
-				'items': ['Plant Disease Diagnosis', 'Plant Additive Log']
+				'items': ['Plant Disease Diagnosis', 'Plant Additive Log', 'Destroyed Plant Log']
 			}
 		]
 	}

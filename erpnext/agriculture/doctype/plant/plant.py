@@ -5,13 +5,29 @@
 import frappe
 from frappe.model.document import Document
 from frappe.model.mapper import get_mapped_doc
-from frappe.utils import today
+from frappe.utils import getdate, nowdate, today
+from erpnext.agriculture.doctype.plant_batch.plant_batch import validate_quantities
 
 
 class Plant(Document):
 	def before_insert(self):
 		if not self.title:
 			self.title = self.strain + " - " + self.plant_tag
+
+	def destroy_plant(self, destroy_count, reason):
+		validate_quantities(self, destroy_count)
+		destroyed_plant_log = frappe.get_doc(
+			dict(
+				doctype = 'Destroyed Plant Log',
+				category_type = "Plant",
+				category = self.name,
+				destroy_count = destroy_count,
+				reason = reason,
+				actual_date = getdate(nowdate())
+			)
+		).insert()
+		destroyed_plant_log.submit()
+		return destroyed_plant_log.name
 
 
 @frappe.whitelist()

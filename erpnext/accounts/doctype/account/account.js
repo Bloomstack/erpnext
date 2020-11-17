@@ -31,11 +31,9 @@ frappe.ui.form.on('Account', {
 		}
 
 		// read-only for root accounts
+		frm.set_root_read_only("parent_account");
 		if (!frm.is_new()) {
-			if (!frm.doc.parent_account) {
-				frm.set_read_only();
-				frm.set_intro(__("This is a root account and cannot be edited."));
-			} else {
+			if (frm.doc.parent_account) {
 				// credit days and type if customer or supplier
 				frm.set_intro(null);
 				frm.trigger('account_type');

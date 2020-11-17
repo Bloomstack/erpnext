@@ -522,12 +522,12 @@ def validate_coupon_code(coupon_name):
 
 	if coupon.valid_from:
 		if coupon.valid_from > getdate(today()):
-			frappe.throw(_("Sorry, this coupon code's validity has not started"))
+			frappe.throw(_("Sorry, this coupon code's validity has not started"), title=_("Coupon Error"))
 	elif coupon.valid_upto:
 		if coupon.valid_upto < getdate(today()):
-			frappe.throw(_("Sorry, this coupon code's validity has expired"))
+			frappe.throw(_("Sorry, this coupon code's validity has expired"), title=_("Coupon Error"))
 	elif coupon.used >= coupon.maximum_use:
-		frappe.throw(_("Sorry, this coupon code is no longer valid"))
+		frappe.throw(_("Sorry, this coupon code is no longer valid"), title=_("Coupon Error"))
 
 def update_coupon_code_count(coupon_name,transaction_type):
 	coupon=frappe.get_doc("Coupon Code",coupon_name)
