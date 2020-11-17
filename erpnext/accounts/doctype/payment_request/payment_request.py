@@ -381,6 +381,7 @@ def get_amount(ref_doc):
 	"""get amount based on doctype"""
 	grand_total = 0
 	dt = ref_doc.doctype
+	print(ref_doc.as_dict())
 	if dt in ["Sales Order", "Purchase Order"]:
 		grand_total = flt(ref_doc.grand_total) - flt(ref_doc.advance_paid)
 
