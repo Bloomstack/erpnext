@@ -297,14 +297,9 @@ def make_payment_request(**args):
 	"""Opens API to frontend for generating a payment request"""
 
 	args = frappe._dict(args)
-	print("Quotation Details: ", args.dn, args.dt)
+	
 	#collect details on the document against which a payment request is going to be generated, along with amount
-	
-	
-	
-	
 	ref_doc = frappe.get_doc(args.dt, args.dn)
-	print("Reference Document: ", ref_doc.as_dict())
 	grand_total = get_amount(ref_doc)
 
 	#collect details of loyalty points, if any
@@ -383,13 +378,24 @@ def make_payment_request(**args):
 	return pr.as_dict()
 
 def get_amount(ref_doc):
-	"""get amount based on doctype"""
+	"""Returns the amount due for payment for generating the payment request
+	
+	Args: 
+		
+		ref_doc: the document that needs to be processed for payment. Can be Quotation, Sales Order/Invoice, 
+					Purchase Order/Invoice or Fees
+	Returns: 
+		the amount against which the payment request will be generated	
+	"""
+
 	grand_total = 0
 	dt = ref_doc.doctype
-	print(ref_doc.as_dict())
+
+	#check if any advances have been paid while ordering
 	if dt in ["Sales Order", "Purchase Order"]:
 		grand_total = flt(ref_doc.grand_total) - flt(ref_doc.advance_paid)
 
+	#check if currency matches, if not convert the value
 	elif dt in ["Sales Invoice", "Purchase Invoice"]:
 		if ref_doc.party_account_currency == ref_doc.currency:
 			grand_total = flt(ref_doc.outstanding_amount)
@@ -399,6 +405,7 @@ def get_amount(ref_doc):
 	elif dt == "Fees":
 		grand_total = ref_doc.outstanding_amount
 
+	#for the shopping cart, where payment requests are made against quotations
 	elif dt == "Quotation": 
 		grand_total = flt(ref_doc.grand_total)
 
