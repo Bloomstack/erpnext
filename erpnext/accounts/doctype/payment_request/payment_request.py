@@ -86,17 +86,10 @@ class PaymentRequest(Document):
 		self.check_if_payment_entry_exists()
 		self.set_as_cancelled()
 
-	#TODO: change from order to quotation
 	def make_invoice(self):
 		"""generate an invoice from the payment request"""
 
-		# if self.reference_doctype != "Quotation":
-		# 	ref_doc = frappe.get_doc(self.reference_doctype, self.reference_name)
-		# else:
-		# 	#get sales order from the quotation
-		# 	pass
-
-		#making an invoice from the shopping cart
+		ref_doc = frappe.get_doc(self.reference_doctype, self.reference_name)
 		if (hasattr(ref_doc, "order_type") and getattr(ref_doc, "order_type") == "Shopping Cart"):
 			from erpnext.selling.doctype.sales_order.sales_order import make_sales_invoice
 			si = make_sales_invoice(self.reference_name, ignore_permissions=True)
@@ -153,16 +146,15 @@ class PaymentRequest(Document):
 		if frappe.session.user == "Guest":
 			frappe.set_user("Administrator")
 
-		#pass quotation/sales order to the create payment entry
+		#create a payment entry against the payment request
 		payment_entry = self.create_payment_entry()
-		self.make_invoice()
 
 		return payment_entry
 
 	def create_payment_entry(self, submit=True):
 		"""Generate a payment entry against a quotation or sales order"""
+		
 		frappe.flags.ignore_account_permission = True
-		print("Creating a payment entry: ", self.reference_doctype, self.reference_name)
 		ref_doc = frappe.get_doc(self.reference_doctype, self.reference_name)
 
 		#select debit_to or credit_to account depending on sales order or purchase order
@@ -184,8 +176,8 @@ class PaymentRequest(Document):
 		else:
 			party_amount = self.grand_total
 
-		#create a sales order if the payment request has been made against a quotation
-		if self.reference_doctype == "Quotation":
+		#create a sales order if the payment request has been made against a quotation from a shopping cart
+		if self.reference_doctype == "Quotation" and (hasattr(ref_doc, "order_type") and getattr(ref_doc, "order_type") == "Shopping Cart")::
 
 			#we submit the quotation
 			frappe.db.set_value(self.reference_doctype, self.reference_name, "docstatus", 1)
@@ -200,9 +192,17 @@ class PaymentRequest(Document):
 			sales_order.submit()
 			print(sales_order.as_dict())
 
-			#reference document is the new sales order we just created
+			#make a payment entry against the newly created sales order
 			payment_entry = get_payment_entry("Sales Order", sales_order.name,
 				party_amount=party_amount, bank_account=self.payment_account, bank_amount=bank_amount)
+
+			#convert the sales order to sales invoice
+			from erpnext.selling.doctype.sales_order.sales_order import make_sales_invoice
+			si = make_sales_invoice(sales_order.name, ignore_permissions=True)
+			si.allocate_advances_automatically = True
+			si = si.insert(ignore_permissions=True)
+			si.submit()
+
 		else:
 			#reference document is the sales order in the payment request that was passed
 			payment_entry = get_payment_entry(self.reference_doctype, self.reference_name,
@@ -225,6 +225,7 @@ class PaymentRequest(Document):
 				"amount": payment_entry.difference_amount
 			})
 
+		#submit the payment entry and return the document
 		if submit:
 			payment_entry.insert(ignore_permissions=True)
 			payment_entry.submit()
@@ -316,10 +317,8 @@ class PaymentRequest(Document):
 @frappe.whitelist(allow_guest=True)
 def make_payment_request(**args):
 	"""Opens API to frontend for generating a payment request"""
-
 	
 	args = frappe._dict(args)
-	print("Creating a payment request against quotation: ", args.dn)
 	#collect details on the document against which a payment request is going to be generated, along with amount
 	ref_doc = frappe.get_doc(args.dt, args.dn)
 	grand_total = get_amount(ref_doc)

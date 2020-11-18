@@ -52,13 +52,14 @@ def get_cart_quotation(doc=None):
 
 @frappe.whitelist()
 def place_order():
+	"""Placing orders for items inside the shopping cart"""
+
+	#get the quotation in the cart and the cart settings
 	quotation = _get_cart_quotation()
 	cart_settings = frappe.db.get_value("Shopping Cart Settings", None,
 		["company", "allow_items_not_in_stock"], as_dict=1)
 	quotation.company = cart_settings.company
-
 	quotation.flags.ignore_permissions = True
-	# quotation.submit()
 
 	if quotation.quotation_to == 'Lead' and quotation.party_name:
 		# company used to create customer accounts
@@ -67,13 +68,9 @@ def place_order():
 	if not (quotation.shipping_address_name or quotation.customer_address):
 		frappe.throw(_("Set Shipping Address or Billing Address"))
 
-	#converts the quotation to a sales order in the shopping cart
-	# from erpnext.selling.doctype.quotation.quotation import _make_sales_order
-	# sales_order = frappe.get_doc(_make_sales_order(quotation.name, ignore_permissions=True))
-	# sales_order.payment_schedule = []
+	#We have migrated the order placement to the make_payment_entry function to accomodate quotations 
 
-	#if making sales of out of stock items is not allowed, throw errors
-	# TODO: Check this against quotation instead of sales order
+	# Checking if items in quotation are in stock, if not throw an error
 	if not cint(cart_settings.allow_items_not_in_stock):
 		for item in quotation.get("items"):
 			item.reserved_warehouse, is_stock_item = frappe.db.get_value("Item",
@@ -86,14 +83,6 @@ def place_order():
 				if item.qty > item_stock.stock_qty[0][0]:
 					throw(_("Only {0} in Stock for item {1}").format(item_stock.stock_qty[0][0], item.item_code))
 
-	# sales_order.flags.ignore_permissions = True
-	# sales_order.insert()
-	# #sales_order.submit()
-
-	# if hasattr(frappe.local, "cookie_manager"):
-	# 	frappe.local.cookie_manager.delete_cookie("cart_count")
-
-	# return sales_order.name
 	return quotation.name
 
 @frappe.whitelist()
