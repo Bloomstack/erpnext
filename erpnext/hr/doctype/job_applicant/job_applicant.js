@@ -7,14 +7,24 @@
 cur_frm.email_field = "email_id";
 
 frappe.ui.form.on("Job Applicant", {
-	refresh: function(frm) {
+	setup: function (frm) {
+		frm.make_methods = {
+			'Employee': () => {
+				frappe.new_doc("Employee", {
+					'first_name': frm.doc.first_name,
+					'last_name': frm.doc.last_name
+				});
+			}
+		};
+	},
+	refresh: function (frm) {
 		if (!frm.doc.__islocal) {
 			if (frm.doc.__onload && frm.doc.__onload.job_offer) {
-				frm.add_custom_button(__("Job Offer"), function() {
+				frm.add_custom_button(__("Job Offer"), function () {
 					frappe.set_route("Form", "Job Offer", frm.doc.__onload.job_offer);
 				}, __("View"));
 			} else {
-				frm.add_custom_button(__("Job Offer"), function() {
+				frm.add_custom_button(__("Job Offer"), function () {
 					frappe.route_options = {
 						"job_applicant": frm.doc.name,
 						"applicant_name": frm.doc.applicant_name,
@@ -25,7 +35,7 @@ frappe.ui.form.on("Job Applicant", {
 			}
 		}
 
-		frm.set_query("job_title", function() {
+		frm.set_query("job_title", function () {
 			return {
 				filters: {
 					'status': 'Open'

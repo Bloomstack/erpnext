@@ -58,6 +58,8 @@ def get_job_applicant():
 	if frappe.db.exists('Job Applicant', 'Test Researcher - test@researcher.com'):
 		return frappe.get_doc('Job Applicant', 'Test Researcher - test@researcher.com')
 	applicant = frappe.new_doc('Job Applicant')
+	applicant.first_name = 'Test'
+	applicant.last_name = 'Researcher'
 	applicant.applicant_name = 'Test Researcher'
 	applicant.email_id = 'test@researcher.com'
 	applicant.status = 'Open'
