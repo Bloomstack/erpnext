@@ -86,8 +86,17 @@ class PaymentRequest(Document):
 		self.check_if_payment_entry_exists()
 		self.set_as_cancelled()
 
+	#TODO: change from order to quotation
 	def make_invoice(self):
-		ref_doc = frappe.get_doc(self.reference_doctype, self.reference_name)
+		"""generate an invoice from the payment request"""
+
+		# if self.reference_doctype != "Quotation":
+		# 	ref_doc = frappe.get_doc(self.reference_doctype, self.reference_name)
+		# else:
+		# 	#get sales order from the quotation
+		# 	pass
+
+		#making an invoice from the shopping cart
 		if (hasattr(ref_doc, "order_type") and getattr(ref_doc, "order_type") == "Shopping Cart"):
 			from erpnext.selling.doctype.sales_order.sales_order import make_sales_invoice
 			si = make_sales_invoice(self.reference_name, ignore_permissions=True)
@@ -177,12 +186,20 @@ class PaymentRequest(Document):
 
 		#create a sales order if the payment request has been made against a quotation
 		if self.reference_doctype == "Quotation":
+
 			#we submit the quotation
 			frappe.db.set_value(self.reference_doctype, self.reference_name, "docstatus", 1)
 			frappe.db.commit()
+
+			#convert the quotation to a sales order
 			from erpnext.selling.doctype.quotation.quotation import _make_sales_order
 			sales_order = frappe.get_doc(_make_sales_order(self.reference_name, ignore_permissions=True))
+			sales_order.payment_schedule = []
+			sales_order.flags.ignore_permissions = True
+			sales_order.insert()
+			sales_order.submit()
 			print(sales_order.as_dict())
+
 			#reference document is the new sales order we just created
 			payment_entry = get_payment_entry("Sales Order", sales_order.name,
 				party_amount=party_amount, bank_account=self.payment_account, bank_amount=bank_amount)
@@ -300,8 +317,9 @@ class PaymentRequest(Document):
 def make_payment_request(**args):
 	"""Opens API to frontend for generating a payment request"""
 
-	args = frappe._dict(args)
 	
+	args = frappe._dict(args)
+	print("Creating a payment request against quotation: ", qrgs.dn)
 	#collect details on the document against which a payment request is going to be generated, along with amount
 	ref_doc = frappe.get_doc(args.dt, args.dn)
 	grand_total = get_amount(ref_doc)
