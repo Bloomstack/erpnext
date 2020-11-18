@@ -182,7 +182,6 @@ class PaymentRequest(Document):
 			#we save with ignore_permissions and submit the quotation
 			ref_doc.save(ignore_permissions=True)
 			ref_doc.submit()
-			#frappe.db.set_value(self.reference_doctype, self.reference_name, "docstatus", 1)
 			frappe.db.commit()
 
 			#convert the quotation to a sales order
