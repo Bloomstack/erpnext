@@ -53,6 +53,21 @@
     padding: 5px 20px;
 }
 
+.authorizenet .group.card-details {
+    box-shadow: none;
+    border-radius: 0;
+    margin-bottom: 0;
+}
+
+.authorizenet .group.card-details:first {
+    border-radius: 4px 4px 0 0;
+}
+
+.authorizenet .group.card-details:last-child {
+    margin-bottom: 25px;
+    border-radius: 0 0 4px 4px;
+}
+
 .authorizenet label {
     position: relative;
     color: #8898AA;

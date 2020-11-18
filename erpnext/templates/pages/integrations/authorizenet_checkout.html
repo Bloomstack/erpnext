@@ -40,33 +40,35 @@
 						</div>
 					</div>
 
-					<div class="group row">
+					<div class="group row card-details">
 						<div class="col-md-4 col-sm-6">
 							<label>{{ _("Card Number") }}</label>
 						</div>
-						<div class="col-md-8 col-sm-6">
+						<div class="col-md-8 col-sm-6 p-0">
 							<input data-validation="digit" type="text" id="card-number" name="card-number" class="field" maxlength="16"
 								placeholder="{{ _('XXXXXXXXXXXXXXXX') }}" />
 						</div>
-
+					</div>
+					<div class="group row card-details">
 						<div class="col-md-4 col-sm-6">
 							<label>{{ _("Card Expiry") }}</label>
 						</div>
-						<div class="col-md-2 col-sm-3 pr-0" >
+						<div class="col-md-1 col-sm-2 p-0">
 							<input data-validation="digit" type="text" id="card-expiry-month" name="card-expiry-month" class="field"  maxlength="2"
 								placeholder="{{ _('MM') }}" />
 						</div>
-						<div class="col-md-3 col-sm-3 pl-0">
+						<div class="col-md-1 col-sm-2 p-0">
 							<input data-validation="digit" type="text" id="card-expiry-year" name="card-expiry-year" class="field"  maxlength="4"
 								placeholder="{{ _('YYYY') }}" />
 						</div>
-
+					</div>
+					<div class="group row card-details">
 						<div class="col-md-4 col-sm-6">
 							<label>{{ _("Card Code") }}</label>
 						</div>
-						<div class="col-md-8 col-sm-6">
+						<div class="col-md-8 col-sm-6 p-0">
 							<input type="password" id="card-code" maxlength="4" name="card-code" class="field"
-								placeholder="{{ _('****') }}" />
+								placeholder="{{ _('***') }}" />
 						</div>
 
 					</div>
