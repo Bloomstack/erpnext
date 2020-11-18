@@ -177,7 +177,7 @@ class PaymentRequest(Document):
 			party_amount = self.grand_total
 
 		#create a sales order if the payment request has been made against a quotation from a shopping cart
-		if self.reference_doctype == "Quotation" and (hasattr(ref_doc, "order_type") and getattr(ref_doc, "order_type") == "Shopping Cart")::
+		if self.reference_doctype == "Quotation" and (hasattr(ref_doc, "order_type") and getattr(ref_doc, "order_type") == "Shopping Cart"):
 
 			#we submit the quotation
 			frappe.db.set_value(self.reference_doctype, self.reference_name, "docstatus", 1)
