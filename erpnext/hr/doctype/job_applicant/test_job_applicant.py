@@ -15,6 +15,8 @@ def create_job_applicant(**args):
 	args = frappe._dict(args)
 	job_applicant = frappe.get_doc({
 		"doctype": "Job Applicant",
+		"first_name": args.first_name or "_Test",
+		"last_name": args.last_name or "Applicant",
 		"applicant_name": args.applicant_name or "_Test Applicant",
 		"email_id": args.email_id or "test_applicant@example.com",
 		"status": args.status or "Open"

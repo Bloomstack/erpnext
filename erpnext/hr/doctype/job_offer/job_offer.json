@@ -1,5 +1,4 @@
 {
- "actions": [],
  "allow_import": 1,
  "autoname": "HR-OFF-.YYYY.-.#####",
  "creation": "2015-03-04 14:20:17.662207",
@@ -8,6 +7,8 @@
  "engine": "InnoDB",
  "field_order": [
   "job_applicant",
+  "first_name",
+  "last_name",
   "applicant_name",
   "applicant_email",
   "column_break_3",
@@ -156,11 +157,22 @@
    "options": "Job Offer",
    "print_hide": 1,
    "read_only": 1
+  },
+  {
+   "fetch_from": "job_applicant.first_name",
+   "fieldname": "first_name",
+   "fieldtype": "Data",
+   "label": "First Name"
+  },
+  {
+   "fetch_from": "job_applicant.last_name",
+   "fieldname": "last_name",
+   "fieldtype": "Data",
+   "label": "Last Name"
   }
  ],
  "is_submittable": 1,
- "links": [],
- "modified": "2020-06-25 00:56:24.756395",
+ "modified": "2020-10-27 04:19:31.599668",
  "modified_by": "Administrator",
  "module": "HR",
  "name": "Job Offer",

@@ -26,6 +26,7 @@ class JobApplicant(Document):
 		self.name = " - ".join(keys)
 
 	def validate(self):
+		self.applicant_name = self.first_name + " " + self.last_name
 		self.check_email_id_is_unique()
 		if self.email_id:
 			validate_email_address(self.email_id, True)
