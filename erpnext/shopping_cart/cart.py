@@ -237,15 +237,6 @@ def decorate_quotation_doc(doc):
 	return doc
 
 
-@frappe.whitelist()
-def get_cart_quotation_doc(): 
-	"""returns the quotations in the user's cart """
-	try: 
-		return _get_cart_quotation()
-	except: 
-		import traceback
-		traceback.print_exc()
-
 def _get_cart_quotation(party=None):
 	'''Return the open Quotation of type "Shopping Cart" or make a new one'''
 	if not party:
