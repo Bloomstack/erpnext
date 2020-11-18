@@ -192,6 +192,10 @@ class PaymentRequest(Document):
 			sales_order.insert()
 			sales_order.submit()
 
+			#emptying out the cart
+			if hasattr(frappe.local, "cookie_manager"):
+				frappe.local.cookie_manager.delete_cookie("cart_count")
+
 			#make a payment entry against the newly created sales order
 			payment_entry = get_payment_entry("Sales Order", sales_order.name,
 				party_amount=party_amount, bank_account=self.payment_account, bank_amount=bank_amount)

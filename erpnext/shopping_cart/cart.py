@@ -89,6 +89,7 @@ def place_order():
 def request_for_quotation():
 	quotation = _get_cart_quotation()
 	quotation.flags.ignore_permissions = True
+	quotation.submit()
 	return quotation.name
 
 @frappe.whitelist()
