@@ -319,7 +319,7 @@ def make_payment_request(**args):
 
 	
 	args = frappe._dict(args)
-	print("Creating a payment request against quotation: ", qrgs.dn)
+	print("Creating a payment request against quotation: ", args.dn)
 	#collect details on the document against which a payment request is going to be generated, along with amount
 	ref_doc = frappe.get_doc(args.dt, args.dn)
 	grand_total = get_amount(ref_doc)
