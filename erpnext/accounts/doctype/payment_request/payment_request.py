@@ -179,8 +179,10 @@ class PaymentRequest(Document):
 		#create a sales order if the payment request has been made against a quotation from a shopping cart
 		if self.reference_doctype == "Quotation" and (hasattr(ref_doc, "order_type") and getattr(ref_doc, "order_type") == "Shopping Cart"):
 
-			#we submit the quotation
-			frappe.db.set_value(self.reference_doctype, self.reference_name, "docstatus", 1)
+			#we save with ignore_permissions and submit the quotation
+			ref_doc.save(ignore_permissions=True)
+			ref_doc.submit()
+			#frappe.db.set_value(self.reference_doctype, self.reference_name, "docstatus", 1)
 			frappe.db.commit()
 
 			#convert the quotation to a sales order
@@ -190,7 +192,6 @@ class PaymentRequest(Document):
 			sales_order.flags.ignore_permissions = True
 			sales_order.insert()
 			sales_order.submit()
-			print(sales_order.as_dict())
 
 			#make a payment entry against the newly created sales order
 			payment_entry = get_payment_entry("Sales Order", sales_order.name,
