@@ -173,6 +173,7 @@
    "fieldtype": "Section Break"
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "status",
    "fieldtype": "Select",
    "in_standard_filter": 1,
@@ -263,7 +264,7 @@
   }
  ],
  "is_submittable": 1,
- "modified": "2020-10-14 03:22:29.579120",
+ "modified": "2020-11-18 22:41:09.757939",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Delivery Trip",

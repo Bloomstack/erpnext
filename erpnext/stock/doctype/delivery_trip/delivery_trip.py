@@ -84,6 +84,10 @@ class DeliveryTrip(Document):
 			visited_stops = [stop.visited for stop in self.delivery_stops]
 			if all(visited_stops):
 				status = "Completed"
+			elif self.status == "Paused":
+				status = "Paused"
+			elif self.status == "Completed":
+				status = "Completed"
 			else:
 				status = "In Transit"
 

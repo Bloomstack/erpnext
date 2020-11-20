@@ -44,6 +44,11 @@ $('#submit').on("click", function(e) {
 	})
 });
 
-$('input[data-validation="digit"]').keypress(function(event){
-	return (event.charCode !== 8 && event.charCode === 0 || (event.charCode >= 48 && event.charCode <= 57));
-});
+$('input[data-validation="digit"]')
+	.on("paste", function(e) {
+		if (e.originalEvent.clipboardData.getData('text').match(/[^\d]/))
+			e.preventDefault(); //prevent the default behaviour
+	})
+	.keypress(function(event) {
+		return (event.charCode !== 8 && event.charCode === 0 || (event.charCode >= 48 && event.charCode <= 57));
+	});
