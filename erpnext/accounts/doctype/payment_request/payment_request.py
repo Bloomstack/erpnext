@@ -200,13 +200,6 @@ class PaymentRequest(Document):
 			payment_entry = get_payment_entry("Sales Order", sales_order.name,
 				party_amount=party_amount, bank_account=self.payment_account, bank_amount=bank_amount)
 
-			#convert the sales order to sales invoice
-			from erpnext.selling.doctype.sales_order.sales_order import make_sales_invoice
-			si = make_sales_invoice(sales_order.name, ignore_permissions=True)
-			si.allocate_advances_automatically = True
-			si = si.insert(ignore_permissions=True)
-			si.submit()
-
 		else:
 			#reference document is the sales order in the payment request that was passed
 			payment_entry = get_payment_entry(self.reference_doctype, self.reference_name,
@@ -233,6 +226,14 @@ class PaymentRequest(Document):
 		if submit:
 			payment_entry.insert(ignore_permissions=True)
 			payment_entry.submit()
+		
+		#creating a sales invoice once the payment entry is submitted
+		if submit and self.reference_doctype == "Quotation": 
+			from erpnext.selling.doctype.sales_order.sales_order import make_sales_invoice
+			si = make_sales_invoice(sales_order.name, ignore_permissions=True)
+			si.allocate_advances_automatically = True
+			si = si.insert(ignore_permissions=True)
+			si.submit()
 
 		return payment_entry
 

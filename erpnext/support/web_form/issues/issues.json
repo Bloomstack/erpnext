@@ -18,7 +18,7 @@
  "is_standard": 1,
  "login_required": 1,
  "max_attachment_size": 0,
- "modified": "2020-05-20 15:08:45.361878",
+ "modified": "2020-12-01 00:37:45.612448",
  "modified_by": "Administrator",
  "module": "Support",
  "name": "issues",
@@ -57,7 +57,7 @@
    "max_value": 0,
    "options": "Open\nReplied\nHold\nClosed",
    "read_only": 1,
-   "reqd": 0,
+   "reqd": 1,
    "show_in_filter": 1
   },
   {
@@ -69,7 +69,7 @@
    "max_length": 0,
    "max_value": 0,
    "read_only": 0,
-   "reqd": 0,
+   "reqd": 1,
    "show_in_filter": 0
   },
   {
