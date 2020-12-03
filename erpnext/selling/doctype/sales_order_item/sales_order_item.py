@@ -13,3 +13,8 @@ class SalesOrderItem(Document):
 
 def on_doctype_update():
 	frappe.db.add_index("Sales Order Item", ["item_code", "warehouse"])
+
+@frappe.whitelist()
+def get_customer_code(items,customer_name):
+    	customer_names = frappe.db.sql_list("Select ref_code from `tabItem Customer Detail` where parent = %s and customer_name=%s",(items,customer_name))
+    	return customer_names[0]
