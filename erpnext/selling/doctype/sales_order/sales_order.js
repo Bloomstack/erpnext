@@ -106,14 +106,14 @@ frappe.ui.form.on("Sales Order Item", {
 			frm.script_manager.copy_from_first_row("items", row, ["delivery_date"]);
 		}
 		frappe.call({
-			method: "erpnext.selling.doctype.sales_order_item.sales_order_item.get_customer_item_ref_code",
+			method: "erpnext.selling.doctype.sales_order.sales_order.get_customer_item_ref_code",
 			args: {	
 				'item': frm.doc.items[0].item_code,
-				'customer_name':frm.doc.customer
+				'customer_name': frm.doc.customer
 			},		
 			callback: function(r) {
 				if (r.message){				
-					frappe.model.set_value(cdt,cdn ,"customer_item_code", r.message);				
+					frappe.model.set_value(cdt, cdn, "customer_item_code", r.message);				
 				}
 			}
 		});

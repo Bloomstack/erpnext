@@ -1071,3 +1071,22 @@ def update_produced_qty_in_so_item(sales_order, sales_order_item):
 	if not total_produced_qty and frappe.flags.in_patch: return
 
 	frappe.db.set_value('Sales Order Item', sales_order_item, 'produced_qty', total_produced_qty)
+
+@frappe.whitelist()
+def get_customer_item_ref_code(item, customer_name):
+    """Fetch the Customer Item Code for the given Item.
+    
+    Args:
+        item (varchar) : Item Code for the Sales Item 
+        customer_name (varchar) : Customer Name Of Sales Order
+
+    Returns:
+        Customer Item Code (varchar) : Returns the Customer Item Reference Code
+    """  	
+    customer_names = frappe.get_all("Item Customer Detail", filters={
+        "parent": item,
+        "customer_name": customer_name
+    }, fields=["ref_code"])    	
+
+    if customer_names:
+        return customer_names[0].ref_code
