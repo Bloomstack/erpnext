@@ -81,6 +81,7 @@
    "label": "Cover Letter"
   },
   {
+   "depends_on": "eval:!doc.__islocal",
    "fieldname": "resume_attachment",
    "fieldtype": "Attach",
    "label": "Resume Attachment"
