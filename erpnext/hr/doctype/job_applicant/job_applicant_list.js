@@ -11,5 +11,25 @@ frappe.listview_settings['Job Applicant'] = {
 		} else if (["Hold", "Rejected"].includes(doc.status)) {
 			return [__(doc.status), "red", "status,=," + doc.status];
 		}
+	},
+
+	onload: function(listview){
+		const action = () => { 			
+			let filters = {
+				doctype: listview.doctype,
+				docnames: listview.get_checked_items(),
+			}
+			let w = window.open(
+				frappe.urllib.get_full_url(
+					"/api/method/frappe.core.doctype.file.file.download_zip_files?" 
+					+ "filters=" + JSON.stringify(filters)
+				)
+			);
+			if (!w) {
+				frappe.msgprint(__("Please enable pop-ups")); return;
+			}
+		}
+		listview.page.add_actions_menu_item(__('Download Applicant Resume'), action, true);
+
 	}
 };
