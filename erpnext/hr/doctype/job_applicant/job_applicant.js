@@ -43,6 +43,6 @@ frappe.ui.form.on("Job Applicant", {
 			};
 		});
 	
-		frm.set_df_property('resume_attachment', 'reqd', frm.is_new() ? 0 : 1)
+		frm.set_df_property("resume_attachment", "reqd", frm.is_new() ? 0 : 1);
 	}
 });
