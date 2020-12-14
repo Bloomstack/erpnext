@@ -1,11 +1,11 @@
 {
- "autoname": "HAR.#####",
+ "autoname": "field:harvest_name",
  "creation": "2020-07-19 09:58:18.540748",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "title",
+  "harvest_name",
   "harvest_type",
   "status",
   "drying_location",
@@ -93,13 +93,14 @@
    "reqd": 1
   },
   {
-   "fieldname": "title",
+   "fieldname": "harvest_name",
    "fieldtype": "Data",
-   "label": "Title"
+   "label": "Name",
+   "unique": 1
   }
  ],
  "is_submittable": 1,
- "modified": "2020-11-01 21:38:28.555172",
+ "modified": "2020-12-07 03:05:34.855524",
  "modified_by": "Administrator",
  "module": "Agriculture",
  "name": "Harvest",
@@ -135,6 +136,5 @@
  "restrict_to_domain": "Agriculture",
  "sort_field": "modified",
  "sort_order": "DESC",
- "title_field": "title",
  "track_changes": 1
 }

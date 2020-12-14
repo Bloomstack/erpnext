@@ -282,7 +282,7 @@ class JournalEntry(AccountsController):
 						party_account = get_party_account_based_on_invoice_discounting(d.reference_name) or against_voucher[1]
 					else:
 						party_account = against_voucher[1]
-					if (against_voucher[0] != d.party or party_account != d.account):
+					if not self.voucher_type == "Use Tax Entry" and (against_voucher[0] != d.party or party_account != d.account):
 						frappe.throw(_("Row {0}: Party / Account does not match with {1} / {2} in {3} {4}")
 							.format(d.idx, field_dict.get(d.reference_type)[0], field_dict.get(d.reference_type)[1],
 								d.reference_type, d.reference_name))

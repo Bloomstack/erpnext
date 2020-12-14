@@ -13,7 +13,8 @@ frappe.ui.form.on("Sales Order", {
 			'Purchase Order': 'Purchase Order',
 			'Project': 'Project',
 			'Payment Entry': "Payment",
-			'Work Order': "Work Order"
+			'Work Order': "Work Order",
+			'Production Plan': 'Production Plan',
 		}
 		frm.add_fetch('customer', 'tax_id', 'tax_id');
 
@@ -66,6 +67,12 @@ frappe.ui.form.on("Sales Order", {
 				})
 			});
 		}
+		frm.add_custom_button(__('Production Plan'), function() {
+			frappe.model.open_mapped_doc({
+				method: "erpnext.selling.doctype.sales_order.sales_order.make_production_plan",
+				frm: frm,
+			})
+		}, __('Create'));
 
 	},
 	onload: function(frm) {

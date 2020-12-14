@@ -15,6 +15,7 @@
   "customer_name",
   "order_type",
   "skip_delivery_note",
+  "advance_received",
   "column_break1",
   "amended_from",
   "company",
@@ -1247,12 +1248,20 @@
    "fieldname": "signature",
    "fieldtype": "Signature",
    "label": "Signature"
+  },
+  {
+   "allow_on_submit": 1,
+   "default": "0",
+   "fieldname": "advance_received",
+   "fieldtype": "Check",
+   "label": "Advance Received",
+   "read_only": 1
   }
  ],
  "icon": "fa fa-file-text",
  "idx": 105,
  "is_submittable": 1,
- "modified": "2020-11-16 05:08:00.693654",
+ "modified": "2020-12-03 05:26:33.334712",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sales Order",

@@ -73,10 +73,10 @@ def customer_query(doctype, txt, searchfield, start, page_len, filters):
 	conditions = []
 	cust_master_name = frappe.defaults.get_user_default("cust_master_name")
 
-	if cust_master_name == "Customer Name":
-		fields = ["name", "customer_group", "territory"]
-	else:
-		fields = ["name", "customer_name", "customer_group", "territory"]
+	fields = ["name", "customer_group", "territory"]
+
+	if not cust_master_name == "Customer Name":
+		fields.append("customer_name")
 
 	fields = get_fields("Customer", fields)
 
@@ -108,10 +108,10 @@ def customer_query(doctype, txt, searchfield, start, page_len, filters):
 # searches for supplier
 def supplier_query(doctype, txt, searchfield, start, page_len, filters):
 	supp_master_name = frappe.defaults.get_user_default("supp_master_name")
-	if supp_master_name == "Supplier Name":
-		fields = ["name", "supplier_group"]
-	else:
-		fields = ["name", "supplier_name", "supplier_group"]
+
+	fields = ["name", "supplier_group"]
+	if not supp_master_name == "Supplier Name":
+		fields.append("supplier_name")
 
 	fields = get_fields("Supplier", fields)
 
@@ -172,13 +172,6 @@ def item_query(doctype, txt, searchfield, start, page_len, filters, as_dict=Fals
 	if "description" in searchfields:
 		searchfields.remove("description")
 
-	columns = ''
-	extra_searchfields = [field for field in searchfields
-		if not field in ["name", "item_group", "description"]]
-
-	if extra_searchfields:
-		columns = ", " + ", ".join(extra_searchfields)
-
 	searchfields = searchfields + [field for field in[searchfield or "name", "item_code", "item_group", "item_name"]
 		if not field in searchfields]
 	searchfields = " or ".join([field + " like %(txt)s" for field in searchfields])
@@ -188,13 +181,15 @@ def item_query(doctype, txt, searchfield, start, page_len, filters, as_dict=Fals
 		# scan description only if items are less than 50000
 		description_cond = 'or tabItem.description LIKE %(txt)s'
 
-	return frappe.db.sql("""select tabItem.name,
-		if(length(tabItem.item_name) > 40,
-			concat(substr(tabItem.item_name, 1, 40), "..."), item_name) as item_name,
-		tabItem.item_group,
+	fields = get_fields("Item", ["name", "item_group"])
+
+	if "description" in fields:
+		fields.remove("description")
+
+	return frappe.db.sql("""select
+		{fields},
 		if(length(tabItem.description) > 40, \
 			concat(substr(tabItem.description, 1, 40), "..."), description) as description
-		{columns}
 		from tabItem
 		where tabItem.docstatus < 2
 			and tabItem.has_variants=0
@@ -209,8 +204,8 @@ def item_query(doctype, txt, searchfield, start, page_len, filters, as_dict=Fals
 			idx desc,
 			name, item_name
 		limit %(start)s, %(page_len)s """.format(
+			fields=', '.join(fields),
 			key=searchfield,
-			columns=columns,
 			scond=searchfields,
 			fcond=get_filters_cond(doctype, filters, conditions).replace('%', '%%'),
 			mcond=get_match_cond(doctype).replace('%', '%%'),
@@ -413,14 +408,21 @@ def get_income_account(doctype, txt, searchfield, start, page_len, filters):
 	if filters.get("company"):
 		condition += "and tabAccount.company = %(company)s"
 
-	return frappe.db.sql("""select tabAccount.name from `tabAccount`
+	fields = get_fields("Account", ["name"])
+
+	return frappe.db.sql("""select {fields} from `tabAccount`
 			where (tabAccount.report_type = "Profit and Loss"
 					or tabAccount.account_type in ("Income Account", "Temporary"))
 				and tabAccount.is_group=0
 				and tabAccount.`{key}` LIKE %(txt)s
 				{condition} {match_condition}
 			order by idx desc, name"""
-			.format(condition=condition, match_condition=get_match_cond(doctype), key=searchfield), {
+			.format(
+				fields=", ".join(fields),
+				condition=condition,
+				match_condition=get_match_cond(doctype),
+				key=searchfield
+			), {
 				'txt': '%' + txt + '%',
 				'company': filters.get("company", "")
 			})
@@ -436,15 +438,21 @@ def get_expense_account(doctype, txt, searchfield, start, page_len, filters):
 	if filters.get("company"):
 		condition += "and tabAccount.company = %(company)s"
 
-	return frappe.db.sql("""select tabAccount.name from `tabAccount`
+	fields = get_fields("Account", ["name"])
+
+	return frappe.db.sql("""select {fields} tabAccount.name from `tabAccount`
 		where (tabAccount.report_type = "Profit and Loss"
 				or tabAccount.account_type in ("Expense Account", "Fixed Asset", "Temporary", "Asset Received But Not Billed", "Capital Work in Progress"))
 			and tabAccount.is_group=0
 			and tabAccount.docstatus!=2
 			and tabAccount.{key} LIKE %(txt)s
 			{condition} {match_condition}"""
-		.format(condition=condition, key=searchfield,
-			match_condition=get_match_cond(doctype)), {
+		.format(
+			fields=", ".join(['`tabAccount`.{0}'.format(f) for f in fields]),
+			condition=condition,
+			key=searchfield,
+			match_condition=get_match_cond(doctype)
+		), {
 			'company': filters.get("company", ""),
 			'txt': '%' + txt + '%'
 		})
@@ -462,7 +470,9 @@ def warehouse_query(doctype, txt, searchfield, start, page_len, filters):
 		bin_conditions=get_filters_cond(doctype, filter_dict.get("Bin"),
 			bin_conditions, ignore_permissions=True))
 
-	query = """select `tabWarehouse`.name,
+	fields = get_fields("Warehouse", ["name"])
+
+	query = """select {fields},
 		CONCAT_WS(" : ", "Actual Qty", ifnull( ({sub_query}), 0) ) as actual_qty
 		from `tabWarehouse`
 		where
@@ -473,6 +483,7 @@ def warehouse_query(doctype, txt, searchfield, start, page_len, filters):
 		limit
 			{start}, {page_len}
 		""".format(
+			fields=", ".join(['`tabWarehouse`.{0}'.format(f) for f in fields]),
 			sub_query=sub_query,
 			key=searchfield,
 			fcond=get_filters_cond(doctype, filter_dict.get("Warehouse"), conditions),
@@ -495,15 +506,25 @@ def get_doctype_wise_filters(filters):
 
 @frappe.whitelist()
 def get_batch_numbers(doctype, txt, searchfield, start, page_len, filters):
-	query = """select batch_id from `tabBatch`
+	fields = get_fields("Batch", ["batch_id"])
+
+	query = """select %(fields)s from `tabBatch`
 			where disabled = 0
 			and (expiry_date >= CURDATE() or expiry_date IS NULL)
-			and name like {txt}""".format(txt = frappe.db.escape('%{0}%'.format(txt)))
+			and name like %(txt)s"""
+
+	flt = {
+		"fields": ", ".join(fields),
+		"txt": frappe.db.escape('%{0}%'.format(txt))
+	}
 
 	if filters and filters.get('item'):
-		query += " and item = {item}".format(item = frappe.db.escape(filters.get('item')))
+		query += " and item = %(item)s"
+		flt.append({
+			"item": frappe.db.escape(filters.get('item'))
+		})
 
-	return frappe.db.sql(query, filters)
+	return frappe.db.sql(query, flt)
 
 
 @frappe.whitelist()
@@ -513,9 +534,11 @@ def item_manufacturer_query(doctype, txt, searchfield, start, page_len, filters)
 		['item_code', '=', filters.get("item_code")]
 	]
 
+	fields = get_fields("Item Manufacturer", ["manufacturer", "manufacturer_part_no"])
+
 	item_manufacturers = frappe.get_all(
 		"Item Manufacturer",
-		fields=["manufacturer", "manufacturer_part_no"],
+		fields=fields,
 		filters=item_filters,
 		limit_start=start,
 		limit_page_length=page_len,
@@ -526,30 +549,50 @@ def item_manufacturer_query(doctype, txt, searchfield, start, page_len, filters)
 
 @frappe.whitelist()
 def get_purchase_receipts(doctype, txt, searchfield, start, page_len, filters):
+	fields = get_fields("Purchase Receipt", ["name"])
+
 	query = """
-		select pr.name
+		select %(fields)s
 		from `tabPurchase Receipt` pr, `tabPurchase Receipt Item` pritem
 		where pr.docstatus = 1 and pritem.parent = pr.name
-		and pr.name like {txt}""".format(txt = frappe.db.escape('%{0}%'.format(txt)))
+		and pr.name like %(txt)s"""
+
+	flt = {
+		"fields": ", ".join(['pr.{0}'.format(f) for f in fields]),
+		"txt": frappe.db.escape('%{0}%'.format(txt))
+	}
 
 	if filters and filters.get('item_code'):
-		query += " and pritem.item_code = {item_code}".format(item_code = frappe.db.escape(filters.get('item_code')))
+		query += " and pritem.item_code = %(item_code)s"
+		flt.append({
+			"item_code": frappe.db.escape(filters.get('item_code'))
+		})
 
-	return frappe.db.sql(query, filters)
+	return frappe.db.sql(query, flt)
 
 
 @frappe.whitelist()
 def get_purchase_invoices(doctype, txt, searchfield, start, page_len, filters):
+	fields = get_fields("Purchase Receipt", ["name"])
+
 	query = """
-		select pi.name
+		select %(fields)s
 		from `tabPurchase Invoice` pi, `tabPurchase Invoice Item` piitem
 		where pi.docstatus = 1 and piitem.parent = pi.name
-		and pi.name like {txt}""".format(txt = frappe.db.escape('%{0}%'.format(txt)))
+		and pi.name like %(txt)s"""
+
+	flt = {
+		"fields": ", ".join(['pi.{0}'.format(f) for f in fields]),
+		"txt": frappe.db.escape('%{0}%'.format(txt))
+	}
 
 	if filters and filters.get('item_code'):
-		query += " and piitem.item_code = {item_code}".format(item_code = frappe.db.escape(filters.get('item_code')))
+		query += " and piitem.item_code = %(item_code)s"
+		flt.append({
+			"item_code": frappe.db.escape(filters.get('item_code'))
+		})
 
-	return frappe.db.sql(query, filters)
+	return frappe.db.sql(query, flt)
 
 
 @frappe.whitelist()
@@ -565,7 +608,8 @@ def get_tax_template(doctype, txt, searchfield, start, page_len, filters):
 		item_group = item_group_doc.parent_item_group
 
 	if not taxes:
-		return frappe.db.sql(""" SELECT name FROM `tabItem Tax Template` """)
+		fields = get_fields("Item Tax Template", ["name"])
+		return frappe.db.sql(""" SELECT %(fields)s FROM `tabItem Tax Template` """ , {fields: ", ".join(fields)})
 	else:
 		args = {
 			'item_code': filters.get('item_code'),

@@ -3,6 +3,7 @@
 
 from __future__ import unicode_literals
 import frappe
+import os
 from frappe import _
 from frappe.utils import get_fullname, flt, cstr
 from frappe.model.document import Document
@@ -13,6 +14,7 @@ from erpnext.accounts.doctype.sales_invoice.sales_invoice import get_bank_cash_a
 from erpnext.controllers.accounts_controller import AccountsController
 from frappe.utils.csvutils import getlink
 from erpnext.accounts.utils import get_account_currency
+from erpnext.hr.doctype.department_approver.department_approver import get_approvers
 
 class InvalidExpenseApproverError(frappe.ValidationError): pass
 class ExpenseApproverIdentityError(frappe.ValidationError): pass
@@ -360,3 +362,46 @@ def get_expense_claim(
 	)
 
 	return expense_claim
+
+@frappe.whitelist()
+def create_expense_claim(user, expense_date, expense_claim_type, description, amount):
+	"""
+	API endpoint for creating expense claims for employees.
+
+	Args:
+		user (string): user_id of an Employee
+		expense_date (date): Date when the expense were made
+		expense_claim_type (string): Type of expense claim i.e. Calls, Food, Travel, Others, Vehicle, Medical
+		description (string): Complete detail of the expense claim like 'Why the user is applying, is that claim covers in company policy etc'
+		amount (number): Total amount that user wants to claim
+	Return:
+		nothing
+	"""
+	employee = frappe.get_doc("Employee", {"user_id": user})
+
+	expense_approver = ""
+	# Fetch list of expense approvers based on the department of the employee claiming the expense
+	if employee.department:
+		expense_approver = get_approvers("User", "", "name", 0, 100,{"employee": employee.name, "department": employee.department, "doctype": employee.doctype})
+		if not expense_approver:
+			expense_approver = ""
+		else:
+			expense_approver = [expense_approver[0] for expense_approver in expense_approver]
+			# Randomly selecting the expense_approver from the expense_approver list.
+			expense_approver = expense_approver[os.urandom(1)[0] % len(expense_approver)]
+
+	# Creating expense claim doc.
+	frappe.get_doc({
+		"doctype": "Expense Claim",
+		"employee": employee.name,
+		"payable_account": frappe.get_value('Company', employee.company, 'default_payable_account'),
+		"expense_approver": expense_approver,
+		"expenses": [
+			{
+				"expense_date": expense_date,
+				"expense_type": expense_claim_type,
+				"amount": amount,
+				"description": description
+			}
+		]
+	}).insert(ignore_permissions=True, ignore_mandatory=True)

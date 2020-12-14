@@ -18,6 +18,9 @@ class ProductionPlan(Document):
 	def validate(self):
 		self.calculate_total_planned_qty()
 		self.set_status()
+		for d in self.get('po_items'):
+			if not d.bom_no:
+				frappe.throw(_("Row {0}: Please select default BOM for Item {1} ".format(d.idx, d.item_code)))
 
 	def validate_data(self):
 		for d in self.get('po_items'):
@@ -36,7 +39,7 @@ class ProductionPlan(Document):
 		if open_so:
 			self.add_so_in_table(open_so)
 		else:
-			frappe.msgprint(_("Sales orders are not available for production"))
+			frappe.msgprint(_("Items which are in the Sales Order do not have BOM"))
 
 	def add_so_in_table(self, open_so):
 		""" Add sales orders in the table"""
@@ -212,12 +215,15 @@ class ProductionPlan(Document):
 			filters = {'docstatus': 0, 'production_plan': ("=", self.name)}):
 			frappe.delete_doc('Work Order', d.name)
 
-	def set_status(self):
+	def set_status(self, update=False):
 		self.status = {
 			0: 'Draft',
 			1: 'Submitted',
 			2: 'Cancelled'
 		}.get(self.docstatus)
+
+		if self.docstatus == 1 and self.per_received == 100:
+			self.db_set("status", "Material Received")
 
 		if self.total_produced_qty > 0:
 			self.status = "In Process"
@@ -365,24 +371,20 @@ class ProductionPlan(Document):
 			key = '{}:{}:{}'.format(item.sales_order, material_request_type, item_doc.customer or '')
 			schedule_date = add_days(nowdate(), cint(item_doc.lead_time_days))
 
-			if not key in material_request_map:
-				# make a new MR for the combination
-				material_request_map[key] = frappe.new_doc("Material Request")
-				material_request = material_request_map[key]
-				material_request.update({
-					"transaction_date": nowdate(),
-					"status": "Draft",
-					"company": self.company,
-					"requested_by": frappe.session.user,
-					'material_request_type': material_request_type,
-					'customer': item_doc.customer or ''
-				})
-				material_request_list.append(material_request)
-			else:
-				material_request = material_request_map[key]
+			# make a new MR
+			material_request_map[key] = frappe.new_doc("Material Request")
+			material_request_doc = material_request_map[key]
+			material_request_doc.update({
+				"transaction_date" : nowdate(),
+				"status": "Draft",
+				"company": self.company,
+				"requested_by": frappe.session.user,
+				"material_request_type": material_request_type,
+				"customer": item_doc.customer or ''
+			})
 
 			# add item
-			material_request.append("items", {
+			material_request_doc.append("items", {
 				"item_code": item.item_code,
 				"qty": item.quantity,
 				"schedule_date": schedule_date,
@@ -390,19 +392,18 @@ class ProductionPlan(Document):
 				"sales_order": item.sales_order,
 				'production_plan': self.name,
 				'material_request_plan_item': item.name,
+				'production_plan_item': item.name,
 				"project": frappe.db.get_value("Sales Order", item.sales_order, "project") \
 					if item.sales_order else None
 			})
 
-		for material_request in material_request_list:
-			# submit
-			material_request.flags.ignore_permissions = 1
-			material_request.run_method("set_missing_values")
-
+			material_request_doc.run_method("set_missing_values")
+			material_request_doc.flags.ignore_permissions = 1
+			material_request_list.append(material_request_doc)
 			if self.get('submit_material_request'):
-				material_request.submit()
+				material_request_doc.submit()
 			else:
-				material_request.save()
+				material_request_doc.save()
 
 		frappe.flags.mute_messages = False
 

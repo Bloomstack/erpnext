@@ -27,6 +27,7 @@ ADDRESS_RECORDS = [
 		"address_title": "_Test Billing Address Title",
 		"city": "Lagos",
 		"country": "Nigeria",
+		"phone": "+91 0000000000",
 		"links": [
 			{
 				"link_doctype": "Customer",
@@ -42,6 +43,7 @@ ADDRESS_RECORDS = [
 		"address_title": "_Test Shipping Address 1 Title",
 		"city": "Lagos",
 		"country": "Nigeria",
+		"phone": "+91 0000000000",
 		"links": [
 			{
 				"link_doctype": "Customer",
@@ -58,6 +60,7 @@ ADDRESS_RECORDS = [
 		"city": "Lagos",
 		"country": "Nigeria",
 		"is_shipping_address": "1",
+		"phone": "+91 0000000000",
 		"links": [
 			{
 				"link_doctype": "Customer",
@@ -71,6 +74,7 @@ ADDRESS_RECORDS = [
 		"address_type": "Billing",
 		"address_line1": "Address line 4",
 		"address_title": "_Test Billing Address 2 Title",
+		"phone": "+91 0000000000",
 		"city": "Lagos",
 		"country": "Nigeria",
 		"is_shipping_address": "1",

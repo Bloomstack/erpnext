@@ -13,7 +13,7 @@ from frappe.utils import floor, flt, today, cint, unique
 from frappe.model.mapper import get_mapped_doc, map_child_doc
 from erpnext.stock.get_item_details import get_conversion_factor
 from erpnext.selling.doctype.sales_order.sales_order import make_delivery_note as create_delivery_note_from_sales_order
-
+from erpnext.compliance.doctype.package_tag.package_tag import get_package_tag_qty
 # TODO: Prioritize SO or WO group warehouse
 
 class PickList(Document):
@@ -63,6 +63,15 @@ class PickList(Document):
 				if item.qty > ordered_item_qty:
 					frappe.throw(_("Row #{0}: {1}'s quantity ({2}) should be less than or equal to the ordered quantity ({3})").format(
 						item.idx, frappe.bold(item.item_name), frappe.bold(item.qty), frappe.bold(ordered_item_qty)))
+
+				if item.source_package_tag:
+					package_tag_qty = get_package_tag_qty(item.source_package_tag)
+					if not package_tag_qty:
+						frappe.throw("Row #{0}: No record found for Package Tag {1} in Stock Ledger Entry ").format(
+							item.idx, frappe.bold(item.source_package_tag))
+					if item.qty > package_tag_qty[0].qty:
+						frappe.throw(_("Row #{0}: {1}'s quantity ({2}) should not exceed Package Tag {3}'s quantity ({4})").format(
+							item.idx, frappe.bold(item.item_name), frappe.bold(item.qty), frappe.bold(item.source_package_tag), frappe.bold(package_tag_qty[0].qty)))
 
 	def on_submit(self):
 		self.update_order_package_tag()

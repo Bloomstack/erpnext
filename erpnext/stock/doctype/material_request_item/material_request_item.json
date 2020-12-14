@@ -47,6 +47,7 @@
   "sales_order",
   "sales_order_item",
   "production_plan",
+  "production_plan_item",
   "material_request_plan_item",
   "col_break3",
   "min_order_qty",
@@ -486,11 +487,16 @@
    "fieldtype": "Long Text",
    "label": "Label Print Details",
    "read_only": 1
+  },
+  {
+   "fieldname": "production_plan_item",
+   "fieldtype": "Data",
+   "label": "Production Plan Item"
   }
  ],
  "idx": 1,
  "istable": 1,
- "modified": "2020-09-01 03:21:37.597686",
+ "modified": "2020-12-02 03:12:29.827169",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Material Request Item",

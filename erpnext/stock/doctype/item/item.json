@@ -86,7 +86,6 @@
   "customer",
   "supplier_details",
   "delivered_by_supplier",
-  "create_purchase_order",
   "supplier_items",
   "foreign_trade_details",
   "country_of_origin",
@@ -1102,11 +1101,6 @@
    "fieldname": "enable_cultivation_tax",
    "fieldtype": "Check",
    "label": "Enable Cultivation Tax"
-  },
-  {
-   "fieldname": "create_purchase_order",
-   "fieldtype": "Button",
-   "label": "Create Purchase Order"
   }
  ],
  "has_web_view": 1,
@@ -1114,7 +1108,7 @@
  "idx": 2,
  "image_field": "image",
  "max_attachments": 1,
- "modified": "2020-11-24 23:38:17.152620",
+ "modified": "2020-12-03 22:01:28.792061",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Item",

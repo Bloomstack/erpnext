@@ -108,6 +108,7 @@ class TestSupplier(unittest.TestCase):
             address_line1='Station Road',
             city='_Test City',
             country='India',
+            phone='+91 0000000000',
             links=[dict(
                 link_doctype='Supplier',
                 link_name='_Test Supplier With Tax Category'

@@ -709,6 +709,10 @@ class AccountsController(TransactionBase):
 
 			frappe.db.set_value(self.doctype, self.name, "advance_paid", advance_paid)
 
+			# If paid in advance it will check the "advance_recieved" in Sales Order.
+			if self.doctype == "Sales Order":
+				frappe.db.set_value(self.doctype, self.name, "advance_received", advance_paid)
+
 	@property
 	def company_abbr(self):
 		if not hasattr(self, "_abbr"):

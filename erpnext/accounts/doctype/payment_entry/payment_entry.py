@@ -55,7 +55,6 @@ class PaymentEntry(AccountsController):
 		self.set_amounts()
 		self.clear_unallocated_reference_document_rows()
 		self.validate_payment_against_negative_invoice()
-		self.validate_transaction_reference()
 		self.set_title()
 		self.set_remarks()
 		self.validate_duplicate_entry()
@@ -75,6 +74,7 @@ class PaymentEntry(AccountsController):
 		self.update_payment_schedule()
 		self.set_status()
 		self.check_reference_details()
+		self.validate_transaction_reference()
 
 	def on_cancel(self):
 		self.setup_party_account_field()
@@ -350,7 +350,8 @@ class PaymentEntry(AccountsController):
 			self.status = 'Draft'
 
 	def check_reference_details(self):
-		if self.mode_of_payment == "Check" and not (self.reference_no and self.reference_date):
+		"""Check if references are allocated before submiting the Document if Payement Mode is 'Check' and Type is 'Pay' !"""
+		if (self.mode_of_payment == "Check" and self.payment_type == "Pay") and not (self.reference_no and self.reference_date):
 			frappe.throw(_("Please enter Reference No and Reference Date before submitting."))
 
 	def set_amounts(self):

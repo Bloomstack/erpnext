@@ -63,6 +63,8 @@
   "project",
   "material_request",
   "material_request_item",
+  "production_plan",
+  "production_plan_item",
   "sales_order",
   "sales_order_item",
   "supplier_quotation",
@@ -721,11 +723,22 @@
    "fieldtype": "Link",
    "label": "Package Tag",
    "options": "Package Tag"
+  },
+  {
+   "fieldname": "production_plan",
+   "fieldtype": "Link",
+   "label": "Production Plan",
+   "options": "Production Plan"
+  },
+  {
+   "fieldname": "production_plan_item",
+   "fieldtype": "Data",
+   "label": "Production Plan Item"
   }
  ],
  "idx": 1,
  "istable": 1,
- "modified": "2020-10-30 01:54:35.789038",
+ "modified": "2020-12-05 02:13:11.251503",
  "modified_by": "Administrator",
  "module": "Buying",
  "name": "Purchase Order Item",

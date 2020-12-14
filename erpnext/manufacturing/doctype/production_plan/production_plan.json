@@ -1,5 +1,4 @@
 {
- "actions": [],
  "autoname": "naming_series:",
  "creation": "2017-10-29 11:53:09.523362",
  "doctype": "DocType",
@@ -41,6 +40,7 @@
   "other_details",
   "total_planned_qty",
   "total_produced_qty",
+  "per_received",
   "column_break_32",
   "status",
   "amended_from"
@@ -274,12 +274,13 @@
    "fieldtype": "Column Break"
   },
   {
+   "allow_on_submit": 1,
    "default": "Draft",
    "fieldname": "status",
    "fieldtype": "Select",
    "label": "Status",
    "no_copy": 1,
-   "options": "\nDraft\nSubmitted\nNot Started\nIn Process\nCompleted\nStopped\nCancelled\nMaterial Requested",
+   "options": "\nDraft\nSubmitted\nNot Started\nIn Process\nCompleted\nStopped\nCancelled\nMaterial Requested\nMaterial Received",
    "print_hide": 1,
    "read_only": 1
   },
@@ -291,12 +292,17 @@
    "options": "Production Plan",
    "print_hide": 1,
    "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "per_received",
+   "fieldtype": "Percent",
+   "label": "% Received"
   }
  ],
  "icon": "fa fa-calendar",
  "is_submittable": 1,
- "links": [],
- "modified": "2019-12-04 15:58:50.940460",
+ "modified": "2020-12-07 03:58:16.048132",
  "modified_by": "Administrator",
  "module": "Manufacturing",
  "name": "Production Plan",

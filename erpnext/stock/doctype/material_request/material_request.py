@@ -79,7 +79,7 @@ class MaterialRequest(BuyingController):
 		# self.validate_qty_against_so()
 		# NOTE: Since Item BOM and FG quantities are combined, using current data, it cannot be validated
 		# Though the creation of Material Request from a Production Plan can be rethought to fix this
-
+	
 	def set_title(self):
 		'''Set title as comma separated list of items'''
 		if not self.title:
@@ -296,7 +296,10 @@ def make_purchase_order(source_name, target_doc=None):
 				["uom", "stock_uom"],
 				["uom", "uom"],
 				["sales_order", "sales_order"],
-				["sales_order_item", "sales_order_item"]
+				["sales_order_item", "sales_order_item"],
+				["production_plan", "production_plan"],
+				["production_plan_item", "production_plan_item"],
+				["rate", "price_list_rate"]
 			],
 			"postprocess": update_item,
 			"condition": select_item

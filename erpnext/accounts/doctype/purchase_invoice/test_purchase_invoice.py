@@ -180,7 +180,7 @@ class TestPurchaseInvoice(unittest.TestCase):
 
 		pe = get_payment_entry('Purchase Invoice', dn=pi.name, bank_account="_Test Bank - _TC")
 
-		self.assertRaises(frappe.ValidationError, pe.save)
+		self.assertRaises(frappe.ValidationError, pe.submit)
 
 	def test_purchase_invoice_explicit_block(self):
 		pi = make_purchase_invoice()

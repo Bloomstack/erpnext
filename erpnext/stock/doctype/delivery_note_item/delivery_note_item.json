@@ -740,14 +740,15 @@
   },
   {
    "fieldname": "coa_batch",
-   "fieldtype": "Data",
+   "fieldtype": "Link",
    "label": "COA Batch",
+   "options": "Batch",
    "read_only": 1
   }
  ],
  "idx": 1,
  "istable": 1,
- "modified": "2020-09-30 05:47:44.435403",
+ "modified": "2020-12-04 07:22:19.022429",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Delivery Note Item",

@@ -375,6 +375,7 @@ class PurchaseInvoice(BuyingController):
 
 		# this sequence because outstanding may get -negative
 		self.make_gl_entries()
+		self.make_use_tax_journal_entry()
 
 		self.update_project()
 		update_linked_doc(self.doctype, self.name, self.inter_company_invoice_reference)
@@ -874,6 +875,51 @@ class PurchaseInvoice(BuyingController):
 					"debit": self.base_rounding_adjustment,
 					"cost_center": self.cost_center or round_off_cost_center,
 				}, item=self))
+
+	def make_use_tax_journal_entry(self):
+		"""Generate a journal entry agianst purchase invoice to record use tax information."""
+		if not cint(self.use_tax) and not self.use_tax_amount:
+			return
+
+		use_tax_expense_account = frappe.get_cached_value('Company',  self.company,
+			"default_use_tax_expense_account")
+
+		use_tax_payable_account = frappe.get_cached_value('Company',  self.company,
+			"default_use_tax_payable_account")
+
+		if not use_tax_expense_account and use_tax_payable_account:
+			frappe.throw(_("Please set default use tax paybale and expense account in Company {0}")
+				.format(self.company))
+
+		journal_entry = frappe.new_doc('Journal Entry')
+		journal_entry.voucher_type = 'Use Tax Entry'
+		journal_entry.company = self.company
+		journal_entry.posting_date = self.posting_date
+		journal_entry.multi_currency = 1
+
+		account_amt_list = [
+			{
+				"account": use_tax_expense_account,
+				"party_type": "Supplier",
+				"party": self.supplier,
+				"debit_in_account_currency": self.use_tax_amount,
+				"reference_type": self.doctype,
+				"reference_name": self.name,
+				"user_remark": (_("Use Tax Against {0} {1}").format(self.doctype, self.name))
+			},
+			{
+				"account": use_tax_payable_account,
+				"credit_in_account_currency": self.use_tax_amount,
+				"reference_type": self.doctype,
+				"reference_name": self.name
+			}
+		]
+		journal_entry.set("accounts", account_amt_list)
+		journal_entry.set_amounts_in_company_currency()
+		journal_entry.set_total_debit_credit()
+		journal_entry.save()
+		journal_entry.submit()
+		frappe.msgprint(_("Journal Entry {0} successfully submited for {1} {2}").format(journal_entry.name, self.doctype, self.name), alert=True)
 
 	def on_cancel(self):
 		super(PurchaseInvoice, self).on_cancel()

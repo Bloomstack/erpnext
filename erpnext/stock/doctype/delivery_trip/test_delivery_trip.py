@@ -110,6 +110,7 @@ def create_address(driver):
 			"city": "_Test City",
 			"state": "Test State",
 			"country": "India",
+			"phone": "9087654321",
 			"links":[
 				{
 					"link_doctype": "Driver",

@@ -8,7 +8,8 @@
   "supplier_part_no",
   "column_break_5",
   "price_list",
-  "price_list_rate"
+  "price_list_rate",
+  "uom"
  ],
  "fields": [
   {
@@ -44,11 +45,19 @@
   {
    "fieldname": "column_break_5",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "uom",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "UOM",
+   "options": "UOM",
+   "read_only": 1
   }
  ],
  "idx": 1,
  "istable": 1,
- "modified": "2020-10-27 22:47:37.458431",
+ "modified": "2020-12-10 20:21:17.391778",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Item Supplier",

@@ -52,6 +52,17 @@ class PurchaseReceipt(BuyingController):
 			'target_ref_field': 'stock_qty',
 			'source_field': 'stock_qty',
 			'percent_join_field': 'material_request'
+		},
+		{
+			'source_dt': 'Purchase Receipt Item',
+			'target_dt': 'Production Plan Item',
+			'join_field': 'production_plan_item',
+			'target_field': 'received_qty',
+			'target_parent_dt': 'Production Plan',
+			'target_parent_field': 'per_received',
+			'target_ref_field': 'received_qty',
+			'source_field': 'received_qty',
+			'percent_join_field': 'production_plan'
 		}]
 		if cint(self.is_return):
 			self.status_updater.append({

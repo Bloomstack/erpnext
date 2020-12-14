@@ -90,6 +90,11 @@ status_map = {
 	"Bank Transaction": [
 		["Unreconciled", "eval:self.docstatus == 1 and self.unallocated_amount>0"],
 		["Reconciled", "eval:self.docstatus == 1 and self.unallocated_amount<=0"]
+	],
+	"Production Plan": [
+		["Draft", None],
+		["Material Received", "eval:self.per_received == 100 and self.docstatus == 1"],
+		["Completed", "eval:self.total_produced_qty == self.total_planned_qty"]
 	]
 }
 

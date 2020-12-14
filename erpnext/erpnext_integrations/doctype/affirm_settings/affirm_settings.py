@@ -307,6 +307,7 @@ def capture_payment(affirm_id, sales_order):
 		integration_request.save()
 		frappe.throw("Something went wrong.")
 
+	create_sales_invoice_for_affirm(sales_order)
 	integration_request.save()
 	return affirm_data
 
@@ -319,6 +320,13 @@ def make_so_payment_entry(affirm_data, sales_order):
 	payment_entry.reference_no = affirm_data.get("transaction_id")
 	payment_entry.reference_date = getdate(affirm_data.get("created"))
 	payment_entry.submit()
+
+def create_sales_invoice_for_affirm(sales_order_name): 
+	from erpnext.selling.doctype.sales_order.sales_order import make_sales_invoice
+	si = make_sales_invoice(sales_order_name, ignore_permissions=True)
+	si.allocate_advances_automatically = True
+	si = si.insert(ignore_permissions=True)
+	si.submit()
 
 @frappe.whitelist(allow_guest=1)
 def get_public_config():

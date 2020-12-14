@@ -705,3 +705,4 @@ execute:frappe.delete_doc_if_exists('Custom Field', 'Stock Settings-autoname_ite
 erpnext.patches.v13_0.job_applicant_name_split
 erpnext.patches.v13_0.add_default_statement_of_account_email_template
 erpnext.patches.v13_0.create_default_issue_priorities
+erpnext.patches.v13_0.update_advance_received_in_sales_order

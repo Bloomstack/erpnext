@@ -96,6 +96,15 @@
     padding: 10px;
 }
 
+.authorizenet input#card-expiry-month {
+    width: 13%;
+    padding-right: 0;
+}
+
+.authorizenet input#card-expiry-year {
+    padding-left: 0;
+}
+
 @media screen and (max-width: 576px) {
     .field {
         padding-left: 0;

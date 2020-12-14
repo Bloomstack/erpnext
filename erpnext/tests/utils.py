@@ -18,6 +18,7 @@ def create_test_contact_and_address():
 		"city": "_Test City",
 		"state": "Test State",
 		"country": "India",
+		"phone": "9087654321",
 		"links": [
 			{
 				"link_doctype": "Customer",

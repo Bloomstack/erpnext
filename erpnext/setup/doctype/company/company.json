@@ -1,5 +1,4 @@
 {
- "actions": [],
  "allow_import": 1,
  "allow_rename": 1,
  "autoname": "field:company_name",
@@ -60,6 +59,8 @@
   "default_deferred_expense_account",
   "default_payroll_payable_account",
   "default_expense_claim_payable_account",
+  "default_use_tax_expense_account",
+  "default_use_tax_payable_account",
   "section_break_22",
   "cost_center",
   "column_break_26",
@@ -723,14 +724,25 @@
    "fieldtype": "Link",
    "label": "Default Buying Terms",
    "options": "Terms and Conditions"
+  },
+  {
+   "fieldname": "default_use_tax_expense_account",
+   "fieldtype": "Link",
+   "label": "Default Use Tax Expense Account",
+   "options": "Account"
+  },
+  {
+   "fieldname": "default_use_tax_payable_account",
+   "fieldtype": "Link",
+   "label": "Default Use Tax Payable Account",
+   "options": "Account"
   }
  ],
  "icon": "fa fa-building",
  "idx": 1,
  "image_field": "company_logo",
  "is_tree": 1,
- "links": [],
- "modified": "2020-03-22 18:26:03.145312",
+ "modified": "2020-12-07 01:08:26.148878",
  "modified_by": "Administrator",
  "module": "Setup",
  "name": "Company",

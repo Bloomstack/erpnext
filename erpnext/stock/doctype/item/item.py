@@ -13,7 +13,7 @@ from erpnext.controllers.item_variant import (ItemVariantExistsError,
 from erpnext.setup.doctype.item_group.item_group import (get_parent_item_groups, invalidate_cache_for)
 from frappe import _, msgprint
 from frappe.utils import (cint, cstr, flt, formatdate, get_timestamp, getdate,
-						  now_datetime, random_string, strip)
+						  now_datetime, random_string, strip, nowdate)
 from frappe.utils.html_utils import clean_html
 from frappe.website.doctype.website_slideshow.website_slideshow import \
 	get_slideshow
@@ -25,7 +25,6 @@ from six import iteritems
 from erpnext.utilities.utils import get_abbr
 from erpnext import get_default_company
 from erpnext.accounts.utils import get_company_default
-from frappe.utils import cstr
 
 
 class DuplicateReorderRows(frappe.ValidationError):
@@ -1141,25 +1140,48 @@ def on_doctype_update():
 	frappe.db.add_index("Item", ["route(500)"])
 
 @frappe.whitelist()
-def make_purchase_order_item_default_supplier(source_name, target_doc=None):
-	item= frappe.get_doc("Item", source_name)
-	doc = frappe.new_doc("Purchase Order")
+def make_purchase_order_item(doc, items):
+	items = json.loads(items)
+	doc = json.loads(doc)
+	if not items:
+		return
 
-	if item.item_defaults and item.item_defaults[0].default_supplier:
-		doc.supplier = item.item_defaults[0].default_supplier
+	purchase_orders = []
 
-	if item.item_defaults and item.item_defaults[0].default_price_list:
-		doc.buying_price_list = item.item_defaults[0].default_price_list
+	for item in items:
+		qi = frappe.new_doc("Purchase Order")
+		qi.update({
+			"supplier": item.get("supplier"),
+			"buying_price_list": item.get("price_list"),
+			"items": [
+					{"item_code": doc.get("name"),
+					"qty":item.get("qty"),
+					"uom":item.get("uom"),
+					"rate":item.get("price_list_rate"),
+					"cultivation_weight_uom": item.get("uom") or doc.get("stock_uom"),
+					"warehouse": item.get("warehouse"),
+					"schedule_date": getdate(nowdate())}
+			]
+		}).save()
 
-	return doc
+		purchase_orders.append(frappe.utils.get_link_to_form("Purchase Order", qi.name))
+
+	return purchase_orders
+
 
 @frappe.whitelist()
-def make_purchase_order_item(source_name, target_doc=None):
-	item= frappe.get_doc("Item", source_name)
-	doc = frappe.new_doc("Purchase Order")
-	doc.supplier = frappe.flags.args.get("supplier")
-	doc.buying_price_list = frappe.flags.args.get("price_list")
-	return doc
+def get_supplier_for_purchase_order(items):
+	items = json.loads(items)
+	data = []
+	for item in items:
+		data.append({
+			"docname": item.get("name"),
+			"supplier": item.get("supplier"),
+			"price_list": item.get("price_list"),
+			"uom": item.get("uom"),
+			"price_list_rate": item.get("price_list_rate")
+		})
+	return data
 
 def custom_autoname(doc):
 	"""
@@ -1171,16 +1193,21 @@ def custom_autoname(doc):
 			e = variant ID number; has to be incremented.
 	"""
 	# Get abbreviations
-	company_abbr = get_company_default(get_default_company(), "abbr")
-	brand_abbr = get_abbr(doc.brand, max_length=len(company_abbr))
-	brand_abbr = brand_abbr if company_abbr != brand_abbr else None
 	item_group_abbr = get_abbr(doc.item_group)
 	item_name_abbr = get_abbr(doc.item_name, 3)
+	default_company = get_default_company()
 
-	params = list(filter(None, [company_abbr, brand_abbr, item_group_abbr, item_name_abbr]))
+	if default_company:
+		company_abbr = get_company_default(default_company, "abbr")
+		brand_abbr = get_abbr(doc.brand, max_length=len(company_abbr))
+		brand_abbr = brand_abbr if company_abbr != brand_abbr else None
+		params = list(filter(None, [company_abbr, brand_abbr, item_group_abbr, item_name_abbr]))
+	else:
+		brand_abbr = get_abbr(doc.brand)
+		params = list(filter(None, [brand_abbr, item_group_abbr, item_name_abbr]))
+
 	item_code = "-".join(params)
-
-		# Get count
+	# Get count
 	count = len(frappe.get_all("Item", filters={"name": ["like", "%{}%".format(item_code)]}))
 
 	if count > 0:
@@ -1194,4 +1221,4 @@ def get_item_price(supplier, item_code):
 		"supplier": supplier,
 		"item_code": item_code,
 		"buying": True
-	}, ["price_list", "price_list_rate"], as_dict=True)
+	}, ["price_list", "price_list_rate", "uom"], as_dict=True)

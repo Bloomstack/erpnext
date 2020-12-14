@@ -74,6 +74,7 @@ class TestCustomer(unittest.TestCase):
 			address_line1='Station Road',
 			city='_Test City',
 			country='India',
+			phone='+91 0000000000',
 			links=[dict(
 				link_doctype='Customer',
 				link_name='_Test Customer With Tax Category'
@@ -87,6 +88,7 @@ class TestCustomer(unittest.TestCase):
 			address_line1='Station Road',
 			city='_Test City',
 			country='India',
+			phone='+91 0000000000',
 			links=[dict(
 				link_doctype='Customer',
 				link_name='_Test Customer With Tax Category'

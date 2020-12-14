@@ -384,7 +384,9 @@ def make_purchase_receipt(source_name, target_doc=None):
 				"parent": "purchase_order",
 				"bom": "bom",
 				"material_request": "material_request",
-				"material_request_item": "material_request_item"
+				"material_request_item": "material_request_item",
+				"production_plan": "production_plan",
+				"proudction_plan_item": "production_plan_item"
 			},
 			"postprocess": update_item,
 			"condition": lambda doc: abs(doc.received_qty) < abs(doc.qty) and doc.delivered_by_supplier!=1

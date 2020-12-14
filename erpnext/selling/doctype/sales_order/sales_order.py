@@ -1073,6 +1073,189 @@ def update_produced_qty_in_so_item(sales_order, sales_order_item):
 	frappe.db.set_value('Sales Order Item', sales_order_item, 'produced_qty', total_produced_qty)
 
 @frappe.whitelist()
+def make_production_plan(source_name, target_doc=None):
+	def set_missing_values(source, target):
+		target.get_items_from = source.doctype
+		target.append("sales_orders", {
+			"sales_order": source.name,
+			"sales_order_date": source.transaction_date,
+			"customer": source.customer,
+			"grand_total": source.base_grand_total
+		})
+
+	# Updates the fields of items.
+	def update_item_data(source, target, source_parent):
+		bom_no = frappe.get_value("BOM", {"item": target.item_code, "is_default": 1})
+		if bom_no:
+			bom_data = frappe.db.get_value('BOM', bom_no, ['raw_material_cost','operating_cost'], as_dict=1)
+			target.bom_no = bom_no
+			target.raw_material_cost = bom_data.raw_material_cost
+			target.total_operational_cost = bom_data.total_operating_cost
+			target.total_operational_hours = flt(frappe.db.get_value("BOM Operation", {"parent": bom_no}, "sum(time_in_mins)")) / 60.0
+			target.total_workstations = frappe.db.count("BOM Operation", {"parent": bom_no, "workstation": ["is", "set"]})
+
+	# Mapping Sales Order doc to new Production Plan doc.
+	doc = get_mapped_doc("Sales Order", source_name, {
+		"Sales Order": {
+			"doctype": "Production Plan",
+		},
+		"Sales Order Item": {
+			"doctype": "Production Plan Item",
+			"field_map": {
+				"item_code": "item_code",
+				'name': 'sales_order_item',
+				"qty": "planned_qty",
+				"parent": "sales_order"
+			},
+			'postprocess': update_item_data
+		}
+	}, target_doc, set_missing_values)
+	return doc
+
+@frappe.whitelist()
+def create_multiple_pick_lists(orders):
+	"""Creating different Pick Lists from multiple Sales Order."""
+	orders = json.loads(orders)
+
+	created_orders = []
+	for order in orders:
+		created = False
+		customer = frappe.db.get_value("Sales Order", order, "customer")
+
+		# check if a Pick List already exists against the order.
+		pick_lists = frappe.get_all("Pick List", filters=[
+				["Pick List", "docstatus", "<", 2],
+				["Pick List Item", "sales_order", "=", order]
+			],
+			distinct=True)
+
+		# if none are found, then create a new Pick List.
+		if not pick_lists:
+			order_doc = create_pick_list(order)
+
+			# if no items can be picked, do not create an empty Pick List.
+			if order_doc.get("locations"):
+				order_doc.save()
+				pick_lists = [order_doc.name]
+				created = True
+			else:
+				pick_lists = []
+
+		created_orders.append({
+			"sales_order": order,
+			"customer": customer,
+			"pick_lists": pick_lists,
+			"created": created
+		})
+
+	return created_orders
+
+@frappe.whitelist()
+def create_multiple_sales_invoices(orders):
+	"""Creating different Sales Invoices from multiple Sales Order."""
+	orders = json.loads(orders)
+
+	created_orders = []
+	for order in orders:
+		created = False
+		customer = frappe.db.get_value("Sales Order", order, "customer")
+
+		# check if a Sales Invoice already exists against the order.
+		sales_invoices = frappe.get_all("Sales Invoice", filters=[
+				["Sales Invoice", "docstatus", "<", 2],
+				["Sales Invoice Item", "sales_order", "=", order]
+			],
+			distinct=True)
+
+		# if none are found, then create a new Sales Invoice.
+		if not sales_invoices:
+			order_doc = make_sales_invoice(order)
+
+			# if no items can be avilable, do not create an empty Sales Invoice.
+			if order_doc.get("items"):
+				order_doc.save()
+				sales_invoices = [order_doc.name]
+				created = True
+			else:
+				sales_invoices = []
+
+		created_orders.append({
+			"sales_order": order,
+			"customer": customer,
+			"sales_invoices": sales_invoices,
+			"created": created
+		})
+
+	return created_orders
+
+@frappe.whitelist()
+def create_muliple_delivery_notes(orders):
+	"""Creating different Delivery Notes from multiple Sales Order."""
+	orders = json.loads(orders)
+
+	created_orders = []
+	for order in orders:
+		created = False
+		customer = frappe.db.get_value("Sales Order", order, "customer")
+
+		# check if a Delivery Note already exists against the order.
+		delivery_notes = frappe.get_all("Delivery Note", filters=[
+				["Delivery Note", "docstatus", "<", 2],
+				["Delivery Note Item", "against_sales_order", "=", order]
+			],
+			distinct=True)
+
+		# if none are found, then create a new Pick List.
+		if not delivery_notes:
+			order_doc = make_delivery_note(order)
+
+			# if no items can be picked, do not create an empty Delivery Note.
+			if order_doc.get("items"):
+				order_doc.save()
+				delivery_notes = [order_doc.name]
+				created = True
+			else:
+				delivery_notes = []
+
+		created_orders.append({
+			"sales_order": order,
+			"customer": customer,
+			"delivery_notes": delivery_notes,
+			"created": created
+		})
+
+	return created_orders
+
+@frappe.whitelist()
+def create_muliple_production_plans(orders):
+	"""Creating different Production Plans from multiple Sales Order."""
+	orders = json.loads(orders)
+
+	created_orders = []
+	for order in orders:
+		created = False
+		customer = frappe.db.get_value("Sales Order", order, "customer")
+
+		# Create a new Production Plan.
+		order_doc = make_production_plan(order)
+		# if no items can be picked, do not create an empty production plan.
+		if order_doc.get("po_items"):
+			order_doc.save()
+			production_plans = [order_doc.name]
+			created = True
+		else:
+			production_plans = []
+
+		created_orders.append({
+			"sales_order": order,
+			"customer": customer,
+			"production_plans": production_plans,
+			"created": created
+		})
+
+	return created_orders
+
+@frappe.whitelist()
 def get_customer_item_ref_code(item, customer_name):
     """Fetch the Customer Item Code for the given Item.
     

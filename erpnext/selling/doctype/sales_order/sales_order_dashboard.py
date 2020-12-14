@@ -10,6 +10,7 @@ def get_data():
 			'Payment Entry': 'reference_name',
 			'Payment Request': 'reference_name',
 			'Auto Repeat': 'reference_document',
+			'Production Plan': 'sales_order',
 		},
 		'internal_links': {
 			'Quotation': ['items', 'prevdoc_docname']
@@ -33,7 +34,7 @@ def get_data():
 			},
 			{
 				'label': _('Reference'),
-				'items': ['Quotation', 'Auto Repeat']
+				'items': ['Quotation', 'Auto Repeat', 'Production Plan']
 			},
 			{
 				'label': _('Payment'),

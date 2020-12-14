@@ -22,6 +22,7 @@
   "workstations",
   "section_break_9",
   "pending_qty",
+  "received_qty",
   "ordered_qty",
   "produced_qty",
   "column_break_17",
@@ -263,11 +264,16 @@
    "label": "Purchase Receipt",
    "options": "Purchase Receipt",
    "read_only": 1
+  },
+  {
+   "fieldname": "received_qty",
+   "fieldtype": "Float",
+   "label": "Received Qty"
   }
  ],
  "idx": 1,
  "istable": 1,
- "modified": "2020-11-04 02:47:18.654576",
+ "modified": "2020-12-02 23:48:47.736988",
  "modified_by": "Administrator",
  "module": "Manufacturing",
  "name": "Production Plan Item",
