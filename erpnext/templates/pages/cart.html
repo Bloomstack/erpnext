@@ -35,7 +35,7 @@
 		<tbody class="cart-items">
 			{% include "templates/includes/cart/cart_items.html" %}
 		</tbody>
-		{% if cart_settings.enable_checkout %}
+		{% if cart_settings.enable_checkout or (cart_settings.sales_team_order_without_payment and order_for) %}
 		<tfoot class="cart-tax-items">
 			{% include "templates/includes/order/order_taxes.html" %}
 		</tfoot>
@@ -47,7 +47,7 @@
 
 	{% if doc.items %}
 		<div class="place-order-container">
-			{% if cart_settings.enable_checkout %}
+			{% if (cart_settings.enable_checkout) or (cart_settings.sales_team_order_without_payment and order_for) %}
 				<button class="btn btn-primary btn-place-order" type="button">
 					{{ _("Place Order") }}
 				</button>

@@ -40,6 +40,13 @@ def update_website_context(context):
 
 	# Order for feature:
 	if "order_for" in frappe.session.data:
+
+		#create a global context variable which is a bool flag for the order_for feature
+		if frappe.session.data.order_for.get('enabled', False):
+			context.update({"order_for": True})
+		else:
+			context.update({"order_for": False})
+
 		customer_name = frappe.session.data.order_for.get("customer_name")
 	
 		if customer_name:

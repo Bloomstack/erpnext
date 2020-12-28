@@ -12,6 +12,8 @@ def set_website_customer(customer_name, primary_contact=None):
 	if not primary_contact:
 		return "Customer does not have a primary contact. Please set one before starting an order."
 
+	#add a flag that tells us if the order_for feature is enabled
+	frappe.session.data.order_for['enabled'] = True
 	frappe.session.data.order_for["customer_name"] = customer_name
 	frappe.session.data.order_for["customer_primary_contact_name"] = primary_contact
 
@@ -21,8 +23,10 @@ def set_website_customer(customer_name, primary_contact=None):
 def reset_website_customer():
 	settings = get_shopping_cart_settings()
 
-	customer_name = frappe.session.data.order_for.get("customer_name")
+	#flag order_for feature as disabled if stopped by the sales team user
+	frappe.session.data.order_for['enabled'] = False
 
+	customer_name = frappe.session.data.order_for.get("customer_name")	
 	if frappe.session.data.order_for.get("customer_name"):
 		del frappe.session.data.order_for["customer_name"]
 	if frappe.session.data.order_for.get("customer_primary_contact_name"):
