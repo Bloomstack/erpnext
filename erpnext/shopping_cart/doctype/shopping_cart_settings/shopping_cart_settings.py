@@ -80,8 +80,8 @@ class ShoppingCartSettings(Document):
 	def validate_checkout_gateways(self):
 		default_gateways = [gateway for gateway in self.gateways if gateway.is_default]
 
-		if len(default_gateways) != 1:
-			frappe.throw(_("There can be only 1 default gateway, found {0}").format(len(default_gateways)))
+		# if len(default_gateways) != 1:
+		# 	frappe.throw(_("There can be only 1 default gateway, found {0}").format(len(default_gateways)))
 
 	def set_payment_gateway(self):
 		for gateway in self.gateways:

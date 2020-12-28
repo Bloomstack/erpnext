@@ -5,14 +5,14 @@
 		<span class="user-image-wrapper"></span>
 		<span class="user-identifier">
 			<span class="full-name"></span>
-			{% if session_customer_primary_contact %}
+			{% if order_for %}
 			<span class="order-for-contact"><span class="for">for: </span>{{ session_customer_primary_contact.first_name }} {{ session_customer_primary_contact.last_name or ""}}</span>
 			{% endif %}
 		</span>
 		<b class="caret"></b>
 	</a>
 	<ul class="dropdown-menu dropdown-menu-right" role="menu">
-		{% if session_customer_primary_contact %}
+		{% if order_for %}
 		<a class="dropdown-item order-for-contact-logout" href="#" rel="nofollow">Stop order for <span>{{ session_customer_primary_contact.first_name }} {{ session_customer_primary_contact.last_name or ""}}</span></a>
 		{% endif %}		{%- for child in post_login -%}
 		{%- if child.url -%}

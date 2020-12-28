@@ -33,6 +33,6 @@ frappe.ui.form.on('Shopping Cart Payment Gateway', {
 function toggle_mandatory (cur_frm){
 	cur_frm.toggle_reqd("gateways", false);
 	if(cur_frm.doc.enabled && cur_frm.doc.enable_checkout) {
-		cur_frm.toggle_reqd("gateways", true);
+		cur_frm.toggle_reqd("gateways", false);
 	}
 }

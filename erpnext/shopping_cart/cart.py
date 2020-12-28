@@ -12,6 +12,7 @@ from frappe.utils.nestedset import get_root_of
 from erpnext.accounts.utils import get_account_name
 from erpnext.utilities.product import get_qty_in_stock
 from frappe.contacts.doctype.contact.contact import get_contact_name
+from frappe.utils import add_days, add_years, add_to_date, cint, cstr, getdate, today, nowdate
 
 
 class WebsitePriceListMissingError(frappe.ValidationError):
@@ -60,7 +61,7 @@ def place_order():
 	#get the quotation in the cart and the cart settings
 	quotation = _get_cart_quotation()
 	cart_settings = frappe.db.get_value("Shopping Cart Settings", None,
-		["company", "allow_items_not_in_stock"], as_dict=1)
+		["company", "allow_items_not_in_stock", 'sales_team_order_without_payment'], as_dict=1)
 	quotation.company = cart_settings.company
 	quotation.flags.ignore_permissions = True
 
@@ -70,8 +71,6 @@ def place_order():
 
 	if not (quotation.shipping_address_name or quotation.customer_address):
 		frappe.throw(_("Set Shipping Address or Billing Address"))
-
-	#We have migrated the order placement to the make_payment_entry function to accomodate quotations
 
 	# Checking if items in quotation are in stock, if not throw an error
 	if not cint(cart_settings.allow_items_not_in_stock):
@@ -85,6 +84,31 @@ def place_order():
 					throw(_("{1} Not in Stock").format(item.item_code))
 				if item.qty > item_stock.stock_qty[0][0]:
 					throw(_("Only {0} in Stock for item {1}").format(item_stock.stock_qty[0][0], item.item_code))
+
+	#We have migrated the order placement to the make_payment_entry function to accomodate quotations
+	#  convert the quotation to a sales order and return the order, else return quotation
+
+	#if checkout without payment has been enabled, submit the quotation, and convert to sales order
+	if cart_settings.sales_team_order_without_payment:
+	
+		quotation.save(ignore_permissions=True)
+		quotation.submit()
+		frappe.db.commit()
+
+		from erpnext.selling.doctype.quotation.quotation import _make_sales_order
+		sales_order = frappe.get_doc(_make_sales_order(quotation.name, ignore_permissions=True))
+		sales_order.payment_schedule = []
+		sales_order.transaction_date = nowdate()
+		sales_order.delivery_date = add_days(nowdate(),10)
+
+		for item in sales_order.items: 
+			item.delivery_date = add_days(nowdate(),10)
+
+		sales_order.flags.ignore_permissions = True
+		sales_order.insert()
+		sales_order.submit()
+
+		return sales_order.name
 
 	return quotation.name
 
