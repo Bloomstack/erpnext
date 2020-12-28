@@ -35,7 +35,7 @@
 		<tbody class="cart-items">
 			{% include "templates/includes/cart/cart_items.html" %}
 		</tbody>
-		{% if cart_settings.enable_checkout %}
+		{% if cart_settings.enable_checkout or (cart_settings.sales_team_order_without_payment and order_for) %}
 		<tfoot class="cart-tax-items">
 			{% include "templates/includes/order/order_taxes.html" %}
 		</tfoot>
@@ -47,7 +47,7 @@
 
 	{% if doc.items %}
 		<div class="place-order-container">
-			{% if cart_settings.enable_checkout %}
+			{% if (cart_settings.enable_checkout) or (cart_settings.sales_team_order_without_payment and order_for) %}
 				<button class="btn btn-primary btn-place-order" type="button">
 					{{ _("Place Order") }}
 				</button>
@@ -55,6 +55,16 @@
 				<button class="btn btn-primary btn-request-for-quotation" type="button">
 					{{ _("Request for Quotation") }}
 				</button>
+			{% endif %}
+		</div>
+	{% endif %}
+
+	{% if doc.items %}
+		<div class="place-order-container">
+			{% if (cart_settings.enable_checkout) or (cart_settings.sales_team_order_without_payment and order_for) %}
+			<div class="add-customer-date">
+				<input type="date" name="" id="order-for-delivery-date" class="form-control mt-3 col-md m-3">
+			</div>
 			{% endif %}
 		</div>
 	{% endif %}

@@ -27,6 +27,7 @@
   "payment_success_url",
   "sb_order_for",
   "allow_order_for",
+  "sales_team_order_without_payment",
   "stop_order_for_behavior",
   "stop_order_for_url",
   "sb_order_for_cb1",
@@ -214,13 +215,20 @@
    "fieldname": "order_for_open_in_tab",
    "fieldtype": "Check",
    "label": "Load Url In New Tab"
+  },
+  {
+   "default": "0",
+   "depends_on": "eval:doc.allow_order_for == 1",
+   "fieldname": "sales_team_order_without_payment",
+   "fieldtype": "Check",
+   "label": "Allow Sales Team to Place Order without Payment"
   }
  ],
  "icon": "fa fa-shopping-cart",
  "idx": 1,
  "issingle": 1,
- "modified": "2020-12-18 11:34:50.612390",
- "modified_by": "forellana@digithinkit.com",
+ "modified": "2020-12-28 01:06:10.120330",
+ "modified_by": "Administrator",
  "module": "Shopping Cart",
  "name": "Shopping Cart Settings",
  "owner": "Administrator",
