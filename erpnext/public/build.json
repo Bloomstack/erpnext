@@ -14,7 +14,8 @@
 		"public/js/utils/card_validator.js"
 	],
 	"css/erpnext-web.css": [
-		"public/scss/website.scss"
+		"public/scss/website.scss",
+		"public/css/cart.css"
 	],
 	"js/marketplace.min.js": [
 		"public/js/hub/marketplace.js"
