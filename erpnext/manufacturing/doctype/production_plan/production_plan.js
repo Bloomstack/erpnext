@@ -40,12 +40,16 @@ frappe.ui.form.on('Production Plan', {
 		if (frm.doc.docstatus === 1 && frm.doc.po_items
 			&& frm.doc.status != 'Completed') {
 			frm.add_custom_button(__("Work Order"), ()=> {
-				frm.trigger("make_work_order");
+				if (frm.doc.status != 'Material Received' && frm.doc.mr_items) {
+					frappe.msgprint(__("Requested Material is not yet received."));
+				} else {
+					frm.trigger("make_work_order");
+				}
 			}, __('Create'));
 		}
 
 		if (frm.doc.docstatus === 1 && frm.doc.mr_items
-			&& !in_list(['Material Requested', 'Completed'], frm.doc.status)) {
+			&& !in_list(['Material Requested', 'Completed', 'Material Received'], frm.doc.status)) {
 			frm.add_custom_button(__("Material Request"), ()=> {
 				frm.trigger("make_material_request");
 			}, __('Create'));
