@@ -86,13 +86,8 @@ def place_order(delivery_date=None):
 					throw(_("Only {0} in Stock for item {1}").format(item_stock.stock_qty[0][0], item.item_code))
 
 	#if checkout without payment has been enabled, submit the quotation, and convert to sales order
-	print("Delivery date for the customer is requested at: ", delivery_date)
-	print("Submitting the sales order from a sales user without the payment...")
 	if cart_settings.sales_team_order_without_payment:
 	
-		#check if the delivery date for customer is valid. If not, throw error
-
-
 		quotation.save(ignore_permissions=True)
 		quotation.submit()
 		frappe.db.commit()
