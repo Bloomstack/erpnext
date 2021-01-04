@@ -47,8 +47,7 @@ $.extend(shopping_cart, {
 
 	bind_place_order: function() {
 		$(".btn-place-order").on("click", function() {
-			var date = $("#order-for-delivery-date").val();
-			console.log("Date is: ", date);
+			let date = $("#order-for-delivery-date").val(); 
 			shopping_cart.place_order(this, date);
 		});
 	},

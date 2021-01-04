@@ -6,7 +6,7 @@
 		<span class="user-identifier">
 			<span class="full-name"></span>
 			{% if order_for %}
-			<span class="order-for-contact"><span class="for">for: </span>{{ session_customer_primary_contact.first_name }} {{ session_customer_primary_contact.last_name or ""}}</span>
+			<span class="order-for-contact"><span class="for">for: </span>{{ customer_name }}</span>
 			{% endif %}
 		</span>
 		<b class="caret"></b>

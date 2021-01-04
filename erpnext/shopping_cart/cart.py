@@ -12,7 +12,7 @@ from frappe.utils.nestedset import get_root_of
 from erpnext.accounts.utils import get_account_name
 from erpnext.utilities.product import get_qty_in_stock
 from frappe.contacts.doctype.contact.contact import get_contact_name
-from frappe.utils import add_days, add_years, add_to_date, cint, cstr, getdate, today, nowdate
+from frappe.utils import cint, cstr, getdate, nowdate
 
 
 class WebsitePriceListMissingError(frappe.ValidationError):
@@ -56,8 +56,15 @@ def get_cart_quotation(doc=None):
 
 @frappe.whitelist()
 def place_order(delivery_date=None):
-	"""Placing orders for items inside the shopping cart"""
+	"""
+	Place an order for items in the shopping cart.
 
+	Args:
+		delivery_date (date, optional): The delivery date requested by the sales user/customer. Defaults to None.
+
+	Returns:
+		string: the name of the quotation or the sales order
+	"""	
 	#get the quotation in the cart and the cart settings
 	quotation = _get_cart_quotation()
 	cart_settings = frappe.db.get_value("Shopping Cart Settings", None,
@@ -88,18 +95,21 @@ def place_order(delivery_date=None):
 	#if checkout without payment has been enabled, submit the quotation, and convert to sales order
 	if cart_settings.sales_team_order_without_payment:
 	
+		#add the requested delivery date to the quotation and submit the document
+		quotation.requested_delivery_date = getdate(delivery_date)
+		for item in quotation.items: 
+			item.requested_delivery_date = getdate(delivery_date)
+
 		quotation.save(ignore_permissions=True)
 		quotation.submit()
 		frappe.db.commit()
 
+		#convert the quotation to a sales order
 		from erpnext.selling.doctype.quotation.quotation import _make_sales_order
 		sales_order = frappe.get_doc(_make_sales_order(quotation.name, ignore_permissions=True))
 		sales_order.payment_schedule = []
 		sales_order.transaction_date = nowdate()
-		sales_order.delivery_date = getdate(delivery_date)
-
-		for item in sales_order.items: 
-			item.delivery_date = getdate(delivery_date)
+		#expected delivery date to the sales order is mapped from the quotation
 
 		sales_order.flags.ignore_permissions = True
 		sales_order.insert()
