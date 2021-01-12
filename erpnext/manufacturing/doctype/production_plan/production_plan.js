@@ -32,6 +32,10 @@ frappe.ui.form.on('Production Plan', {
 		}
 	},
 
+	on_submit: function(frm) {
+		frm.fields_dict.po_items.grid.toggle_reqd("bom_no", true)
+	},
+
 	refresh: function(frm) {
 		if (frm.doc.docstatus === 1) {
 			frm.trigger("show_progress");

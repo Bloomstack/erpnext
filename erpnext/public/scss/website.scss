@@ -83,3 +83,26 @@
 .place-order-container {
 	text-align: right;
 }
+
+/* Order For Feature */
+
+.navbar { 
+	.user-identifier {
+		display: inline-flex;
+		flex-direction: column;
+		white-space: nowrap;
+	}
+	.user-identifier .full-name {
+		line-height: .9rem;
+		font-size: 1.2rem;
+		white-space: nowrap;
+	}
+	.user-identifier .for {
+		font-size: .8rem;
+	}
+	.user-identifier .order-for-contact {
+		font-size: .8rem;
+		margin: 0;
+		white-space: nowrap;
+	}
+}

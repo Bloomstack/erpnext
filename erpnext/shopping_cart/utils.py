@@ -38,6 +38,28 @@ def update_website_context(context):
 		"shopping_cart_count": shopping_cart_count
 	})
 
+	# Order for feature:
+	if "order_for" in frappe.session.data:
+
+		#create a global context variable which is a bool flag for the order_for feature
+		context.update({
+			"order_for": frappe.session.data.order_for.get('enabled', False)
+		})
+		customer_name = frappe.session.data.order_for.get("customer_name")
+	
+		if customer_name:
+			customer = frappe.get_doc("Customer", customer_name)
+			primary_contact = frappe.session.data.order_for.get("customer_primary_contact_name")
+
+			context.update({
+				"session_customer": customer, 
+				"customer_name": customer_name
+			})
+
+			if primary_contact and frappe.db.exists("Contact", primary_contact):
+				contact = frappe.get_doc("Contact", primary_contact)
+				context.update({"session_customer_primary_contact": contact})
+					
 def check_customer_or_supplier():
 	if frappe.session.user:
 		contact_name = frappe.get_value("Contact", {"email_id": frappe.session.user})

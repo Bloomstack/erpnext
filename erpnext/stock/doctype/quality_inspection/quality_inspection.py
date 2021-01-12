@@ -51,8 +51,11 @@ class QualityInspection(Document):
 
 	def on_submit(self):
 		self.update_qc_reference()
+
 		if self.batch_no:
 			self.set_batch_coa()
+			frappe.db.set_value("Batch", self.batch_no, "disabled", False if self.status == "Accepted" else True)
+
 		if self.thc or self.cbd:
 			update_batch_doc(self.batch_no, self.name, self.item_code)
 
@@ -61,6 +64,9 @@ class QualityInspection(Document):
 
 	def on_cancel(self):
 		self.update_qc_reference()
+
+		if self.batch_no:
+			frappe.db.set_value("Batch", self.batch_no, "disabled", False if self.status == "Accepted" else True)
 
 	def validate_certificate_of_analysis(self):
 		is_compliance_item = frappe.db.get_value("Item", self.item_code, "is_compliance_item")

@@ -635,7 +635,8 @@ frappe.ui.form.on('Payment Entry', {
 						var c = frm.add_child("references");
 						c.reference_doctype = d.voucher_type;
 						c.reference_name = d.voucher_no;
-						c.due_date = d.due_date
+						c.due_date = d.due_date;
+						c.posting_date = d.posting_date;
 						c.total_amount = d.invoice_amount;
 						c.outstanding_amount = d.outstanding_amount;
 						c.bill_no = d.bill_no;
@@ -657,6 +658,7 @@ frappe.ui.form.on('Payment Entry', {
 						}
 						if (in_list(['Sales Invoice', 'Purchase Invoice', "Expense Claim", "Fees"], d.reference_doctype)){
 							c.due_date = d.due_date;
+							c.posting_date = d.posting_date;
 						}
 					});
 
@@ -688,6 +690,7 @@ frappe.ui.form.on('Payment Entry', {
 	},
 
 	allocate_party_amount_against_ref_docs: function(frm, paid_amount) {
+		const within_days = frm.doc.references_date ? frm.doc.references_date : frm.doc.posting_date;
 		var total_positive_outstanding_including_order = 0;
 		var total_negative_outstanding = 0;
 		var total_deductions = frappe.utils.sum($.map(frm.doc.deductions || [],
@@ -740,16 +743,46 @@ frappe.ui.form.on('Payment Entry', {
 			if(frappe.flags.allocate_payment_amount != 0){
 				if(row.outstanding_amount > 0 && allocated_positive_outstanding > 0) {
 					if(row.outstanding_amount >= allocated_positive_outstanding) {
-						row.allocated_amount = allocated_positive_outstanding;
+						if (row.posting_date && row.payment_within_days && row.discount) {
+							if (frappe.datetime.get_day_diff(row.posting_date, within_days) < row.payment_within_days) {
+								row.discounted_amount = (allocated_positive_outstanding * row.discount) / 100
+								row.allocated_amount = allocated_positive_outstanding - row.discounted_amount
+							}
+						} else {
+							row.allocated_amount = allocated_positive_outstanding;
+						}
 					} else {
-						row.allocated_amount = row.outstanding_amount;
+						if (row.posting_date && row.payment_within_days && row.discount) {
+							if (frappe.datetime.get_day_diff(row.posting_date, within_days) < row.payment_within_days) {
+								row.discounted_amount = (row.outstanding_amount * row.discount) / 100
+								row.allocated_amount = row.outstanding_amount - row.discounted_amount
+							}
+						} else {
+							row.allocated_amount = row.outstanding_amount;
+						}
 					}
 
 					allocated_positive_outstanding -= flt(row.allocated_amount);
 				} else if (row.outstanding_amount < 0 && allocated_negative_outstanding) {
-					if(Math.abs(row.outstanding_amount) >= allocated_negative_outstanding)
-						row.allocated_amount = -1*allocated_negative_outstanding;
-					else row.allocated_amount = row.outstanding_amount;
+					if (Math.abs(row.outstanding_amount) >= allocated_negative_outstanding) {
+						if (row.posting_date && row.payment_within_days && row.discount) {
+							if (frappe.datetime.get_day_diff(row.posting_date, within_days) < row.payment_within_days) {
+								row.discounted_amount = (-1*allocated_negative_outstanding * row.discount) / 100
+								row.allocated_amount = -1*allocated_negative_outstanding - row.discounted_amount
+							}
+						} else {
+							row.allocated_amount = -1*allocated_negative_outstanding;
+						}
+					} else {
+						if (row.posting_date && row.payment_within_days && row.discount) {
+							if (frappe.datetime.get_day_diff(row.posting_date, within_days) < row.payment_within_days) {
+								row.discounted_amount = (row.outstanding_amount * row.discount) / 100
+								row.allocated_amount = row.outstanding_amount - row.discounted_amount
+							}
+						} else {
+							row.allocated_amount = row.outstanding_amount;
+						}
+					}
 
 					allocated_negative_outstanding -= Math.abs(flt(row.allocated_amount));
 				}
@@ -761,9 +794,16 @@ frappe.ui.form.on('Payment Entry', {
 	},
 
 	set_total_allocated_amount: function(frm) {
+		const within_days = frm.doc.references_date ? frm.doc.references_date : frm.doc.posting_date;
 		var total_allocated_amount = 0.0;
 		var base_total_allocated_amount = 0.0;
 		$.each(frm.doc.references || [], function(i, row) {
+			if (row.posting_date && row.payment_within_days && row.discount) {
+				if (frappe.datetime.get_day_diff(row.posting_date, within_days) < row.payment_within_days) {
+					row.discounted_amount = (row.allocated_amount * row.discount) / 100
+					row.allocated_amount = row.allocated_amount - row.discounted_amount
+				}
+			}
 			if (row.allocated_amount) {
 				total_allocated_amount += flt(row.allocated_amount);
 				base_total_allocated_amount += flt(flt(row.allocated_amount)*flt(row.exchange_rate),
@@ -773,6 +813,21 @@ frappe.ui.form.on('Payment Entry', {
 		frm.set_value("total_allocated_amount", Math.abs(total_allocated_amount));
 		frm.set_value("base_total_allocated_amount", Math.abs(base_total_allocated_amount));
 
+		frm.events.set_discounted_amount(frm);
+	},
+
+	set_discounted_amount: function(frm) {
+		let total_discounted_amount = 0.0;
+		let base_total_discounted_amount = 0.0;
+		$.each(frm.doc.references || [], function(i, row) {
+			if (row.discounted_amount) {
+				total_discounted_amount += flt(row.discounted_amount);
+				base_total_discounted_amount += flt(flt(row.discounted_amount)*flt(row.exchange_rate),
+					precision("base_paid_amount"));
+			}
+		});
+		frm.set_value("total_discounted_amount", Math.abs(total_discounted_amount));
+		frm.set_value("base_total_discounted_amount", Math.abs(base_total_discounted_amount));
 		frm.events.set_unallocated_amount(frm);
 	},
 
@@ -781,16 +836,19 @@ frappe.ui.form.on('Payment Entry', {
 		var total_deductions = frappe.utils.sum($.map(frm.doc.deductions || [],
 			function(d) { return flt(d.amount) }));
 
+		var total_discount = frappe.utils.sum($.map(frm.doc.references || [],
+			function(d) { return flt(d.discounted_amount) }));
+
 		if(frm.doc.party) {
 			if(frm.doc.payment_type == "Receive"
-				&& frm.doc.base_total_allocated_amount < frm.doc.base_received_amount + total_deductions
-				&& frm.doc.total_allocated_amount < frm.doc.paid_amount + (total_deductions / frm.doc.source_exchange_rate)) {
-					unallocated_amount = (frm.doc.base_received_amount + total_deductions
+				&& frm.doc.base_total_allocated_amount < frm.doc.base_received_amount + total_deductions - total_discount
+				&& frm.doc.total_allocated_amount < frm.doc.paid_amount + (total_deductions / frm.doc.source_exchange_rate) - (total_discount/ frm.doc.source_exchange_rate)) {
+					unallocated_amount = (frm.doc.base_received_amount + total_deductions - total_discount
 						- frm.doc.base_total_allocated_amount) / frm.doc.source_exchange_rate;
 			} else if (frm.doc.payment_type == "Pay"
 				&& frm.doc.base_total_allocated_amount < frm.doc.base_paid_amount - total_deductions
 				&& frm.doc.total_allocated_amount < frm.doc.received_amount + (total_deductions / frm.doc.target_exchange_rate)) {
-					unallocated_amount = (frm.doc.base_paid_amount - (total_deductions
+					unallocated_amount = (frm.doc.base_paid_amount - (total_deductions -total_discount
 						+ frm.doc.base_total_allocated_amount)) / frm.doc.target_exchange_rate;
 			}
 		}
@@ -803,7 +861,7 @@ frappe.ui.form.on('Payment Entry', {
 		var base_unallocated_amount = flt(frm.doc.unallocated_amount) *
 			(frm.doc.payment_type=="Receive" ? frm.doc.source_exchange_rate : frm.doc.target_exchange_rate);
 
-		var base_party_amount = flt(frm.doc.base_total_allocated_amount) + base_unallocated_amount;
+		var base_party_amount = flt(frm.doc.base_total_allocated_amount) + base_unallocated_amount - frm.doc.total_base_discounted_amount; 
 
 		if(frm.doc.payment_type == "Receive") {
 			difference_amount = base_party_amount - flt(frm.doc.base_received_amount);
@@ -938,7 +996,35 @@ frappe.ui.form.on('Payment Entry', {
 				}
 			});
 		}
-	}
+	},
+
+	cost_center: function(frm){
+		if (frm.doc.posting_date && (frm.doc.paid_from || frm.doc.paid_to)) {
+			return frappe.call({
+				method: "erpnext.accounts.doctype.payment_entry.payment_entry.get_party_and_account_balance",
+				args: {
+					company: frm.doc.company,
+					date: frm.doc.posting_date,
+					paid_from: frm.doc.paid_from,
+					paid_to: frm.doc.paid_to,
+					ptype: frm.doc.party_type,
+					pty: frm.doc.party,
+					cost_center: frm.doc.cost_center
+				},
+				callback: function (r, rt) {
+					if (r.message) {
+						frappe.run_serially([
+							() => {
+								frm.set_value("paid_from_account_balance", r.message.paid_from_account_balance);
+								frm.set_value("paid_to_account_balance", r.message.paid_to_account_balance);
+								frm.set_value("party_balance", r.message.party_balance);
+							}
+						]);
+					}
+				}
+			});
+		}
+	},
 });
 
 
@@ -980,6 +1066,14 @@ frappe.ui.form.on('Payment Entry Reference', {
 		frm.events.set_total_allocated_amount(frm);
 	},
 
+	discounted_amount: function(frm) {
+		frm.events.set_total_allocated_amount(frm);
+	},
+
+	payment_term: function(frm) {
+		frm.events.set_total_allocated_amount(frm);
+	},
+
 	references_remove: function(frm) {
 		frm.events.set_total_allocated_amount(frm);
 	}
@@ -993,33 +1087,4 @@ frappe.ui.form.on('Payment Entry Deduction', {
 	deductions_remove: function(frm) {
 		frm.events.set_unallocated_amount(frm);
 	}
-})
-frappe.ui.form.on('Payment Entry', {
-	cost_center: function(frm){
-		if (frm.doc.posting_date && (frm.doc.paid_from || frm.doc.paid_to)) {
-			return frappe.call({
-				method: "erpnext.accounts.doctype.payment_entry.payment_entry.get_party_and_account_balance",
-				args: {
-					company: frm.doc.company,
-					date: frm.doc.posting_date,
-					paid_from: frm.doc.paid_from,
-					paid_to: frm.doc.paid_to,
-					ptype: frm.doc.party_type,
-					pty: frm.doc.party,
-					cost_center: frm.doc.cost_center
-				},
-				callback: function (r, rt) {
-					if (r.message) {
-						frappe.run_serially([
-							() => {
-								frm.set_value("paid_from_account_balance", r.message.paid_from_account_balance);
-								frm.set_value("paid_to_account_balance", r.message.paid_to_account_balance);
-								frm.set_value("party_balance", r.message.party_balance);
-							}
-						]);
-					}
-				}
-			});
-		}
-	},
 })

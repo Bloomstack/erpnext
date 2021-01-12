@@ -1,17 +1,18 @@
 {
- "actions": [],
  "creation": "2020-04-08 01:42:30.195352",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "sandbox_mode",
+  "section_break_2",
   "api_login_id",
   "column_break_2",
   "api_transaction_key",
   "section_break_4",
-  "header_img",
+  "redirect_url",
   "column_break_6",
-  "redirect_url"
+  "header_img"
  ],
  "fields": [
   {
@@ -49,11 +50,20 @@
    "fieldname": "redirect_url",
    "fieldtype": "Data",
    "label": "Redirect URL"
+  },
+  {
+   "default": "0",
+   "fieldname": "sandbox_mode",
+   "fieldtype": "Check",
+   "label": "Sandbox Mode"
+  },
+  {
+   "fieldname": "section_break_2",
+   "fieldtype": "Section Break"
   }
  ],
  "issingle": 1,
- "links": [],
- "modified": "2020-04-21 22:57:00.336318",
+ "modified": "2020-12-30 15:42:21.964052",
  "modified_by": "Administrator",
  "module": "ERPNext Integrations",
  "name": "Authorizenet Settings",

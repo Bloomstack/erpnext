@@ -235,6 +235,7 @@ class WorkOrder(Document):
 			produced_qty = total_qty[0][0] if total_qty else 0
 
 		production_plan.run_method("update_produced_qty", produced_qty, self.production_plan_item)
+		production_plan.run_method("update_produced_qty_in_mr_item", produced_qty, self.material_request_plan_item)
 
 	def validate_manufacturing_type(self):
 		if self.manufacturing_type == "Process":
@@ -620,14 +621,15 @@ def get_item_details(item, project = None):
 			res = get_item_details(item)
 			frappe.msgprint(_("Default BOM not found for Item {0} and Project {1}").format(item, project), alert=1)
 		else:
-			frappe.throw(_("Default BOM for {0} not found").format(item))
+			frappe.msgprint(_("Default BOM for {0} not found").format(item))
 
 	bom_data = frappe.db.get_value('BOM', res['bom_no'],
 		['project', 'allow_alternative_item', 'transfer_material_against', 'item_name','raw_material_cost','operating_cost'], as_dict=1)
 
-	res['project'] = project or bom_data.pop("project")
-	res.update(bom_data)
-	res.update(check_if_scrap_warehouse_mandatory(res["bom_no"]))
+	if bom_data:
+		res['project'] = project or bom_data.pop("project")
+		res.update(bom_data)
+		res.update(check_if_scrap_warehouse_mandatory(res["bom_no"]))
 
 	return res
 

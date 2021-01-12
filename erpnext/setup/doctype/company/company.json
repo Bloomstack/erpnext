@@ -352,13 +352,13 @@
   {
    "fieldname": "discount_allowed_account",
    "fieldtype": "Link",
-   "label": "Discount Allowed Account",
+   "label": "Purchase Discount",
    "options": "Account"
   },
   {
    "fieldname": "discount_received_account",
    "fieldtype": "Link",
-   "label": "Discount Received Account",
+   "label": "Sales Discount",
    "options": "Account"
   },
   {
@@ -742,7 +742,7 @@
  "idx": 1,
  "image_field": "company_logo",
  "is_tree": 1,
- "modified": "2020-12-07 01:08:26.148878",
+ "modified": "2020-12-30 09:57:40.784491",
  "modified_by": "Administrator",
  "module": "Setup",
  "name": "Company",

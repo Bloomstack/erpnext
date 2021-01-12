@@ -555,7 +555,7 @@
  "icon": "fa fa-user",
  "idx": 363,
  "image_field": "image",
- "modified": "2020-09-08 01:00:08.123104",
+ "modified": "2021-01-04 00:01:18.784725",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Customer",
@@ -634,7 +634,7 @@
   }
  ],
  "quick_entry": 1,
- "search_fields": "customer_name,customer_group,territory, mobile_no,primary_address",
+ "search_fields": "customer_group,territory,mobile_no,primary_address",
  "show_name_in_global_search": 1,
  "sort_field": "modified",
  "sort_order": "ASC",

@@ -1222,3 +1222,22 @@ def get_item_price(supplier, item_code):
 		"item_code": item_code,
 		"buying": True
 	}, ["price_list", "price_list_rate", "uom"], as_dict=True)
+
+@frappe.whitelist()
+def create_material_request(source_name, target_doc=None):
+	"""
+	Creating Material Request from Item.
+
+	Args:
+		source_name (string): item name
+		target_doc (json, optional): json of new material_request doc. Defaults to None.
+
+	Returns:
+		target_doc (json): new material_request doc
+	"""
+	doc = frappe.get_doc("Item", source_name)
+	target_doc = frappe.new_doc("Material Request")
+	if doc.is_customer_provided_item:
+		target_doc.material_request_type = "Customer Provided"
+		target_doc.customer = doc.customer
+	return target_doc

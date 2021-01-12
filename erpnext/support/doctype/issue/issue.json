@@ -1,5 +1,4 @@
 {
- "actions": [],
  "allow_import": 1,
  "allow_rename": 1,
  "autoname": "naming_series:",
@@ -365,8 +364,7 @@
  ],
  "icon": "fa fa-ticket",
  "idx": 7,
- "links": [],
- "modified": "2020-02-26 02:19:49.477928",
+ "modified": "2021-01-04 00:01:25.923738",
  "modified_by": "Administrator",
  "module": "Support",
  "name": "Issue",
@@ -385,7 +383,7 @@
   }
  ],
  "quick_entry": 1,
- "search_fields": "status,customer,subject,raised_by",
+ "search_fields": "status,customer,raised_by",
  "sort_field": "modified",
  "sort_order": "DESC",
  "timeline_field": "customer",

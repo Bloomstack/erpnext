@@ -5,14 +5,6 @@ cur_frm.cscript.refresh = cur_frm.cscript.inspection_type;
 
 frappe.ui.form.on("Quality Inspection", {
 	setup: function (frm) {
-		frm.set_query("batch_no", function (doc) {
-			return {
-				filters: {
-					'item': doc.item_code
-				}
-			}
-		});
-
 		frm.set_query('package_tag', () => {
 			return {
 				filters: {
@@ -21,6 +13,22 @@ frappe.ui.form.on("Quality Inspection", {
 				}
 
 			};
+		});
+	},
+	refresh: function (frm) {
+		frm.trigger("set_batch_query");
+	},
+	show_disabled_batch: function (frm) {
+		frm.trigger("set_batch_query");
+	},
+	set_batch_query: function (frm) {
+		frm.set_query("batch_no", function (doc) {
+			return {
+				filters: {
+					'item': doc.item_code,
+					'disabled': doc.show_disabled_batch
+				}
+			}
 		});
 	},
 	item_code: function (frm) {

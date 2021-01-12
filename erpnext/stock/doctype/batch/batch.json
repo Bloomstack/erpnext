@@ -218,7 +218,7 @@
  "idx": 1,
  "image_field": "image",
  "max_attachments": 5,
- "modified": "2020-09-01 02:27:03.853936",
+ "modified": "2021-01-04 00:01:20.930703",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Batch",
@@ -309,7 +309,7 @@
   }
  ],
  "quick_entry": 1,
- "search_fields": "batch_id,item,item_name,batch_qty,stock_uom",
+ "search_fields": "item,item_name,batch_qty,stock_uom",
  "sort_field": "modified",
  "sort_order": "DESC",
  "title_field": "batch_id"

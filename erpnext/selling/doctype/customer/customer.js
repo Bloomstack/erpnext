@@ -54,15 +54,16 @@ frappe.ui.form.on("Customer", {
 					'customer': doc.name
 				}
 			}
-		})
+		});
+
 		frm.set_query('customer_primary_address', function(doc) {
 			return {
+				query: "erpnext.selling.doctype.customer.customer.get_customer_primary_address",
 				filters: {
-					'link_doctype': 'Customer',
-					'link_name': doc.name
+					'customer': doc.name
 				}
 			}
-		})
+		});
 
 		frm.set_query('default_bank_account', function() {
 			return {
@@ -164,6 +165,56 @@ frappe.ui.form.on("Customer", {
 			frm.add_custom_button(__('Pricing Rule'), function () {
 				erpnext.utils.make_pricing_rule(frm.doc.doctype, frm.doc.name);
 			}, __('Create'));
+
+			// only one of these roles is allowed to use these feature
+			if ( frappe.user.has_role("Sales User") || frappe.user.has_role("Sales Manager") || frappe.user.has_role("System Manager") || frappe.user.has_role("Administrator")) {
+				frappe.call({
+					method: "frappe.client.get",
+					args: {
+						"doctype": "Shopping Cart Settings",
+						"name": "Shopping Cart Settings"
+					}
+				}).then((data) => {
+
+					const shopping_cart_settings = data.message;
+
+					if ( shopping_cart_settings.allow_order_for ) {
+						frm.add_custom_button(__('Order For Customer'), function() {
+							let windowTarget = window;
+							if  ( shopping_cart_settings.order_for_open_in_tab ) {
+								windowTarget = window.open("", "_blank");
+								// Create a new window as a pop under to redirect backend user to the frontend without closing the current page.
+								windowTarget.blur();
+								// Then focus back on current window until we have a successful callback.
+								window.focus();
+							}
+
+							frappe.call({
+								method: "erpnext.utilities.order_for.set_website_customer",
+								args: { customer_name: frm.doc.name },
+								freeze: true,
+								callback: function(data) {
+									if ( data.message == "Success" ) {
+										if  ( shopping_cart_settings.order_for_open_in_tab ) {
+											// move focus back to pop under
+											window.blur();
+											windowTarget.focus();
+										}
+										// redirect pop under to website
+										windowTarget.location.href = shopping_cart_settings.order_for_landing_url || "/";
+									} else {
+										if  ( shopping_cart_settings.order_for_open_in_tab ) {
+												// close pop under on error
+											windowTarget.close();
+										}
+										frappe.msgprint(data.message);
+									}
+								}
+							})
+						});
+					}
+				});
+			}
 
 			// indicator
 			erpnext.utils.set_party_dashboard_indicators(frm);

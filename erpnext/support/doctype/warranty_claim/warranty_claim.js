@@ -58,20 +58,17 @@ erpnext.support.WarrantyClaim = frappe.ui.form.Controller.extend({
 $.extend(cur_frm.cscript, new erpnext.support.WarrantyClaim({frm: cur_frm}));
 
 cur_frm.fields_dict['serial_no'].get_query = function(doc, cdt, cdn) {
-	var cond = [];
-	var filter = [
-		['Serial No', 'docstatus', '!=', 2]
-	];
+	let filter = [];
+
 	if(doc.item_code) {
-		cond = ['Serial No', 'item_code', '=', doc.item_code];
-		filter.push(cond);
+		filter.push(['Serial No', 'item_code', '=', doc.item_code]);
 	}
+
 	if(doc.customer) {
-		cond = ['Serial No', 'customer', '=', doc.customer];
-		filter.push(cond);
+		filter.push(['Serial No', 'customer', '=', doc.customer]);
 	}
-	return{
-		filters:filter
+	return {
+		filters: filter
 	}
 }
 

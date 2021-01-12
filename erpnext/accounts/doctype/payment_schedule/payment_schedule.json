@@ -5,13 +5,15 @@
  "engine": "InnoDB",
  "field_order": [
   "payment_term",
+  "mode_of_payment",
   "description",
   "due_date",
   "invoice_portion",
   "payment_amount",
-  "mode_of_payment",
   "paid_amount",
-  "credit_days"
+  "credit_days",
+  "payment_within_days",
+  "discount"
  ],
  "fields": [
   {
@@ -71,10 +73,22 @@
    "fieldname": "credit_days",
    "fieldtype": "Read Only",
    "label": "Credit Days"
+  },
+  {
+   "fetch_from": "payment_term.payment_within_days",
+   "fieldname": "payment_within_days",
+   "fieldtype": "Read Only",
+   "label": "Payment Within Days"
+  },
+  {
+   "fetch_from": "payment_term.discount",
+   "fieldname": "discount",
+   "fieldtype": "Read Only",
+   "label": "Discount"
   }
  ],
  "istable": 1,
- "modified": "2020-11-22 18:40:50.164112",
+ "modified": "2020-12-24 00:42:13.860709",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Payment Schedule",

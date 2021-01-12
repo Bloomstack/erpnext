@@ -519,6 +519,8 @@ def raise_work_orders(material_request):
 				wo_order.update({
 					"production_item": d.item_code,
 					"qty": d.stock_qty - d.ordered_qty,
+					"production_plan": d.production_plan,
+					"production_plan_item": d.production_plan_item,
 					"fg_warehouse": d.warehouse,
 					"wip_warehouse": default_wip_warehouse,
 					"description": d.description,
@@ -528,6 +530,7 @@ def raise_work_orders(material_request):
 					"bom_no": get_item_details(d.item_code).bom_no,
 					"material_request": mr.name,
 					"material_request_item": d.name,
+					"material_request_plan_item": d.material_request_plan_item,
 					"planned_start_date": mr.transaction_date,
 					"company": mr.company
 				})

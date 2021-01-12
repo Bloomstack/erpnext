@@ -90,6 +90,7 @@ class Quotation(SellingController):
 		#update enquiry status
 		self.update_opportunity()
 		self.update_lead()
+		self.check_items()
 
 	def on_cancel(self):
 		super(Quotation, self).on_cancel()
@@ -98,6 +99,10 @@ class Quotation(SellingController):
 		self.set_status(update=True)
 		self.update_opportunity()
 		self.update_lead()
+
+	def check_items(self): 
+		if not self.items: 
+			frappe.throw(_("You cannot submit an empty Quotation."))
 
 	def print_other_charges(self,docname):
 		print_lst = []
@@ -157,12 +162,16 @@ def _make_sales_order(source_name, target_doc=None, ignore_permissions=False):
 				"doctype": "Sales Order",
 				"validation": {
 					"docstatus": ["=", 1]
+				}, 
+				"field_map": {
+					"requested_delivery_date": "delivery_date"
 				}
 			},
 			"Quotation Item": {
 				"doctype": "Sales Order Item",
 				"field_map": {
-					"parent": "prevdoc_docname"
+					"parent": "prevdoc_docname",
+					"requested_delivery_date": "delivery_date"
 				},
 				"postprocess": update_item
 			},

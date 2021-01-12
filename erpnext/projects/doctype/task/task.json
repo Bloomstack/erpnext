@@ -390,7 +390,7 @@
  "idx": 1,
  "is_tree": 1,
  "max_attachments": 5,
- "modified": "2020-11-23 00:17:00.054157",
+ "modified": "2021-01-04 00:01:12.880631",
  "modified_by": "Administrator",
  "module": "Projects",
  "name": "Task",
@@ -409,7 +409,6 @@
    "write": 1
   }
  ],
- "search_fields": "subject",
  "show_name_in_global_search": 1,
  "show_preview_popup": 1,
  "sort_field": "modified",

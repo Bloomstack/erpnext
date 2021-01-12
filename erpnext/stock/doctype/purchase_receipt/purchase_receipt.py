@@ -16,7 +16,7 @@ from frappe.model.mapper import get_mapped_doc
 from erpnext.buying.utils import check_on_hold_or_closed_status
 from erpnext.assets.doctype.asset.asset import get_asset_account, is_cwip_accounting_enabled
 from erpnext.assets.doctype.asset_category.asset_category import get_asset_category_account
-from erpnext.manufacturing.doctype.production_plan.production_plan import update_per_received_and_status_in_production_plan
+from erpnext.manufacturing.doctype.production_plan.production_plan import update_per_received_in_production_plan
 from six import iteritems
 
 form_grid_templates = {
@@ -170,7 +170,7 @@ class PurchaseReceipt(BuyingController):
 
 		self.make_gl_entries()
 		self.update_package_tag_batch()
-		update_per_received_and_status_in_production_plan(self)
+		update_per_received_in_production_plan(self)
 
 
 	def before_cancel(self):
@@ -204,7 +204,7 @@ class PurchaseReceipt(BuyingController):
 		self.update_stock_ledger()
 		self.make_gl_entries_on_cancel()
 		self.delete_auto_created_batches()
-		update_per_received_and_status_in_production_plan(self)
+		update_per_received_in_production_plan(self)
 
 	def get_current_stock(self):
 		for d in self.get('supplied_items'):

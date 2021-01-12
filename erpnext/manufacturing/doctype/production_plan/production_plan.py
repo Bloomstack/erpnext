@@ -214,6 +214,17 @@ class ProductionPlan(Document):
 		self.set_status()
 		self.db_set('status', self.status)
 
+	def update_produced_qty_in_mr_item(self, produced_qty, material_request_plan_item):
+		for data in self.mr_items:
+			if data.name == material_request_plan_item:
+				data.produced_qty = produced_qty
+				data.db_update()
+
+		self.calculate_total_produced_qty()
+		self.set_status()
+		self.db_set('status', self.status)
+		update_status_for_production_plan(self.name)
+
 	def on_cancel(self):
 		self.db_set('status', 'Cancelled')
 		self.delete_draft_work_order()
@@ -421,6 +432,7 @@ class ProductionPlan(Document):
 			material_request_list = ["""<a href="#Form/Material Request/{0}">{1}</a>""".format(m.name, m.name) \
 				for m in material_request_list]
 			msgprint(_("{0} created").format(comma_and(material_request_list)))
+			self.db_set("status", "Material Requested")
 		else :
 			msgprint(_("No material request created"))
 
@@ -755,10 +767,9 @@ def get_sub_assembly_items(bom_no, bom_data):
 			get_sub_assembly_items(bom_item.get("bom_no"), bom_data)
 
 @frappe.whitelist()
-def update_per_received_and_status_in_production_plan(purchase_receipt):
+def update_per_received_in_production_plan(purchase_receipt):
 	"""
-	Set Percentage Received(per_received) in Material Request Plan Item and
-	update status of Production Plan from Material Request Status.
+	Set Percentage Received(per_received) in Material Request Plan Item.
 
 	Args:
 		purchase_receipt (dict): Purchase Receipt items for which Production Plan is updated
@@ -786,8 +797,20 @@ def update_per_received_and_status_in_production_plan(purchase_receipt):
 					frappe.db.set_value("Material Request Plan Item", mr_item.name, "per_received", per_received)
 					production_plan.reload()
 
-		all_received =[item.per_received for item in production_plan.mr_items]
-		if all(all_received):
-			production_plan.db_set("status", "Material Received")
-		elif any(all_received):
-			production_plan.db_set("status", "Partially Received")
+	update_status_for_production_plan(production_plan.name)
+
+def update_status_for_production_plan(production_plan):
+	"""
+	Set status for production plan on the basis of material requests.
+
+	Args:
+		production_plan (string): Production Plan name
+	"""	
+	production_plan = frappe.get_doc("Production Plan", production_plan)
+	all_received = [item.per_received for item in production_plan.mr_items if item.material_request_type == "Purchase"]
+	produced_qty = [item.produced_qty for item in production_plan.mr_items if item.material_request_type == "Manufacture" and item.requested_qty == item.produced_qty]
+	status_set = all_received + produced_qty
+	if all(status_set):
+		production_plan.db_set("status", "Material Received")
+	elif any(status_set):
+		production_plan.db_set("status", "Partially Received")

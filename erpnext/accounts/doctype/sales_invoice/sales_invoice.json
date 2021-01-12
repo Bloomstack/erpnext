@@ -1607,7 +1607,7 @@
  "icon": "fa fa-file-text",
  "idx": 181,
  "is_submittable": 1,
- "modified": "2020-12-18 19:12:42.440076",
+ "modified": "2021-01-05 19:12:42.440076",
  "modified_by": "forellana@digithinkit.com",
  "module": "Accounts",
  "name": "Sales Invoice",
@@ -1653,7 +1653,7 @@
   }
  ],
  "quick_entry": 1,
- "search_fields": "posting_date, due_date, customer, base_grand_total, outstanding_amount",
+ "search_fields": "posting_date, due_date, base_grand_total, outstanding_amount",
  "show_name_in_global_search": 1,
  "sort_field": "modified",
  "sort_order": "DESC",

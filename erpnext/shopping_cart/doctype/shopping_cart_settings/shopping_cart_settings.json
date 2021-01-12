@@ -1,5 +1,4 @@
 {
- "actions": [],
  "creation": "2013-06-19 15:57:32",
  "description": "Default settings for Shopping Cart",
  "doctype": "DocType",
@@ -26,6 +25,14 @@
   "enable_checkout",
   "column_break_20",
   "payment_success_url",
+  "sb_order_for",
+  "allow_order_for",
+  "sales_team_order_without_payment",
+  "stop_order_for_behavior",
+  "stop_order_for_url",
+  "sb_order_for_cb1",
+  "order_for_open_in_tab",
+  "order_for_landing_url",
   "section_break_22",
   "gateways"
  ],
@@ -165,13 +172,62 @@
    "fieldtype": "Table",
    "label": "Gateways",
    "options": "Shopping Cart Payment Gateway"
+  },
+  {
+   "default": "0",
+   "fieldname": "allow_order_for",
+   "fieldtype": "Check",
+   "label": "Allow Sales Person to Order for Customer"
+  },
+  {
+   "depends_on": "eval:doc.allow_order_for == 1 && doc.stop_order_for_behavior == \"Redirect\"",
+   "fieldname": "stop_order_for_url",
+   "fieldtype": "Data",
+   "label": "Stop Order For Url"
+  },
+  {
+   "default": "/products",
+   "depends_on": "eval:doc.allow_order_for == 1",
+   "fieldname": "order_for_landing_url",
+   "fieldtype": "Data",
+   "label": "Order For Landing Url"
+  },
+  {
+   "default": "Reload",
+   "depends_on": "eval:doc.allow_order_for == 1",
+   "fieldname": "stop_order_for_behavior",
+   "fieldtype": "Select",
+   "label": "Stop Order For Behaviour",
+   "options": "Reload\nRedirect\nBack to Customer Record"
+  },
+  {
+   "fieldname": "sb_order_for",
+   "fieldtype": "Section Break",
+   "label": "Order For"
+  },
+  {
+   "fieldname": "sb_order_for_cb1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "1",
+   "depends_on": "eval:doc.allow_order_for == 1",
+   "fieldname": "order_for_open_in_tab",
+   "fieldtype": "Check",
+   "label": "Load Url In New Tab"
+  },
+  {
+   "default": "0",
+   "depends_on": "eval:doc.allow_order_for == 1",
+   "fieldname": "sales_team_order_without_payment",
+   "fieldtype": "Check",
+   "label": "Allow Sales Team to Place Order without Payment"
   }
  ],
  "icon": "fa fa-shopping-cart",
  "idx": 1,
  "issingle": 1,
- "links": [],
- "modified": "2020-06-10 16:39:21.768721",
+ "modified": "2020-12-28 01:06:10.120330",
  "modified_by": "Administrator",
  "module": "Shopping Cart",
  "name": "Shopping Cart Settings",

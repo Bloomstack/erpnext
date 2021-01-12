@@ -221,8 +221,8 @@ class PickList(Document):
 		"""
 		all_orders = [d.sales_order for d in self.locations]
 		for order in unique(all_orders):
-			picked_qty = sum(d.picked_qty for d in self.locations if d.sales_order == order)
-			ordered_qty = sum(d.qty for d in self.locations if d.sales_order == order)
+			picked_qty = sum(d.picked_qty for d in self.locations if d.sales_order == order and d.picked_qty)
+			ordered_qty = sum(d.qty for d in self.locations if d.sales_order == order and d.qty)
 			per_picked = (picked_qty / ordered_qty) * 100
 
 			frappe.db.set_value("Sales Order", self.locations[0].sales_order, "per_picked", per_picked, update_modified=False)

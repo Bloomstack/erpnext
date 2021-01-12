@@ -8,6 +8,7 @@
   "item_code",
   "customer_item_code",
   "col_break1",
+  "requested_delivery_date",
   "item_name",
   "section_break_5",
   "description",
@@ -578,11 +579,16 @@
    "fieldname": "item_ignore_pricing_rule",
    "fieldtype": "Check",
    "label": "Ignore Pricing Rule"
+  },
+  {
+   "fieldname": "requested_delivery_date",
+   "fieldtype": "Date",
+   "label": "Requested Delivery Date"
   }
  ],
  "idx": 1,
  "istable": 1,
- "modified": "2020-10-30 02:05:52.065802",
+ "modified": "2021-01-04 07:19:10.702235",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Quotation Item",

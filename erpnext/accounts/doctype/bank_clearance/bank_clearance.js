@@ -1,7 +1,7 @@
 // Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
 // License: GNU General Public License v3. See license.txt
 
-frappe.ui.form.on("Bank Reconciliation", {
+frappe.ui.form.on("Bank Clearance", {
 	setup: function(frm) {
 		frm.add_fetch("account", "account_currency", "account_currency");
 	},
@@ -48,10 +48,10 @@ frappe.ui.form.on("Bank Reconciliation", {
 				frm.refresh_fields();
 
 				$(frm.fields_dict.payment_entries.wrapper).find("[data-fieldname=amount]").each(function(i,v){
-					if (i !=0){
-						$(v).addClass("text-right")
+					if (i !== 0){
+						$(v).addClass("text-right");
 					}
-				})
+				});
 			}
 		});
 	}

@@ -15,6 +15,7 @@
   "cb_item",
   "batch_no",
   "coa_batch_no",
+  "package_tag_qty",
   "source_package_tag"
  ],
  "fields": [
@@ -82,9 +83,15 @@
    "no_copy": 1,
    "options": "Package Tag",
    "read_only": 1
+  },
+  {
+   "fieldname": "package_tag_qty",
+   "fieldtype": "Float",
+   "label": "Package Tag Quantity",
+   "read_only": 1
   }
  ],
- "modified": "2020-10-01 03:07:24.929879",
+ "modified": "2021-01-08 03:25:17.422926",
  "modified_by": "Administrator",
  "module": "Compliance",
  "name": "Package Tag",
@@ -146,7 +153,7 @@
   }
  ],
  "quick_entry": 1,
- "search_fields": "item_code,item_name,package_tag",
+ "search_fields": "item_code,item_name,package_tag_qty",
  "show_name_in_global_search": 1,
  "show_preview_popup": 1,
  "sort_field": "modified",

@@ -21,7 +21,8 @@
   "requested_qty",
   "stock_qty",
   "received_qty",
-  "per_received"
+  "per_received",
+  "produced_qty"
  ],
  "fields": [
   {
@@ -138,10 +139,15 @@
    "fieldname": "stock_qty",
    "fieldtype": "Float",
    "label": "Stock Qty"
+  },
+  {
+   "fieldname": "produced_qty",
+   "fieldtype": "Float",
+   "label": "Produced Qty"
   }
  ],
  "istable": 1,
- "modified": "2020-12-09 03:28:06.873088",
+ "modified": "2021-01-04 00:32:03.534497",
  "modified_by": "Administrator",
  "module": "Manufacturing",
  "name": "Material Request Plan Item",

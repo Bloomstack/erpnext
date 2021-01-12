@@ -114,6 +114,10 @@ class PaymentRequest(Document):
 		if self.payment_url:
 			self.db_set('payment_url', self.payment_url)
 
+		message = self.get_message()
+		if message:
+			self.db_set('message', message)
+
 		if self.payment_url or not self.payment_gateway_account:
 			self.db_set('status', 'Initiated')
 
@@ -153,7 +157,7 @@ class PaymentRequest(Document):
 
 	def create_payment_entry(self, submit=True):
 		"""Generate a payment entry against a quotation or sales order"""
-		
+
 		frappe.flags.ignore_account_permission = True
 		ref_doc = frappe.get_doc(self.reference_doctype, self.reference_name)
 
@@ -226,9 +230,9 @@ class PaymentRequest(Document):
 		if submit:
 			payment_entry.insert(ignore_permissions=True)
 			payment_entry.submit()
-		
+
 		#creating a sales invoice once the payment entry is submitted
-		if submit and self.reference_doctype == "Quotation": 
+		if submit and self.reference_doctype == "Quotation":
 			from erpnext.selling.doctype.sales_order.sales_order import make_sales_invoice
 			si = make_sales_invoice(sales_order.name, ignore_permissions=True)
 			si.allocate_advances_automatically = True
@@ -322,7 +326,7 @@ class PaymentRequest(Document):
 @frappe.whitelist(allow_guest=True)
 def make_payment_request(**args):
 	"""Opens API to frontend for generating a payment request"""
-	
+
 	args = frappe._dict(args)
 	#collect details on the document against which a payment request is going to be generated, along with amount
 	ref_doc = frappe.get_doc(args.dt, args.dn)
@@ -365,7 +369,7 @@ def make_payment_request(**args):
 			if existing_payment_request_amount:
 				grand_total -= existing_payment_request_amount
 
-		#create a new payment request 
+		#create a new payment request
 		pr = frappe.new_doc("Payment Request")
 		pr.update({
 			"payment_gateway_account": gateway_account.get("name"),
@@ -405,13 +409,13 @@ def make_payment_request(**args):
 
 def get_amount(ref_doc):
 	"""Returns the amount due for payment for generating the payment request
-	
-	Args: 
-		
-		ref_doc: the document that needs to be processed for payment. Can be Quotation, Sales Order/Invoice, 
+
+	Args:
+
+		ref_doc: the document that needs to be processed for payment. Can be Quotation, Sales Order/Invoice,
 					Purchase Order/Invoice or Fees
-	Returns: 
-		the amount against which the payment request will be generated	
+	Returns:
+		the amount against which the payment request will be generated
 	"""
 
 	grand_total = 0
@@ -432,7 +436,7 @@ def get_amount(ref_doc):
 		grand_total = ref_doc.outstanding_amount
 
 	#for the shopping cart, where payment requests are made against quotations
-	elif dt == "Quotation": 
+	elif dt == "Quotation":
 		grand_total = flt(ref_doc.grand_total)
 
 	if grand_total > 0 :

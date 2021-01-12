@@ -69,7 +69,6 @@
    "oldfieldtype": "Link",
    "options": "BOM",
    "print_width": "100px",
-   "reqd": 1,
    "width": "100px"
   },
   {
@@ -273,7 +272,7 @@
  ],
  "idx": 1,
  "istable": 1,
- "modified": "2020-12-02 23:48:47.736988",
+ "modified": "2021-01-05 05:49:13.688955",
  "modified_by": "Administrator",
  "module": "Manufacturing",
  "name": "Production Plan Item",

@@ -8,6 +8,7 @@ import json
 from frappe.utils import getdate
 from frappe.utils.dateutils import parse_date
 from six import iteritems
+from frappe import _
 
 @frappe.whitelist()
 def upload_bank_statement():
@@ -34,16 +35,23 @@ def upload_bank_statement():
 
 @frappe.whitelist()
 def create_bank_entries(columns, data, bank_account):
-	header_map = get_header_mapping(columns, bank_account)
+	bank_name = frappe.db.get_value("Bank Account", bank_account, "bank")
+	bank = frappe.get_doc("Bank", bank_name)
+	header_map = get_header_mapping(columns, bank)
 
 	success = 0
 	errors = 0
-	for d in json.loads(data):
+	total = len(json.loads(data))
+	for idx, d in enumerate(json.loads(data)):
 		if all(item is None for item in d) is True:
 			continue
 		fields = {}
 		for key, value in iteritems(header_map):
-			fields.update({key: d[int(value)-1]})
+			fields.update({
+				key: get_value(d, key, bank, int(value)-1)
+			})
+
+		frappe.publish_progress(((idx+1)*100)/total, title=_("Importing Transactions"),description=_("Transaction {0} of {1}.").format(idx, total))
 
 		try:
 			bank_transaction = frappe.get_doc({
@@ -61,8 +69,19 @@ def create_bank_entries(columns, data, bank_account):
 
 	return {"success": success, "errors": errors}
 
-def get_header_mapping(columns, bank_account):
-	mapping = get_bank_mapping(bank_account)
+def get_value(data, key, bank, index):
+	if not bank.is_single_column_import or key not in ["debit", "credit"]:
+		return data[index]
+
+	if key == "debit" and float(data[index]) >= 0:
+		return data[index]
+	elif key == "credit" and float(data[index]) < 0:
+		return abs(float(data[index]))
+	else:
+		return None
+
+def get_header_mapping(columns, bank):
+	mapping = get_bank_mapping(bank)
 
 	header_map = {}
 	for column in json.loads(columns):
@@ -71,10 +90,7 @@ def get_header_mapping(columns, bank_account):
 
 	return header_map
 
-def get_bank_mapping(bank_account):
-	bank_name = frappe.db.get_value("Bank Account", bank_account, "bank")
-	bank = frappe.get_doc("Bank", bank_name)
-
+def get_bank_mapping(bank):
 	mapping = {row.file_field:row.bank_transaction_field for row in bank.bank_transaction_mapping}
 
 	return mapping

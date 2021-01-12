@@ -13,6 +13,7 @@ class PackageTag(Document):
 		if self.source_package_tag:
 			self.validate_source_package_tag()
 			self.update_coa_batch_no()
+		self.calculate_package_tag_qty()
 
 	def validate_source_package_tag(self):
 		source_package_tag = frappe.db.get_value("Package Tag", self.source_package_tag, "source_package_tag")
@@ -22,6 +23,8 @@ class PackageTag(Document):
 	def update_coa_batch_no(self):
 		self.coa_batch_no = frappe.db.get_value("Package Tag", self.source_package_tag, "coa_batch_no")
 
+	def calculate_package_tag_qty(self):
+		self.package_tag_qty = frappe.db.get_value("Stock Ledger Entry", {"docstatus": 1, "package_tag": self.package_tag}, "sum(actual_qty)")
 
 @frappe.whitelist()
 def get_package_tag_qty(package_tag=None):

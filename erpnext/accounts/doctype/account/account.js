@@ -25,6 +25,10 @@ frappe.ui.form.on('Account', {
 		// disable fields
 		frm.toggle_enable(['is_group', 'company'], false);
 
+		if (frm.is_new()) {
+			frm.toggle_enable(['company'], true);
+		}
+
 		if (cint(frm.doc.is_group) == 0) {
 			frm.toggle_display('freeze_account', frm.doc.__onload
 				&& frm.doc.__onload.can_freeze_account);

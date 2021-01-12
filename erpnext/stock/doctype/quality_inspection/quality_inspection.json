@@ -15,6 +15,7 @@
   "section_break_7",
   "item_code",
   "item_serial_no",
+  "show_disabled_batch",
   "batch_no",
   "package_tag",
   "sample_size",
@@ -364,12 +365,18 @@
    "label": "Job Card",
    "options": "Job Card",
    "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "show_disabled_batch",
+   "fieldtype": "Check",
+   "label": "Show Disabled Batch"
   }
  ],
  "icon": "fa fa-search",
  "idx": 1,
  "is_submittable": 1,
- "modified": "2020-09-28 17:33:08.459754",
+ "modified": "2020-12-28 21:24:29.694054",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Quality Inspection",

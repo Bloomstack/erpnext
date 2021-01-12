@@ -151,7 +151,10 @@ def get_customers_suppliers(doctype, user):
 def has_website_permission(doc, ptype, user, verbose=False):
 	doctype = doc.doctype
 	customers, suppliers = get_customers_suppliers(doctype, user)
-	if customers:
+
+	if frappe.get_value("User", user, "user_type") == "System User":
+		return True
+	elif customers:
 		return frappe.db.exists(doctype, get_customer_filter(doc, customers))
 	elif suppliers:
 		fieldname = 'suppliers' if doctype == 'Request for Quotation' else 'supplier'

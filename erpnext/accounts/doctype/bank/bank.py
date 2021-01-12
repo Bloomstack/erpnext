@@ -7,4 +7,15 @@ import frappe
 from frappe.model.document import Document
 
 class Bank(Document):
-	pass
+
+	def validate(self):
+		credit_column = None
+		debit_column = None
+
+		for mapping in self.bank_transaction_mapping:
+			if mapping.bank_transaction_field == "debit":
+				debit_column = mapping.file_field
+			elif mapping.bank_transaction_field == "credit":
+				credit_column = mapping.file_field
+
+		self.is_single_column_import = True if credit_column == debit_column else False

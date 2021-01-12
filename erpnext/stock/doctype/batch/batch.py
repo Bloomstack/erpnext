@@ -415,7 +415,7 @@ def get_active_batch(item_code):
 			}
 	"""
 
-	fields = ["name", "item", "item_name", "stock_uom", "thc", "cbd", "certificate_of_analysis"]
+	fields = ["name", "item", "item_name", "stock_uom", "thc", "cbd", "certificate_of_analysis", "batch_qty"]
 	active_batch = frappe.get_all("Batch", filters={"item": item_code, "display_on_website": 1}, fields=fields)
 	active_batch = active_batch[0] if active_batch else {}
 	return active_batch

@@ -27,19 +27,27 @@
 			<tr>
 				<th width="60%">{{ _('Item') }}</th>
 				<th width="20%" class="text-right">{{ _('Quantity') }}</th>
-				{% if cart_settings.enable_checkout %}
 				<th width="20%" class="text-right">{{ _('Subtotal') }}</th>
-				{% endif %}
 			</tr>
 		</thead>
 		<tbody class="cart-items">
 			{% include "templates/includes/cart/cart_items.html" %}
 		</tbody>
-		{% if cart_settings.enable_checkout %}
+		{% if cart_settings.enable_checkout or (cart_settings.sales_team_order_without_payment and order_for) %}
+		<tfoot>
+			<tr>
+				<td class="text-right align-middle" colspan="2"><b>Requested Delivery Date</b></td>
+				<td>
+					<div>
+						<input type="date" id="order-for-delivery-date" class="form-control border border-dark">
+					</div>
+				</td>
+			</tr>
+		</tfoot>
+		{% endif %}
 		<tfoot class="cart-tax-items">
 			{% include "templates/includes/order/order_taxes.html" %}
 		</tfoot>
-		{% endif %}
 	</table>
 	{% else %}
 	<p class="text-muted">{{ _('Your cart is Empty') }}</p>
@@ -47,7 +55,7 @@
 
 	{% if doc.items %}
 		<div class="place-order-container">
-			{% if cart_settings.enable_checkout %}
+			{% if (cart_settings.enable_checkout) or (cart_settings.sales_team_order_without_payment and order_for) %}
 				<button class="btn btn-primary btn-place-order" type="button">
 					{{ _("Place Order") }}
 				</button>

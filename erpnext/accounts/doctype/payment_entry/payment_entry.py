@@ -391,7 +391,7 @@ class PaymentEntry(AccountsController):
 			if self.payment_type == "Receive" \
 				and self.base_total_allocated_amount < self.base_received_amount + total_deductions \
 				and self.total_allocated_amount < self.paid_amount + (total_deductions / self.source_exchange_rate):
-					self.unallocated_amount = (self.base_received_amount + total_deductions -
+					self.unallocated_amount = (self.base_received_amount + total_deductions - self.base_total_discounted_amount -
 						self.base_total_allocated_amount) / self.source_exchange_rate
 			elif self.payment_type == "Pay" \
 				and self.base_total_allocated_amount < (self.base_paid_amount - total_deductions) \
@@ -413,8 +413,9 @@ class PaymentEntry(AccountsController):
 			self.difference_amount = self.base_paid_amount - flt(self.base_received_amount)
 
 		total_deductions = sum([flt(d.amount) for d in self.get("deductions")])
+		total_discounts = sum([flt(d.discounted_amount) for d in self.get("references")])
 
-		self.difference_amount = flt(self.difference_amount - total_deductions,
+		self.difference_amount = flt(self.difference_amount - total_deductions + total_discounts,
 			self.precision("difference_amount"))
 
 	# Paid amount is auto allocated in the reference document by default.
@@ -518,6 +519,7 @@ class PaymentEntry(AccountsController):
 			dr_or_cr = "credit" if erpnext.get_party_account_type(self.party_type) == 'Receivable' else "debit"
 
 			for d in self.get("references"):
+
 				gle = party_gl_dict.copy()
 				gle.update({
 					"against_voucher_type": d.reference_doctype,
@@ -526,7 +528,6 @@ class PaymentEntry(AccountsController):
 
 				allocated_amount_in_company_currency = flt(flt(d.allocated_amount) * flt(d.exchange_rate),
 					self.precision("paid_amount"))
-
 				gle.update({
 					dr_or_cr + "_in_account_currency": d.allocated_amount,
 					dr_or_cr: allocated_amount_in_company_currency
@@ -546,6 +547,24 @@ class PaymentEntry(AccountsController):
 				})
 
 				gl_entries.append(gle)
+			
+			if self.total_discounted_amount:
+				for d in self.get("references"):
+					gle = party_gl_dict.copy()
+					gle.update({
+						"against_voucher_type": d.reference_doctype,
+						"against_voucher": d.reference_name
+					})
+
+					discounted_amount_in_company_currency = flt(flt(d.discounted_amount) * flt(d.exchange_rate),
+						self.precision("paid_amount"))
+					gle.update({
+						"account": frappe.get_cached_value('Company',  self.company, "discount_received_account") if self.payment_type=="Receive" else frappe.get_cached_value('Company',  self.company, "discount_allowed_account"),
+						dr_or_cr + "_in_account_currency": d.discounted_amount,
+						dr_or_cr: discounted_amount_in_company_currency
+					})
+
+					gl_entries.append(gle)
 
 	def add_bank_gl_entries(self, gl_entries):
 		if self.payment_type in ("Pay", "Internal Transfer"):
@@ -943,6 +962,7 @@ def get_reference_details(reference_doctype, reference_name, party_account_curre
 
 	return frappe._dict({
 		"due_date": ref_doc.get("due_date"),
+		"posting_date": ref_doc.get("posting_date"),
 		"total_amount": total_amount,
 		"outstanding_amount": outstanding_amount,
 		"exchange_rate": exchange_rate,

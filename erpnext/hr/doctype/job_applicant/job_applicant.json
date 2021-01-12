@@ -101,7 +101,7 @@
  ],
  "icon": "fa fa-user",
  "idx": 1,
- "modified": "2020-12-14 05:14:59.303456",
+ "modified": "2021-01-04 00:01:09.812371",
  "modified_by": "Administrator",
  "module": "HR",
  "name": "Job Applicant",
@@ -119,7 +119,6 @@
    "write": 1
   }
  ],
- "search_fields": "applicant_name",
  "sort_field": "modified",
  "sort_order": "ASC",
  "title_field": "applicant_name"

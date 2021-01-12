@@ -47,7 +47,8 @@ $.extend(shopping_cart, {
 
 	bind_place_order: function() {
 		$(".btn-place-order").on("click", function() {
-			shopping_cart.place_order(this);
+			let date = $("#order-for-delivery-date").val(); 
+			shopping_cart.place_order(this, date);
 		});
 	},
 
@@ -146,11 +147,14 @@ $.extend(shopping_cart, {
 		});
 	},
 
-	place_order: function(btn) {
+	place_order: function(btn, delivery_date) {
 		return frappe.call({
 			type: "POST",
 			method: "erpnext.shopping_cart.cart.place_order",
 			btn: btn,
+			args: { 
+				delivery_date: delivery_date
+			},
 			callback: function(r) {
 				if(r.exc) {
 					var msg = "";
@@ -221,7 +225,6 @@ $.extend(shopping_cart, {
 });
 
 frappe.ready(function() {
-	$(".cart-icon").hide();
 	shopping_cart.bind_events();
 });
 

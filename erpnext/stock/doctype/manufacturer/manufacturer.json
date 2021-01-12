@@ -85,7 +85,7 @@
   }
  ],
  "icon": "fa fa-certificate",
- "modified": "2019-07-06 13:06:47.237014",
+ "modified": "2021-01-04 00:01:42.147094",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Manufacturer",
@@ -113,8 +113,9 @@
    "share": 1
   }
  ],
- "search_fields": "short_name, full_name",
+ "search_fields": "full_name",
  "show_name_in_global_search": 1,
+ "sort_field": "modified",
  "sort_order": "DESC",
  "title_field": "short_name"
 }

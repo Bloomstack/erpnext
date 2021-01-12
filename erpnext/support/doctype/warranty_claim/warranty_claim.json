@@ -4,6 +4,7 @@
  "creation": "2013-01-10 16:34:30",
  "doctype": "DocType",
  "document_type": "Setup",
+ "engine": "InnoDB",
  "field_order": [
   "naming_series",
   "status",
@@ -361,7 +362,7 @@
  ],
  "icon": "fa fa-bug",
  "idx": 1,
- "modified": "2019-05-24 10:56:30.626200",
+ "modified": "2021-01-04 00:01:43.863569",
  "modified_by": "Administrator",
  "module": "Support",
  "name": "Warranty Claim",
@@ -379,7 +380,7 @@
    "write": 1
   }
  ],
- "search_fields": "status,customer,customer_name,territory",
+ "search_fields": "status,customer,territory",
  "show_name_in_global_search": 1,
  "sort_field": "modified",
  "sort_order": "DESC",

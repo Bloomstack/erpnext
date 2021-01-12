@@ -6,7 +6,11 @@ frappe.provide("erpnext.item");
 frappe.ui.form.on("Item", {
 	setup: function(frm) {
 		frm.make_methods = {
-			'Purchase Order': create_purchase_order
+			'Purchase Order': create_purchase_order,
+			'Material Request': () => frappe.model.open_mapped_doc({
+				method: "erpnext.stock.doctype.item.item.create_material_request",
+				frm: frm
+			})
 		}
 		frm.add_fetch('attribute', 'numeric_values', 'numeric_values');
 		frm.add_fetch('attribute', 'from_range', 'from_range');

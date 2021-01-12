@@ -1,5 +1,4 @@
 {
- "actions": [],
  "allow_events_in_timeline": 1,
  "allow_import": 1,
  "allow_rename": 1,
@@ -384,8 +383,7 @@
  "icon": "fa fa-user",
  "idx": 370,
  "image_field": "image",
- "links": [],
- "modified": "2020-03-17 09:48:30.578242",
+ "modified": "2021-01-04 00:01:23.391267",
  "modified_by": "Administrator",
  "module": "Buying",
  "name": "Supplier",
@@ -445,7 +443,7 @@
   }
  ],
  "quick_entry": 1,
- "search_fields": "supplier_name, supplier_group",
+ "search_fields": "supplier_group",
  "show_name_in_global_search": 1,
  "sort_field": "modified",
  "sort_order": "ASC",

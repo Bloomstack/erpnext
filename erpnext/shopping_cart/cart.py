@@ -12,6 +12,7 @@ from frappe.utils.nestedset import get_root_of
 from erpnext.accounts.utils import get_account_name
 from erpnext.utilities.product import get_qty_in_stock
 from frappe.contacts.doctype.contact.contact import get_contact_name
+from frappe.utils import cint, cstr, getdate, nowdate
 
 
 class WebsitePriceListMissingError(frappe.ValidationError):
@@ -54,13 +55,20 @@ def get_cart_quotation(doc=None):
 	}
 
 @frappe.whitelist()
-def place_order():
-	"""Placing orders for items inside the shopping cart"""
+def place_order(delivery_date=None):
+	"""
+	Place an order for items in the shopping cart.
 
+	Args:
+		delivery_date (date, optional): The delivery date requested by the sales user/customer. Defaults to None.
+
+	Returns:
+		string: the name of the quotation or the sales order
+	"""	
 	#get the quotation in the cart and the cart settings
 	quotation = _get_cart_quotation()
 	cart_settings = frappe.db.get_value("Shopping Cart Settings", None,
-		["company", "allow_items_not_in_stock"], as_dict=1)
+		["company", "allow_items_not_in_stock", 'sales_team_order_without_payment'], as_dict=1)
 	quotation.company = cart_settings.company
 	quotation.flags.ignore_permissions = True
 
@@ -70,8 +78,6 @@ def place_order():
 
 	if not (quotation.shipping_address_name or quotation.customer_address):
 		frappe.throw(_("Set Shipping Address or Billing Address"))
-
-	#We have migrated the order placement to the make_payment_entry function to accomodate quotations
 
 	# Checking if items in quotation are in stock, if not throw an error
 	if not cint(cart_settings.allow_items_not_in_stock):
@@ -85,6 +91,31 @@ def place_order():
 					throw(_("{1} Not in Stock").format(item.item_code))
 				if item.qty > item_stock.stock_qty[0][0]:
 					throw(_("Only {0} in Stock for item {1}").format(item_stock.stock_qty[0][0], item.item_code))
+
+	#if checkout without payment has been enabled, submit the quotation, and convert to sales order
+	if cart_settings.sales_team_order_without_payment:
+	
+		#add the requested delivery date to the quotation and submit the document
+		quotation.requested_delivery_date = getdate(delivery_date)
+		for item in quotation.items: 
+			item.requested_delivery_date = getdate(delivery_date)
+
+		quotation.save(ignore_permissions=True)
+		quotation.submit()
+		frappe.db.commit()
+
+		#convert the quotation to a sales order
+		from erpnext.selling.doctype.quotation.quotation import _make_sales_order
+		sales_order = frappe.get_doc(_make_sales_order(quotation.name, ignore_permissions=True))
+		sales_order.payment_schedule = []
+		sales_order.transaction_date = nowdate()
+		#expected delivery date to the sales order is mapped from the quotation
+
+		sales_order.flags.ignore_permissions = True
+		sales_order.insert()
+		sales_order.submit()
+
+		return sales_order.name
 
 	return quotation.name
 
@@ -270,6 +301,20 @@ def _get_cart_quotation(party=None):
 
 		qdoc.flags.ignore_permissions = True
 
+		# Order For feature:
+		if "order_for" in frappe.session.data:
+			customer_name = frappe.session.data.order_for.get("customer_name")
+
+			if customer_name:
+				# override contact person
+				primary_contact = frappe.session.data.order_for.get("customer_primary_contact_name")
+
+				qdoc.contact_person = primary_contact
+				qdoc.contact_email = frappe.get_value("Contact", primary_contact, "email_id")
+
+				# override customer
+				qdoc.party_name = customer_name
+
 		# Hook: Allows overriding cart quotation creation for shopping cart
 		#
 		# Signature:
@@ -339,7 +384,7 @@ def set_price_list_and_rate(quotation, cart_settings):
 	quotation.price_list_currency = quotation.currency = \
 		quotation.plc_conversion_rate = quotation.conversion_rate = None
 	for item in quotation.get("items"):
-		item.price_list_rate = item.discount_percentage = item.rate = item.amount = None
+		item.price_list_rate = item.rate = item.amount = None
 
 	# refetch values
 	quotation.run_method("set_price_list_and_item_details")
@@ -390,6 +435,13 @@ def get_party(user=None):
 
 	contact_name = get_contact_name(user)
 	party = None
+
+	# Order For feature. Sets current customer's primary contact for this session.
+	if "order_for" in frappe.session.data:
+		customer_name = frappe.session.data.order_for.get("customer_name")
+		
+		if customer_name and "customer_primary_contact_name" in frappe.session.data.order_for:
+			contact_name = frappe.session.data.order_for.customer_primary_contact_name
 
 	# Hook: Allows overriding the contact person used by the shopping cart
 	#

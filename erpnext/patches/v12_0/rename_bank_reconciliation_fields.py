@@ -11,4 +11,3 @@ def _rename_single_field(**kwargs):
 def execute():
 	_rename_single_field(doctype = "Bank Reconciliation", old_name = "bank_account" , new_name = "account")
 	_rename_single_field(doctype = "Bank Reconciliation", old_name = "bank_account_no", new_name = "bank_account")
-	frappe.reload_doc("Accounts", "doctype", "Bank Reconciliation")

@@ -709,3 +709,5 @@ erpnext.patches.v13_0.update_advance_received_in_sales_order
 erpnext.patches.v13_0.update_global_search
 erpnext.patches.v13_0.update_title_field_in_bom
 erpnext.patches.v13_0.update_batch_no_in_purchase_receipt
+erpnext.patches.v13_0.set_package_tag_qty_in_package_tag
+

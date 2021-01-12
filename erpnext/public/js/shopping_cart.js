@@ -105,29 +105,24 @@ $.extend(shopping_cart, {
 
 	set_cart_count: function() {
 		var cart_count = frappe.get_cookie("cart_count");
-		if(frappe.session.user==="Guest") {
+
+		if (frappe.session.user==="Guest" || !cart_count) {
 			cart_count = 0;
 		}
 
-		if(cart_count) {
-			$(".shopping-cart").toggleClass('hidden', false);
-		}
 
 		var $cart = $('.cart-icon');
 		var $badge = $cart.find("#cart-count");
+		$cart.css("display", "inline");
 
-		if(parseInt(cart_count) === 0 || cart_count === undefined) {
-			$cart.css("display", "none");
+		if (parseInt(cart_count) === 0) {
 			$(".cart-items").html('Cart is Empty');
 			$(".cart-tax-items").hide();
 			$(".btn-place-order").hide();
 			$(".cart-addresses").hide();
 		}
-		else {
-			$cart.css("display", "inline");
-		}
 
-		if(cart_count) {
+		if (cart_count) {
 			$badge.html(cart_count);
 		} else {
 			$badge.remove();
