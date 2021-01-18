@@ -512,7 +512,6 @@ class PurchaseReceipt(BuyingController):
 		'''Returns items with BOM that already do not have a linked work order'''
 
 		items = []
-		item_codes = [i.item_code for i in self.items]
 
 		for table in [self.items, self.supplied_items]:
 			for row in table:
