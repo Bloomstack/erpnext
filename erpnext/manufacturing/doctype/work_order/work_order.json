@@ -21,7 +21,7 @@
   "material_transferred_for_manufacturing",
   "produced_qty",
   "sales_order",
-  "purchase_receipt_no",
+  "purchase_receipt",
   "project",
   "settings_section",
   "allow_alternative_item",
@@ -486,22 +486,22 @@
    "label": "Material Request Plan Item"
   },
   {
-   "fieldname": "purchase_receipt_no",
-   "fieldtype": "Link",
-   "label": "Purchase Receipt",
-   "options": "Purchase Receipt"
-  },
-  {
    "fieldname": "purchase_receipt_item",
    "fieldtype": "Data",
    "label": "Purchase Receipt Item"
+  },
+  {
+   "fieldname": "purchase_receipt",
+   "fieldtype": "Link",
+   "label": "Purchase Receipt",
+   "options": "Purchase Receipt"
   }
  ],
  "icon": "fa fa-cogs",
  "idx": 1,
  "image_field": "image",
  "is_submittable": 1,
- "modified": "2021-01-18 04:47:48.703849",
+ "modified": "2021-01-18 09:17:58.710165",
  "modified_by": "Administrator",
  "module": "Manufacturing",
  "name": "Work Order",
