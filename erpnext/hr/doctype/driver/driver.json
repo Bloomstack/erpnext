@@ -64,7 +64,8 @@
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Employee",
-   "options": "Employee"
+   "options": "Employee",
+   "read_only": 1
   },
   {
    "fieldname": "cell_number",
@@ -118,7 +119,7 @@
   }
  ],
  "icon": "fa fa-user",
- "modified": "2021-01-04 00:01:40.499620",
+ "modified": "2021-01-14 00:01:40.499620",
  "modified_by": "Administrator",
  "module": "HR",
  "name": "Driver",

@@ -120,7 +120,8 @@
    "fieldname": "gender",
    "fieldtype": "Link",
    "label": "Gender",
-   "options": "Gender"
+   "options": "Gender",
+   "hidden": 1
   },
   {
    "default": "Company",
@@ -129,7 +130,7 @@
    "label": "Type",
    "oldfieldname": "customer_type",
    "oldfieldtype": "Select",
-   "options": "Company\nIndividual",
+   "options": "Company\nIndividual\nCorporation\nLLC",
    "reqd": 1
   },
   {
@@ -555,7 +556,7 @@
  "icon": "fa fa-user",
  "idx": 363,
  "image_field": "image",
- "modified": "2021-01-04 00:01:18.784725",
+ "modified": "2021-01-14 00:01:18.784725",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Customer",

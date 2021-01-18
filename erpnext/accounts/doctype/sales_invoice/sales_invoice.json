@@ -245,7 +245,7 @@
    "fieldname": "tax_id",
    "fieldtype": "Data",
    "label": "Tax Id",
-   "print_hide": 1,
+   "print_hide": 0,
    "read_only": 1
   },
   {
@@ -341,7 +341,8 @@
    "fieldname": "set_posting_time",
    "fieldtype": "Check",
    "label": "Edit Posting Date and Time",
-   "print_hide": 1
+   "print_hide": 1,
+   "allow_on_submit": 1
   },
   {
    "fieldname": "due_date",
@@ -349,7 +350,8 @@
    "label": "Payment Due Date",
    "no_copy": 1,
    "oldfieldname": "due_date",
-   "oldfieldtype": "Date"
+   "oldfieldtype": "Date",
+   "allow_on_submit": 1
   },
   {
    "fieldname": "amended_from",
@@ -1607,7 +1609,7 @@
  "icon": "fa fa-file-text",
  "idx": 181,
  "is_submittable": 1,
- "modified": "2021-01-05 19:12:42.440076",
+ "modified": "2021-01-14 19:12:42.440076",
  "modified_by": "forellana@digithinkit.com",
  "module": "Accounts",
  "name": "Sales Invoice",

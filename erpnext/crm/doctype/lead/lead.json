@@ -70,7 +70,8 @@
   {
    "fieldname": "lead_details",
    "fieldtype": "Section Break",
-   "options": "fa fa-user"
+   "options": "fa fa-user",
+   "label": "Lead"
   },
   {
    "fieldname": "naming_series",
@@ -149,7 +150,8 @@
    "fieldname": "gender",
    "fieldtype": "Link",
    "label": "Gender",
-   "options": "Gender"
+   "options": "Gender",
+   "hidden": 1
   },
   {
    "fieldname": "source",
@@ -221,7 +223,6 @@
    "no_copy": 1
   },
   {
-   "collapsible": 1,
    "fieldname": "notes_section",
    "fieldtype": "Section Break",
    "label": "Notes"
@@ -415,7 +416,7 @@
   {
    "fieldname": "designation",
    "fieldtype": "Link",
-   "label": "Designation",
+   "label": "Title",
    "options": "Designation"
   },
   {
@@ -438,7 +439,7 @@
  "icon": "fa fa-user",
  "idx": 5,
  "image_field": "image",
- "modified": "2020-11-19 11:33:47.171097",
+ "modified": "2021-01-14 11:33:47.171097",
  "modified_by": "Administrator",
  "module": "CRM",
  "name": "Lead",

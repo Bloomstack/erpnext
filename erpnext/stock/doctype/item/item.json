@@ -680,7 +680,7 @@
    "options": "UOM"
   },
   {
-   "default": "1",
+   "default": "0",
    "fieldname": "is_sales_item",
    "fieldtype": "Check",
    "label": "Is Sales Item"
@@ -1108,7 +1108,7 @@
  "idx": 2,
  "image_field": "image",
  "max_attachments": 1,
- "modified": "2021-01-04 00:01:10.450227",
+ "modified": "2021-01-14 00:01:10.450227",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Item",

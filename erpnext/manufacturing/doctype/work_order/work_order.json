@@ -142,7 +142,7 @@
    "label": "Allow Alternative Item"
   },
   {
-   "default": "1",
+   "default": "0",
    "description": "Plan material for sub-assemblies",
    "fieldname": "use_multi_level_bom",
    "fieldtype": "Check",
@@ -178,7 +178,8 @@
    "label": "Qty To Manufacture",
    "oldfieldname": "qty",
    "oldfieldtype": "Currency",
-   "reqd": 1
+   "reqd": 1,
+   "in_list_view": 1
   },
   {
    "default": "0",
@@ -532,7 +533,7 @@
  ],
  "sort_field": "modified",
  "sort_order": "ASC",
- "title_field": "production_item",
+ "title_field": "item_name",
  "track_changes": 1,
  "track_seen": 1
 }

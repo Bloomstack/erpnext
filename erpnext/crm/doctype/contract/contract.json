@@ -2,6 +2,7 @@
  "allow_import": 1,
  "allow_rename": 1,
  "creation": "2018-04-12 06:32:04.582486",
+ "default_print_format": "Bloomstack Contract",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
@@ -49,7 +50,8 @@
    "fieldtype": "Select",
    "label": "Party Type",
    "options": "Customer\nSupplier\nEmployee",
-   "reqd": 1
+   "reqd": 1,
+   "print_hide": 1
   },
   {
    "allow_on_submit": 1,
@@ -57,7 +59,8 @@
    "fieldname": "is_signed",
    "fieldtype": "Check",
    "label": "Signed",
-   "no_copy": 1
+   "no_copy": 1,
+   "print_hide": 1
   },
   {
    "fieldname": "cb_party",
@@ -75,7 +78,8 @@
    "fieldname": "party_user",
    "fieldtype": "Link",
    "label": "Party User",
-   "options": "User"
+   "options": "User",
+   "print_hide": 1
   },
   {
    "allow_on_submit": 1,
@@ -86,7 +90,8 @@
    "in_standard_filter": 1,
    "label": "Status",
    "no_copy": 1,
-   "options": "Unsigned\nActive\nInactive"
+   "options": "Unsigned\nActive\nInactive",
+   "print_hide": 1
   },
   {
    "allow_on_submit": 1,
@@ -97,7 +102,8 @@
    "in_standard_filter": 1,
    "label": "Fulfilment Status",
    "no_copy": 1,
-   "options": "N/A\nUnfulfilled\nPartially Fulfilled\nFulfilled\nLapsed"
+   "options": "N/A\nUnfulfilled\nPartially Fulfilled\nFulfilled\nLapsed",
+   "print_hide": 1
   },
   {
    "fieldname": "sb_terms",
@@ -130,7 +136,8 @@
    "fieldtype": "Data",
    "in_global_search": 1,
    "label": "Signee",
-   "no_copy": 1
+   "no_copy": 1,
+   "read_only": 1
   },
   {
    "allow_on_submit": 1,
@@ -138,7 +145,8 @@
    "fieldtype": "Datetime",
    "in_list_view": 1,
    "label": "Signed On",
-   "no_copy": 1
+   "no_copy": 1,
+   "read_only": 1
   },
   {
    "fieldname": "cb_user",
@@ -163,14 +171,16 @@
    "fieldname": "contract_template",
    "fieldtype": "Link",
    "label": "Contract Template",
-   "options": "Contract Template"
+   "options": "Contract Template",
+   "print_hide": 1
   },
   {
    "fieldname": "contract_terms",
    "fieldtype": "Text Editor",
    "in_list_view": 1,
    "label": "Contract Terms",
-   "reqd": 1
+   "reqd": 1,
+   "print_hide": 1
   },
   {
    "fieldname": "sb_fulfilment",
@@ -181,7 +191,8 @@
    "default": "0",
    "fieldname": "requires_fulfilment",
    "fieldtype": "Check",
-   "label": "Requires Fulfilment"
+   "label": "Requires Fulfilment",
+   "print_hide": 1
   },
   {
    "depends_on": "eval:doc.requires_fulfilment==1",
@@ -234,7 +245,7 @@
   {
    "fieldname": "signee_company",
    "fieldtype": "Signature",
-   "label": "Signee (Company)"
+   "label": "Signature (Company)"
   },
   {
    "fieldname": "signed_by_company",
@@ -273,7 +284,7 @@
   }
  ],
  "is_submittable": 1,
- "modified": "2020-11-05 23:42:26.144864",
+ "modified": "2021-01-14 23:42:26.144864",
  "modified_by": "Administrator",
  "module": "CRM",
  "name": "Contract",

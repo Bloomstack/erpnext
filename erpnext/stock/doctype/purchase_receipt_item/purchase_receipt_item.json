@@ -431,7 +431,8 @@
   {
    "fieldname": "weight_per_unit",
    "fieldtype": "Float",
-   "label": "Weight Per Unit"
+   "label": "Weight Per Unit",
+   "print_hide": 1
   },
   {
    "fieldname": "total_weight",
@@ -861,7 +862,7 @@
  ],
  "idx": 1,
  "istable": 1,
- "modified": "2020-12-09 03:11:56.000436",
+ "modified": "2021-01-14 03:11:56.000436",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Purchase Receipt Item",

@@ -166,7 +166,7 @@
    "fieldname": "supplier_type",
    "fieldtype": "Select",
    "label": "Supplier Type",
-   "options": "Company\nIndividual",
+   "options": "Company\nIndividual\nCorporation\nLLC",
    "reqd": 1
   },
   {
@@ -383,7 +383,7 @@
  "icon": "fa fa-user",
  "idx": 370,
  "image_field": "image",
- "modified": "2021-01-04 00:01:23.391267",
+ "modified": "2021-01-14 00:01:23.391267",
  "modified_by": "Administrator",
  "module": "Buying",
  "name": "Supplier",

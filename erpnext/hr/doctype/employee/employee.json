@@ -138,10 +138,9 @@
    "fieldtype": "Select",
    "label": "Series",
    "no_copy": 1,
-   "oldfieldname": "naming_series",
-   "oldfieldtype": "Select",
    "options": "HR-EMP-",
-   "set_only_once": 1
+   "set_only_once": 1,
+   "reqd": 1
   },
   {
    "fieldname": "salutation",
@@ -167,7 +166,8 @@
    "allow_in_quick_entry": 1,
    "fieldname": "last_name",
    "fieldtype": "Data",
-   "label": "Last Name"
+   "label": "Last Name",
+   "reqd": 1
   },
   {
    "fieldname": "employee_name",
@@ -221,7 +221,8 @@
    "in_global_search": 1,
    "label": "Employee Number",
    "oldfieldname": "employee_number",
-   "oldfieldtype": "Data"
+   "oldfieldtype": "Data",
+   "hidden": 1
   },
   {
    "fieldname": "employment_type",
@@ -239,7 +240,7 @@
    "oldfieldname": "gender",
    "oldfieldtype": "Select",
    "options": "Gender",
-   "reqd": 1
+   "hidden": 1
   },
   {
    "description": "You can enter any date manually",
@@ -286,7 +287,7 @@
    "collapsible": 1,
    "fieldname": "erpnext_user",
    "fieldtype": "Section Break",
-   "label": "ERPNext User"
+   "label": "Bloomstack User"
   },
   {
    "description": "System User (login) ID. If set, it will become default for all HR forms.",
@@ -535,7 +536,8 @@
    "fieldname": "permanent_accommodation_type",
    "fieldtype": "Select",
    "label": "Permanent Address Is",
-   "options": "\nRented\nOwned"
+   "options": "\nRented\nOwned",
+   "hidden": 1
   },
   {
    "fieldname": "permanent_address",
@@ -546,7 +548,8 @@
    "fieldname": "current_accommodation_type",
    "fieldtype": "Select",
    "label": "Current Address Is",
-   "options": "\nRented\nOwned"
+   "options": "\nRented\nOwned",
+   "hidden": 1
   },
   {
    "fieldname": "current_address",
@@ -600,25 +603,29 @@
    "fieldname": "marital_status",
    "fieldtype": "Select",
    "label": "Marital Status",
-   "options": "\nSingle\nMarried\nDivorced\nWidowed"
+   "options": "\nSingle\nMarried\nDivorced\nWidowed",
+   "hidden": 1
   },
   {
    "fieldname": "blood_group",
    "fieldtype": "Select",
    "label": "Blood Group",
-   "options": "\nA+\nA-\nB+\nB-\nAB+\nAB-\nO+\nO-"
+   "options": "\nA+\nA-\nB+\nB-\nAB+\nAB-\nO+\nO-",
+   "hidden": 1
   },
   {
    "description": "Here you can maintain family details like name and occupation of parent, spouse and children",
    "fieldname": "family_background",
    "fieldtype": "Small Text",
-   "label": "Family Background"
+   "label": "Family Background",
+   "hidden": 1
   },
   {
    "description": "Here you can maintain height, weight, allergies, medical concerns etc",
    "fieldname": "health_details",
    "fieldtype": "Small Text",
-   "label": "Health Details"
+   "label": "Health Details",
+   "hidden": 1
   },
   {
    "collapsible": 1,
@@ -841,7 +848,7 @@
  "icon": "fa fa-user",
  "idx": 24,
  "image_field": "image",
- "modified": "2021-01-04 00:01:14.615309",
+ "modified": "2021-01-14 00:01:14.615309",
  "modified_by": "Administrator",
  "module": "HR",
  "name": "Employee",

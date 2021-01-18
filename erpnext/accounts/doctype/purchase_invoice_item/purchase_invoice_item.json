@@ -132,7 +132,8 @@
    "collapsible": 1,
    "fieldname": "description_section",
    "fieldtype": "Section Break",
-   "label": "Description"
+   "label": "Description",
+   "print_hide": 1
   },
   {
    "fieldname": "description",
@@ -239,7 +240,8 @@
    "fieldname": "discount_amount",
    "fieldtype": "Currency",
    "label": "Discount Amount",
-   "options": "currency"
+   "options": "currency",
+   "print_hide": 1
   },
   {
    "fieldname": "col_break3",
@@ -372,7 +374,8 @@
   {
    "fieldname": "weight_per_unit",
    "fieldtype": "Float",
-   "label": "Weight Per Unit"
+   "label": "Weight Per Unit",
+   "print_hide": 1
   },
   {
    "fieldname": "total_weight",
@@ -399,7 +402,8 @@
    "fieldname": "warehouse",
    "fieldtype": "Link",
    "label": "Accepted Warehouse",
-   "options": "Warehouse"
+   "options": "Warehouse",
+   "print_hide": 1
   },
   {
    "fieldname": "rejected_warehouse",
@@ -784,7 +788,7 @@
  ],
  "idx": 1,
  "istable": 1,
- "modified": "2020-12-23 00:33:59.858285",
+ "modified": "2021-01-14 00:33:59.858285",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Purchase Invoice Item",
