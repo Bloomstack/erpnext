@@ -14,7 +14,6 @@
   "image",
   "bom_no",
   "manufacturing_type",
-  "skip_raw_material_validation",
   "column_break1",
   "company",
   "raw_material_qty",
@@ -22,6 +21,7 @@
   "material_transferred_for_manufacturing",
   "produced_qty",
   "sales_order",
+  "purchase_receipt_no",
   "project",
   "settings_section",
   "allow_alternative_item",
@@ -60,6 +60,7 @@
   "material_request",
   "material_request_item",
   "sales_order_item",
+  "purchase_receipt_item",
   "production_plan",
   "production_plan_item",
   "material_request_plan_item",
@@ -480,23 +481,27 @@
    "label": "Raw Material Quantity"
   },
   {
-   "default": "0",
-   "depends_on": "eval:doc.manufacturing_type==\"Process\"",
-   "fieldname": "skip_raw_material_validation",
-   "fieldtype": "Check",
-   "label": "Skip Raw Material Validation"
-  },
-  {
    "fieldname": "material_request_plan_item",
    "fieldtype": "Data",
    "label": "Material Request Plan Item"
+  },
+  {
+   "fieldname": "purchase_receipt_no",
+   "fieldtype": "Link",
+   "label": "Purchase Receipt",
+   "options": "Purchase Receipt"
+  },
+  {
+   "fieldname": "purchase_receipt_item",
+   "fieldtype": "Data",
+   "label": "Purchase Receipt Item"
   }
  ],
  "icon": "fa fa-cogs",
  "idx": 1,
  "image_field": "image",
  "is_submittable": 1,
- "modified": "2021-01-11 23:04:45.676501",
+ "modified": "2021-01-18 04:47:48.703849",
  "modified_by": "Administrator",
  "module": "Manufacturing",
  "name": "Work Order",

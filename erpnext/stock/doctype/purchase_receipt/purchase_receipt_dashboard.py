@@ -34,5 +34,9 @@ def get_data():
 				'label': _('Subscription'),
 				'items': ['Auto Repeat']
 			},
+			{
+				'label': _('Manufacturing'),
+				'items': ['Work Order']
+			},
 		]
 	}

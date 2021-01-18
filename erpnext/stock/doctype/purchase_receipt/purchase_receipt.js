@@ -28,6 +28,7 @@ frappe.ui.form.on("Purchase Receipt", {
 			'Stock Entry': 'Return',
 			'Purchase Invoice': 'Purchase Invoice',
 			'Production Plan': 'Production Plan',
+			'Work Order': "Work Order",
 		};
 
 		frm.set_query("expense_account", "items", function() {
@@ -130,7 +131,7 @@ erpnext.stock.PurchaseReceiptController = erpnext.buying.BuyingController.extend
 				if (this.frm.has_perm("submit")) {
 					cur_frm.add_custom_button(__("Close"), this.close_purchase_receipt, __("Status"))
 				}
-
+				this.frm.add_custom_button(__('Work Order'), () => this.make_work_order(), __('Create'));
 				cur_frm.add_custom_button(__('Purchase Return'), this.make_purchase_return, __('Create'));
 
 				cur_frm.add_custom_button(__('Make Stock Entry'), cur_frm.cscript['Make Stock Entry'], __('Create'));
@@ -163,6 +164,94 @@ erpnext.stock.PurchaseReceiptController = erpnext.buying.BuyingController.extend
 			method: "erpnext.stock.doctype.purchase_receipt.purchase_receipt.make_purchase_invoice",
 			frm: cur_frm
 		})
+	},
+
+	make_work_order() {
+		var me = this;
+		this.frm.call({
+			doc: this.frm.doc,
+			method: 'get_work_order_items',
+			callback: function(r) {
+				if(!r.message) {
+					frappe.msgprint({
+						title: __('Work Order not created'),
+						message: __('No items left to manufacture'),
+						indicator: 'orange'
+					});
+					return;
+				} else {
+					const fields = [{
+						label: 'Items',
+						fieldtype: 'Table',
+						fieldname: 'items',
+						description: __('Select BOM and Qty for Production'),
+						fields: [{
+							fieldtype: 'Read Only',
+							fieldname: 'item_code',
+							label: __('Item Code'),
+							in_list_view: 1
+						}, {
+							fieldtype: 'Link',
+							fieldname: 'bom',
+							options: 'BOM',
+							reqd: 1,
+							label: __('Select BOM'),
+							in_list_view: 1,
+							get_query: function (doc) {
+								return { filters: { item: doc.item_code } };
+							}
+						}, {
+							fieldtype: 'Float',
+							fieldname: 'pending_qty',
+							reqd: 1,
+							label: __('Qty'),
+							in_list_view: 1
+						}, {
+							fieldtype: 'Data',
+							fieldname: 'purchase_receipt_item',
+							reqd: 1,
+							label: __('Purchase Receipt Item'),
+							hidden: 1
+						}],
+						data: r.message,
+						get_data: () => {
+							return r.message
+						}
+					}]
+					var d = new frappe.ui.Dialog({
+						title: __('Select Items to Manufacture'),
+						fields: fields,
+						primary_action: function() {
+							var data = d.get_values();
+							me.frm.call({
+								method: 'make_work_orders',
+								args: {
+									items: data,
+									company: me.frm.doc.company,
+									purchase_receipt: me.frm.docname,
+									project: me.frm.project
+								},
+								freeze: true,
+								callback: function(r) {
+									if(r.message) {
+										frappe.msgprint({
+											message: __('Work Orders Created: {0}',
+												[r.message.map(function(d) {
+													return repl('<a href="#Form/Work Order/%(name)s">%(name)s</a>', {name:d})
+												}).join(', ')]),
+											indicator: 'green'
+										})
+									}
+									d.hide();
+								}
+							});
+						},
+						primary_action_label: __('Create')
+					});
+					d.show();
+				}
+			}
+		});
 	},
 
 	make_purchase_return: function() {
