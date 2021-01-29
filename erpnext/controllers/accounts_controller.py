@@ -1187,7 +1187,7 @@ def set_purchase_receipt_defaults(parent_doctype, parent_doctype_name, child_doc
 	child_item.item_code = item.item_code
 	child_item.item_name = item.item_name
 	child_item.description = item.description
-	child_item.schedule_date = trans_item.get('transaction_date') or p_doc.schedule_date
+	child_item.schedule_date = trans_item.get('posting_date') or p_doc.schedule_date
 	child_item.conversion_factor = flt(trans_item.get('conversion_factor')) or get_conversion_factor(item.item_code, item.stock_uom).get("conversion_factor") or 1.0
 	child_item.uom = item.stock_uom
 	child_item.base_rate = 1 # Initiallize value will update in parent validation
@@ -1270,7 +1270,7 @@ def update_child_qty_rate(parent_doctype, trans_items, parent_doctype_name, chil
 			elif parent_doctype == 'Purchase Order':
 				prev_date, new_date = child_item.get("schedule_date"), d.get("schedule_date")
 			elif parent_doctype == 'Purchase Receipt':
-				prev_date, new_date = child_item.get("transaction_date"), d.get("transaction_date")
+				prev_date, new_date = child_item.get("posting_date"), d.get("posting_date")
 
 			rate_unchanged = prev_rate == new_rate
 			qty_unchanged = prev_qty == new_qty
