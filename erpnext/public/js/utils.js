@@ -493,9 +493,9 @@ erpnext.utils.update_child_items = function(opts) {
 	if (frm.doc.doctype == 'Sales Order' || frm.doc.doctype == 'Purchase Order' || frm.doc.doctype == 'Purchase Receipt') {
 		fields.splice(2, 0, {
 			fieldtype: 'Date',
-			fieldname: frm.doc.doctype == 'Sales Order' ? "delivery_date" : frm.doctype == 'Purchase Receipt' ? "transaction_date" : "schedule_date",
+			fieldname: frm.doc.doctype == 'Sales Order' ? "delivery_date" : frm.doctype == 'Purchase Receipt' ? "posting_date" : "schedule_date",
 			in_list_view: 1,
-			label: frm.doc.doctype == 'Sales Order' ? __("Delivery Date") : frm.doc.doctype == 'Purchase Receipt' ? __("Transaction Date") : __("Reqd by date"),
+			label: frm.doc.doctype == 'Sales Order' ? __("Delivery Date") : frm.doc.doctype == 'Purchase Receipt' ? __("Posting Date") : __("Reqd by date"),
 			reqd: 1
 		})
 		fields.splice(3, 0, {
