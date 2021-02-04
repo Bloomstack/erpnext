@@ -81,10 +81,10 @@
    "label": "Cover Letter"
   },
   {
-   "depends_on": "eval:!doc.__islocal",
    "fieldname": "resume_attachment",
    "fieldtype": "Attach",
-   "label": "Resume Attachment"
+   "label": "Resume Attachment",
+   "reqd": 1
   },
   {
    "fieldname": "first_name",
@@ -101,7 +101,7 @@
  ],
  "icon": "fa fa-user",
  "idx": 1,
- "modified": "2021-01-04 00:01:09.812371",
+ "modified": "2021-02-03 23:48:31.993391",
  "modified_by": "Administrator",
  "module": "HR",
  "name": "Job Applicant",
