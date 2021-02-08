@@ -19,6 +19,8 @@
   "column_break_11",
   "intro_video",
   "hero_image",
+  "section_break_14",
+  "intro",
   "description"
  ],
  "fields": [
@@ -62,7 +64,7 @@
   {
    "depends_on": "is_published",
    "fieldname": "description",
-   "fieldtype": "Small Text",
+   "fieldtype": "Text Editor",
    "label": "Description"
   },
   {
@@ -105,10 +107,19 @@
   {
    "fieldname": "column_break_11",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_14",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "intro",
+   "fieldtype": "Small Text",
+   "label": "Intro"
   }
  ],
  "image_field": "hero_image",
- "modified": "2019-06-12 12:31:14.999346",
+ "modified": "2021-02-04 08:12:33.499963",
  "modified_by": "Administrator",
  "module": "Education",
  "name": "Program",

@@ -11,7 +11,7 @@
 		{% endif %}
 		<div class='card-body'>
 			<h5 class='card-title'>{{ program.program_name }}</h5>
-			<div class="text-muted">{{ program.description[:110] + '...' if program.description else '' }}</div>
+			<div class="text-muted">{{ program.intro if program.intro else '' }}</div>
 		</div>
 		{% if has_access or program.intro_video%}
 		<div class='card-footer'>

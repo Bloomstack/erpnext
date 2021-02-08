@@ -61,7 +61,9 @@ class CourseEnrollment(Document):
 			"result": result_data,
 			"score": score,
 			"status": status
-			}).insert(ignore_permissions = True)
+			})
+		quiz_activity.flags.ignore_permissions = True
+		quiz_activity.submit()
 
 	def add_activity(self, content_type, content):
 		activity = check_activity_exists(self.name, content_type, content)

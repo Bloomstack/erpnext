@@ -10,6 +10,7 @@
   "department",
   "section_break_6",
   "topics",
+  "intro",
   "description",
   "hero_image",
   "assessment",
@@ -69,12 +70,17 @@
   },
   {
    "fieldname": "description",
-   "fieldtype": "Small Text",
+   "fieldtype": "Text Editor",
    "label": "Description"
+  },
+  {
+   "fieldname": "intro",
+   "fieldtype": "Small Text",
+   "label": "Intro"
   }
  ],
  "image_field": "hero_image",
- "modified": "2020-03-29 12:50:27.677589",
+ "modified": "2021-02-05 04:02:23.010660",
  "modified_by": "Administrator",
  "module": "Education",
  "name": "Course",

@@ -109,7 +109,7 @@ class Student(Document):
 					"student": self.name,
 					"academic_year": frappe.get_last_doc("Academic Year").name,
 					"program": program_name,
-					"enrollment_date": frappe.utils.datetime.datetime.now()
+					"enrollment_date": frappe.utils.now_datetime()
 				})
 			enrollment.save(ignore_permissions=True)
 		except frappe.exceptions.ValidationError:
