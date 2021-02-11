@@ -285,9 +285,9 @@ class StockController(AccountsController):
 		return sl_dict
 
 	def make_sl_entries(self, sl_entries, is_amended=None, allow_negative_stock=False,
-			via_landed_cost_voucher=False):
+			via_landed_cost_voucher=False, force_update=False):
 		from erpnext.stock.stock_ledger import make_sl_entries
-		make_sl_entries(sl_entries, is_amended, allow_negative_stock, via_landed_cost_voucher)
+		make_sl_entries(sl_entries, is_amended, allow_negative_stock, via_landed_cost_voucher, force_update)
 
 	def make_gl_entries_on_cancel(self, repost_future_gle=True):
 		if frappe.db.sql("""select name from `tabGL Entry` where voucher_type=%s

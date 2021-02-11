@@ -1289,6 +1289,7 @@ def update_child_qty_rate(parent_doctype, trans_items, parent_doctype_name, chil
 						 .format(child_item.idx, child_item.item_code))
 		else:
 			child_item.rate = flt(d.get("rate"))
+			child_item.valuation_rate = flt(d.get("rate"))
 
 		if d.get("conversion_factor"):
 			if child_item.stock_uom == child_item.uom:
@@ -1364,6 +1365,7 @@ def update_child_qty_rate(parent_doctype, trans_items, parent_doctype_name, chil
 			parent.update_reserved_qty_for_subcontract()
 	elif parent_doctype == 'Purchase Receipt':
 		update_last_purchase_rate(parent, is_submit = 1)
+		parent.update_stock_ledger(force_update=True)
 		parent.notify_update()
 	else:
 		parent.update_reserved_qty()
