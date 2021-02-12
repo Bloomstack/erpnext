@@ -31,6 +31,7 @@ class ExpenseClaim(AccountsController):
 		self.calculate_total_amount()
 		set_employee_name(self)
 		self.set_expense_account(validate=True)
+		self.set_company()
 		self.set_payable_account()
 		self.set_cost_center()
 		self.calculate_taxes()
@@ -55,6 +56,10 @@ class ExpenseClaim(AccountsController):
 			self.status = "Unpaid"
 		elif self.docstatus == 1 and self.approval_status == 'Rejected':
 			self.status = 'Rejected'
+
+	def set_company(self):
+		if not self.company:
+			self.company = frappe.get_value("Employee", self.employee, "company")
 
 	def set_payable_account(self):
 		if not self.payable_account and not self.is_paid:
@@ -434,7 +439,7 @@ def list_expense_claims(user,filters=None):
 		filters = {"employee": employee}
 
 	expense_claims = frappe.get_all("Expense Claim",filters = filters ,
-		fields=["name", "employee_name", "approval_status","expense_approver", "`tabExpense Claim Detail`.*"])
+		fields=["name", "employee_name", "approval_status", "expense_approver", "project", "`tabExpense Claim Detail`.*"])
 
 	if not expense_claims:
 		return _("No Claim Found for {0}.").format(user)
