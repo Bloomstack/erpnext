@@ -1366,6 +1366,7 @@ def update_child_qty_rate(parent_doctype, trans_items, parent_doctype_name, chil
 	elif parent_doctype == 'Purchase Receipt':
 		update_last_purchase_rate(parent, is_submit = 1)
 		parent.update_stock_ledger(force_update=True)
+		parent.make_gl_entries()
 		parent.notify_update()
 	else:
 		parent.update_reserved_qty()
