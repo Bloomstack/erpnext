@@ -1177,18 +1177,18 @@ def set_purchase_order_defaults(parent_doctype, parent_doctype_name, child_docna
 	child_item.base_amount = 1 # Initiallize value will update in parent validation
 	return child_item
 
-def set_purchase_receipt_defaults(parent_doctype, parent_doctype_name, child_docname, trans_item):
+def set_purchase_receipt_defaults(parent_doctype, parent_doctype_name, child_docname, transaction_item):
 	"""
 	Returns a Purchase Receipt Item child item containing the default values
 	"""
 	p_doc = frappe.get_doc(parent_doctype, parent_doctype_name)
 	child_item = frappe.new_doc('Purchase Receipt Item', p_doc, child_docname)
-	item = frappe.get_doc("Item", trans_item.get('item_code'))
+	item = frappe.get_doc("Item", transaction_item.get('item_code'))
 	child_item.item_code = item.item_code
 	child_item.item_name = item.item_name
 	child_item.description = item.description
-	child_item.schedule_date = trans_item.get('posting_date') or p_doc.schedule_date
-	child_item.conversion_factor = flt(trans_item.get('conversion_factor')) or get_conversion_factor(item.item_code, item.stock_uom).get("conversion_factor") or 1.0
+	child_item.schedule_date = transaction_item.get('posting_date') or p_doc.schedule_date
+	child_item.conversion_factor = flt(transaction_item.get('conversion_factor')) or get_conversion_factor(item.item_code, item.stock_uom).get("conversion_factor") or 1.0
 	child_item.uom = item.stock_uom
 	child_item.base_rate = 1 # Initiallize value will update in parent validation
 	child_item.base_amount = 1 # Initiallize value will update in parent validation
