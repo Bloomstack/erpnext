@@ -50,7 +50,7 @@
 		{% endif %}
 		<div class='card-body'>
 			<h5 class='card-title'>{{ course.course_name }}</h5>
-			<div class="text-muted">{{ course.description[:110] + '...' if course.description else '' }}</div>
+			<div class="text-muted">{{ course.intro if course.intro else '' }}</div>
 		</div>
 		{% if has_access and progress[course.name] %}
 		<div class='card-footer'>

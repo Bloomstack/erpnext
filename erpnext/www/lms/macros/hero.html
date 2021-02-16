@@ -11,7 +11,7 @@
 			{% if frappe.session.user == 'Guest' %}
 			<a id="signup" class="btn btn-primary btn-lg" href="/login#signup">Sign Up</a>
 			{% elif not has_access %}
-			<button id="enroll" class="btn btn-primary btn-lg" onclick="enroll()" disabled>Enroll</button>
+			<button id="enroll" class="btn btn-primary btn-lg" onclick="enroll()" disabled>Start Learning</button>
 			{% endif %}
 		</p>
 	</div>

@@ -15,13 +15,12 @@ class ProgramEnrollment(Document):
 		self.validate_duplication()
 		if not self.student_name:
 			self.student_name = frappe.db.get_value("Student", self.student, "title")
-		if not self.courses:
-			self.extend("courses", self.get_courses())
 
 	def on_submit(self):
 		self.update_student_joining_date()
 		self.make_fee_records()
-		self.create_course_enrollments()
+		if self.enroll_in_program_courses:
+			self.create_course_enrollments()
 
 	def validate_duplication(self):
 		enrollment = frappe.get_all("Program Enrollment", filters={
@@ -64,9 +63,6 @@ class ProgramEnrollment(Document):
 			fee_list = ["""<a href="#Form/Fees/%s" target="_blank">%s</a>""" % \
 				(fee, fee) for fee in fee_list]
 			msgprint(_("Fee Records Created - {0}").format(comma_and(fee_list)))
-
-	def get_courses(self):
-		return frappe.db.sql('''select course from `tabProgram Course` where parent = %s and required = 1''', (self.program), as_dict=1)
 
 	def create_course_enrollments(self):
 		student = frappe.get_doc("Student", self.student)

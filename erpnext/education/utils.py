@@ -145,11 +145,6 @@ def enroll_in_program(program_name, student=None):
 	if not student == None:
 		student = frappe.get_doc("Student", student)
 	else:
-		# Check if self enrollment in allowed
-		program = frappe.get_doc('Program', program_name)
-		if not program.allow_self_enroll:
-			return frappe.throw(_("You are not allowed to enroll for this course"))
-
 		student = get_current_student()
 		if not student:
 			student = create_student_from_current_user()
@@ -246,12 +241,14 @@ def get_topic_progress(topic, course_name, program):
 		:param course_name:
 	"""
 	student = get_current_student()
+	progress = None
 	if not student:
 		return None
 	course_enrollment = get_or_create_course_enrollment(course_name, program)
-	progress = student.get_topic_progress(course_enrollment.name, topic)
+	if course_enrollment:
+		progress = student.get_topic_progress(course_enrollment.name, topic)
 	if not progress:
-		return None
+		return {'completed': False, 'started': False}
 	count = sum([activity['is_complete'] for activity in progress])
 	if count == 0:
 		return {'completed': False, 'started': False}
@@ -347,7 +344,6 @@ def get_or_create_course_enrollment(course, program):
 	if not course_enrollment:
 		program_enrollment = get_enrollment('program', program, student.name)
 		if not program_enrollment:
-			frappe.throw(_("You are not enrolled in program {0}".format(program)))
 			return
 		return student.enroll_in_course(course_name=course, program_enrollment=get_enrollment('program', program, student.name))
 	else:
@@ -373,3 +369,15 @@ def check_quiz_completion(quiz, enrollment_name):
 		if result == 'Pass':
 			status = True
 	return status, score, result
+
+def get_next_content(content_list, current_index):
+	try:
+		return content_list[current_index + 1]
+	except IndexError:
+		return None
+
+def get_previous_content(content_list, current_index):
+	if current_index == 0:
+		return None
+	else:
+		return content_list[current_index - 1]

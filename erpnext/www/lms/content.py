@@ -41,20 +41,8 @@ def get_context(context):
 	context.length = len(content_list)
 
 	# Set context for navigation
-	context.previous = get_previous_content(content_list, context.position)
-	context.next = get_next_content(content_list, context.position)
-
-def get_next_content(content_list, current_index):
-	try:
-		return content_list[current_index + 1]
-	except IndexError:
-		return None
-
-def get_previous_content(content_list, current_index):
-	if current_index == 0:
-		return None
-	else:
-		return content_list[current_index - 1]
+	context.previous = utils.get_previous_content(content_list, context.position)
+	context.next = utils.get_next_content(content_list, context.position)
 
 def allowed_content_access(program, content, content_type):
 	contents_of_program = frappe.db.sql("""select `tabTopic Content`.content, `tabTopic Content`.content_type
