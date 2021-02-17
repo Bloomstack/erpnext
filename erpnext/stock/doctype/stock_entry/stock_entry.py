@@ -1471,7 +1471,8 @@ def get_work_order_details(work_order, company):
 		"use_multi_level_bom": work_order.use_multi_level_bom,
 		"wip_warehouse": work_order.wip_warehouse,
 		"fg_warehouse": work_order.fg_warehouse,
-		"fg_completed_qty": pending_qty_to_produce
+		"fg_completed_qty": pending_qty_to_produce,
+		"manufacturing_type": work_order.manufacturing_type
 	}
 
 def get_operating_cost_per_unit(work_order=None, bom_no=None):

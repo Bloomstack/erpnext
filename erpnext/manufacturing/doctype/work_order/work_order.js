@@ -359,7 +359,7 @@ frappe.ui.form.on("Work Order", {
 						erpnext.in_production_item_onchange = true;
 
 						$.each(["description", "stock_uom", "project", "bom_no", "allow_alternative_item",
-							"transfer_material_against", "item_name"], function(i, field) {
+							"transfer_material_against", "item_name", "manufacturing_type"], function(i, field) {
 							frm.set_value(field, r.message[field]);
 						});
 
