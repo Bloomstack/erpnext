@@ -628,7 +628,7 @@ def get_item_details(item, project = None):
 			frappe.msgprint(_("Default BOM for {0} not found").format(item))
 
 	bom_data = frappe.db.get_value('BOM', res['bom_no'],
-		['project', 'allow_alternative_item', 'transfer_material_against', 'item_name','raw_material_cost','operating_cost'], as_dict=1)
+		['project', 'allow_alternative_item', 'transfer_material_against', 'item_name','raw_material_cost','operating_cost', 'manufacturing_type', 'company'], as_dict=1)
 
 	if bom_data:
 		res['project'] = project or bom_data.pop("project")
