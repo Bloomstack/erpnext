@@ -644,13 +644,14 @@
    "fetch_from": "work_order.purchase_receipt",
    "fieldname": "purchase_receipt",
    "fieldtype": "Data",
-   "label": "Purchase Receipt"
+   "label": "Purchase Receipt",
+   "read_only": 1
   }
  ],
  "icon": "fa fa-file-text",
  "idx": 1,
  "is_submittable": 1,
- "modified": "2021-02-19 03:35:56.365511",
+ "modified": "2021-02-19 04:47:54.632804",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Stock Entry",
