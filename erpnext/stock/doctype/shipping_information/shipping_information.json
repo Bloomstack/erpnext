@@ -1,0 +1,44 @@
+{
+ "creation": "2021-02-02 00:14:31.967523",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "box",
+  "uom",
+  "box_capacity_for_item"
+ ],
+ "fields": [
+  {
+   "fieldname": "box",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Box",
+   "options": "Box"
+  },
+  {
+   "fieldname": "box_capacity_for_item",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Box Capacity for Item"
+  },
+  {
+   "fieldname": "uom",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "UOM",
+   "options": "UOM"
+  }
+ ],
+ "istable": 1,
+ "modified": "2021-02-15 23:58:17.637501",
+ "modified_by": "Administrator",
+ "module": "Stock",
+ "name": "Shipping Information",
+ "owner": "Administrator",
+ "permissions": [],
+ "quick_entry": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

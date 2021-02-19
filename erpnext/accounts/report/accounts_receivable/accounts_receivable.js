@@ -130,6 +130,11 @@ frappe.query_reports["Accounts Receivable"] = {
 			"fieldtype": "Check"
 		},
 		{
+			"fieldname": "group_by_partner",
+			"label": __("Group By Sales Partner"),
+			"fieldtype": "Check"
+		},
+		{
 			"fieldname":"based_on_payment_terms",
 			"label": __("Based On Payment Terms"),
 			"fieldtype": "Check",

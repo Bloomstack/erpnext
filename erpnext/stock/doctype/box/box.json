@@ -1,0 +1,56 @@
+{
+ "autoname": "field:box",
+ "creation": "2021-02-02 20:48:29.191937",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "box",
+  "max_box_capacity",
+  "dimension"
+ ],
+ "fields": [
+  {
+   "fieldname": "box",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Box",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "max_box_capacity",
+   "fieldtype": "Data",
+   "label": "Max. Box Capacity",
+   "reqd": 1
+  },
+  {
+   "fieldname": "dimension",
+   "fieldtype": "Data",
+   "label": "Dimension"
+  }
+ ],
+ "modified": "2021-02-10 08:51:44.143346",
+ "modified_by": "Administrator",
+ "module": "Stock",
+ "name": "Box",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "quick_entry": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

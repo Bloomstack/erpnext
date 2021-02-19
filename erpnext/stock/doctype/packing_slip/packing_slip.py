@@ -8,6 +8,7 @@ from frappe import _
 from frappe.model import no_value_fields
 from frappe.model.document import Document
 from frappe.utils import cint, flt
+from math import ceil
 
 
 class PackingSlip(Document):
@@ -184,3 +185,30 @@ def item_details(doctype, txt, searchfield, start, page_len, filters):
 	 			limit  %s, %s """ % ("%s", searchfield, "%s",
 	 			get_match_cond(doctype), "%s", "%s"),
 	 			((filters or {}).get("delivery_note"), "%%%s%%" % txt, start, page_len))
+
+def get_box_type_for_item(doctype, txt, searchfield, start, page_len, filters):
+	"""
+		Fetches boxes available in child table Shipping Information from Item master.
+	"""
+	return frappe.get_all("Shipping Information",
+		filters={"parent": filters.get("item_code")},
+		fields=["box"],
+		as_list=True)
+
+@frappe.whitelist()
+def fetch_no_of_boxes_required(item_code, box_type, qty, uom):
+	"""
+	Returns number of boxes required to pack the item
+
+	Args:
+		item_code (string): item_code to fetch box capacity for item
+		box_type (string): box available to pack item
+		qty (int): qty to pack
+		uom (string): stock uom
+
+	Returns:
+		no_of_boxes_reqd: number of boxes required to pack item on basis of qty and max box capacity.
+	"""
+	box_capacity_for_item = frappe.db.get_value("Shipping Information", filters={"parent": item_code, "box": box_type, "uom": uom}, fieldname="box_capacity_for_item")
+	no_of_boxes_reqd = ceil(int(qty) / int(box_capacity_for_item))
+	return no_of_boxes_reqd

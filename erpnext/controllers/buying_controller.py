@@ -524,7 +524,7 @@ class BuyingController(StockController):
 				if status in ("Closed", "On Hold"):
 					frappe.throw(_("{0} {1} is {2}").format(ref_doctype,d.get(ref_fieldname), status))
 
-	def update_stock_ledger(self, allow_negative_stock=False, via_landed_cost_voucher=False):
+	def update_stock_ledger(self, allow_negative_stock=False, via_landed_cost_voucher=False, force_update=False):
 		self.update_ordered_and_reserved_qty()
 
 		sl_entries = []
@@ -565,7 +565,7 @@ class BuyingController(StockController):
 
 		self.make_sl_entries_for_supplier_warehouse(sl_entries)
 		self.make_sl_entries(sl_entries, allow_negative_stock=allow_negative_stock,
-			via_landed_cost_voucher=via_landed_cost_voucher)
+			via_landed_cost_voucher=via_landed_cost_voucher, force_update=force_update)
 
 	def update_ordered_and_reserved_qty(self):
 		po_map = {}

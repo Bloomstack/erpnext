@@ -646,7 +646,6 @@ def make_work_order(bom_no, item, qty=0, project=None, finished_goods_qty=0, man
 		manufacturing_type = "Discrete"
 	
 	item_details = get_item_details(item, project)
-
 	wo_doc = frappe.new_doc("Work Order")
 	wo_doc.production_item = item
 	wo_doc.update(item_details)

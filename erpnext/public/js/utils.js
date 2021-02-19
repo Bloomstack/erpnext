@@ -490,12 +490,12 @@ erpnext.utils.update_child_items = function(opts) {
 		label: __('Rate')
 	}];
 
-	if (frm.doc.doctype == 'Sales Order' || frm.doc.doctype == 'Purchase Order' ) {
+	if (frm.doc.doctype == 'Sales Order' || frm.doc.doctype == 'Purchase Order' || frm.doc.doctype == 'Purchase Receipt') {
 		fields.splice(2, 0, {
 			fieldtype: 'Date',
-			fieldname: frm.doc.doctype == 'Sales Order' ? "delivery_date" : "schedule_date",
+			fieldname: frm.doc.doctype == 'Sales Order' ? "delivery_date" : frm.doctype == 'Purchase Receipt' ? "posting_date" : "schedule_date",
 			in_list_view: 1,
-			label: frm.doc.doctype == 'Sales Order' ? __("Delivery Date") : __("Reqd by date"),
+			label: frm.doc.doctype == 'Sales Order' ? __("Delivery Date") : frm.doc.doctype == 'Purchase Receipt' ? __("Posting Date") : __("Reqd by date"),
 			reqd: 1
 		})
 		fields.splice(3, 0, {
@@ -551,6 +551,7 @@ erpnext.utils.update_child_items = function(opts) {
 			"item_code": d.item_code,
 			"delivery_date": d.delivery_date,
 			"schedule_date": d.schedule_date,
+			"transaction_date": d.transaction_date,
 			"conversion_factor": d.conversion_factor,
 			"qty": d.qty,
 			"rate": d.rate,

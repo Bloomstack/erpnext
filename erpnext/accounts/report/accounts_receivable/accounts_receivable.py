@@ -46,6 +46,7 @@ class ReceivablePayableReport(object):
 		self.get_columns()
 		self.get_data()
 		self.get_chart_data()
+
 		return self.columns, self.data, None, self.chart, None, self.skip_total_row
 
 	def set_defaults(self):
@@ -88,6 +89,59 @@ class ReceivablePayableReport(object):
 
 		self.build_data()
 
+		if self.filters.get("group_by_partner"):
+			self.data = sorted(self.data, key=lambda i: i['sales_partner'])
+			self.sales_partner_summary_lines()
+
+
+	def sales_partner_summary_lines(self):
+		"""
+		Insert summary lines for each sales partner if group by partner feature is requested.
+		"""
+		previous_partner = ""
+		outstanding_amount, paid_amount, invoiced_amount = 0.0, 0.0, 0.0
+		range1, range2, range3, range4 = 0,0,0,0
+		index = 0
+		data = []
+		for row in self.data:
+			index += 1
+			current_partner = row.get("sales_partner")
+
+			#create a summary line if the sales partner has changed, reset totals
+			if current_partner != previous_partner:
+				total = range1 + range2 + range3 + range4
+				partner_sales = "Unassigned" if previous_partner == "" else previous_partner
+				summary_line = {
+					"sales_partner": "Total for {0}".format(partner_sales),
+					"outstanding": outstanding_amount,
+					"paid": paid_amount,
+					"invoiced": invoiced_amount,
+					"range1": range1,
+					"range2": range2,
+					"range3": range3,
+					"range4": range4,
+					"total": total
+				}
+				data.append(summary_line)
+				data.append({})
+				data.append(row)
+				outstanding_amount, paid_amount, invoiced_amount = 0.0, 0.0, 0.0
+				range1, range2, range3, range4 = 0,0,0,0
+				previous_partner = current_partner
+			else:
+				#accumulate totals for summary lines
+				data.append(row)
+				outstanding_amount += row.get("outstanding", 0.0)
+				paid_amount = row.get("paid", 0.0)
+				invoiced_amount = row.get("invoiced", 0.0)
+				range1 += row.get("range1", 0.0)
+				range2 += row.get("range2", 0.0)
+				range3 += row.get("range3", 0.0)
+				range4 += row.get("range4", 0.0)
+
+		self.data = data
+
+
 	def init_voucher_balance(self):
 		# build all keys, since we want to exclude vouchers beyond the report date
 		for gle in self.gl_entries:
@@ -113,6 +167,7 @@ class ReceivablePayableReport(object):
 
 		if self.filters.get('group_by_party'):
 			self.init_subtotal_row('Total')
+
 
 	def get_invoices(self, gle):
 		if gle.voucher_type in ('Sales Invoice', 'Purchase Invoice'):
@@ -255,6 +310,7 @@ class ReceivablePayableReport(object):
 		invoice_details = self.invoice_details.get(row.voucher_no, {})
 		if row.due_date:
 			invoice_details.pop("due_date", None)
+		row['sales_partner'] = invoice_details.get("sales_partner", "")
 		row.update(invoice_details)
 
 		if row.voucher_type == 'Sales Invoice':
@@ -298,7 +354,7 @@ class ReceivablePayableReport(object):
 		self.invoice_details = frappe._dict()
 		if self.party_type == "Customer":
 			si_list = frappe.db.sql("""
-				select name, due_date, po_no
+				select name, due_date, po_no, sales_partner
 				from `tabSales Invoice`
 				where posting_date <= %s
 			""",self.filters.report_date, as_dict=1)
@@ -731,6 +787,8 @@ class ReceivablePayableReport(object):
 		self.add_column(label=_('Voucher No'), fieldname='voucher_no', fieldtype='Dynamic Link',
 			options='voucher_type', width=180)
 		self.add_column(label='Due Date', fieldtype='Date')
+
+		self.add_column(label=_('Sales Partner'), fieldname='sales_partner', fieldtype="Dynamic Link", options="Sales Partner")
 
 		if self.party_type == "Supplier":
 			self.add_column(label=_('Bill No'), fieldname='bill_no', fieldtype='Data')

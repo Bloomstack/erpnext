@@ -87,6 +87,8 @@
   "supplier_details",
   "delivered_by_supplier",
   "supplier_items",
+  "shipping_information_section",
+  "shipping_information",
   "foreign_trade_details",
   "country_of_origin",
   "column_break_59",
@@ -1101,6 +1103,18 @@
    "fieldname": "enable_cultivation_tax",
    "fieldtype": "Check",
    "label": "Enable Cultivation Tax"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "shipping_information_section",
+   "fieldtype": "Section Break",
+   "label": "Shipping Information"
+  },
+  {
+   "fieldname": "shipping_information",
+   "fieldtype": "Table",
+   "label": "Shipping Information",
+   "options": "Shipping Information"
   }
  ],
  "has_web_view": 1,
@@ -1108,7 +1122,7 @@
  "idx": 2,
  "image_field": "image",
  "max_attachments": 1,
- "modified": "2021-01-14 00:01:10.450227",
+ "modified": "2021-02-02 00:19:02.360290",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Item",

@@ -1177,6 +1177,23 @@ def set_purchase_order_defaults(parent_doctype, parent_doctype_name, child_docna
 	child_item.base_amount = 1 # Initiallize value will update in parent validation
 	return child_item
 
+def set_purchase_receipt_defaults(parent_doctype, parent_doctype_name, child_docname, transaction_item):
+	"""
+	Returns a Purchase Receipt Item child item containing the default values
+	"""
+	p_doc = frappe.get_doc(parent_doctype, parent_doctype_name)
+	child_item = frappe.new_doc('Purchase Receipt Item', p_doc, child_docname)
+	item = frappe.get_doc("Item", transaction_item.get('item_code'))
+	child_item.item_code = item.item_code
+	child_item.item_name = item.item_name
+	child_item.description = item.description
+	child_item.schedule_date = transaction_item.get('posting_date') or p_doc.schedule_date
+	child_item.conversion_factor = flt(transaction_item.get('conversion_factor')) or get_conversion_factor(item.item_code, item.stock_uom).get("conversion_factor") or 1.0
+	child_item.uom = item.stock_uom
+	child_item.base_rate = 1 # Initiallize value will update in parent validation
+	child_item.base_amount = 1 # Initiallize value will update in parent validation
+	return child_item
+
 def check_and_delete_children(parent, data):
 	deleted_children = []
 	updated_item_names = [d.get("docname") for d in data]
@@ -1216,6 +1233,9 @@ def update_child_qty_rate(parent_doctype, trans_items, parent_doctype_name, chil
 			return set_sales_order_defaults(parent_doctype, parent_doctype_name, child_docname, item_row)
 		if parent_doctype == "Purchase Order":
 			return set_purchase_order_defaults(parent_doctype, parent_doctype_name, child_docname, item_row)
+		if parent_doctype == "Purchase Receipt":
+			return set_purchase_receipt_defaults(parent_doctype, parent_doctype_name, child_docname, item_row)
+
 
 	def validate_quantity(child_item, d):
 		if parent_doctype == "Sales Order" and flt(d.get("qty")) < flt(child_item.delivered_qty):
@@ -1249,6 +1269,8 @@ def update_child_qty_rate(parent_doctype, trans_items, parent_doctype_name, chil
 				prev_date, new_date = child_item.get("delivery_date"), d.get("delivery_date")
 			elif parent_doctype == 'Purchase Order':
 				prev_date, new_date = child_item.get("schedule_date"), d.get("schedule_date")
+			elif parent_doctype == 'Purchase Receipt':
+				prev_date, new_date = child_item.get("posting_date"), d.get("posting_date")
 
 			rate_unchanged = prev_rate == new_rate
 			qty_unchanged = prev_qty == new_qty
@@ -1267,6 +1289,7 @@ def update_child_qty_rate(parent_doctype, trans_items, parent_doctype_name, chil
 						 .format(child_item.idx, child_item.item_code))
 		else:
 			child_item.rate = flt(d.get("rate"))
+			child_item.valuation_rate = flt(d.get("rate"))
 
 		if d.get("conversion_factor"):
 			if child_item.stock_uom == child_item.uom:
@@ -1325,6 +1348,8 @@ def update_child_qty_rate(parent_doctype, trans_items, parent_doctype_name, chil
 		parent.validate_budget()
 		if parent.is_against_so():
 			parent.update_status_updater()
+	if parent_doctype == 'Purchase Receipt':
+		parent.check_on_hold_or_closed_status()
 	else:
 		parent.check_credit_limit()
 	parent.save()
@@ -1338,13 +1363,19 @@ def update_child_qty_rate(parent_doctype, trans_items, parent_doctype_name, chil
 		parent.update_receiving_percentage()
 		if parent.is_subcontracted == "Yes":
 			parent.update_reserved_qty_for_subcontract()
+	elif parent_doctype == 'Purchase Receipt':
+		update_last_purchase_rate(parent, is_submit = 1)
+		parent.update_stock_ledger(force_update=True)
+		parent.make_gl_entries()
+		parent.notify_update()
 	else:
 		parent.update_reserved_qty()
 		parent.update_project()
 		parent.update_prevdoc_status('submit')
 		parent.update_delivery_status()
 
-	parent.update_blanket_order()
+	if not parent_doctype == "Purchase Receipt":
+		parent.update_blanket_order()
 	parent.update_billing_percentage()
 	parent.set_status()
 

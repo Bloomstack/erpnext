@@ -99,6 +99,8 @@
    "search_index": 1
   },
   {
+   "fetch_from": "bom_no.item",
+   "fetch_if_empty": 1,
    "fieldname": "production_item",
    "fieldtype": "Link",
    "in_global_search": 1,
@@ -510,7 +512,7 @@
  "idx": 1,
  "image_field": "image",
  "is_submittable": 1,
- "modified": "2021-01-19 06:08:55.294661",
+ "modified": "2021-02-16 04:30:47.312630",
  "modified_by": "Administrator",
  "module": "Manufacturing",
  "name": "Work Order",
