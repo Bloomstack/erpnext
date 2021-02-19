@@ -320,7 +320,7 @@ def get_batch_no(doctype, txt, searchfield, start, page_len, filters):
 		having_clause = ""
 
 	if args.get('warehouse'):
-		batch_nos = frappe.db.sql("""select sle.batch_no, round(sum(sle.actual_qty),2), sle.stock_uom,
+		return frappe.db.sql("""select sle.batch_no, round(sum(sle.actual_qty),2), sle.stock_uom, sle.package_tag,
 				concat('MFG-',batch.manufacturing_date), concat('EXP-',batch.expiry_date)
 			from `tabStock Ledger Entry` sle
 				INNER JOIN `tabBatch` batch on sle.batch_no = batch.name
@@ -328,6 +328,7 @@ def get_batch_no(doctype, txt, searchfield, start, page_len, filters):
 				batch.disabled = 0
 				and sle.item_code = %(item_code)s
 				and sle.warehouse = %(warehouse)s
+				{package_tag}
 				and (sle.batch_no like %(txt)s
 				or batch.expiry_date like %(txt)s
 				or batch.manufacturing_date like %(txt)s)
@@ -338,24 +339,72 @@ def get_batch_no(doctype, txt, searchfield, start, page_len, filters):
 			order by batch.expiry_date, sle.batch_no desc
 			limit %(start)s, %(page_len)s""".format(
 				cond=cond,
+				package_tag="and sle.package_tag={0}".format(filters.get("package_tag")) if filters.get("package_tag") else "",
 				match_conditions=get_match_cond(doctype),
 				having_clause = having_clause
 			), args)
-
-		return batch_nos
 	else:
-		return frappe.db.sql("""select name, concat('MFG-', manufacturing_date), concat('EXP-',expiry_date) from `tabBatch` batch
+		return frappe.db.sql("""
+			select batch.name, concat('MFG-', batch.manufacturing_date), concat('EXP-', batch.expiry_date) {package_tag_field}
+				from `tabBatch` batch
+					{package_tag}
 			where batch.disabled = 0
-			and item = %(item_code)s
-			and (name like %(txt)s
-			or expiry_date like %(txt)s
-			or manufacturing_date like %(txt)s)
-			and docstatus < 2
-			{0}
+			and batch.item = %(item_code)s
+			and (batch.name like %(txt)s
+			or batch.expiry_date like %(txt)s
+			or batch.manufacturing_date like %(txt)s)
+			and batch.docstatus < 2
+			{cond}
 			{match_conditions}
-			order by expiry_date, name desc
-			limit %(start)s, %(page_len)s""".format(cond, match_conditions=get_match_cond(doctype)), args)
+			order by batch.expiry_date, batch.name desc
+			limit %(start)s, %(page_len)s""".format(
+				cond=cond,
+				package_tag_field=", package_tag.name" if filters.get("package_tag") else "",
+				package_tag="inner join `tabPackage Tag` package_tag on batch.name=package_tag.batch_no" if filters.get("package_tag") else "",
+				match_conditions=get_match_cond(doctype)
+			), args)
 
+def get_package_tags(doctype, txt, searchfield, start, page_len, filters):
+
+	args = {
+		'item_code': filters.get("item_code"),
+		'txt': "%{0}%".format(txt),
+		"start": start,
+		'page_len': page_len
+	}
+
+	if filters.get('warehouse'):
+		args.update({'warehouse': filters.get("warehouse")})
+
+		return frappe.db.sql("""
+			select sle.package_tag, tag.package_tag, tag.item_code, tag.item_name, tag.item_group, round(sum(sle.actual_qty),2)
+			from `tabStock Ledger Entry` sle
+				INNER JOIN `tabPackage Tag` tag
+					on sle.package_tag = tag.name
+			where
+				{item_code}
+				and sle.warehouse = %(warehouse)s
+				and sle.package_tag like %(txt)s
+				{batch_no}
+				{match_conditions}
+			group by sle.package_tag having sum(sle.actual_qty) > 0
+			limit %(start)s, %(page_len)s""".format(
+				item_code="tag.item_code = %(item_code)s" if filters.get("item_code") else "tag.item_code is null",
+				batch_no="and sle.batch_no = {0}".format(frappe.db.escape(filters.get("batch_no"))) if filters.get("batch_no") else "",
+				match_conditions=get_match_cond(doctype)
+		), args, debug=1, explain=1)
+	else:
+		return frappe.db.sql("""select name, package_tag, item_code, item_name, item_group from `tabPackage Tag` package_tag
+			where {item_code}
+			and package_tag.name like %(txt)s
+			{batch_no}
+			{match_conditions}
+			order by package_tag.name desc
+			limit %(start)s, %(page_len)s""".format(
+				item_code="package_tag.item_code = %(item_code)s" if filters.get("item_code") else "package_tag.item_code is null",
+				batch_no="and package_tag.batch_no = {0}".format(frappe.db.escape(filters.get("batch_no"))) if filters.get("batch_no") else "",
+				match_conditions=get_match_cond(doctype)
+		), args, debug=1, explain=1)
 
 def get_account_list(doctype, txt, searchfield, start, page_len, filters):
 	filter_list = []
@@ -552,9 +601,9 @@ def get_purchase_receipts(doctype, txt, searchfield, start, page_len, filters):
 	fields = get_fields("Purchase Receipt", ["name"])
 	item_filters = [
 		['Purchase Receipt', 'docstatus', '=', '1'],
-		['Purchase Receipt', 'name', 'like', '%' + txt + '%'],	
+		['Purchase Receipt', 'name', 'like', '%' + txt + '%'],
 		['Purchase Receipt Item', 'item_code', '=', filters.get("item_code")]
-	]	
+	]
 
 	purchase_receipts = frappe.get_all('Purchase Receipt',
 		fields=fields,
@@ -611,6 +660,9 @@ def get_fields(doctype, fields=[]):
 	fields.extend(meta.get_search_fields())
 
 	if meta.title_field and not meta.title_field.strip() in fields:
+		fields.insert(1, meta.title_field.strip())
+	elif meta.title_field and meta.title_field.strip() in fields:
+		fields.pop(fields.index(meta.title_field.strip()))
 		fields.insert(1, meta.title_field.strip())
 
 	return unique(fields)
