@@ -695,6 +695,7 @@ def make_stock_entry(work_order_id, purpose, qty=None):
 	stock_entry.company = work_order.company
 	stock_entry.from_bom = 1
 	stock_entry.bom_no = work_order.bom_no
+	stock_entry.manufacturing_type = work_order.manufacturing_type
 	stock_entry.use_multi_level_bom = work_order.use_multi_level_bom
 	stock_entry.fg_completed_qty = qty or (flt(work_order.qty) - flt(work_order.produced_qty))
 	if work_order.bom_no:
