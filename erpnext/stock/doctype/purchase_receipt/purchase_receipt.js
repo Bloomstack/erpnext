@@ -45,17 +45,6 @@ frappe.ui.form.on("Purchase Receipt", {
 			frm.trigger("toggle_display_account_head");
 		}
 
-		if(frm.doc.docstatus === 1 && frm.doc.status !== 'Closed' && flt(frm.doc.per_billed) === 0) {
-			frm.add_custom_button(__('Update Rate'), () => {
-				erpnext.utils.update_child_items({
-					frm: frm,
-					child_docname: "items",
-					child_doctype: "Purchase Receipt Detail",
-					cannot_add_row: false,
-				})
-			});
-		}
-
 		if (frm.doc.docstatus === 1 && frm.doc.is_return === 1 && frm.doc.per_billed !== 100) {
 			frm.add_custom_button(__('Debit Note'), function() {
 				frappe.model.open_mapped_doc({
