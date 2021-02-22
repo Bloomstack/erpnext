@@ -16,7 +16,7 @@ class NegativeStockError(frappe.ValidationError): pass
 _exceptions = frappe.local('stockledger_exceptions')
 # _exceptions = []
 
-def make_sl_entries(sl_entries, is_amended=None, allow_negative_stock=False, via_landed_cost_voucher=False, force_update=False):
+def make_sl_entries(sl_entries, is_amended=None, allow_negative_stock=False, via_landed_cost_voucher=False):
 	if sl_entries:
 		from erpnext.stock.utils import update_bin
 
@@ -28,13 +28,6 @@ def make_sl_entries(sl_entries, is_amended=None, allow_negative_stock=False, via
 			sle_id = None
 			if sle.get('is_cancelled') == 'Yes':
 				sle['actual_qty'] = -flt(sle['actual_qty'])
-			args = sle.copy()
-			if force_update:
-				sle_entry = frappe.db.get_value("Stock Ledger Entry", filters={"item_code":sle.get('item_code'), "voucher_no":sle.get("voucher_no")})
-				doc = frappe.get_doc("Stock Ledger Entry", sle_entry)
-				doc.cancel()
-				doc.delete()
-				frappe.db.commit()
 
 			if sle.get("actual_qty") or sle.get("voucher_type")=="Stock Reconciliation":
 				sle_id = make_entry(sle, allow_negative_stock, via_landed_cost_voucher)
