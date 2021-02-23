@@ -14,7 +14,6 @@
   "purpose",
   "company",
   "work_order",
-  "purchase_receipt",
   "purchase_order",
   "delivery_note_no",
   "sales_invoice_no",
@@ -639,19 +638,12 @@
    "label": "Harvest",
    "options": "Harvest",
    "read_only": 1
-  },
-  {
-   "fetch_from": "work_order.purchase_receipt",
-   "fieldname": "purchase_receipt",
-   "fieldtype": "Data",
-   "label": "Purchase Receipt",
-   "read_only": 1
   }
  ],
  "icon": "fa fa-file-text",
  "idx": 1,
  "is_submittable": 1,
- "modified": "2021-02-19 04:47:54.632804",
+ "modified": "2020-09-10 23:06:16.110675",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Stock Entry",
