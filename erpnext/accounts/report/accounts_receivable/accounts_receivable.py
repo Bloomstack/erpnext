@@ -98,20 +98,13 @@ class ReceivablePayableReport(object):
 		"""
 		Insert summary lines for each sales partner if group by partner feature is requested.
 		"""
-		previous_partner = ""
+		previous_partner = self.data[0].get("sales_partner")
 		outstanding_amount, paid_amount, invoiced_amount = 0.0, 0.0, 0.0
 		range1, range2, range3, range4 = 0,0,0,0
-		index = 0
 		data = []
-		for row in self.data:
-			index += 1
-			current_partner = row.get("sales_partner")
 
-			#create a summary line if the sales partner has changed, reset totals
-			if current_partner != previous_partner:
-				total = range1 + range2 + range3 + range4
-				partner_sales = "Unassigned" if previous_partner == "" else previous_partner
-				summary_line = {
+		def create_summary_line(partner_sales, outstanding_amount, paid_amount, invoiced_amount, range1, range2, range3, range4, total):
+			summary_line = {
 					"sales_partner": "Total for {0}".format(partner_sales),
 					"outstanding": outstanding_amount,
 					"paid": paid_amount,
@@ -122,22 +115,45 @@ class ReceivablePayableReport(object):
 					"range4": range4,
 					"total": total
 				}
-				data.append(summary_line)
-				data.append({})
-				data.append(row)
-				outstanding_amount, paid_amount, invoiced_amount = 0.0, 0.0, 0.0
-				range1, range2, range3, range4 = 0,0,0,0
+			return summary_line
+
+		for row in self.data:
+			current_partner = row.get("sales_partner")
+
+			#create a summary line if the sales partner has changed, reset totals
+			if current_partner != previous_partner:
+				print("Creating summary for: ", previous_partner)
+				total = range1 + range2 + range3 + range4
+				partner_sales = "Unassigned" if previous_partner == "" else previous_partner
+
+				summary_line = create_summary_line(partner_sales, outstanding_amount, paid_amount, invoiced_amount, range1, range2, range3, range4, total)
+				data.append(summary_line) #adding the summary line for the sales partner
+				data.append({}) #adding empty line for clean report
+
+				#resetting values to current sales partner
+				outstanding_amount = row.get("outstanding", 0.0)
+				paid_amount = row.get("paid", 0.0)
+				invoiced_amount = row.get("invoiced", 0.0)
+				range1 = row.get("range1", 0.0)
+				range2 = row.get("range2", 0.0)
+				range3 = row.get("range3", 0.0)
+				range4 = row.get("range4", 0.0)
 				previous_partner = current_partner
 			else:
 				#accumulate totals for summary lines
-				data.append(row)
 				outstanding_amount += row.get("outstanding", 0.0)
-				paid_amount = row.get("paid", 0.0)
-				invoiced_amount = row.get("invoiced", 0.0)
+				paid_amount += row.get("paid", 0.0)
+				invoiced_amount += row.get("invoiced", 0.0)
 				range1 += row.get("range1", 0.0)
 				range2 += row.get("range2", 0.0)
 				range3 += row.get("range3", 0.0)
 				range4 += row.get("range4", 0.0)
+
+			data.append(row)
+
+		#summary line for last sales partner
+		summary_line = create_summary_line(current_partner, outstanding_amount, paid_amount, invoiced_amount, range1, range2, range3, range4, total)
+		data.append(summary_line)
 
 		self.data = data
 
