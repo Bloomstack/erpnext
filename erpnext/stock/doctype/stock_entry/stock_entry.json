@@ -644,7 +644,7 @@
    "fetch_from": "work_order.purchase_receipt",
    "fieldname": "purchase_receipt",
    "fieldtype": "Read Only",
-   "label": "Purchase Receipt",
+   "label": "Purchase Receipt"
   }
  ],
  "icon": "fa fa-file-text",
