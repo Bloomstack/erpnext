@@ -122,7 +122,6 @@ class ReceivablePayableReport(object):
 
 			#create a summary line if the sales partner has changed, reset totals
 			if current_partner != previous_partner:
-				print("Creating summary for: ", previous_partner)
 				total = range1 + range2 + range3 + range4
 				partner_sales = "Unassigned" if previous_partner == "" else previous_partner
 
