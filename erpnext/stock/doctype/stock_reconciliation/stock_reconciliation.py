@@ -450,7 +450,6 @@ def get_items(warehouse, posting_date, posting_time, company):
 		from tabBin bin, tabItem i
 		where i.name=bin.item_code and i.disabled=0 and i.is_stock_item = 1
 		and i.has_variants = 0
-		and i.has_variants = 0 and i.has_serial_no = 0 and i.has_batch_no = 0
 		and exists(select name from `tabWarehouse` where lft >= %s and rgt <= %s and name=bin.warehouse)
 	""", (lft, rgt))
 
