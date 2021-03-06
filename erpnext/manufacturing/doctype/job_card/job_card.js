@@ -70,9 +70,9 @@ frappe.ui.form.on('Job Card', {
 						fieldname: 'employee'}, d => {
 						if (d.employee) {
 							frm.set_value("employee", d.employee);
+						} else {
+							frm.events.start_job(frm);
 						}
-
-						frm.events.start_job(frm);
 					}, __("Enter Value"), __("Start"));
 				} else {
 					frm.events.start_job(frm);
@@ -117,9 +117,7 @@ frappe.ui.form.on('Job Card', {
 			frm.set_value('current_time' , 0);
 		}
 
-		frm.save("Save", () => {}, "", () => {
-			frm.doc.time_logs.pop(-1);
-		});
+		frm.save();
 	},
 
 	complete_job: function(frm, completed_time, completed_qty) {
@@ -151,6 +149,8 @@ frappe.ui.form.on('Job Card', {
 	employee: function(frm) {
 		if (frm.doc.job_started && !frm.doc.current_time) {
 			frm.trigger("reset_timer");
+		} else {
+			frm.events.start_job(frm);
 		}
 	},
 
