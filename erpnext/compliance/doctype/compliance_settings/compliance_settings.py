@@ -20,4 +20,5 @@ class ComplianceSettings(Document):
 			else:
 				frappe.throw(_("Company {0} already added to sync.").format(frappe.bold(company.company)))
 
-		frappe.cache().hset("compliance", "companies", companies)
+	def on_update(self):
+		frappe.clear_document_cache(self.doctype, self.name)
