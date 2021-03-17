@@ -936,6 +936,9 @@ def make_work_orders(items, sales_order, company, project=None):
 	items = json.loads(items).get('items')
 	out = []
 
+	if not items:
+		frappe.throw(_("Please add an item to create a Work Order"))
+
 	for i in items:
 		if not i.get("bom"):
 			frappe.throw(_("Please select BOM against item {0}").format(i.get("item_code")))
