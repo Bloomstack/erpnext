@@ -99,6 +99,7 @@ class StockEntry(StockController):
 		if self.work_order and self.purpose == "Manufacture":
 			self.update_so_in_serial_number()
 		self.update_package_tag()
+		self.update_package_tag_transaction_status()
 
 	def on_cancel(self):
 
@@ -115,6 +116,7 @@ class StockEntry(StockController):
 		self.update_transferred_qty()
 		self.update_quality_inspection()
 		self.delete_auto_created_batches()
+		self.update_package_tag_transaction_status()
 
 	def set_job_card_data(self):
 		if self.job_card and not self.work_order:
@@ -1397,6 +1399,14 @@ class StockEntry(StockController):
 					else:
 						frappe.throw(_("Do not assign new item code to an existing package tag."))
 
+
+	def update_package_tag_transaction_status(self):
+		for item in self.items:
+			if not item.package_tag:
+				continue
+
+			exists = 1 if frappe.db.exists("Stock Ledger Entry", {"package_tag": item.package_tag}) else 0
+			frappe.db.set_value("Package Tag", item.package_tag, "has_transactions", exists)
 
 @frappe.whitelist()
 def move_sample_to_retention_warehouse(company, items):

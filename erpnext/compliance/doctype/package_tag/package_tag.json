@@ -8,6 +8,7 @@
  "engine": "InnoDB",
  "field_order": [
   "package_tag",
+  "has_transactions",
   "sb_item",
   "item_code",
   "item_name",
@@ -87,9 +88,16 @@
    "fieldtype": "Float",
    "label": "Package Tag Quantity",
    "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "has_transactions",
+   "fieldtype": "Check",
+   "label": "Has Transactions",
+   "read_only": 1
   }
  ],
- "modified": "2021-01-28 02:24:24.953775",
+ "modified": "2021-03-18 03:17:23.490256",
  "modified_by": "Administrator",
  "module": "Compliance",
  "name": "Package Tag",
