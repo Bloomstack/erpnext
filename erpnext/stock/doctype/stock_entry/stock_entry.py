@@ -1663,3 +1663,31 @@ def raw_material_update_on_bom():
 		if value.get("raw_material") and value.get("finished_good"):
 			avg_manufactured_qty = value.get("finished_good") / value.get("raw_material")
 			frappe.db.set_value("BOM", bom, "avg_manufactured_qty", avg_manufactured_qty)
+
+@frappe.whitelist()
+def make_stock_entry_from_batch(source_name, target_doc=None):
+	"""
+	Creates Stock Entry from Batch.
+	Args:
+		source_name (string): name of the doc from which Stock Entry is to be created
+		target_doc (list, optional): target document to be created. Defaults to None.
+	Returns:
+		target_doc: Created Stock Entry Document
+	"""
+	batch_fields = frappe.get_value("Batch", source_name, ["item", "item_name"], as_dict=1)
+
+	target_doc = get_mapped_doc("Batch", source_name, {
+		"Batch": {
+			"doctype": "Stock Entry"
+		},
+	}, target_doc)
+
+	# add line item to Stock Entry document
+	target_doc.append("items", {
+		"item_code": batch_fields.item,
+		"item_name": batch_fields.item_name,
+		"batch_no": source_name
+		})
+	target_doc.run_method("set_missing_values")
+
+	return target_doc

@@ -24,7 +24,11 @@ frappe.ui.form.on('Batch', {
 			'Material Request': () => frappe.model.open_mapped_doc({
 				method: "erpnext.stock.doctype.material_request.material_request.make_material_request",
 				frm: frm
-			})
+			}),
+			'Stock Entry': () => frappe.model.open_mapped_doc({
+				method: "erpnext.stock.doctype.stock_entry.stock_entry.make_stock_entry_from_batch",
+				frm: frm
+			}),
 		}
 	},
 	refresh: (frm) => {
