@@ -2,23 +2,16 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on('Compliance Info', {
-	refresh: (frm) => {
-		if (!frm.is_new()) {
-			if (!frm.doc.license_expiry_date || frm.doc.license_expiry_date > frappe.datetime.get_today()) {
-				frm.add_custom_button(__("Customer"), () => {
-					frappe.model.open_mapped_doc({
-						method: "erpnext.compliance.doctype.compliance_info.compliance_info.create_customer",
-						frm: frm
-					});
-				}, __("Create"));
-
-				frm.add_custom_button(__("Supplier"), () => {
-					frappe.model.open_mapped_doc({
-						method: "erpnext.compliance.doctype.compliance_info.compliance_info.create_supplier",
-						frm: frm
-					});
-				}, __("Create"));
-			}
-		}
+	setup: function (frm) {
+		frm.make_methods = {
+			'Customer': () => frappe.model.open_mapped_doc({
+				method: 'erpnext.compliance.doctype.compliance_info.compliance_info.create_customer',
+				frm: frm
+			}),
+			'Supplier': () => frappe.model.open_mapped_doc({
+				method: 'erpnext.compliance.doctype.compliance_info.compliance_info.create_supplier',
+				frm: frm
+			})
+		};
 	}
 });
