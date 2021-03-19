@@ -1406,7 +1406,8 @@ class StockEntry(StockController):
 				continue
 
 			exists = 1 if frappe.db.exists("Stock Ledger Entry", {"package_tag": item.package_tag}) else 0
-			frappe.db.set_value("Package Tag", item.package_tag, "has_transactions", exists)
+			if not cint(frappe.db.get_value("Package Tag", item.package_tag, "is_used")) == exists:
+				frappe.db.set_value("Package Tag", item.package_tag, "is_used", exists)
 
 @frappe.whitelist()
 def move_sample_to_retention_warehouse(company, items):

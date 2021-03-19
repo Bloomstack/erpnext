@@ -394,19 +394,19 @@ def get_package_tags(doctype, txt, searchfield, start, page_len, filters):
 				match_conditions=get_match_cond(doctype)
 		), args, debug=1, explain=1)
 	else:
-		if "has_transactions" in filters:
-			args.update({"has_transactions": filters.get("has_transactions")})
+		if "is_used" in filters:
+			args.update({"is_used": filters.get("is_used")})
 
 		return frappe.db.sql("""select name, package_tag, item_code, item_name, item_group from `tabPackage Tag` package_tag
 			where package_tag.name like %(txt)s
 			{item_code}
-			{has_transactions}
+			{is_used}
 			{batch_no}
 			{match_conditions}
 			order by package_tag.name desc
 			limit %(start)s, %(page_len)s""".format(
 				item_code="and package_tag.item_code = %(item_code)s" if filters.get("item_code") else "",
-				has_transactions="and package_tag.has_transactions = %(has_transactions)s" if "has_transactions" in filters else "",
+				is_used="and package_tag.is_used = %(is_used)s" if "is_used" in filters else "",
 				batch_no="and package_tag.batch_no = {0}".format(frappe.db.escape(filters.get("batch_no"))) if filters.get("batch_no") else "",
 				match_conditions=get_match_cond(doctype)
 		), args)
