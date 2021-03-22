@@ -1294,11 +1294,14 @@ def make_sales_order_from_batch(source_name, target_doc=None):
 		# throw if the item is not a sales item
 		frappe.throw(_("Following item {0}: {1} is not marked as sales item. You can enable them as sales item from its Item master".format(batch_fields.item, batch_fields.item_name)))
 
+	args = frappe.flags.args
 	target_doc = get_mapped_doc("Batch", source_name, {
 		"Batch": {
 			"doctype": "Sales Order"
 		},
 	}, target_doc)
+
+	target_doc.customer = args.customer
 
 	# add line item to sales order document
 	target_doc.append("items", {

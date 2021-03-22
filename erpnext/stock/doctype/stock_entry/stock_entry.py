@@ -99,7 +99,7 @@ class StockEntry(StockController):
 		if self.work_order and self.purpose == "Manufacture":
 			self.update_so_in_serial_number()
 		self.update_package_tag()
-		self.update_package_tag_transaction_status()
+		self.update_package_tag_is_used()
 
 	def on_cancel(self):
 
@@ -116,7 +116,7 @@ class StockEntry(StockController):
 		self.update_transferred_qty()
 		self.update_quality_inspection()
 		self.delete_auto_created_batches()
-		self.update_package_tag_transaction_status()
+		self.update_package_tag_is_used()
 
 	def set_job_card_data(self):
 		if self.job_card and not self.work_order:
@@ -1379,11 +1379,15 @@ class StockEntry(StockController):
 		if stock_entry_purpose == "Material Receipt":
 			for item in self.items:
 				if item.package_tag:
+					check_if_destroyed(item.package_tag)
+
 					frappe.db.set_value("Package Tag", item.package_tag, "coa_batch_no", item.batch_no)
 		elif stock_entry_purpose in ["Manufacture", "Repack"]:
 			source_item = next((item for item in self.items if item.s_warehouse), None)
 			for item in self.items:
 				if item.package_tag and item.t_warehouse:
+					check_if_destroyed(item.package_tag)
+
 					if frappe.db.get_value("Item", item.item_code, "requires_lab_tests"):
 						frappe.db.set_value("Package Tag", item.package_tag, "batch_no", item.batch_no)
 					else:
@@ -1399,15 +1403,17 @@ class StockEntry(StockController):
 					else:
 						frappe.throw(_("Do not assign new item code to an existing package tag."))
 
-
-	def update_package_tag_transaction_status(self):
+	def update_package_tag_is_used(self):
 		for item in self.items:
-			if not item.package_tag:
-				continue
+			if item.package_tag:
+				exists = 1 if frappe.db.exists("Stock Ledger Entry", {"package_tag": item.package_tag}) else 0
 
-			exists = 1 if frappe.db.exists("Stock Ledger Entry", {"package_tag": item.package_tag}) else 0
-			if not cint(frappe.db.get_value("Package Tag", item.package_tag, "is_used")) == exists:
-				frappe.db.set_value("Package Tag", item.package_tag, "is_used", exists)
+				if not cint(frappe.db.get_value("Package Tag", item.package_tag, "is_used")) == exists:
+					frappe.db.set_value("Package Tag", item.package_tag, "is_used", exists)
+
+def check_if_destroyed(package_tag):
+	if cint(frappe.db.get_value("Package Tag", package_tag, "lost_or_destroyed")):
+		frappe.throw(_("Package Tag {0} is Lost/Destroyed.").format(frappe.bold(package_tag)))
 
 @frappe.whitelist()
 def move_sample_to_retention_warehouse(company, items):
@@ -1674,3 +1680,31 @@ def raw_material_update_on_bom():
 		if value.get("raw_material") and value.get("finished_good"):
 			avg_manufactured_qty = value.get("finished_good") / value.get("raw_material")
 			frappe.db.set_value("BOM", bom, "avg_manufactured_qty", avg_manufactured_qty)
+
+@frappe.whitelist()
+def make_stock_entry_from_batch(source_name, target_doc=None):
+	"""
+	Creates Stock Entry from Batch.
+	Args:
+		source_name (string): name of the doc from which Stock Entry is to be created
+		target_doc (list, optional): target document to be created. Defaults to None.
+	Returns:
+		target_doc: Created Stock Entry Document
+	"""
+	batch_fields = frappe.get_value("Batch", source_name, ["item", "item_name"], as_dict=1)
+
+	target_doc = get_mapped_doc("Batch", source_name, {
+		"Batch": {
+			"doctype": "Stock Entry"
+		},
+	}, target_doc)
+
+	# add line item to Stock Entry document
+	target_doc.append("items", {
+		"item_code": batch_fields.item,
+		"item_name": batch_fields.item_name,
+		"batch_no": source_name
+		})
+	target_doc.run_method("set_missing_values")
+
+	return target_doc

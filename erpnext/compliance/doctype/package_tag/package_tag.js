@@ -3,18 +3,20 @@
 
 frappe.ui.form.on('Package Tag', {
 	setup: (frm) => {
-		frm.custom_make_buttons = {
-			'Waste Disposal': 'Waste Disposal'
+		frm.make_methods = {
+			'Waste Disposal': () => frappe.model.open_mapped_doc({
+				method: "erpnext.compliance.doctype.package_tag.package_tag.make_waste_disposal",
+				frm: frm,
+			})
 		};
 	},
 	refresh: function(frm) {
 		frm.trigger("make_dashboard");
-		frm.add_custom_button(__('Waste Disposal'), function() {
-			frappe.model.open_mapped_doc({
-				method: "erpnext.compliance.doctype.package_tag.package_tag.make_waste_disposal",
-				frm: frm,
-			});
-		}, __('Create'));
+		frm.add_custom_button(__('Lost / Destroyed'), function() {
+			frm.set_value("is_used", 1);
+			frm.set_value("lost_or_destroyed", 1);
+			frm.save();
+		});
 	},
 
 	make_dashboard: (frm) => {
