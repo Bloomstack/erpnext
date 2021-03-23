@@ -2,7 +2,6 @@
  "allow_import": 1,
  "autoname": "naming_series:",
  "creation": "2013-05-24 19:29:09",
- "default_print_format": "Shipping Manifest",
  "doctype": "DocType",
  "document_type": "Document",
  "engine": "InnoDB",
@@ -108,14 +107,15 @@
   "transporter_info",
   "delivery_start_time",
   "transporter",
+  "transporter_name",
   "driver",
-  "lr_no",
+  "driver_name",
   "vehicle_no",
   "col_break34",
   "delivery_end_time",
-  "transporter_name",
-  "driver_name",
+  "lr_no",
   "lr_date",
+  "estimated_arrival",
   "more_info",
   "project",
   "campaign",
@@ -913,18 +913,20 @@
   },
   {
    "fieldname": "lr_no",
-   "fieldtype": "Data",
+   "fieldtype": "Link",
    "label": "Transport Receipt No",
    "oldfieldname": "lr_no",
    "oldfieldtype": "Data",
+   "options": "Delivery Trip",
    "print_hide": 1,
    "print_width": "100px",
    "width": "100px"
   },
   {
    "fieldname": "vehicle_no",
-   "fieldtype": "Data",
+   "fieldtype": "Link",
    "label": "Vehicle No",
+   "options": "Vehicle",
    "print_hide": 1
   },
   {
@@ -952,13 +954,13 @@
    "default": "Today",
    "fieldname": "lr_date",
    "fieldtype": "Date",
+   "in_list_view": 1,
    "label": "Transport Receipt Date",
    "oldfieldname": "lr_date",
    "oldfieldtype": "Date",
    "print_hide": 1,
    "print_width": "100px",
-   "width": "100px",
-   "in_list_view": 1
+   "width": "100px"
   },
   {
    "collapsible": 1,
@@ -1023,10 +1025,10 @@
   {
    "fieldname": "territory",
    "fieldtype": "Link",
+   "in_list_view": 1,
    "label": "Territory",
    "options": "Territory",
-   "print_hide": 1,
-   "in_list_view": 1
+   "print_hide": 1
   },
   {
    "collapsible": 1,
@@ -1277,12 +1279,17 @@
    "fieldname": "email_coas",
    "fieldtype": "Button",
    "label": "Email Certificates of Analysis"
+  },
+  {
+   "fieldname": "estimated_arrival",
+   "fieldtype": "Datetime",
+   "label": "Estimated Arrival"
   }
  ],
  "icon": "fa fa-truck",
  "idx": 146,
  "is_submittable": 1,
- "modified": "2021-01-14 02:10:17.375775",
+ "modified": "2021-03-22 23:49:40.726086",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Delivery Note",
