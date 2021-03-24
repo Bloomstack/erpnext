@@ -116,6 +116,7 @@
   "lr_no",
   "lr_date",
   "estimated_arrival",
+  "departure_time",
   "more_info",
   "project",
   "campaign",
@@ -1284,12 +1285,17 @@
    "fieldname": "estimated_arrival",
    "fieldtype": "Datetime",
    "label": "Estimated Arrival"
+  },
+  {
+   "fieldname": "departure_time",
+   "fieldtype": "Datetime",
+   "label": "Departure Time"
   }
  ],
  "icon": "fa fa-truck",
  "idx": 146,
  "is_submittable": 1,
- "modified": "2021-03-22 23:49:40.726086",
+ "modified": "2021-03-24 00:13:23.847586",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Delivery Note",
