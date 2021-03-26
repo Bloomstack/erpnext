@@ -116,6 +116,8 @@
   "transporter_name",
   "driver_name",
   "lr_date",
+  "departure_time",
+  "estimated_arrival",
   "more_info",
   "project",
   "campaign",
@@ -898,7 +900,7 @@
   {
    "fieldname": "transporter",
    "fieldtype": "Link",
-   "label": "Transporter",
+   "label": "Supplier",
    "options": "Supplier",
    "print_hide": 1,
    "print_width": "150px",
@@ -913,8 +915,8 @@
   },
   {
    "fieldname": "lr_no",
-   "fieldtype": "Data",
-   "label": "Transport Receipt No",
+   "fieldtype": "Link",
+   "label": "Delivery Trip",
    "oldfieldname": "lr_no",
    "oldfieldtype": "Data",
    "print_hide": 1,
@@ -937,7 +939,7 @@
    "fetch_from": "transporter.name",
    "fieldname": "transporter_name",
    "fieldtype": "Data",
-   "label": "Transporter Name",
+   "label": "Supplier Name",
    "print_hide": 1,
    "read_only": 1
   },
@@ -952,13 +954,13 @@
    "default": "Today",
    "fieldname": "lr_date",
    "fieldtype": "Date",
-   "label": "Transport Receipt Date",
+   "in_list_view": 1,
+   "label": "Delivery Trip Date",
    "oldfieldname": "lr_date",
    "oldfieldtype": "Date",
    "print_hide": 1,
    "print_width": "100px",
-   "width": "100px",
-   "in_list_view": 1
+   "width": "100px"
   },
   {
    "collapsible": 1,
@@ -1277,12 +1279,22 @@
    "fieldname": "email_coas",
    "fieldtype": "Button",
    "label": "Email Certificates of Analysis"
+  },
+  {
+   "fieldname": "estimated_arrival",
+   "fieldtype": "Datetime",
+   "label": "Estimated Arrival Time"
+  },
+  {
+   "fieldname": "departure_time",
+   "fieldtype": "Datetime",
+   "label": "Departure Time"
   }
  ],
  "icon": "fa fa-truck",
  "idx": 146,
  "is_submittable": 1,
- "modified": "2021-01-14 02:10:17.375775",
+ "modified": "2021-03-25 22:21:03.089841",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Delivery Note",
