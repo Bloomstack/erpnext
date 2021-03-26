@@ -2,7 +2,6 @@
  "allow_import": 1,
  "autoname": "naming_series:",
  "creation": "2013-05-24 19:29:09",
- "default_print_format": "Shipping Manifest",
  "doctype": "DocType",
  "document_type": "Document",
  "engine": "InnoDB",
@@ -108,13 +107,13 @@
   "transporter_info",
   "delivery_start_time",
   "transporter",
+  "transporter_name",
   "driver",
-  "lr_no",
+  "driver_name",
   "vehicle_no",
   "col_break34",
   "delivery_end_time",
-  "transporter_name",
-  "driver_name",
+  "lr_no",
   "lr_date",
   "departure_time",
   "estimated_arrival",
@@ -919,14 +918,16 @@
    "label": "Delivery Trip",
    "oldfieldname": "lr_no",
    "oldfieldtype": "Data",
+   "options": "Delivery Trip",
    "print_hide": 1,
    "print_width": "100px",
    "width": "100px"
   },
   {
    "fieldname": "vehicle_no",
-   "fieldtype": "Data",
+   "fieldtype": "Link",
    "label": "Vehicle No",
+   "options": "Vehicle",
    "print_hide": 1
   },
   {
@@ -1025,10 +1026,10 @@
   {
    "fieldname": "territory",
    "fieldtype": "Link",
+   "in_list_view": 1,
    "label": "Territory",
    "options": "Territory",
-   "print_hide": 1,
-   "in_list_view": 1
+   "print_hide": 1
   },
   {
    "collapsible": 1,

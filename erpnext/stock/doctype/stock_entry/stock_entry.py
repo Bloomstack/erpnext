@@ -1615,6 +1615,10 @@ def validate_sample_quantity(item_code, sample_quantity, qty, batch_no = None):
 	if cint(qty) < cint(sample_quantity):
 		frappe.throw(_("Sample quantity {0} cannot be more than received quantity {1}").format(sample_quantity, qty))
 	retention_warehouse = frappe.db.get_single_value('Stock Settings', 'sample_retention_warehouse')
+
+	if not retention_warehouse:
+		frappe.throw(_("Please set Sample Retention Warehouse in Stock Settings"))
+
 	retainted_qty = 0
 	if batch_no:
 		retainted_qty = get_batch_qty(batch_no, retention_warehouse, item_code)
