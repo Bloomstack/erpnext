@@ -712,4 +712,7 @@ erpnext.patches.v13_0.update_batch_no_in_purchase_receipt
 erpnext.patches.v13_0.set_package_tag_qty_in_package_tag
 execute:frappe.delete_doc_if_exists("Custom Field", "Sales Order Item-batch_no")
 erpnext.patches.v13_0.delete_package_tag_property_setter_search_fields
+erpnext.patches.v13_0.set_batch_qty_in_batch
+erpnext.patches.v13_0.set_stock_valuation_method #2021-03-15
 erpnext.patches.v13_0.delete_bank_reconciliation_doctype
+erpnext.patches.v13_0.set_is_used

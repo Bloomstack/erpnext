@@ -45,29 +45,30 @@ def get_columns(filters):
 
 
 def get_conditions(filters):
-	conditions = ""
+	conditions = []
 	if not filters.get("from_date"):
 		frappe.throw(_("'From Date' is required"))
 
 	if filters.get("to_date"):
-		conditions += " and posting_date <= '%s'" % filters["to_date"]
+		conditions.append("and posting_date <= %(to_date)s")
 	else:
 		frappe.throw(_("'To Date' is required"))
 
-	return conditions
+	if filters.get("warehouse"):
+		filters.warehouse = frappe.parse_json(filters.get('warehouse'))
+		conditions.append(" and warehouse in %(warehouse)s")
 
+	return "".join(conditions) if conditions else ""
 
 # get all details
 def get_stock_ledger_entries(filters):
-	conditions = get_conditions(filters)
 	return frappe.db.sql("""
 		select item_code, batch_no, warehouse, posting_date, sum(actual_qty) as actual_qty
 		from `tabStock Ledger Entry`
-		where docstatus < 2 and ifnull(batch_no, '') != '' %s
+		where docstatus < 2 and ifnull(batch_no, '') != '' {conditions}
 		group by voucher_no, batch_no, item_code, warehouse
-		order by item_code, warehouse""" %
-		conditions, as_dict=1)
-
+		order by item_code, warehouse""".format(conditions=get_conditions(filters)),
+		filters, as_dict=1)
 
 def get_item_warehouse_batch_map(filters, float_precision):
 	sle = get_stock_ledger_entries(filters)

@@ -14,6 +14,9 @@
 {% block header_actions %}
 {% endblock %}
 
+{% block style %}
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+{% endblock %}
 {% block page_content %}
 
 {% from "templates/includes/macros.html" import item_name_and_description %}
@@ -39,7 +42,7 @@
 				<td class="text-right align-middle" colspan="2"><b>Requested Delivery Date</b></td>
 				<td>
 					<div>
-						<input type="date" id="order-for-delivery-date" class="form-control border border-dark">
+						<input type="text" placeholder="MM-DD-YYYY" id="date-picker" class="form-control border border-dark">
 					</div>
 				</td>
 			</tr>
@@ -124,4 +127,12 @@
 <script type="text/javascript" src="/assets/js/control.min.js"></script>
 <script type="text/javascript" src="/assets/js/dialog.min.js"></script>
 <script type="text/javascript" src="/assets/js/bootstrap-4-web.min.js"></script>
+<script src="//code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script>
+	$(function () {
+		$("#date-picker").datepicker({
+			dateFormat: "mm-dd-yy"
+		})
+	})
+</script>
 {% endblock %}

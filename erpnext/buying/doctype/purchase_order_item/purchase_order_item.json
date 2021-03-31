@@ -45,6 +45,13 @@
   "item_ignore_pricing_rule",
   "is_free_item",
   "is_fixed_asset",
+  "section_break_label",
+  "coa_batch",
+  "jar_type",
+  "labels_needed",
+  "unwind_direction",
+  "column_break_label",
+  "label_details",
   "section_break_29",
   "net_rate",
   "net_amount",
@@ -740,11 +747,47 @@
    "fieldname": "material_request_plan_item",
    "fieldtype": "Data",
    "label": "Material Request Plan Item"
+  },
+  {
+   "fieldname": "section_break_label",
+   "fieldtype": "Section Break",
+   "label": "Label Details"
+  },
+  {
+   "fieldname": "coa_batch",
+   "fieldtype": "Link",
+   "label": "COA Batch",
+   "options": "Batch"
+  },
+  {
+   "fieldname": "jar_type",
+   "fieldtype": "Data",
+   "label": "Jar Type (Flower Only)"
+  },
+  {
+   "fieldname": "labels_needed",
+   "fieldtype": "Data",
+   "label": "Labels Needed (Wrap, Front, Back, Top, Bag, etc.)"
+  },
+  {
+   "fieldname": "unwind_direction",
+   "fieldtype": "Data",
+   "label": "Unwind Direction (Flower Only)"
+  },
+  {
+   "fieldname": "column_break_label",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "label_details",
+   "fieldtype": "Long Text",
+   "label": "Label Print Details",
+   "read_only": 1
   }
  ],
  "idx": 1,
  "istable": 1,
- "modified": "2020-12-09 03:10:41.856034",
+ "modified": "2021-03-15 07:46:17.788951",
  "modified_by": "Administrator",
  "module": "Buying",
  "name": "Purchase Order Item",

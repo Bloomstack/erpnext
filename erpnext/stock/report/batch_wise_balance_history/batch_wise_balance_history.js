@@ -23,7 +23,15 @@ frappe.query_reports["Batch-Wise Balance History"] = {
 			"fieldtype": "Link",
 			"options": "Item",
 			"width": "80"
-		}
+		},
+		{
+			"fieldname":"warehouse",
+			"label": __("Warehouse"),
+			"fieldtype": "MultiSelectList",
+			get_data: function(txt) {
+				return frappe.db.get_link_options('Warehouse', txt);
+			}
+		},
 	],
 	"formatter": function (value, row, column, data, default_formatter) {
 		if (column.fieldname == "Batch" && data && !!data["Batch"]) {

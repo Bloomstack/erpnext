@@ -108,7 +108,7 @@
  "icon": "fa fa-cog",
  "idx": 1,
  "issingle": 1,
- "modified": "2020-09-24 04:43:52.270309",
+ "modified": "2021-03-23 01:19:39.370971",
  "modified_by": "Administrator",
  "module": "Buying",
  "name": "Buying Settings",
@@ -125,5 +125,6 @@
   }
  ],
  "sort_field": "modified",
- "sort_order": "DESC"
+ "sort_order": "DESC",
+ "track_changes": 1
 }

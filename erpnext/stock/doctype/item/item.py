@@ -130,6 +130,7 @@ class Item(WebsiteGenerator):
 		self.validate_customer_provided_part()
 		self.update_defaults_from_item_group()
 		self.validate_auto_reorder_enabled_in_stock_settings()
+		self.validate_valuation_method()
 		self.cant_change()
 		self.update_show_in_website()
 
@@ -888,6 +889,10 @@ class Item(WebsiteGenerator):
 			enabled = frappe.db.get_single_value('Stock Settings', 'auto_indent')
 			if not enabled:
 				frappe.msgprint(msg=_("You have to enable auto re-order in Stock Settings to maintain re-order levels."), title=_("Enable Auto Re-Order"), indicator="orange")
+
+	def validate_valuation_method(self):
+			if not self.valuation_method:
+				self.valuation_method = frappe.db.get_single_value("Stock Settings", "valuation_method")
 
 def get_timeline_data(doctype, name):
 	'''returns timeline data based on stock ledger entry'''

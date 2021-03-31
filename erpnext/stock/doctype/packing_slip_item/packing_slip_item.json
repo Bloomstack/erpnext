@@ -15,10 +15,13 @@
   "quantity_section",
   "qty",
   "net_weight",
-  "box_type",
-  "column_break_10",
   "stock_uom",
+  "conversion_factor",
+  "column_break_10",
+  "uom",
+  "stock_qty",
   "weight_uom",
+  "box_type",
   "no_of_boxes_required",
   "page_break",
   "dn_detail"
@@ -95,7 +98,7 @@
   {
    "fieldname": "stock_uom",
    "fieldtype": "Link",
-   "label": "UOM",
+   "label": "Stock UOM",
    "options": "UOM",
    "print_width": "100px",
    "read_only": 1,
@@ -125,6 +128,24 @@
    "label": "DN Detail"
   },
   {
+   "fieldname": "uom",
+   "fieldtype": "Link",
+   "label": "UOM",
+   "options": "UOM"
+  },
+  {
+   "fieldname": "conversion_factor",
+   "fieldtype": "Float",
+   "label": "UOM Conversion Factor",
+   "read_only": 1
+  },
+  {
+   "fieldname": "stock_qty",
+   "fieldtype": "Float",
+   "label": "Qty as per Stock UOM",
+   "read_only": 1
+  },
+  {
    "fieldname": "box_type",
    "fieldtype": "Link",
    "label": "Box Type",
@@ -138,7 +159,7 @@
  ],
  "idx": 1,
  "istable": 1,
- "modified": "2021-02-02 20:49:08.434358",
+ "modified": "2021-03-16 00:44:18.015863",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Packing Slip Item",

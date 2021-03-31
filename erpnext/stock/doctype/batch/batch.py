@@ -424,3 +424,19 @@ def get_active_batch(item_code):
 	else:
 		active_batch = {}
 	return active_batch
+
+@frappe.whitelist()
+def create_coa_material_request(source_name, target_doc=None):
+	"""
+	Creating Material Request from Batch.
+
+	Args:
+		source_name (string): batch name
+		target_doc (json, optional): json of new material_request doc. Defaults to None.
+
+	Returns:
+		target_doc (json): new material_request doc
+	"""
+	doc = frappe.get_doc("Batch", source_name)
+	target_doc = frappe.new_doc("Material Request")
+	return target_doc

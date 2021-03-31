@@ -11,6 +11,21 @@ frappe.ui.form.on('Batch', {
 					'has_batch_no': 1
 				}
 			};
+		},
+		frm.make_methods = {
+			'Sales Order': () => frm.trigger("select_customer_and_create_sales_order"),
+			'Package Tag': () => frappe.model.open_mapped_doc({
+				method: "erpnext.compliance.doctype.package_tag.package_tag.make_package_tag_from_batch",
+				frm: frm
+			}),
+			'Material Request': () => frappe.model.open_mapped_doc({
+				method: "erpnext.stock.doctype.material_request.material_request.make_material_request",
+				frm: frm
+			}),
+			'Stock Entry': () => frappe.model.open_mapped_doc({
+				method: "erpnext.stock.doctype.stock_entry.stock_entry.make_stock_entry_from_batch",
+				frm: frm
+			}),
 		}
 	},
 	refresh: (frm) => {
@@ -25,12 +40,21 @@ frappe.ui.form.on('Batch', {
 			frm.add_custom_button(__('Material Request'), () => {
 				frm.trigger("make_material_request");
 			}, __("Create"));
+			frm.add_custom_button(__('Material Request (COA Batch)'), () => {
+				frm.trigger("make_coa_material_request");
+			}, __("Create"));
 			this.frm.page.set_inner_btn_group_as_primary(__('Create'));
 		}
 	},
 	make_material_request: function (frm) {
 		frappe.model.open_mapped_doc({
 			method: "erpnext.stock.doctype.material_request.material_request.make_material_request",
+			frm: frm
+		});
+	},
+	make_coa_material_request: function (frm) {
+		frappe.model.open_mapped_doc({
+			method: "erpnext.stock.doctype.batch.batch.create_coa_material_request",
 			frm: frm
 		});
 	},
@@ -163,6 +187,40 @@ frappe.ui.form.on('Batch', {
 				}
 			});
 		}
+	},
+	select_customer_and_create_sales_order: function (frm) {
+		if (frm.doc.customer) {
+			frm.events.create_sales_order(frm, frm.doc.customer);
+		}
+		else {
+			var dialog = new frappe.ui.Dialog({
+				title: __('Select Customer'),
+				fields: [
+					{
+						"label" : "Customer",
+						"fieldname": "customer",
+						"fieldtype": "Link",
+						"options": "Customer",
+						"reqd": 1
+					}
+				],
+				primary_action: function() {
+					var data = dialog.get_values();
+					frm.events.create_sales_order(frm, data.customer);
+				},
+				primary_action_label: __('Create Sales Order')
+			});
+			dialog.show();
+		}
+	},
+	create_sales_order: function (frm, customer) {
+		frappe.model.open_mapped_doc({
+			method: "erpnext.selling.doctype.sales_order.sales_order.make_sales_order_from_batch",
+			frm: frm,
+			args: {
+				customer: customer
+			}
+		})
 	}
 })
 

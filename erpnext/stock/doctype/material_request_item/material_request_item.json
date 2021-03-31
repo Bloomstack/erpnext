@@ -37,7 +37,7 @@
   "amount",
   "stock_qty",
   "section_break_label",
-  "label_qty",
+  "coa_batch",
   "jar_type",
   "labels_needed",
   "unwind_direction",
@@ -448,11 +448,6 @@
    "label": "Unwind Direction (Flower Only)"
   },
   {
-   "fieldname": "label_qty",
-   "fieldtype": "Int",
-   "label": "Label Quantity"
-  },
-  {
    "fieldname": "batch_item",
    "fieldtype": "Link",
    "label": "Batch Item",
@@ -500,11 +495,17 @@
    "fieldtype": "Link",
    "label": "Source Warehouse (Material Transfer)",
    "options": "Warehouse"
+  },
+  {
+   "fieldname": "coa_batch",
+   "fieldtype": "Link",
+   "label": "COA Batch",
+   "options": "Batch"
   }
  ],
  "idx": 1,
  "istable": 1,
- "modified": "2021-02-18 22:05:35.766070",
+ "modified": "2021-03-15 07:22:45.831726",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Material Request Item",

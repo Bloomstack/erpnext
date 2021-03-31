@@ -8,6 +8,8 @@
  "engine": "InnoDB",
  "field_order": [
   "package_tag",
+  "is_used",
+  "lost_or_destroyed",
   "sb_item",
   "item_code",
   "item_name",
@@ -87,9 +89,23 @@
    "fieldtype": "Float",
    "label": "Package Tag Quantity",
    "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "is_used",
+   "fieldtype": "Check",
+   "label": "Is used",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "lost_or_destroyed",
+   "fieldtype": "Check",
+   "label": "Lost / Destroyed",
+   "read_only": 1
   }
  ],
- "modified": "2021-01-28 02:24:24.953775",
+ "modified": "2021-03-21 21:49:38.210008",
  "modified_by": "Administrator",
  "module": "Compliance",
  "name": "Package Tag",

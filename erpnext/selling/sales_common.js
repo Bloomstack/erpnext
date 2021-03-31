@@ -509,7 +509,9 @@ erpnext.selling.SellingController = erpnext.TransactionController.extend({
 	*/
 	set_batch_number: function(cdt, cdn) {
 		const doc = frappe.get_doc(cdt, cdn);
-		if (doc && doc.has_batch_no && doc.warehouse) {
+		// Added !doc.batch_no in if conditon to make sure it calculate avialiable qty for selected batch
+		// otherwise warehouse trigger set default batch value. cauation: dont remove it(!doc.batch_no)
+		if (doc && doc.has_batch_no && doc.warehouse && !doc.batch_no) {
 			this._set_batch_number(doc);
 		}
 	},
@@ -526,8 +528,6 @@ erpnext.selling.SellingController = erpnext.TransactionController.extend({
 			callback: function(r) {
 				if(r.message) {
 					frappe.model.set_value(doc.doctype, doc.name, 'batch_no', r.message);
-				} else {
-				    frappe.model.set_value(doc.doctype, doc.name, 'batch_no', r.message);
 				}
 			}
 		});

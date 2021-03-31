@@ -90,7 +90,7 @@ def place_order(delivery_date=None):
 				if not cint(item_stock.in_stock):
 					throw(_("{1} Not in Stock").format(item.item_code))
 				if item.qty > item_stock.stock_qty[0][0]:
-					throw(_("Only {0} in Stock for item {1}").format(item_stock.stock_qty[0][0], item.item_code))
+					throw(_("Only {0} in Stock for item {1}: {2}").format(item_stock.stock_qty[0][0], item.item_code, item.item_name))
 
 	#if checkout without payment has been enabled, submit the quotation, and convert to sales order
 	if cart_settings.sales_team_order_without_payment:
@@ -448,13 +448,14 @@ def get_party(user=None):
 	# Hook: Allows overriding the contact person used by the shopping cart
 	#
 	# Signature:
-	#       override_shopping_cart_get_party_contact(contact_name)
+	#		override_shopping_cart_get_party_contact(contact_name)
 	#
 	# Args:
 	#		contact_name: The contact name that will be used to fetch a party
 	#
 	# Returns:
 	#		Hook expects a string or None to override the contact_name
+
 	hooks = frappe.get_hooks("override_shopping_cart_get_party_contact") or []
 	for method in hooks:
 		contact_name = frappe.call(method, contact_name=contact_name) or contact_name
@@ -462,8 +463,7 @@ def get_party(user=None):
 	if contact_name:
 		contact = frappe.get_doc('Contact', contact_name)
 		if contact.links:
-			party_doctype = contact.links[0].link_doctype
-			party = contact.links[0].link_name
+			party_doctype, party = _get_customer_or_lead(contact)
 
 	cart_settings = frappe.get_doc("Shopping Cart Settings")
 
@@ -522,6 +522,16 @@ def get_party(user=None):
 		contact.save(ignore_permissions=True)
 
 		return customer
+
+def _get_customer_or_lead(contact):
+	if contact.get("links", {"link_doctype": "Customer"}):
+		links = contact.get("links", {"link_doctype": "Customer"})[0]
+		return links.link_doctype, links.link_name
+	elif contact.get("links", {"link_doctype": "Lead"}):
+		links = contact.get("links", {"link_doctype": "Lead"})[0]
+		return links.link_doctype, links.link_name
+	else:
+		return contact.links[0].link_doctype, contact.links[0].link_name
 
 def get_debtors_account(cart_settings):
 	payment_gateway_account = get_default_payment_gateway_account(cart_settings)

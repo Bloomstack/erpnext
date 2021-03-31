@@ -27,6 +27,11 @@ frappe.ui.form.on("Company", {
 		});
 	},
 
+	refresh: function(frm) {
+		frm.toggle_reqd("default_direct_expenses", 1);
+		frm.toggle_reqd("default_indirect_expenses", 1);
+	},
+
 	company_name: function(frm) {
 		if(frm.doc.__islocal) {
 			// add missing " " arg in split method
@@ -222,6 +227,8 @@ erpnext.company.setup_queries = function(frm) {
 		["default_receivable_account", {"account_type": "Receivable"}],
 		["default_payable_account", {"account_type": "Payable"}],
 		["default_expense_account", {"root_type": "Expense"}],
+		["default_direct_expenses", {"root_type": "Expense"}],
+		["default_indirect_expenses", {"root_type": "Expense"}],
 		["default_income_account", {"root_type": "Income"}],
 		["default_payroll_payable_account", {"root_type": "Liability"}],
 		["round_off_account", {"root_type": "Expense"}],

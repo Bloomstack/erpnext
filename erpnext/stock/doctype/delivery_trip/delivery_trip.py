@@ -92,6 +92,7 @@ class DeliveryTrip(Document):
 				status = "In Transit"
 
 		self.status = status
+
 	def update_delivery_notes(self, delete=False):
 		"""
 		Update all connected Delivery Notes with Delivery Trip details
@@ -102,8 +103,6 @@ class DeliveryTrip(Document):
 			delete (bool, optional): Defaults to `False`. `True` if driver details need to be emptied, else `False`.
 		"""
 
-		delivery_notes = list(set([stop.delivery_note for stop in self.delivery_stops if stop.delivery_note]))
-
 		update_fields = {
 			"driver": self.driver,
 			"driver_name": self.driver_name,
@@ -112,8 +111,13 @@ class DeliveryTrip(Document):
 			"lr_date": self.departure_time
 		}
 
-		for delivery_note in delivery_notes:
-			note_doc = frappe.get_doc("Delivery Note", delivery_note)
+		delivery_notes = []
+
+		for stop in self.delivery_stops:
+			if not stop.delivery_note or stop.delivery_note in delivery_notes:
+				continue
+
+			note_doc = frappe.get_doc("Delivery Note", stop.delivery_note)
 
 			for field, value in update_fields.items():
 				value = None if delete else value
@@ -123,6 +127,8 @@ class DeliveryTrip(Document):
 				setattr(note_doc, "delivered", 0)
 				setattr(note_doc, "status", "To Deliver")
 
+			# Set estimated_arrival in DN
+			setattr(note_doc, "estimated_arrival", stop.estimated_arrival)
 			note_doc.flags.ignore_validate_update_after_submit = True
 			note_doc.save()
 

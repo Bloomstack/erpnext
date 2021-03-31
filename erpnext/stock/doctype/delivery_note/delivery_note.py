@@ -668,7 +668,15 @@ def make_packing_slip(source_name, target_doc=None):
 			"validation": {
 				"docstatus": ["=", 0]
 			}
-		}
+		},
+		"Delivery Note Item": {
+			"doctype": "Packing Slip Item",
+			"field_map": {
+				"uom": "uom",
+				"conversion_factor": "conversion_factor",
+				"stock_qty": "stock_qty"
+			}
+		},
 	}, target_doc)
 
 	return doclist

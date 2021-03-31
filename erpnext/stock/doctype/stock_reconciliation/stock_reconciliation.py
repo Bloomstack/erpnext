@@ -468,7 +468,7 @@ def get_items(warehouse, posting_date, posting_time, company):
 		stock_bal = get_stock_balance(d[0], d[2], posting_date, posting_time,
 			with_valuation_rate=True)
 
-		if frappe.db.get_value("Item", d[0], "disabled") == 0:
+		if frappe.db.get_value("Item", d[0], "disabled") == 0 and stock_bal[0]:
 			res.append({
 				"item_code": d[0],
 				"warehouse": d[2],

@@ -26,6 +26,7 @@
   "cbd",
   "source",
   "supplier",
+  "customer",
   "column_break_9",
   "reference_doctype",
   "reference_name",
@@ -212,13 +213,20 @@
    "fieldtype": "Long Text",
    "label": "Label Details",
    "read_only": 1
+  },
+  {
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "label": "Customer",
+   "options": "Customer",
+   "read_only": 1
   }
  ],
  "icon": "fa fa-archive",
  "idx": 1,
  "image_field": "image",
  "max_attachments": 5,
- "modified": "2021-01-04 00:01:20.930703",
+ "modified": "2021-03-18 00:20:52.920465",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Batch",

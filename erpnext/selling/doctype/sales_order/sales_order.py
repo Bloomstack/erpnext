@@ -936,6 +936,9 @@ def make_work_orders(items, sales_order, company, project=None):
 	items = json.loads(items).get('items')
 	out = []
 
+	if not items:
+		frappe.throw(_("Please add an item to create a Work Order"))
+
 	for i in items:
 		if not i.get("bom"):
 			frappe.throw(_("Please select BOM against item {0}").format(i.get("item_code")))
@@ -1257,19 +1260,55 @@ def create_muliple_production_plans(orders):
 
 @frappe.whitelist()
 def get_customer_item_ref_code(item, customer_name):
-    """Fetch the Customer Item Code for the given Item.
-    
-    Args:
-        item (varchar) : Item Code for the Sales Item 
-        customer_name (varchar) : Customer Name Of Sales Order
+	"""Fetch the Customer Item Code for the given Item.
 
-    Returns:
-        Customer Item Code (varchar) : Returns the Customer Item Reference Code
-    """  	
-    customer_names = frappe.get_all("Item Customer Detail", filters={
-        "parent": item,
-        "customer_name": customer_name
-    }, fields=["ref_code"])    	
+	Args:
+		item (varchar) : Item Code for the Sales Item
+		customer_name (varchar) : Customer Name Of Sales Order
 
-    if customer_names:
-        return customer_names[0].ref_code
+	Returns:
+		Customer Item Code (varchar) : Returns the Customer Item Reference Code
+	"""
+	customer_names = frappe.get_all("Item Customer Detail", filters={
+		"parent": item,
+		"customer_name": customer_name
+	}, fields=["ref_code"])
+
+	if customer_names:
+		return customer_names[0].ref_code
+
+@frappe.whitelist()
+def make_sales_order_from_batch(source_name, target_doc=None):
+	"""
+	Creates Sales Order from Batch.
+
+	Args:
+		source_name (string): name of the doc from which sales order is to be created
+		target_doc (list, optional): target document to be created. Defaults to None.
+
+	Returns:
+		target_doc: Created Sales Order Document
+	"""
+	batch_fields = frappe.get_value("Batch", source_name, ["item", "item_name"],as_dict=1)
+	if not frappe.db.get_value("Item", batch_fields.item, "is_sales_item"):
+		# throw if the item is not a sales item
+		frappe.throw(_("Following item {0}: {1} is not marked as sales item. You can enable them as sales item from its Item master".format(batch_fields.item, batch_fields.item_name)))
+
+	args = frappe.flags.args
+	target_doc = get_mapped_doc("Batch", source_name, {
+		"Batch": {
+			"doctype": "Sales Order"
+		},
+	}, target_doc)
+
+	target_doc.customer = args.customer
+
+	# add line item to sales order document
+	target_doc.append("items", {
+		"item_code": batch_fields.item,
+		"item_name": batch_fields.item_name,
+		"batch_no": source_name
+		})
+	target_doc.run_method("set_missing_values")
+
+	return target_doc

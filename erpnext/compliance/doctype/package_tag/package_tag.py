@@ -77,3 +77,28 @@ def make_waste_disposal(source_name, target_doc=None):
 		}
 	}, target_doc, set_missing_values)
 	return doc
+
+@frappe.whitelist()
+def make_package_tag_from_batch(source_name, target_doc=None):
+	"""
+	Creates Package Tag from Batch.
+
+	Args:
+		source_name (string): name of the doc from which package tag is to be created
+		target_doc (list, optional): target document to be created. Defaults to None.
+
+	Returns:
+		target_doc: Created Package Tag Document
+	"""
+
+	target_doc = get_mapped_doc("Batch", source_name, {
+		"Batch": {
+			"doctype": "Package Tag",
+			"field_map": {
+				"item": "item_code",
+				"name": "batch_no"
+			}
+		},
+	}, target_doc)
+
+	return target_doc
