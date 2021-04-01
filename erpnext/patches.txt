@@ -715,4 +715,4 @@ erpnext.patches.v13_0.delete_package_tag_property_setter_search_fields
 erpnext.patches.v13_0.set_batch_qty_in_batch
 erpnext.patches.v13_0.set_stock_valuation_method #2021-03-15
 erpnext.patches.v13_0.delete_bank_reconciliation_doctype
-erpnext.patches.v13_0.set_is_used
+erpnext.patches.v13_0.set_is_used #01-04-2021

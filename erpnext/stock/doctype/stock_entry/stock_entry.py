@@ -1406,7 +1406,7 @@ class StockEntry(StockController):
 	def update_package_tag_is_used(self):
 		for item in self.items:
 			if item.package_tag:
-				exists = 1 if frappe.db.exists("Stock Ledger Entry", {"package_tag": item.package_tag}) else 0
+				exists = 1 if len(frappe.get_all("Stock Ledger Entry", {"package_tag": item.package_tag, "voucher_no": ["!=", self.name]})) else 0
 
 				if not cint(frappe.db.get_value("Package Tag", item.package_tag, "is_used")) == exists:
 					frappe.db.set_value("Package Tag", item.package_tag, "is_used", exists)

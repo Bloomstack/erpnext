@@ -172,6 +172,7 @@ class PurchaseReceipt(BuyingController):
 		self.make_gl_entries()
 		self.update_package_tag_batch()
 		update_per_received_in_production_plan(self)
+		self.update_package_tag_is_used()
 
 
 	def before_cancel(self):
@@ -206,6 +207,7 @@ class PurchaseReceipt(BuyingController):
 		self.make_gl_entries_on_cancel()
 		self.delete_auto_created_batches()
 		update_per_received_in_production_plan(self)
+		self.update_package_tag_is_used()
 
 	def get_current_stock(self):
 		for d in self.get('supplied_items'):
@@ -500,6 +502,14 @@ class PurchaseReceipt(BuyingController):
 						"coa_batch_no": item.batch_no
 					})
 			package_tag.save()
+
+	def update_package_tag_is_used(self):
+		for item in self.items:
+			if item.package_tag:
+				exists = 1 if len(frappe.get_all("Stock Ledger Entry", {"package_tag": item.package_tag, "voucher_no": ["!=", self.name]})) else 0
+
+				if not cint(frappe.db.get_value("Package Tag", item.package_tag, "is_used")) == exists:
+					frappe.db.set_value("Package Tag", item.package_tag, "is_used", exists)
 
 	def validate_duplicate_package_tags(self):
 		package_tags = [item.package_tag for item in self.items if item.package_tag]
@@ -796,7 +806,7 @@ def make_production_plan(source_name, target_doc=None):
 			"field_map": {
 				"item_code": "item_code",
 				"parent": "purchase_receipt",
-			}	
+			}
 		}
 	}, target_doc)
 	return doc
