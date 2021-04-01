@@ -207,7 +207,7 @@ class PurchaseReceipt(BuyingController):
 		self.make_gl_entries_on_cancel()
 		self.delete_auto_created_batches()
 		update_per_received_in_production_plan(self)
-		self.update_package_tag_is_used()
+		self.update_package_tag_is_used(reset=True)
 
 	def get_current_stock(self):
 		for d in self.get('supplied_items'):
@@ -503,12 +503,13 @@ class PurchaseReceipt(BuyingController):
 					})
 			package_tag.save()
 
-	def update_package_tag_is_used(self):
+	def update_package_tag_is_used(self, reset=False):
 		for item in self.items:
 			if item.package_tag:
-				exists = 1 if len(frappe.get_all("Stock Ledger Entry", {"package_tag": item.package_tag, "voucher_no": ["!=", self.name]})) else 0
-
-				if not cint(frappe.db.get_value("Package Tag", item.package_tag, "is_used")) == exists:
+				if not reset:
+					frappe.db.set_value("Package Tag", item.package_tag, "is_used", 1)
+				else:
+					exists = 1 if len(frappe.get_all("Stock Ledger Entry", {"package_tag": item.package_tag, "voucher_no": ["!=", self.name]})) else 0
 					frappe.db.set_value("Package Tag", item.package_tag, "is_used", exists)
 
 	def validate_duplicate_package_tags(self):

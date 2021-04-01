@@ -116,7 +116,7 @@ class StockEntry(StockController):
 		self.update_transferred_qty()
 		self.update_quality_inspection()
 		self.delete_auto_created_batches()
-		self.update_package_tag_is_used()
+		self.update_package_tag_is_used(reset=True)
 
 	def set_job_card_data(self):
 		if self.job_card and not self.work_order:
@@ -1403,12 +1403,13 @@ class StockEntry(StockController):
 					else:
 						frappe.throw(_("Do not assign new item code to an existing package tag."))
 
-	def update_package_tag_is_used(self):
+	def update_package_tag_is_used(self, reset=False):
 		for item in self.items:
 			if item.package_tag:
-				exists = 1 if len(frappe.get_all("Stock Ledger Entry", {"package_tag": item.package_tag, "voucher_no": ["!=", self.name]})) else 0
-
-				if not cint(frappe.db.get_value("Package Tag", item.package_tag, "is_used")) == exists:
+				if not reset:
+					frappe.db.set_value("Package Tag", item.package_tag, "is_used", 1)
+				else:
+					exists = 1 if len(frappe.get_all("Stock Ledger Entry", {"package_tag": item.package_tag, "voucher_no": ["!=", self.name]})) else 0
 					frappe.db.set_value("Package Tag", item.package_tag, "is_used", exists)
 
 def check_if_destroyed(package_tag):
