@@ -5,10 +5,40 @@
  "engine": "InnoDB",
  "field_order": [
   "company",
-  "push_data",
-  "pull_data",
-  "pull_incoming_transfer",
-  "license_no"
+  "column_break_2",
+  "license_no",
+  "items_section",
+  "pull_item",
+  "column_break_6",
+  "push_item",
+  "package_tags_section",
+  "pull_package_tag",
+  "column_break_10",
+  "push_package_tag",
+  "transfers_section",
+  "pull_transfer",
+  "column_break_14",
+  "push_transfer",
+  "plants",
+  "pull_plant",
+  "column_break_18",
+  "push_plant",
+  "plant_batches_section",
+  "pull_plant_batch",
+  "column_break_22",
+  "push_plant_batch",
+  "strains_section",
+  "pull_strain",
+  "column_break_26",
+  "push_strain",
+  "harvests_section",
+  "pull_harvest",
+  "column_break_30",
+  "push_harvest",
+  "packages_section",
+  "pull_package",
+  "column_break_34",
+  "push_package"
  ],
  "fields": [
   {
@@ -20,35 +50,188 @@
    "reqd": 1
   },
   {
-   "default": "0",
-   "fieldname": "push_data",
-   "fieldtype": "Check",
-   "in_list_view": 1,
-   "label": "Push Data"
-  },
-  {
-   "default": "0",
-   "fieldname": "pull_data",
-   "fieldtype": "Check",
-   "in_list_view": 1,
-   "label": "Pull Data"
-  },
-  {
-   "default": "0",
-   "fieldname": "pull_incoming_transfer",
-   "fieldtype": "Check",
-   "in_list_view": 1,
-   "label": "Pull Incoming Transfer"
-  },
-  {
    "fieldname": "license_no",
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "License No"
+  },
+  {
+   "fieldname": "column_break_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "items_section",
+   "fieldtype": "Section Break",
+   "label": "Items"
+  },
+  {
+   "default": "0",
+   "fieldname": "push_item",
+   "fieldtype": "Check",
+   "label": "Push Item"
+  },
+  {
+   "fieldname": "column_break_6",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "pull_item",
+   "fieldtype": "Check",
+   "label": "Pull Item"
+  },
+  {
+   "fieldname": "package_tags_section",
+   "fieldtype": "Section Break",
+   "label": "Package Tags"
+  },
+  {
+   "default": "0",
+   "fieldname": "push_package_tag",
+   "fieldtype": "Check",
+   "label": "Push Package Tag"
+  },
+  {
+   "fieldname": "column_break_10",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "pull_package_tag",
+   "fieldtype": "Check",
+   "label": "Pull Package Tag"
+  },
+  {
+   "fieldname": "transfers_section",
+   "fieldtype": "Section Break",
+   "label": "Transfers"
+  },
+  {
+   "default": "0",
+   "fieldname": "pull_transfer",
+   "fieldtype": "Check",
+   "label": "Pull Transfer"
+  },
+  {
+   "default": "0",
+   "fieldname": "column_break_14",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "push_transfer",
+   "fieldtype": "Check",
+   "label": "Push Transfer"
+  },
+  {
+   "fieldname": "plants",
+   "fieldtype": "Section Break",
+   "label": "Plants"
+  },
+  {
+   "fieldname": "column_break_18",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "plant_batches_section",
+   "fieldtype": "Section Break",
+   "label": "Plant Batches"
+  },
+  {
+   "fieldname": "column_break_22",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "strains_section",
+   "fieldtype": "Section Break",
+   "label": "Strains"
+  },
+  {
+   "fieldname": "column_break_26",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "harvests_section",
+   "fieldtype": "Section Break",
+   "label": "Harvests"
+  },
+  {
+   "fieldname": "column_break_30",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "packages_section",
+   "fieldtype": "Section Break",
+   "label": "Packages"
+  },
+  {
+   "fieldname": "column_break_34",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "pull_plant",
+   "fieldtype": "Check",
+   "label": "Pull Plant"
+  },
+  {
+   "default": "0",
+   "fieldname": "push_plant",
+   "fieldtype": "Check",
+   "label": "Push Plant"
+  },
+  {
+   "default": "0",
+   "fieldname": "pull_plant_batch",
+   "fieldtype": "Check",
+   "label": "Pull Plant Batch"
+  },
+  {
+   "default": "0",
+   "fieldname": "push_plant_batch",
+   "fieldtype": "Check",
+   "label": "Push Plant Batch"
+  },
+  {
+   "default": "0",
+   "fieldname": "pull_strain",
+   "fieldtype": "Check",
+   "label": "Pull Strain"
+  },
+  {
+   "default": "0",
+   "fieldname": "push_strain",
+   "fieldtype": "Check",
+   "label": "Push Strain"
+  },
+  {
+   "default": "0",
+   "fieldname": "pull_harvest",
+   "fieldtype": "Check",
+   "label": "Pull Harvest"
+  },
+  {
+   "default": "0",
+   "fieldname": "push_harvest",
+   "fieldtype": "Check",
+   "label": "Push Harvest"
+  },
+  {
+   "default": "0",
+   "fieldname": "pull_package",
+   "fieldtype": "Check",
+   "label": "Pull Package"
+  },
+  {
+   "default": "0",
+   "fieldname": "push_package",
+   "fieldtype": "Check",
+   "label": "Push Package"
   }
  ],
  "istable": 1,
- "modified": "2020-11-22 22:36:52.407285",
+ "modified": "2021-03-30 23:39:34.784360",
  "modified_by": "Administrator",
  "module": "Compliance",
  "name": "Compliance Company",

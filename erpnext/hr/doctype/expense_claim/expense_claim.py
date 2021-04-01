@@ -66,8 +66,12 @@ class ExpenseClaim(AccountsController):
 			self.payable_account = frappe.get_cached_value('Company', self.company, 'default_expense_claim_payable_account')
 
 	def set_cost_center(self):
+		default_cost_center = frappe.get_cached_value('Company', self.company, 'cost_center')
 		if not self.cost_center:
-			self.cost_center = frappe.get_cached_value('Company', self.company, 'cost_center')
+			self.cost_center = default_cost_center
+		for expense in self.expenses:
+			if not expense.cost_center:
+				expense.cost_center = default_cost_center
 
 	def on_submit(self):
 		if self.approval_status=="Draft":

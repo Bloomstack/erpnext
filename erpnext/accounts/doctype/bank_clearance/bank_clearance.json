@@ -109,7 +109,7 @@
  "icon": "fa fa-check",
  "idx": 1,
  "issingle": 1,
- "modified": "2020-04-06 16:12:06.628008",
+ "modified": "2021-03-23 01:19:41.581774",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Bank Clearance",
@@ -126,5 +126,6 @@
  "quick_entry": 1,
  "read_only": 1,
  "sort_field": "modified",
- "sort_order": "ASC"
+ "sort_order": "ASC",
+ "track_changes": 1
 }

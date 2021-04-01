@@ -7,7 +7,6 @@ from frappe.model.document import Document
 from frappe import _
 
 class ComplianceSettings(Document):
-
 	def validate(self):
 		self.validate_companies()
 

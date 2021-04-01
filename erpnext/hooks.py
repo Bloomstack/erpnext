@@ -18,7 +18,7 @@ develop_version = '12.x.x-develop'
 app_include_js = "assets/js/erpnext.min.js"
 app_include_css = "assets/css/erpnext.css"
 web_include_js = [
-	"assets/js/erpnext-web.min.js", 
+	"assets/js/erpnext-web.min.js",
 	"assets/js/order_for.js"
 ]
 web_include_css = "assets/css/erpnext-web.css"
@@ -61,7 +61,7 @@ treeviews = ['Account', 'Cost Center', 'Warehouse', 'Item Group', 'Customer Grou
 
 # website
 update_website_context = [
-	"erpnext.shopping_cart.utils.update_website_context", 
+	"erpnext.shopping_cart.utils.update_website_context",
 	"erpnext.education.doctype.education_settings.education_settings.update_website_context"
 ]
 my_account_context = "erpnext.shopping_cart.utils.update_my_account_context"
@@ -335,7 +335,8 @@ scheduler_events = {
 		"erpnext.setup.doctype.email_digest.email_digest.send",
 		"erpnext.manufacturing.doctype.bom_update_tool.bom_update_tool.update_latest_price_in_all_boms",
 		"erpnext.hr.doctype.leave_ledger_entry.leave_ledger_entry.process_expired_allocation",
-		"erpnext.hr.utils.generate_leave_encashment"
+		"erpnext.hr.utils.generate_leave_encashment",
+		"erpnext.erpnext_integrations.doctype.asana.asana.daily_asana_email_notification"
 	],
 	"monthly": [
 		"erpnext.selling.doctype.customer.customer.set_total_monthly_sales_to_zero"

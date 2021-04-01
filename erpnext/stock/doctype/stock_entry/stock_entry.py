@@ -636,7 +636,7 @@ class StockEntry(StockController):
 			self.work_order, ["production_item", "qty"])
 
 		for d in self.get('items'):
-			if (self.purpose != "Send to Subcontractor" and d.bom_no
+			if (self.purpose not in ["Send to Subcontractor", "Material Transfer for Manufacture"] and d.bom_no
 				and flt(d.transfer_qty) > flt(self.fg_completed_qty) and d.item_code == production_item):
 				frappe.throw(_("Quantity in row {0} ({1}) must be same as manufactured quantity {2}"). \
 					format(d.idx, d.transfer_qty, self.fg_completed_qty))
@@ -1616,6 +1616,10 @@ def validate_sample_quantity(item_code, sample_quantity, qty, batch_no = None):
 	if cint(qty) < cint(sample_quantity):
 		frappe.throw(_("Sample quantity {0} cannot be more than received quantity {1}").format(sample_quantity, qty))
 	retention_warehouse = frappe.db.get_single_value('Stock Settings', 'sample_retention_warehouse')
+
+	if not retention_warehouse:
+		frappe.throw(_("Please set Sample Retention Warehouse in Stock Settings"))
+
 	retainted_qty = 0
 	if batch_no:
 		retainted_qty = get_batch_qty(batch_no, retention_warehouse, item_code)
