@@ -287,6 +287,18 @@ def install(country=None):
 
 	make_records(records)
 
+	roles = [
+		{
+			"role_name": "Expense Module",
+			"for_mobile_application": 1
+		},
+		{
+			"role_name": "Driver Module",
+			"for_mobile_application": 1
+		}
+	]
+	make_roles(roles=roles)
+
 	set_more_defaults()
 
 	update_global_search_doctypes()
@@ -295,6 +307,14 @@ def install(country=None):
 	# if os.path.exists(path.encode("utf-8")):
 	# 	frappe.get_attr("erpnext.regional.{0}.setup.setup_company_independent_fixtures".format(frappe.scrub(country)))()
 
+
+def make_roles(roles=[]):
+	for role in roles:
+		frappe.get_doc({
+			"doctype": "Role",
+			"role_name": role.get("role_name"),
+			"for_mobile_application": role.get("for_mobile_application")
+		}).insert(ignore_permissions=True)
 
 def set_more_defaults():
 	# Do more setup stuff that can be done here with no dependencies
