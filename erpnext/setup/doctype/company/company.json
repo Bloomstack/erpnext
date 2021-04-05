@@ -32,6 +32,8 @@
   "existing_company",
   "tax_id",
   "date_of_establishment",
+  "licenses_sb",
+  "licenses",
   "sales_settings",
   "monthly_sales_target",
   "sales_monthly_history",
@@ -49,6 +51,10 @@
   "discount_received_account",
   "exchange_gain_loss_account",
   "unrealized_exchange_gain_loss_account",
+  "default_excise_tax_account",
+  "default_sales_tax_account",
+  "default_shipping_account",
+  "default_cultivation_tax_account_plant",
   "column_break0",
   "allow_account_creation_against_child_company",
   "default_payable_account",
@@ -63,6 +69,8 @@
   "default_expense_claim_payable_account",
   "default_use_tax_expense_account",
   "default_use_tax_payable_account",
+  "default_cultivation_tax_account_leaf",
+  "default_cultivation_tax_account_flower",
   "section_break_22",
   "cost_center",
   "column_break_26",
@@ -91,6 +99,7 @@
   "company_logo",
   "date_of_incorporation",
   "address_html",
+  "contact_name",
   "date_of_commencement",
   "phone_no",
   "fax",
@@ -728,27 +737,90 @@
    "options": "Terms and Conditions"
   },
   {
+   "depends_on": "eval:!doc.__islocal",
    "fieldname": "default_use_tax_expense_account",
    "fieldtype": "Link",
    "label": "Default Use Tax Expense Account",
    "options": "Account"
   },
   {
+   "depends_on": "eval:!doc.__islocal",
    "fieldname": "default_use_tax_payable_account",
    "fieldtype": "Link",
    "label": "Default Use Tax Payable Account",
    "options": "Account"
   },
   {
+   "depends_on": "eval:!doc.__islocal",
    "fieldname": "default_direct_expenses",
    "fieldtype": "Link",
    "label": "Default Direct Expenses",
    "options": "Account"
   },
   {
+   "depends_on": "eval:!doc.__islocal",
    "fieldname": "default_indirect_expenses",
    "fieldtype": "Link",
    "label": "Default Indirect Expenses",
+   "options": "Account"
+  },
+  {
+   "fieldname": "contact_name",
+   "fieldtype": "Data",
+   "label": "Contact Name"
+  },
+  {
+   "depends_on": "eval:!doc.__islocal",
+   "fieldname": "default_excise_tax_account",
+   "fieldtype": "Link",
+   "label": "Default Excise Tax Account",
+   "options": "Account"
+  },
+  {
+   "depends_on": "eval:!doc.__islocal",
+   "fieldname": "default_sales_tax_account",
+   "fieldtype": "Link",
+   "label": "Default Sales Tax Account",
+   "options": "Account"
+  },
+  {
+   "depends_on": "eval:!doc.__islocal",
+   "fieldname": "default_shipping_account",
+   "fieldtype": "Link",
+   "label": "Default Shipping Account",
+   "options": "Account"
+  },
+  {
+   "fieldname": "licenses",
+   "fieldtype": "Table",
+   "label": "Licenses",
+   "options": "Compliance License Detail"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "licenses_sb",
+   "fieldtype": "Section Break",
+   "label": "Licenses"
+  },
+  {
+   "depends_on": "eval:!doc.__islocal",
+   "fieldname": "default_cultivation_tax_account_leaf",
+   "fieldtype": "Link",
+   "label": "Default Cultivation Tax Account (Leaf)",
+   "options": "Account"
+  },
+  {
+    "depends_on": "eval:!doc.__islocal",
+    "fieldname": "default_cultivation_tax_account_flower",
+   "fieldtype": "Link",
+   "label": "Default Cultivation Tax Account (Flower)",
+   "options": "Account"
+  },
+  {
+   "depends_on": "eval:!doc.__islocal",
+   "fieldname": "default_cultivation_tax_account_plant",
+   "fieldtype": "Link",
+   "label": "Default Cultivation Tax Account (Plant)",
    "options": "Account"
   }
  ],
@@ -756,7 +828,7 @@
  "idx": 1,
  "image_field": "company_logo",
  "is_tree": 1,
- "modified": "2021-02-15 03:01:19.487475",
+ "modified": "2021-04-05 04:47:27.167650",
  "modified_by": "Administrator",
  "module": "Setup",
  "name": "Company",
