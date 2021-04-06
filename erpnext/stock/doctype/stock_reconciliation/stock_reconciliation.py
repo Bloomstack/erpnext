@@ -324,6 +324,7 @@ class StockReconciliation(StockController):
 			"is_cancelled": "No" if self.docstatus != 2 else "Yes",
 			"serial_no": '\n'.join(serial_nos) if serial_nos else '',
 			"batch_no": row.batch_no,
+			"package_tag": row.package_tag,
 			"valuation_rate": flt(row.valuation_rate, row.precision("valuation_rate"))
 		})
 
