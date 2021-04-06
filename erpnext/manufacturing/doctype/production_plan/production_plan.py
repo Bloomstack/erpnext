@@ -729,7 +729,7 @@ def get_items_for_material_requests(doc, ignore_existing_ordered_qty=None):
 def get_item_data(item_code):
 	item_details = get_item_details(item_code)
 	bom_no = item_details.get("bom_no")
-	
+
 	total_operating_hours = frappe.db.get_value(
 		"BOM Operation", {"parent": bom_no}, "sum(time_in_mins) AS total_operating_time")
 	total_operating_hours = flt(total_operating_hours) / 60.0
@@ -786,7 +786,6 @@ def update_per_received_in_production_plan(purchase_receipt):
 			for item in production_plan.mr_items:
 				if item.received_qty and item.requested_qty and pr_item.material_request_plan_item == item.name:
 					frappe.db.set_value("Material Request Plan Item", item.name, "received_qty", "0")
-					frappe.db.set_value("Material Request Plan Item", item.name, "requested_qty", "0")
 					frappe.db.set_value("Material Request Plan Item", item.name, "stock_qty", "0")
 					frappe.db.set_value("Material Request Plan Item", item.name, "per_received", "0")
 					production_plan.reload()
@@ -806,7 +805,7 @@ def update_status_for_production_plan(production_plan):
 
 	Args:
 		production_plan (string): Production Plan name
-	"""	
+	"""
 	production_plan = frappe.get_doc("Production Plan", production_plan)
 	all_received = [item.per_received for item in production_plan.mr_items if item.material_request_type == "Purchase"]
 	produced_qty = [item.produced_qty for item in production_plan.mr_items if item.material_request_type == "Manufacture" and item.requested_qty == item.produced_qty]
