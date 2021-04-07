@@ -66,8 +66,7 @@ def calculate_contents_progress(contents):
 def get_ongoing_topic(contents):
 	ongoing_content = None
 	ongoing_topics = [content for content in contents if not content.get("completed")]
-	if len(contents) != len(ongoing_topics):
+	if len(contents) != len(ongoing_topics) and ongoing_topics[0]:
 		ongoing_content = ongoing_topics[0].get('content')
 	return ongoing_content
-
 
