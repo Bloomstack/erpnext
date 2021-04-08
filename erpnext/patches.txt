@@ -718,3 +718,4 @@ erpnext.patches.v13_0.delete_bank_reconciliation_doctype
 erpnext.patches.v13_0.make_mobile_application_access_roles #2021-04-08
 execute:frappe.reload_doc('setup', 'doctype', 'company', force=True)
 erpnext.patches.v13_0.set_is_used #01-04-2021
+erpnext.patches.v13_0.delete_company_custom_fields
