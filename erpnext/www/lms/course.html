@@ -120,10 +120,12 @@
 			{% endif %}
 		</div>
 		<div class="course-progress col-md-3">
+			{% if has_access %}
 			<p class="text-right mb-0">{{total_progress}}% Completed </p>
 			<div class="progress">
 				<div class="progress-bar" role="progressbar" style="width: {{total_progress}}%;" aria-valuenow="{{total_progress}}" aria-valuemin="0" aria-valuemax="100"></div>
 			</div>
+			{% endif %}
 		</div>
 	</div>
 </div>
