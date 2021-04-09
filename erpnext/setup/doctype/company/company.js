@@ -5,7 +5,6 @@ frappe.provide("erpnext.company");
 
 frappe.ui.form.on("Company", {
 	setup: function(frm) {
-		erpnext.company.setup_queries(frm);
 		frm.set_query("hra_component", function(){
 			return {
 				filters: {"type": "Earning"}
@@ -103,7 +102,7 @@ frappe.ui.form.on("Company", {
 		}
 
 		erpnext.company.set_chart_of_accounts_options(frm.doc);
-
+		erpnext.company.setup_queries(frm);
 	},
 
 	make_default_tax_template: function(frm) {
@@ -257,7 +256,9 @@ erpnext.company.setup_queries = function(frm) {
 		["default_cultivation_tax_account_plant", {}],
 		["default_use_tax_expense_account", {}],
 		["default_use_tax_payable_account", {}],
-		["default_expense_claim_payable_account", {}]
+		["default_expense_claim_payable_account", {}],
+		["default_deferred_revenue_account", {}],
+		["default_deferred_expense_account", {}]
 	], function(i, v) {
 		erpnext.company.set_custom_query(frm, v);
 	});
