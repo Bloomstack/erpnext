@@ -81,7 +81,7 @@ def send_delivery_request_to_flowkana(sales_order):
 	integration_request.save(ignore_permissions=True)
 
 	#fetch and prepare headers from flowkana settings, flag error if missing data
-	flowkana_settings = frappe.get_doc("Flowkana Settings")
+	flowkana_settings = frappe.get_cached_doc("Flowkana Settings")
 	if not flowkana_settings.get("url_tab"):
 		frappe.throw(_("Please provide an endpoint to send data to."))
 	if not flowkana_settings.get("api_key", 0.0):
@@ -113,4 +113,3 @@ def send_delivery_request_to_flowkana(sales_order):
 def json_handler(obj):
 	if isinstance(obj, (datetime.date, datetime.timedelta, datetime.datetime)):
 		return text_type(obj)
-
