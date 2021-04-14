@@ -6,23 +6,18 @@
 		.lms-content {
 			line-height: 1.8em;
 		}
-
 		.lms-content h1 {
 			margin-top: 1em;
 		}
-
 		.lms-content h2 {
 			margin-top: 1em;
 		}
-
 		.lms-content h3 {
 			margin-top: 0.8em;
 		}
-
 		.lms-content h4 {
 			margin-top: 0.6em;
 		}
-
 		section {
 			padding: 5rem 0 5rem 0;
 		}
@@ -31,16 +26,13 @@
 		.plyr--video .plyr__control[aria-expanded='true'] {
 			 background: #5e64ff !important;
 		}
-
 		.plyr__control--overlaid:focus,
 		.plyr__control--overlaid:hover {
 		  background: #5e64ff !important;
 		}
-
 		.plyr__menu__container .plyr__control[role=menuitemradio][aria-checked=true]::before {
     		background: #5e64ff !important;
 		}
-
 		.plyr__menu__container
 		.plyr__control[role='menuitemradio'][aria-checked='true']::before {
 		  background: #5e64ff;
@@ -48,9 +40,19 @@
 		.plyr--full-ui input[type='range'] {
 		  color: #5e64ff !important;
 		}
-
 		.plyr__control--overlaid {
 			background: rgba(94, 100, 255, 0.8) !important;
+		}
+		.timer_text {
+			display: block;
+			font-size: 14px;
+			text-transform: uppercase;
+		}
+		#timer {
+			font-size: 46px;
+			color: #8d99a6;
+			line-height: 1;
+			text-align: right;
 		}
 	</style>
 	<link rel="stylesheet" href="https://cdn.plyr.io/3.5.3/plyr.css" />
@@ -126,7 +128,16 @@
 
 {% macro quiz() %}
 <div class="mb-5">
-	{{ title() }}
+	<div class="row">
+		<div class="col-md-9">
+			{{ title() }}
+		</div>
+		<div class="col-md-3 align-self-center">
+
+			<p id="timer"></p>
+
+		</div>
+	</div>
 </div>
 <div id="quiz-wrapper">
 </div>

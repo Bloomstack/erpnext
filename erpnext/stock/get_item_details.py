@@ -117,6 +117,12 @@ def update_stock(args, out):
 			if actual_batch_qty:
 				out.update(actual_batch_qty)
 
+		# get the aviliable batch qty for batch_no
+		if out.has_batch_no and args.get("batch_no"):
+			actual_batch_qty = get_batch_qty(out.batch_no, out.warehouse, out.item_code)
+			if actual_batch_qty:
+				out.update(actual_batch_qty)
+
 		if out.has_serial_no and args.get('batch_no'):
 			reserved_so = get_so_reservation_for_item(args)
 			out.batch_no = args.get('batch_no')

@@ -8,6 +8,30 @@
 		section {
 			padding: 5rem 0 5rem 0;
 		}
+		.course-progress {
+			margin-top: 2.5rem;
+		}
+		.course-progress .progress {
+			border-radius: 1rem;
+			border: 1px solid #7ec45e;
+			height: 0.5rem;
+		}
+		.course-progress .progress-bar {
+			background-color: #7ec45e;
+		}
+		.continue-learning-btn {
+			background-color: #76c2ba;
+			color: #fff;
+			border: 2px solid #76c2ba;
+			border-radius: 8px;
+			padding: 10px 30px;
+			text-transform: uppercase;
+			outline: 0;
+		}
+		.continue-learning-btn:hover {
+			background-color: #fff;
+			color: #76c2ba;
+		}
 	</style>
 {% endblock %}
 
@@ -41,7 +65,24 @@
 
 {% block content %}
 <section class="section">
-	{{ hero(topic.topic_name, topic.description, has_access, {'name': 'Course', 'url': '/lms/course?name=' + course +'&program=' + program}) }}
+	<div class="container">
+	<div class="d-flex flex-row justify-content-between">
+		<div class="course-title col-md-9">
+			{{ hero(topic.topic_name, topic.description, has_access, {'name': 'Course', 'url': '/lms/course?name=' + course +'&program=' + program}) }}
+			{% if ongoing_topic %}
+			<a href="/lms/content?program={{ program }}&course={{ course }}&topic={{ topic.name }}&type={{ ongoing_topic.doctype }}&content={{ ongoing_topic.name }}" class="btn continue-learning-btn">Continue Learning</a>
+			{% endif %}
+		</div>
+		<div class="course-progress col-md-3">
+			{% if has_access and not has_super_access and not frappe.session.user == 'Administrator' %}
+			<p class="text-right mb-0">{{total_progress}}% Completed </p>
+			<div class="progress">
+				<div class="progress-bar" role="progressbar" style="width: {{total_progress}}%;" aria-valuenow="{{total_progress}}" aria-valuemin="0" aria-valuemax="100"></div>
+			</div>
+			{% endif %}
+		</div>
+	</div>
+</div>
 	<div class='container'>
 		<div class="row mt-5">
 			{% for content in contents %}

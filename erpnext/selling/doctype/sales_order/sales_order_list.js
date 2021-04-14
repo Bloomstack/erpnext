@@ -225,7 +225,7 @@ frappe.listview_settings['Sales Order'] = {
 					Are you sure you want to create {0} Delivery Note(s)?`, [selected_docs.length]),
 				() => {
 					frappe.call({
-						method: "erpnext.selling.doctype.sales_order.sales_order.create_muliple_delivery_notes",
+						method: "erpnext.selling.doctype.sales_order.sales_order.create_multiple_delivery_notes",
 						args: {
 							"orders": docnames
 						},
@@ -303,7 +303,7 @@ frappe.listview_settings['Sales Order'] = {
 					Are you sure you want to create {0} Production Plan(s)?`, [selected_docs.length]),
 				() => {
 					frappe.call({
-						method: "erpnext.selling.doctype.sales_order.sales_order.create_muliple_production_plans",
+						method: "erpnext.selling.doctype.sales_order.sales_order.create_multiple_production_plans",
 						args: {
 							"orders": docnames
 						},
@@ -351,8 +351,56 @@ frappe.listview_settings['Sales Order'] = {
 			}
 		};
 
+		const create_one_production_plan_action = () => {
+			const selected_docs = listview.get_checked_items();
+			const docnames = listview.get_checked_items(true);
+
+			if (selected_docs.length > 0) {
+				for (let doc of selected_docs) {
+					if (doc.docstatus !== 1 || ["On Hold", "Closed"].includes(doc.status)) {
+						frappe.throw(__("Cannot create a Production Plan from {0} orders", [doc.status.bold()]));
+					}
+				}
+
+				frappe.confirm(__(`This will create a Production Plan against selected Sales Orders.<br>
+					Are you sure you want to create Production Plan?`),
+				() => {
+					frappe.call({
+						method: "erpnext.selling.doctype.sales_order.sales_order.create_one_production_plan_from_multiple_sales_orders",
+						args: {
+							"sales_orders": docnames
+						},
+						freeze: true,
+						callback: (r) => {
+							if (!r.exc) {
+								if (r.message.length === 0) {
+									return;
+								}
+
+								let production_plan_link = frappe.utils.get_form_link("Production Plan", r.message, true)
+								frappe.msgprint(__(`Production Plan: <b>${production_plan_link}</b> created.`));
+
+								// if validation messages are found, append at the bottom of our message
+								if (r._server_messages) {
+									let server_messages = JSON.parse(r._server_messages);
+									for (let server_message of server_messages) {
+										frappe.msgprint(__(JSON.parse(server_message).message));
+									}
+									// delete server messages to avoid Frappe eating up our msgprint
+									delete r._server_messages;
+								}
+
+								listview.refresh();
+							}
+						}
+					});
+				});
+			}
+		};
+
 		listview.page.add_actions_menu_item(__('Create Pick Lists'), create_pick_list_action, false);
 		listview.page.add_actions_menu_item(__('Create Production Plan'), create_production_plan_action, false);
+		listview.page.add_actions_menu_item(__('Create Single Production Plan'), create_one_production_plan_action, false);
 		listview.page.add_actions_menu_item(__('Create Sales Invoices'), create_sales_invoice_action, false);
 		listview.page.add_actions_menu_item(__('Create Delivery Note'), create_delivery_note_action, false);
 

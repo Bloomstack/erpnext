@@ -1,5 +1,4 @@
 {
- "actions": [],
  "allow_copy": 1,
  "creation": "2019-02-01 12:24:34.761380",
  "description": "Import Chart of Accounts from a csv file",
@@ -49,8 +48,7 @@
  "hide_toolbar": 1,
  "in_create": 1,
  "issingle": 1,
- "links": [],
- "modified": "2020-02-28 08:49:11.422846",
+ "modified": "2021-03-23 01:19:42.162165",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Chart of Accounts Importer",
@@ -67,5 +65,6 @@
  "quick_entry": 1,
  "read_only": 1,
  "sort_field": "modified",
- "sort_order": "DESC"
+ "sort_order": "DESC",
+ "track_changes": 1
 }

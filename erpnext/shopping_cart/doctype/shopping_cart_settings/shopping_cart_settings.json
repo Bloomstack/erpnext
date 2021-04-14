@@ -227,7 +227,7 @@
  "icon": "fa fa-shopping-cart",
  "idx": 1,
  "issingle": 1,
- "modified": "2020-12-28 01:06:10.120330",
+ "modified": "2021-03-23 01:19:38.727442",
  "modified_by": "Administrator",
  "module": "Shopping Cart",
  "name": "Shopping Cart Settings",
@@ -244,5 +244,6 @@
   }
  ],
  "sort_field": "modified",
- "sort_order": "ASC"
+ "sort_order": "ASC",
+ "track_changes": 1
 }

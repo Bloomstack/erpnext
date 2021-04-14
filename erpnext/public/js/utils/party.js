@@ -123,6 +123,26 @@ erpnext.utils.add_item = function(frm) {
 	}
 }
 
+erpnext.utils.add_coa_batch = function(frm) {
+	if(frm.is_new()) {
+		var prev_route = frappe.get_prev_route();
+		if(prev_route[1]==='Batch' && !(frm.doc.items && frm.doc.items.length)) {
+			// add row
+			var item = frm.add_child('items');
+			frm.refresh_field('items');
+
+			// set coa batch and label details
+			frappe.model.set_value(item.doctype, item.name, 'coa_batch', prev_route[2]);
+			if (item.coa_batch) {
+				frappe.db.get_value("Batch", { "name": item.coa_batch }, ["label_details"], (r) => {
+					frappe.model.set_value(item.doctype, item.name, "label_details", r.label_details);
+					refresh_field("items");
+				})
+			}
+		}
+	}
+}
+
 erpnext.utils.get_address_display = function(frm, address_field, display_field, is_your_company_address) {
 	if(frm.updating_party_details) return;
 

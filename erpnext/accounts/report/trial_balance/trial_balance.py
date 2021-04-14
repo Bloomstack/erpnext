@@ -78,7 +78,6 @@ def get_data(filters):
 		filters.to_date, min_lft, max_rgt, filters, gl_entries_by_account, ignore_closing_entries=not flt(filters.with_period_closing_entry))
 
 	total_row = calculate_values(accounts, gl_entries_by_account, opening_balances, filters, company_currency)
-	accumulate_values_into_parents(accounts, accounts_by_name)
 
 	data = prepare_data(accounts, filters, total_row, parent_children_map, company_currency)
 	data = filter_out_zero_value_rows(data, parent_children_map, show_zero_values=filters.get("show_zero_values"))
@@ -226,7 +225,7 @@ def prepare_data(accounts, filters, total_row, parent_children_map, company_curr
 		row = {
 			"account": d.name,
 			"parent_account": d.parent_account,
-			"indent": d.indent,
+			"indent": 0,
 			"from_date": filters.from_date,
 			"to_date": filters.to_date,
 			"currency": company_currency,

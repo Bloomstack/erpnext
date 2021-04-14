@@ -464,7 +464,7 @@ frappe.ui.form.on('Stock Entry', {
 			} else if (((frm.doc.purpose === "Material Receipt") && (child_doc.t_warehouse)) ||
 				(in_list(["Manufacture", "Repack"], frm.doc.purpose) && (!child_doc.s_warehouse && child_doc.t_warehouse))) {
 
-				filters["item_code"] = "";
+				filters["is_used"] = 0;
 			} else if (in_list(["Manufacture", "Repack"], frm.doc.purpose) && (!child_doc.s_warehouse && !child_doc.t_warehouse)) {
 				frappe.throw(__("Select Source or Target warehouse for Stock Entry Type {0}", [`<b>${frm.doc.stock_entry_type}</b>`]));
 			}

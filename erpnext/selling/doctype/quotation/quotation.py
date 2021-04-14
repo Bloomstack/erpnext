@@ -100,8 +100,8 @@ class Quotation(SellingController):
 		self.update_opportunity()
 		self.update_lead()
 
-	def check_items(self): 
-		if not self.items: 
+	def check_items(self):
+		if not self.items:
 			frappe.throw(_("You cannot submit an empty Quotation."))
 
 	def print_other_charges(self,docname):
@@ -162,7 +162,7 @@ def _make_sales_order(source_name, target_doc=None, ignore_permissions=False):
 				"doctype": "Sales Order",
 				"validation": {
 					"docstatus": ["=", 1]
-				}, 
+				},
 				"field_map": {
 					"requested_delivery_date": "delivery_date"
 				}
@@ -252,9 +252,13 @@ def _make_customer(source_name, ignore_permissions=False):
 
 	if quotation and quotation.get('party_name'):
 		if not frappe.db.exists("Customer", quotation.get("party_name")):
+
+			#check if a customer doc has been created from the lead
 			lead_name = quotation.get("party_name")
 			customer_name = frappe.db.get_value("Customer", {"lead_name": lead_name},
 				["name", "customer_name"], as_dict=True)
+
+			#convert lead to a customer if not done already
 			if not customer_name:
 				from erpnext.crm.doctype.lead.lead import _make_customer
 				customer_doclist = _make_customer(lead_name, ignore_permissions=ignore_permissions)
@@ -263,6 +267,13 @@ def _make_customer(source_name, ignore_permissions=False):
 				if quotation.get("party_name") == "Shopping Cart":
 					customer.customer_group = frappe.db.get_value("Shopping Cart Settings", None,
 						"default_customer_group")
+
+				#raise error message if mandatory defaults for creating a customer is missing in selling settings
+				if not frappe.db.get_value("Selling Settings", None, "customer_group"):
+					frappe.throw(_("Please set a default customer group in Selling Settings."))
+
+				if not frappe.db.get_value("Selling Settings", None, "territory"):
+					frappe.throw(_("Please set a default territory in Selling Settings."))
 
 				try:
 					customer.insert()

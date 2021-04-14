@@ -7,7 +7,7 @@ import json
 from erpnext.compliance.utils import get_default_license
 from frappe import _
 from frappe.model.document import Document
-from frappe.utils import get_link_to_form, getdate, nowdate, today
+from frappe.utils import get_link_to_form, getdate, nowdate, today, formatdate
 
 
 class ComplianceInfo(Document):
@@ -85,7 +85,7 @@ def get_entity_license(doc, party_type, party_name):
 				frappe.bold(license_number)))
 		elif getdate(license_expiry_date) < getdate(nowdate()):
 			frappe.msgprint(_("Our records indicate that the license number {0} has expired on {1}. Proceed with caution.").format(
-				frappe.bold(license_number), frappe.bold(license_expiry_date)))
+				frappe.bold(license_number), frappe.bold(formatdate(license_expiry_date))))
 
 	return license_record
 

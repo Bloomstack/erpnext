@@ -30,6 +30,9 @@ frappe.ui.form.on('Material Request', {
 		// add item, if previous view was item
 		erpnext.utils.add_item(frm);
 
+		//add coa batch and label details, if previous view was batch
+		erpnext.utils.add_coa_batch(frm);
+
 		// set schedule_date
 		set_schedule_date(frm);
 	},

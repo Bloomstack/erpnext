@@ -11,3 +11,4 @@ python-stdnum==1.12
 taxjar==1.9.0
 Unidecode==1.1.1
 WooCommerce==2.1.1
+asana==0.10.3

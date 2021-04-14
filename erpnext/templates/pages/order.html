@@ -207,7 +207,7 @@
 		doctype_name: '{{ doc.name }}',
 		grand_total: '{{ doc.grand_total }}',
 		currency: '{{ doc.currency }}',
-		payment_gateway_url: '/api/method/erpnext.accounts.doctype.payment_request.payment_request.make_payment_request?dn={{ doc.name }}&dt={{ doc.doctype }}&submit_doc=1&order_type=Shopping Cart'
+		payment_gateway_url: '/api/method/erpnext.accounts.doctype.payment_request.payment_request.make_payment_request?dn={{ doc.name }}&dt={{ doc.doctype }}&submit_doc=1&mute_email=1&order_type=Shopping Cart'
 	}
 </script>
 {% endblock %}
