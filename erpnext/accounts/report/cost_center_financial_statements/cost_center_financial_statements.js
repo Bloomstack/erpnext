@@ -2,7 +2,7 @@
 // For license information, please see license.txt
 /* eslint-disable */
 
-frappe.query_reports["Cost Center Wise Financial Statements"] = {
+frappe.query_reports["Cost Center Financial Statements"] = {
 	"filters": [
 		{
 			"fieldname":"company",
