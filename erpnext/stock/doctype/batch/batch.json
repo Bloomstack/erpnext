@@ -1,6 +1,6 @@
 {
  "allow_import": 1,
- "autoname": "field:batch_id",
+ "allow_rename": 1,
  "creation": "2013-03-05 14:50:38",
  "doctype": "DocType",
  "document_type": "Setup",
@@ -226,7 +226,7 @@
  "idx": 1,
  "image_field": "image",
  "max_attachments": 5,
- "modified": "2021-03-18 00:20:52.920465",
+ "modified": "2021-04-27 00:38:04.673130",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Batch",
@@ -319,6 +319,5 @@
  "quick_entry": 1,
  "search_fields": "item,item_name,batch_qty,stock_uom",
  "sort_field": "modified",
- "sort_order": "DESC",
- "title_field": "batch_id"
+ "sort_order": "DESC"
 }
