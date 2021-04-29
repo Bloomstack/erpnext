@@ -120,7 +120,7 @@ class ProductionPlan(Document):
 			item_condition = ' and so_item.item_code = {0}'.format(frappe.db.escape(self.item_code))
 
 		items = frappe.db.sql("""select distinct parent, item_code, warehouse,
-			(qty - work_order_qty) * conversion_factor as pending_qty, description, name
+			(qty - work_order_qty) * conversion_factor as pending_qty, description, name, iem_owner
 			from `tabSales Order Item` so_item
 			where parent in (%s) and docstatus = 1 and qty > work_order_qty
 			and exists (select name from `tabBOM` bom where bom.item=so_item.item_code
@@ -179,7 +179,8 @@ class ProductionPlan(Document):
 				'planned_qty': data.pending_qty,
 				'pending_qty': data.pending_qty,
 				'planned_start_date': now_datetime(),
-				'product_bundle_item': data.parent_item
+				'product_bundle_item': data.parent_item,
+				'iem_owner': data.iem_owner
 			})
 
 			if self.get_items_from == "Sales Order":
@@ -289,7 +290,8 @@ class ProductionPlan(Document):
 				"production_plan"       : self.name,
 				"production_plan_item"  : d.name,
 				"product_bundle_item"	: d.product_bundle_item,
-				"make_work_order_for_sub_assembly_items": d.get("make_work_order_for_sub_assembly_items", 0)
+				"make_work_order_for_sub_assembly_items": d.get("make_work_order_for_sub_assembly_items", 0),
+				"iem_owner"				: d.iem_owner
 			}
 
 			item_details.update({
@@ -300,13 +302,13 @@ class ProductionPlan(Document):
 				item_details.update({
 					"qty": d.planned_qty
 				})
-				item_dict[(d.item_code, d.material_request_item, d.warehouse)] = item_details
+				item_dict[(d.item_code, d.material_request_item, d.warehouse, d.iem_owner)] = item_details
 			else:
 				item_details.update({
-					"qty": flt(item_dict.get((d.item_code, d.sales_order, d.warehouse),{})
+					"qty": flt(item_dict.get((d.item_code, d.sales_order, d.warehouse, d.iem_owner),{})
 						.get("qty")) + (flt(d.planned_qty) - flt(d.ordered_qty))
 				})
-				item_dict[(d.item_code, d.sales_order, d.warehouse)] = item_details
+				item_dict[(d.item_code, d.sales_order, d.warehouse, d.iem_owner)] = item_details
 
 		return item_dict
 
