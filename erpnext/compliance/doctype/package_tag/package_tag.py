@@ -73,10 +73,12 @@ def make_waste_disposal(source_name, target_doc=None):
 	"""
 	def set_missing_values(source, target):
 		target.append("items", {
+			"package_tag": source.package_tag,
 			"item_code": source.item_code,
 			"item_name": source.item_name,
 			"item_group": source.item_group,
-			"batch_no": source.batch_no
+			"batch_no": source.batch_no,
+			"coa_batch_no": source.coa_batch_no
 		})
 
 	doc = get_mapped_doc("Package Tag", source_name, {
