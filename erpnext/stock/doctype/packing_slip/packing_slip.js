@@ -92,7 +92,7 @@ cur_frm.cscript.validate_case_nos = function(doc) {
 		doc.to_case_no = doc.from_case_no;
 		refresh_field('to_case_no');
 	} else if(cint(doc.to_case_no) < cint(doc.from_case_no)) {
-		frappe.msgprint(__("'To Case No.' cannot be less than 'From Case No.'"));
+		frappe.msgprint(__("<b>To Package No.: {0}</b> cannot be less than <b>From Package No.: {1}</b>",[doc.to_case_no , doc.from_case_no]));
 		frappe.validated = false;
 	}
 }

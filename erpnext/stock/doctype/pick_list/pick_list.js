@@ -55,7 +55,7 @@ frappe.ui.form.on('Pick List', {
 			const row = frm.selected_doc || locals[cdt][cdn];
 			return {
 				filters: {
-					"item_code": ["IN", [row.item_code, ""]]
+					"is_used" : 0
 				}
 			};
 		});

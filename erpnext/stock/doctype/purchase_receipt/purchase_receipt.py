@@ -173,6 +173,7 @@ class PurchaseReceipt(BuyingController):
 		self.update_package_tag_batch()
 		update_per_received_in_production_plan(self)
 		self.update_package_tag_is_used()
+		self.update_batch_with_supplier()
 
 
 	def before_cancel(self):
@@ -214,6 +215,12 @@ class PurchaseReceipt(BuyingController):
 			if self.supplier_warehouse:
 				bin = frappe.db.sql("select actual_qty from `tabBin` where item_code = %s and warehouse = %s", (d.rm_item_code, self.supplier_warehouse), as_dict = 1)
 				d.current_stock = bin and flt(bin[0]['actual_qty']) or 0
+
+	def update_batch_with_supplier(self):
+		for item in self.items:
+			batch_supplier = frappe.db.get_value("Batch", item.batch_no, "supplier")
+			if not batch_supplier:
+				frappe.db.set_value("Batch", item.batch_no, "supplier", self.supplier)
 
 	def get_gl_entries(self, warehouse_account=None):
 		from erpnext.accounts.general_ledger import process_gl_map
@@ -488,13 +495,15 @@ class PurchaseReceipt(BuyingController):
 					"item_name": None,
 					"item_group": None,
 					"batch_no": None,
-					"coa_batch_no": None
+					"coa_batch_no": None,
+					"is_used" : 0
 				})
 			else:
 				package_tag.update({
 					"item_code": item.item_code,
 					"item_name": item.item_name,
-					"item_group": frappe.db.get_value("Item", item.item_code, "item_group")
+					"item_group": frappe.db.get_value("Item", item.item_code, "item_group"),
+					"is_used" : 1
 				})
 				if item.batch_no:
 					package_tag.update({

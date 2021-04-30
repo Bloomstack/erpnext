@@ -33,6 +33,7 @@ class DeliveryTrip(Document):
 
 	def on_update_after_submit(self):
 		self.update_delivery_note_status()
+		self.update_delivered_status_for_delivery_note()
 		self.validate_payment_due_date()
 	def before_submit(self):
 		self.update_status()
@@ -134,6 +135,11 @@ class DeliveryTrip(Document):
 
 		delivery_notes = [get_link_to_form("Delivery Note", note) for note in delivery_notes]
 		frappe.msgprint(_("Delivery Notes {0} updated".format(", ".join(delivery_notes))))
+
+	def update_delivered_status_for_delivery_note(self):
+		for stop in self.delivery_stops:
+			if stop.visited:
+				frappe.db.set_value("Delivery Note", stop.delivery_note, "delivered", 1)
 
 	def process_route(self, optimize):
 		"""

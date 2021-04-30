@@ -119,9 +119,9 @@
    "depends_on": "eval:doc.customer_type != 'Company'",
    "fieldname": "gender",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Gender",
-   "options": "Gender",
-   "hidden": 1
+   "options": "Gender"
   },
   {
    "default": "Company",
@@ -299,6 +299,7 @@
    "read_only": 1
   },
   {
+   "depends_on": "eval:!doc.__islocal",
    "description": "Select, to make the customer searchable with these fields",
    "fieldname": "primary_address_and_contact_detail",
    "fieldtype": "Section Break",
@@ -556,7 +557,7 @@
  "icon": "fa fa-user",
  "idx": 363,
  "image_field": "image",
- "modified": "2021-01-14 00:01:18.784725",
+ "modified": "2021-04-19 22:43:18.580824",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Customer",

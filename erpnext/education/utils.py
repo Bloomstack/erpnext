@@ -232,7 +232,15 @@ def get_quiz(quiz_name, course):
 	student = get_current_student()
 	course_enrollment = get_enrollment("course", course, student.name)
 	status, score, result = check_quiz_completion(quiz, course_enrollment)
-	return {'questions': questions, 'activity': {'is_complete': status, 'score': score, 'result': result}}
+	return {
+		'questions': questions,
+		'activity': {
+			'is_complete': status,
+			'score': score,
+			'result': result
+			},
+		'quiz_time': quiz.total_time_for_quiz
+	}
 
 def get_topic_progress(topic, course_name, program):
 	"""

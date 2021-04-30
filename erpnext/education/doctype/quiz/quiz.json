@@ -12,7 +12,10 @@
   "quiz_configuration_section",
   "passing_score",
   "max_attempts",
-  "grading_basis"
+  "grading_basis",
+  "column_break_7",
+  "total_time_for_quiz",
+  "assessment_questions"
  ],
  "fields": [
   {
@@ -58,9 +61,25 @@
    "fieldtype": "Select",
    "label": "Grading Basis",
    "options": "Latest Highest Score\nLatest Attempt"
+  },
+  {
+   "fieldname": "column_break_7",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "Questions will be randomized",
+   "fieldname": "assessment_questions",
+   "fieldtype": "Int",
+   "label": "Assessment Questions"
+  },
+  {
+   "description": "Enter time in Seconds",
+   "fieldname": "total_time_for_quiz",
+   "fieldtype": "Int",
+   "label": "Total time for Quiz"
   }
  ],
- "modified": "2019-06-12 12:23:57.020508",
+ "modified": "2021-04-08 12:37:37.429033",
  "modified_by": "Administrator",
  "module": "Education",
  "name": "Quiz",

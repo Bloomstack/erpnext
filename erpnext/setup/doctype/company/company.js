@@ -5,7 +5,6 @@ frappe.provide("erpnext.company");
 
 frappe.ui.form.on("Company", {
 	setup: function(frm) {
-		erpnext.company.setup_queries(frm);
 		frm.set_query("hra_component", function(){
 			return {
 				filters: {"type": "Earning"}
@@ -103,7 +102,7 @@ frappe.ui.form.on("Company", {
 		}
 
 		erpnext.company.set_chart_of_accounts_options(frm.doc);
-
+		erpnext.company.setup_queries(frm);
 	},
 
 	make_default_tax_template: function(frm) {
@@ -248,7 +247,18 @@ erpnext.company.setup_queries = function(frm) {
 		["default_employee_advance_account", {"root_type": "Asset"}],
 		["expenses_included_in_asset_valuation", {"account_type": "Expenses Included In Asset Valuation"}],
 		["capital_work_in_progress_account", {"account_type": "Capital Work in Progress"}],
-		["asset_received_but_not_billed", {"account_type": "Asset Received But Not Billed"}]
+		["asset_received_but_not_billed", {"account_type": "Asset Received But Not Billed"}],
+		["default_excise_tax_account", {}],
+		["default_sales_tax_account", {}],
+		["default_shipping_account", {}],
+		["default_cultivation_tax_account_leaf", {}],
+		["default_cultivation_tax_account_flower", {}],
+		["default_cultivation_tax_account_plant", {}],
+		["default_use_tax_expense_account", {}],
+		["default_use_tax_payable_account", {}],
+		["default_expense_claim_payable_account", {}],
+		["default_deferred_revenue_account", {}],
+		["default_deferred_expense_account", {}]
 	], function(i, v) {
 		erpnext.company.set_custom_query(frm, v);
 	});
@@ -268,14 +278,12 @@ erpnext.company.setup_queries = function(frm) {
 }
 
 erpnext.company.set_custom_query = function(frm, v) {
-	var filters = {
+	let filters = {
 		"company": frm.doc.name,
 		"is_group": 0
 	};
 
-	for (var key in v[1]) {
-		filters[key] = v[1][key];
-	}
+	Object.assign(filters, v[1]);
 
 	frm.set_query(v[0], function() {
 		return {

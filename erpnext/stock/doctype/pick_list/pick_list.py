@@ -236,6 +236,7 @@ class PickList(Document):
 			# Create New Document
 			stock_entry = frappe.new_doc('Stock Entry')
 			stock_entry.name = self.get('name')
+			stock_entry.pick_list = self.get('name')
 			if self.get('purpose') == "Delivery":
 				stock_entry.purpose = "Repack"
 			if self.get('work_order'):

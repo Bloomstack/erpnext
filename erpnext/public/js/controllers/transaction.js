@@ -1487,20 +1487,21 @@ erpnext.TransactionController = erpnext.taxes_and_totals.extend({
 
 		return this.frm.call({
 			method: "erpnext.stock.get_item_details.apply_price_list",
-			args: {	args: args }
-		}).then(async function(r) {
-			if (!r.exc) {
-				await frappe.run_serially([
-					() => me.frm.set_value("price_list_currency", r.message.parent.price_list_currency),
-					() => me.frm.set_value("plc_conversion_rate", r.message.parent.plc_conversion_rate),
-					() => {
-						if(args.items.length) {
-							return me._set_values_for_item_list(r.message.children);
+			args: {	args: args },
+			callback: function(r) {
+				if (!r.exc) {
+					frappe.run_serially([
+						() => me.frm.set_value("price_list_currency", r.message.parent.price_list_currency),
+						() => me.frm.set_value("plc_conversion_rate", r.message.parent.plc_conversion_rate),
+						() => {
+							if(args.items.length) {
+								return me._set_values_for_item_list(r.message.children);
+							}
 						}
-					}
-				]);
+					]);
+				}
 			}
-		})
+		});
 	},
 
 	remove_pricing_rule: function(item) {
@@ -1605,6 +1606,7 @@ erpnext.TransactionController = erpnext.taxes_and_totals.extend({
 
 	tax_category: function() {
 		var me = this;
+		if(!me.frm.doc.tax_category) return;
 		if(me.frm.updating_party_details) return;
 
 		frappe.run_serially([

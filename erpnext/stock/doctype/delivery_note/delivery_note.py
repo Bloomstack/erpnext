@@ -117,6 +117,7 @@ class DeliveryNote(SellingController):
 		self.validate_uom_is_integer("uom", "qty")
 		self.validate_with_previous_doc()
 		self.validate_batch_coa()
+		self.update_item_batch_nos()
 
 		if self._action != 'submit' and not self.is_return:
 			set_batch_nos(self, 'warehouse', True)
@@ -161,6 +162,22 @@ class DeliveryNote(SellingController):
 		for item in self.items:
 			if item.coa_batch:
 				item.certificate_of_analysis = frappe.db.get_value("Batch", item.coa_batch, "certificate_of_analysis")
+
+	def update_item_batch_nos(self):
+		"""
+		Add batch nos to items that have coa batch assigned to them.
+		"""
+		auto_assign_batch_during_delivery = frappe.db.get_value("Stock Settings", None, "auto_assign_batch_during_delivery")
+		for item in self.items:
+			#If item has a coa batch and auto assigning batches are enabled in stock settings, we assign a batch to the item in the delivery note
+			if  auto_assign_batch_during_delivery and item.coa_batch and not item.batch_no:
+				#fetch batch with same coa_batch and map quantity
+				valid_batches = frappe.get_all("Batch",
+							filters = {"batch_qty":[">", item.qty], "coa_batch": item.coa_batch},
+							limit=1
+				)
+				if valid_batches:
+					item.batch_no = valid_batches[0]
 
 	def validate_proj_cust(self):
 		"""check for does customer belong to same project as entered.."""

@@ -61,7 +61,14 @@ frappe.ui.form.on('Delivery Trip', {
 			} else {
 				// Inject Google Maps data into map embed field
 				let wrapper = frm.fields_dict.map_html.$wrapper;
-				wrapper.html(frm.doc.map_embed);
+				if (frm.doc.docstatus == 0){
+					var parser = new DOMParser();
+					var htmlDoc = parser.parseFromString(frm.doc.map_embed, 'text/html');
+					wrapper.html(htmlDoc.body.textContent);
+				}
+				else {
+					wrapper.html(frm.doc.map_embed)
+				}
 			}
 		});
 

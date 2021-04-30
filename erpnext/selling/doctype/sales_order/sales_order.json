@@ -21,6 +21,7 @@
   "company",
   "transaction_date",
   "delivery_date",
+  "fulfillment_partner",
   "po_no",
   "po_date",
   "tax_id",
@@ -1257,12 +1258,18 @@
    "fieldtype": "Check",
    "label": "Advance Received",
    "read_only": 1
+  },
+  {
+   "fieldname": "fulfillment_partner",
+   "fieldtype": "Link",
+   "label": "Fulfillment Partner",
+   "options": "Fulfillment Partner"
   }
  ],
  "icon": "fa fa-file-text",
  "idx": 105,
  "is_submittable": 1,
- "modified": "2021-01-14 03:20:54.326989",
+ "modified": "2021-03-19 04:08:31.995032",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sales Order",

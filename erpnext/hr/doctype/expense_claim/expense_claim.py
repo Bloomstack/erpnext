@@ -416,7 +416,7 @@ def create_expense_claim(user, expense_date, expense_claim_type, description, am
 			}
 		]
 	}).insert(ignore_permissions=True, ignore_mandatory=True)
-
+	return True
 
 @frappe.whitelist()
 def list_expense_claims(user,filters=None):
@@ -434,7 +434,7 @@ def list_expense_claims(user,filters=None):
 
 	employee = frappe.db.exists("Employee", {"company_email": user})
 	if not employee:
-		return _("Employee's E-mail ID Not Found, Please Add 'Company Email' Under 'Employee' Document")
+		return return_error_message_dict(_("Employee's E-mail ID Not Found, Please Add 'Company Email' Under 'Employee' Document"))
 
 	if filters:
 		filters = json.loads(filters)
@@ -446,7 +446,7 @@ def list_expense_claims(user,filters=None):
 		fields=["name", "employee_name", "approval_status", "expense_approver", "project", "`tabExpense Claim Detail`.*"])
 
 	if not expense_claims:
-		return _("No Claim Found for {0}.").format(user)
+		 return return_error_message_dict(_("No Claim Found for {0}.").format(user))
 
 	return expense_claims
 
@@ -464,7 +464,7 @@ def update_expense_claim(expense_claim_detail, expense_date=None, expense_claim_
 
 	expense_claim_detail = frappe.get_doc("Expense Claim Detail", expense_claim_detail)
 	if expense_claim_detail.docstatus == 1:
-		return _("Expense Claim '{0}' is submitted Document, It cannot be Updated").format(expense_claim_detail.parent)
+		return return_error_message_dict(_("Expense Claim '{0}' is submitted Document, It cannot be Updated").format(expense_claim_detail.parent))
 	if expense_date:
 		expense_claim_detail.update({"expense_date":expense_date})
 	if description:
@@ -485,13 +485,16 @@ def delete_expense_claim(expense_claim):
 	"""
 
 	if not frappe.db.exists("Expense Claim", expense_claim):
-		return _("'{0}' Not Found").format(expense_claim)
+		return return_error_message_dict(_("'{0}' Not Found").format(expense_claim))
 
 	expense_claim_doc = frappe.get_doc("Expense Claim", expense_claim)
 
 	if expense_claim_doc.docstatus == 1:
-		return _("Expense Claim '{0}' is submitted Document, It cannot be Deleted").format(expense_claim)
+		return return_error_message_dict(_("Expense Claim '{0}' is submitted Document, It cannot be Deleted").format(expense_claim))
 
 	expense_claim_doc.delete()
 
-	return _("Expense Claim '{0}' is deleted").format(expense_claim)
+	return return_error_message_dict(_("Expense Claim '{0}' is deleted").format(expense_claim))
+
+def return_error_message_dict(message):
+	return {"error": {"message": message}}

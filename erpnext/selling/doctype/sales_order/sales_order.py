@@ -5,6 +5,7 @@ from __future__ import unicode_literals
 import frappe
 import json
 import calendar
+import requests
 import frappe.utils
 from frappe.utils import cstr, flt, getdate, cint, nowdate, add_days, get_link_to_form, comma_and
 from frappe import _
@@ -14,10 +15,12 @@ from frappe.model.mapper import get_mapped_doc
 from erpnext.stock.stock_balance import update_bin_qty, get_reserved_qty
 from frappe.desk.notifications import clear_doctype_notifications
 from frappe.contacts.doctype.address.address import get_company_address
+from frappe.integrations.utils import create_payment_gateway, create_request_log
 from erpnext.controllers.selling_controller import SellingController
 from frappe.automation.doctype.auto_repeat.auto_repeat import get_next_schedule_date
 from erpnext.selling.doctype.customer.customer import check_credit_limit
 from erpnext.stock.doctype.item.item import get_item_defaults
+from erpnext.erpnext_integrations.doctype.flowkana_settings.flowkana_settings import send_delivery_request_to_flowkana
 from erpnext.setup.doctype.item_group.item_group import get_item_group_defaults
 from erpnext.manufacturing.doctype.production_plan.production_plan import get_items_for_material_requests
 from erpnext.accounts.doctype.sales_invoice.sales_invoice import validate_inter_company_party, update_linked_doc,\
@@ -188,6 +191,13 @@ class SalesOrder(SellingController):
 		if self.coupon_code:
 			from erpnext.accounts.doctype.pricing_rule.utils import update_coupon_code_count
 			update_coupon_code_count(self.coupon_code,'used')
+
+		flowkana_settings = frappe.get_cached_doc("Flowkana Settings")
+
+		#send delivery request to flowkana if enabled by user
+		if flowkana_settings.enable_flowkana and self.fulfillment_partner == "Flowkana":
+			send_delivery_request_to_flowkana(self)
+
 
 	def on_cancel(self):
 		super(SalesOrder, self).on_cancel()
@@ -1192,7 +1202,7 @@ def create_multiple_sales_invoices(orders):
 	return created_orders
 
 @frappe.whitelist()
-def create_muliple_delivery_notes(orders):
+def create_multiple_delivery_notes(orders):
 	"""Creating different Delivery Notes from multiple Sales Order."""
 	orders = json.loads(orders)
 
@@ -1230,7 +1240,7 @@ def create_muliple_delivery_notes(orders):
 	return created_orders
 
 @frappe.whitelist()
-def create_muliple_production_plans(orders):
+def create_multiple_production_plans(orders):
 	"""Creating different Production Plans from multiple Sales Order."""
 	orders = json.loads(orders)
 
@@ -1240,11 +1250,11 @@ def create_muliple_production_plans(orders):
 		customer = frappe.db.get_value("Sales Order", order, "customer")
 
 		# Create a new Production Plan.
-		order_doc = make_production_plan(order)
+		production_plan_doc = make_production_plan(order)
 		# if no items can be picked, do not create an empty production plan.
-		if order_doc.get("po_items"):
-			order_doc.save()
-			production_plans = [order_doc.name]
+		if production_plan_doc.get("po_items"):
+			production_plan_doc.save()
+			production_plans = [production_plan_doc.name]
 			created = True
 		else:
 			production_plans = []
@@ -1259,11 +1269,42 @@ def create_muliple_production_plans(orders):
 	return created_orders
 
 @frappe.whitelist()
+def create_one_production_plan_from_multiple_sales_orders(sales_orders):
+	"""
+	Create Single Production Plan from selected Sales Orders.
+
+	Args:
+		sales_orders (list): list of names of Sales Orders from which Production Plan is to be created
+
+	Returns:
+		production_plan.name: created production plan name
+	"""
+	sales_orders = json.loads(sales_orders)
+
+	production_plan = frappe.new_doc("Production Plan")
+	production_plan.get_items_from = "Sales Order"
+
+	for sales_order in sales_orders:
+		sales_order_data = frappe.db.get_value("Sales Order", sales_order, ["customer", "transaction_date", "grand_total"], as_dict=1)
+		production_plan.append("sales_orders",{
+			"sales_order": sales_order,
+			"customer": sales_order_data.customer,
+			"sales_order_date": sales_order_data.transaction_date,
+			"grand_total": sales_order_data.grand_total
+		})
+		production_plan.run_method("get_so_items")
+		production_plan.run_method("set_missing_values")
+		production_plan.save()
+
+	return production_plan.name
+
+
+@frappe.whitelist()
 def get_customer_item_ref_code(item, customer_name):
 	"""Fetch the Customer Item Code for the given Item.
 
 	Args:
-		item (varchar) : Item Code for the Sales Item
+		item (varchar) : Item Code for the Sales Item 
 		customer_name (varchar) : Customer Name Of Sales Order
 
 	Returns:

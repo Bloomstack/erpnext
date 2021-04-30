@@ -201,7 +201,6 @@ class Customer(TransactionBase):
 				if lead.mobile_no:
 					contact.append('phone_nos', dict(phone=lead.mobile_no, is_primary_mobile_no=1))
 				contact.flags.ignore_permissions = self.flags.ignore_permissions
-				contact.autoname()
 				if not frappe.db.exists("Contact", contact.name):
 					contact.insert()
 

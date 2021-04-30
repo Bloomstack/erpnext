@@ -483,6 +483,35 @@ def get_exploded_items(item_details, company, bom_no, include_non_stock_items, p
 			item_details.setdefault(d.get('item_code'), d)
 	return item_details
 
+def get_exploded_items_with_subassembly(item_details, company, bom_no, include_non_stock_items, planned_qty=1):
+	explosion_items = get_items_for_explode_and_subassembly("BOM Explosion Item", company, bom_no, include_non_stock_items, planned_qty)
+	bom_items = get_items_for_explode_and_subassembly("BOM Item", company, bom_no, include_non_stock_items, planned_qty)
+
+	for d in explosion_items + bom_items:
+		item_details.setdefault(d.get('item_code'), d)
+	return item_details
+
+def get_items_for_explode_and_subassembly(item, company, bom_no, include_non_stock_items, planned_qty=1):
+	items = frappe.db.sql("""select bei.item_code, item.default_bom as bom,
+			ifnull(sum(bei.stock_qty/ifnull(bom.quantity, 1)), 0)*%s as qty, item.item_name,
+			bei.description, bei.stock_uom, item.min_order_qty, bei.source_warehouse,
+			item.default_material_request_type, item.min_order_qty, item_default.default_warehouse,
+			item.purchase_uom, item_uom.conversion_factor
+		from
+			`tab{0}` bei
+			JOIN `tabBOM` bom ON bom.name = bei.parent
+			JOIN `tabItem` item ON item.name = bei.item_code
+			LEFT JOIN `tabItem Default` item_default
+				ON item_default.parent = item.name and item_default.company=%s
+			LEFT JOIN `tabUOM Conversion Detail` item_uom
+				ON item.name = item_uom.parent and item_uom.uom = item.purchase_uom
+		where
+			bei.docstatus < 2
+			and bom.name=%s and item.is_stock_item in (1, {1})
+		group by bei.item_code, bei.stock_uom""".format(item, 0 if include_non_stock_items else 1),
+		(planned_qty, company, bom_no), as_dict=1)
+	return items
+
 def get_subitems(doc, data, item_details, bom_no, company, include_non_stock_items,
 	include_subcontracted_items, parent_qty, planned_qty=1):
 	items = frappe.db.sql("""
@@ -665,9 +694,13 @@ def get_items_for_material_requests(doc, ignore_existing_ordered_qty=None):
 				frappe.throw(_("For row {0}: Enter Planned Qty").format(data.get('idx')))
 
 			if bom_no:
-				if data.get('include_exploded_items') and include_subcontracted_items:
+				if data.get('include_exploded_items') and include_subcontracted_items and not doc.get("include_sub_assembly_with_exploded_item"):
 					# fetch exploded items from BOM
 					item_details = get_exploded_items(item_details,
+						company, bom_no, include_non_stock_items, planned_qty=planned_qty)
+				elif  data.get('include_exploded_items') and include_subcontracted_items and doc.get("include_sub_assembly_with_exploded_item"): 
+					# fetch exploded items with sub assembly item from BOM
+					item_details = get_exploded_items_with_subassembly(item_details,
 						company, bom_no, include_non_stock_items, planned_qty=planned_qty)
 				else:
 					item_details = get_subitems(doc, data, item_details, bom_no, company,
@@ -729,7 +762,7 @@ def get_items_for_material_requests(doc, ignore_existing_ordered_qty=None):
 def get_item_data(item_code):
 	item_details = get_item_details(item_code)
 	bom_no = item_details.get("bom_no")
-	
+
 	total_operating_hours = frappe.db.get_value(
 		"BOM Operation", {"parent": bom_no}, "sum(time_in_mins) AS total_operating_time")
 	total_operating_hours = flt(total_operating_hours) / 60.0
@@ -786,7 +819,6 @@ def update_per_received_in_production_plan(purchase_receipt):
 			for item in production_plan.mr_items:
 				if item.received_qty and item.requested_qty and pr_item.material_request_plan_item == item.name:
 					frappe.db.set_value("Material Request Plan Item", item.name, "received_qty", "0")
-					frappe.db.set_value("Material Request Plan Item", item.name, "requested_qty", "0")
 					frappe.db.set_value("Material Request Plan Item", item.name, "stock_qty", "0")
 					frappe.db.set_value("Material Request Plan Item", item.name, "per_received", "0")
 					production_plan.reload()
@@ -806,7 +838,7 @@ def update_status_for_production_plan(production_plan):
 
 	Args:
 		production_plan (string): Production Plan name
-	"""	
+	"""
 	production_plan = frappe.get_doc("Production Plan", production_plan)
 	all_received = [item.per_received if item.per_received else 0 for item in production_plan.mr_items if item.material_request_type == "Purchase"]
 	produced_qty = [item.produced_qty if item.produced_qty else 0 for item in production_plan.mr_items if item.material_request_type == "Manufacture"]

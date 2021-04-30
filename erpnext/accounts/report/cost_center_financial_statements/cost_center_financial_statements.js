@@ -2,7 +2,7 @@
 // For license information, please see license.txt
 /* eslint-disable */
 
-frappe.query_reports["Cost Center Wise Financial Statements"] = {
+frappe.query_reports["Cost Center Financial Statements"] = {
 	"filters": [
 		{
 			"fieldname":"company",
@@ -10,7 +10,20 @@ frappe.query_reports["Cost Center Wise Financial Statements"] = {
 			"fieldtype": "Link",
 			"options": "Company",
 			"default": frappe.defaults.get_user_default("Company"),
-			"reqd": 1
+			"reqd": 1,
+			"on_change": function(query_report) {
+				let company = query_report.get_filter_value("company");
+				if (company) {
+					frappe.model.with_doc("Company", company, function(r) {
+						frappe.query_report.set_filter_value({
+							cost_center: frappe.model.get_doc("Company", company).cost_center,
+						});
+					});
+				}
+				else {
+					frappe.query_report.set_filter_value('cost_center', "");
+				}
+			}
 		},
 		{
 			"fieldname":"from_date",
@@ -72,6 +85,15 @@ frappe.query_reports["Cost Center Wise Financial Statements"] = {
 			"fieldname": "cost_center",
 			"label": __("Cost Center"),
 			"fieldtype": "MultiSelectList",
+  			"default": function() {
+				let company = frappe.defaults.get_user_default("Company")
+				if (!company) return;
+				frappe.model.with_doc("Company", company, function(r) {
+					frappe.query_report.set_filter_value({
+						cost_center: frappe.model.get_doc("Company", company).cost_center,
+					});
+				});
+			},
 			get_data: function(txt) {
 				return frappe.db.get_link_options('Cost Center', txt, {
 					company: frappe.query_report.get_filter_value("company")

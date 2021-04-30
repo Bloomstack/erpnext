@@ -24,6 +24,7 @@
   "column_break_10",
   "automatically_set_serial_nos_based_on_fifo",
   "automatically_set_batch_nos_based_on_fifo",
+  "auto_assign_batch_during_delivery",
   "set_qty_in_transactions_based_on_serial_no_input",
   "auto_material_request",
   "auto_indent",
@@ -218,12 +219,18 @@
    "fieldname": "no_of_days_to_calculate_avg_manufactured_qty",
    "fieldtype": "Int",
    "label": "Number of Days (Past) to Calculate Average Manufactured Quantity "
+  },
+  {
+   "default": "0",
+   "fieldname": "auto_assign_batch_during_delivery",
+   "fieldtype": "Check",
+   "label": "Auto Assign Batch During Delivery"
   }
  ],
  "icon": "icon-cog",
  "idx": 1,
  "issingle": 1,
- "modified": "2021-03-23 01:19:37.977835",
+ "modified": "2021-03-28 22:06:48.428711",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Stock Settings",

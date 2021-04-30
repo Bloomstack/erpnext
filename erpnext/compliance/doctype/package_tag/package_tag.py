@@ -14,6 +14,7 @@ class PackageTag(Document):
 			self.validate_source_package_tag()
 			self.update_coa_batch_no()
 		self.calculate_package_tag_qty()
+		self.set_coa_batch_in_batch_no()
 
 	def validate_source_package_tag(self):
 		source_package_tag = frappe.db.get_value("Package Tag", self.source_package_tag, "source_package_tag")
@@ -25,6 +26,13 @@ class PackageTag(Document):
 
 	def calculate_package_tag_qty(self):
 		self.package_tag_qty = frappe.db.get_value("Stock Ledger Entry", {"docstatus": 1, "package_tag": self.package_tag}, "sum(actual_qty)")
+
+	def set_coa_batch_in_batch_no(self):
+		"""
+		Assigns the coa_batch_no to the batch specified in the package tag.
+		"""
+		if self.batch_no and self.coa_batch_no:
+			frappe.db.set_value("Batch", self.batch_no, "coa_batch", self.coa_batch_no)
 
 @frappe.whitelist()
 def get_package_tag_qty(package_tag=None):
@@ -70,7 +78,7 @@ def make_waste_disposal(source_name, target_doc=None):
 			"item_group": source.item_group,
 			"batch_no": source.batch_no
 		})
-	
+
 	doc = get_mapped_doc("Package Tag", source_name, {
 		"Package Tag": {
 			"doctype": "Waste Disposal",

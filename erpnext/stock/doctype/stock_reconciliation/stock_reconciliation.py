@@ -324,6 +324,7 @@ class StockReconciliation(StockController):
 			"is_cancelled": "No" if self.docstatus != 2 else "Yes",
 			"serial_no": '\n'.join(serial_nos) if serial_nos else '',
 			"batch_no": row.batch_no,
+			"package_tag": row.package_tag,
 			"valuation_rate": flt(row.valuation_rate, row.precision("valuation_rate"))
 		})
 
@@ -464,20 +465,53 @@ def get_items(warehouse, posting_date, posting_time, company):
 	""", (lft, rgt, company))
 
 	res = []
-	for d in set(items):
+	for d in items:
 		stock_bal = get_stock_balance(d[0], d[2], posting_date, posting_time,
 			with_valuation_rate=True)
 
-		if frappe.db.get_value("Item", d[0], "disabled") == 0 and stock_bal[0]:
-			res.append({
-				"item_code": d[0],
-				"warehouse": d[2],
-				"qty": stock_bal[0],
-				"item_name": d[1],
-				"valuation_rate": stock_bal[1],
-				"current_qty": stock_bal[0],
-				"current_valuation_rate": stock_bal[1]
-			})
+		if frappe.db.get_value("Item", d[0], "disabled") == 0:
+			package_tags = frappe.get_all("Stock Ledger Entry",
+				filters={"item_code": d[0], "warehouse": d[2], "package_tag": ["is", "set"]},
+				fields=["distinct(package_tag)", "actual_qty", "valuation_rate"])
+
+			batch_nos = frappe.get_all("Stock Ledger Entry",
+				filters={"item_code": d[0], "warehouse": d[2], "batch_no": ["is", "set"]},
+				fields=["distinct(batch_no)", "actual_qty", "valuation_rate"])
+
+			if package_tags:
+				for package_tag in package_tags:
+					res.append({
+						"item_code": d[0],
+						"warehouse": d[2],
+						"package_tag": package_tag.package_tag,
+						"qty": package_tag.actual_qty,
+						"item_name": d[1],
+						"valuation_rate": package_tag.valuation_rate,
+						"current_qty": stock_bal[0],
+						"current_valuation_rate": stock_bal[1]
+					})
+			if batch_nos:
+				for batch_no in batch_nos:
+					res.append({
+						"item_code": d[0],
+						"warehouse": d[2],
+						"batch_no": batch_no.batch_no,
+						"qty": batch_no.actual_qty,
+						"item_name": d[1],
+						"valuation_rate": batch_no.valuation_rate,
+						"current_qty": stock_bal[0],
+						"current_valuation_rate": stock_bal[1]
+					})
+			if not package_tags and not batch_nos:
+				res.append({
+					"item_code": d[0],
+					"warehouse": d[2],
+					"qty": stock_bal[0],
+					"item_name": d[1],
+					"valuation_rate": stock_bal[1],
+					"current_qty": stock_bal[0],
+					"current_valuation_rate": stock_bal[1]
+				})
 
 	return res
 
