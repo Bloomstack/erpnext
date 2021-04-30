@@ -572,7 +572,7 @@ def get_customer_primary_contact(doctype, txt, searchfield, start, page_len, fil
 		["Dynamic Link", "link_doctype", "=", "Customer"],
 		["Dynamic Link", "link_name", "=", filters.get('customer')],
 		["Contact", "name", "like", "%" + txt + "%"],
-	], fields=get_fields("Contact"), as_list=True)
+	], fields=get_fields("Contact", ["name"]), as_list=True)
 
 def get_customer_primary_address(doctype, txt, searchfield, start, page_len, filters):
 	from erpnext.controllers.queries import get_fields
@@ -581,7 +581,7 @@ def get_customer_primary_address(doctype, txt, searchfield, start, page_len, fil
 		["Dynamic Link", "link_doctype", "=", "Customer"],
 		["Dynamic Link", "link_name", "=", filters.get('customer')],
 		["Address", "name", "like", "%" + txt + "%"],
-	], fields=get_fields("Address"), as_list=True)
+	], fields=get_fields("Address", ["name"]), as_list=True, debug=True)
 
 def update_customer_current_month_sales(customer):
 	current_month_year = formatdate(today(), "MM-yyyy")
