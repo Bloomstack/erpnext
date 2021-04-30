@@ -11,7 +11,6 @@
   "cb_waste",
   "disposal_date",
   "disposal_time",
-  "package_tag",
   "sb_items",
   "items",
   "amended_from"
@@ -67,11 +66,12 @@
   {
    "fieldname": "sb_items",
    "fieldtype": "Section Break",
-   "label": "Items"
+   "label": "Waste Items"
   },
   {
    "fieldname": "items",
    "fieldtype": "Table",
+   "label": "Items",
    "options": "Waste Disposal Item",
    "reqd": 1
   },
@@ -83,16 +83,10 @@
    "options": "Waste Disposal",
    "print_hide": 1,
    "read_only": 1
-  },
-  {
-   "fieldname": "package_tag",
-   "fieldtype": "Link",
-   "label": "Package Tag",
-   "options": "Package Tag"
   }
  ],
  "is_submittable": 1,
- "modified": "2020-10-20 02:34:18.846300",
+ "modified": "2021-04-30 00:20:22.227480",
  "modified_by": "Administrator",
  "module": "Compliance",
  "name": "Waste Disposal",
