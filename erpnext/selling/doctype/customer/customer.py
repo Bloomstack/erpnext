@@ -566,28 +566,22 @@ def make_address(args, is_primary_address=1):
 	return address
 
 def get_customer_primary_contact(doctype, txt, searchfield, start, page_len, filters):
-	customer = filters.get('customer')
-	return frappe.db.sql("""
-		select `tabContact`.name from `tabContact`, `tabDynamic Link`
-			where `tabContact`.name = `tabDynamic Link`.parent and `tabDynamic Link`.link_name = %(customer)s
-			and `tabDynamic Link`.link_doctype = 'Customer'
-			and `tabContact`.name like %(txt)s
-		""", {
-			'customer': customer,
-			'txt': '%%%s%%' % txt
-		})
+	from erpnext.controllers.queries import get_fields
+
+	return frappe.get_all("Contact", filters=[
+		["Dynamic Link", "link_doctype", "=", "Customer"],
+		["Dynamic Link", "link_name", "=", filters.get('customer')],
+		["Contact", "name", "like", "%" + txt + "%"],
+	], fields=get_fields("Contact"), as_list=True)
 
 def get_customer_primary_address(doctype, txt, searchfield, start, page_len, filters):
-	customer = filters.get('customer')
-	return frappe.db.sql("""
-		select `tabAddress`.name from `tabAddress`, `tabDynamic Link`
-			where `tabAddress`.name = `tabDynamic Link`.parent and `tabDynamic Link`.link_name = %(customer)s
-			and `tabDynamic Link`.link_doctype = 'Customer'
-			and `tabAddress`.name like %(txt)s
-		""", {
-			'customer': customer,
-			'txt': '%%%s%%' % txt
-		})
+	from erpnext.controllers.queries import get_fields
+
+	return frappe.get_all("Address", filters=[
+		["Dynamic Link", "link_doctype", "=", "Customer"],
+		["Dynamic Link", "link_name", "=", filters.get('customer')],
+		["Address", "name", "like", "%" + txt + "%"],
+	], fields=get_fields("Address"), as_list=True)
 
 def update_customer_current_month_sales(customer):
 	current_month_year = formatdate(today(), "MM-yyyy")
