@@ -1380,6 +1380,7 @@ class StockEntry(StockController):
 			for item in self.items:
 				if item.package_tag:
 					check_if_destroyed(item.package_tag)
+					set_item_code_in_package_tag(item.package_tag, item.item_code)
 
 					frappe.db.set_value("Package Tag", item.package_tag, "coa_batch_no", item.batch_no)
 					frappe.db.set_value("Package Tag", item.package_tag, "batch_no", item.batch_no)
@@ -1388,6 +1389,7 @@ class StockEntry(StockController):
 			for item in self.items:
 				if item.package_tag and item.t_warehouse:
 					check_if_destroyed(item.package_tag)
+					set_item_code_in_package_tag(item.package_tag, item.item_code)
 
 					if frappe.db.get_value("Item", item.item_code, "requires_lab_tests"):
 						frappe.db.set_value("Package Tag", item.package_tag, "batch_no", item.batch_no)
@@ -1399,12 +1401,6 @@ class StockEntry(StockController):
 						frappe.db.set_value("Package Tag", item.package_tag, "coa_batch_no", coa_batch_no)
 						item.update({"coa_batch_no" : coa_batch_no})
 
-					#if empty - then assign. If not empty - throw an error.
-					if frappe.db.exists("Package Tag", {"name": item.package_tag, "item_code": ["is", "not set"]}):
-						frappe.db.set_value("Package Tag", item.package_tag, "item_code", item.item_code)
-					else:
-						frappe.throw(_("Do not assign new item code to an existing package tag."))
-
 	def update_package_tag_is_used(self, reset=False):
 		for item in self.items:
 			if item.package_tag:
@@ -1413,6 +1409,14 @@ class StockEntry(StockController):
 				else:
 					exists = 1 if len(frappe.get_all("Stock Ledger Entry", {"package_tag": item.package_tag, "voucher_no": ["!=", self.name]})) else 0
 					frappe.db.set_value("Package Tag", item.package_tag, "is_used", exists)
+
+def set_item_code_in_package_tag(package_tag, item_code):
+	#if empty - then assign. If not empty - throw an error.
+	if frappe.db.exists("Package Tag", {"name": package_tag, "item_code": ["is", "not set"]}):
+		frappe.db.set_value("Package Tag", package_tag, "item_code", item_code)
+	else:
+		frappe.throw(_("Item {0} is already linked to Package Tag {1}.").format(frappe.bold(item_code),
+			frappe.bold(package_tag)))
 
 def check_if_destroyed(package_tag):
 	if cint(frappe.db.get_value("Package Tag", package_tag, "lost_or_destroyed")):
