@@ -1,5 +1,4 @@
 {
- "actions": [],
  "creation": "2019-05-03 00:07:22.731177",
  "doctype": "DocType",
  "editable_grid": 1,
@@ -9,11 +8,13 @@
   "cb_waste_item",
   "item_name",
   "sb_track",
+  "qty",
   "warehouse",
   "serial_no",
   "cb_track",
-  "qty",
-  "batch_no"
+  "package_tag",
+  "batch_no",
+  "coa_batch_no"
  ],
  "fields": [
   {
@@ -44,7 +45,6 @@
   {
    "fieldname": "warehouse",
    "fieldtype": "Link",
-   "in_list_view": 1,
    "label": "Warehouse",
    "options": "Warehouse",
    "reqd": 1
@@ -60,23 +60,40 @@
    "fieldtype": "Column Break"
   },
   {
+   "columns": 1,
    "fieldname": "qty",
    "fieldtype": "Float",
    "in_list_view": 1,
    "label": "Quantity"
   },
   {
+   "fetch_from": "package_tag.batch_no",
    "fieldname": "batch_no",
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Batch No",
    "no_copy": 1,
    "options": "Batch"
+  },
+  {
+   "columns": 3,
+   "fieldname": "package_tag",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Package Tag",
+   "options": "Package Tag",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "package_tag.coa_batch_no",
+   "fieldname": "coa_batch_no",
+   "fieldtype": "Link",
+   "label": "COA Batch No",
+   "options": "Batch"
   }
  ],
  "istable": 1,
- "links": [],
- "modified": "2020-08-04 04:58:21.736093",
+ "modified": "2021-04-29 23:33:41.487924",
  "modified_by": "Administrator",
  "module": "Compliance",
  "name": "Waste Disposal Item",

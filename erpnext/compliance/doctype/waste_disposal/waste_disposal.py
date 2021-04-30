@@ -2,13 +2,10 @@
 # Copyright (c) 2020, Bloom Stack, Inc and contributors
 # For license information, please see license.txt
 
-import json
-
 import frappe
-from erpnext.stock.doctype.batch.batch import get_batch_qty
+import json
 from frappe.model.document import Document
 from frappe.model.mapper import get_mapped_doc
-
 
 class WasteDisposal(Document):
 	pass
@@ -26,6 +23,7 @@ def create_stock_entry_for_waste_disposal(doc):
 		"Waste Disposal Item": {
 			"doctype": "Stock Entry Detail",
 			"field_map": {
+				"package_tag": "package_tag",
 				"warehouse": "s_warehouse",
 				"batch_no": "batch_no",
 				"serial_no": "serial_no"
@@ -98,17 +96,29 @@ def get_items(warehouse, posting_date, posting_time, company):
 	res = []
 
 	for item in items:
-		batch_details = get_batch_qty(warehouse=item.warehouse, item_code=item.item_code) or []
+		item_details = get_batch_and_qty_and_package_tag(warehouse=item.warehouse, item_code=item.item_code) or []
 
-		for batch in batch_details:
-			if batch.qty > 0:
+		for item_detail in item_details:
+			if item_detail.qty > 0:
 				res.append({
 					"item_code": item.item_code,
 					"warehouse": item.warehouse,
-					"qty": batch.qty,
+					"package_tag": item_detail.package_tag,
+					"qty": item_detail.qty,
 					"item_name": item.item_name,
-					"current_qty": batch.qty,
-					"batch_no": batch.batch_no
+					"current_qty": item_detail.qty,
+					"batch_no": item_detail.batch_no
 				})
 
 	return res
+
+def get_batch_and_qty_and_package_tag(warehouse, item_code):
+	"""Returns batch, actual qty and package tag
+
+	:param warehouse: Optional - give qty for this warehouse
+	:param item_code: Optional - give qty for this item"""
+
+	return frappe.db.sql('''select batch_no, package_tag, sum(actual_qty) as qty
+		from `tabStock Ledger Entry`
+		where item_code = %s and warehouse=%s
+		group by batch_no''', (item_code, warehouse), as_dict=True)

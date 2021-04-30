@@ -1382,6 +1382,7 @@ class StockEntry(StockController):
 					check_if_destroyed(item.package_tag)
 
 					frappe.db.set_value("Package Tag", item.package_tag, "coa_batch_no", item.batch_no)
+					frappe.db.set_value("Package Tag", item.package_tag, "batch_no", item.batch_no)
 		elif stock_entry_purpose in ["Manufacture", "Repack"]:
 			source_item = next((item for item in self.items if item.s_warehouse), None)
 			for item in self.items:
@@ -1390,6 +1391,7 @@ class StockEntry(StockController):
 
 					if frappe.db.get_value("Item", item.item_code, "requires_lab_tests"):
 						frappe.db.set_value("Package Tag", item.package_tag, "batch_no", item.batch_no)
+						frappe.db.set_value("Package Tag", item.package_tag, "coa_batch_no", item.batch_no)
 					else:
 						frappe.db.set_value("Package Tag", item.package_tag, "batch_no", item.batch_no)
 						#coa batch of source and finished item is the same
@@ -1398,7 +1400,7 @@ class StockEntry(StockController):
 						item.update({"coa_batch_no" : coa_batch_no})
 
 					#if empty - then assign. If not empty - throw an error.
-					if frappe.db.exists("Package Tag", {"name": item.package_tag}) and not frappe.get_value("Package Tag", item.package_tag, "item_code"):
+					if frappe.db.exists("Package Tag", {"name": item.package_tag, "item_code": ["is", "not set"]}):
 						frappe.db.set_value("Package Tag", item.package_tag, "item_code", item.item_code)
 					else:
 						frappe.throw(_("Do not assign new item code to an existing package tag."))
