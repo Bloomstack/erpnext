@@ -8,7 +8,9 @@ from frappe.model.document import Document
 from frappe.model.mapper import get_mapped_doc
 
 class WasteDisposal(Document):
-	pass
+
+	def before_submit(self):
+		self.stock_entry = create_stock_entry_for_waste_disposal(self)
 
 
 @frappe.whitelist()
@@ -18,7 +20,8 @@ def create_stock_entry_for_waste_disposal(doc):
 
 	stock_entry = get_mapped_doc("Waste Disposal", doc.name, {
 		"Waste Disposal": {
-			"doctype": "Stock Entry"
+			"doctype": "Stock Entry",
+			"company": "company"
 		},
 		"Waste Disposal Item": {
 			"doctype": "Stock Entry Detail",

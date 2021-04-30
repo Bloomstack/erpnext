@@ -64,7 +64,8 @@ frappe.ui.form.on("Purchase Receipt", {
 		frm.set_query("package_tag", "items", (frm, cdt, cdn) => {
 			return {
 				filters: {
-					is_used: 0
+					is_used: 0,
+					company: frm.doc.company
 				}
 			}
 		});

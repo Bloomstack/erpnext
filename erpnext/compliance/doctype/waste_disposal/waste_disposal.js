@@ -18,9 +18,9 @@ frappe.ui.form.on("Waste Disposal", {
 			});
 		}
 
-		frm.fields_dict.items.grid.get_field("item_code").get_query = function () {
+		frm.set_query("item_code", "items", (frm, cdt, cdn) => {
 			return erpnext.queries.item({ is_stock_item: 1 });
-		};
+		});
 
 		frm.set_query("package_tag", "items", (frm, cdt, cdn) => {
 			let row = locals[cdt][cdn];
@@ -34,7 +34,7 @@ frappe.ui.form.on("Waste Disposal", {
 					item_code: row.item_code
 				}
 			};
-		})
+		});
 
 		frm.set_query("batch_no", "items", (frm, cdt, cdn) => {
 			let row = locals[cdt][cdn];
@@ -54,24 +54,6 @@ frappe.ui.form.on("Waste Disposal", {
 					item_code: row.item_code
 				}
 			};
-		});
-	},
-
-	before_submit: (frm) => {
-		frappe.call({
-			method: "erpnext.compliance.doctype.waste_disposal.waste_disposal.create_stock_entry_for_waste_disposal",
-			args: {
-				doc: frm.doc
-			},
-			callback: (r) => {
-				if (!r.exc) {
-					frm.set_value("stock_entry", r.message);
-
-					let stock_entry_link = frappe.utils.get_form_link("Stock Entry", r.message);
-					frappe.msgprint(__(`Stock Entry <a href="${stock_entry_link}">${r.message}</a> was created`));
-					frm.refresh();
-				}
-			}
 		});
 	},
 
@@ -102,10 +84,18 @@ frappe.ui.form.on("Waste Disposal", {
 				}
 			});
 		}, __("Get Items from Warehouse"), __("Update"));
-	},
+	}
 });
 
+
 frappe.ui.form.on("Waste Disposal Item", {
+	items_add: function(frm, cdt, cdn) {
+		let row = locals[cdt][cdn];
+
+		if (!row.warehouse) {
+			row.warehouse = frm.doc.s_warehouse;
+		}
+	},
 	batch_no: function(frm, cdt, cdn) {
 		let row = locals[cdt][cdn];
 
