@@ -460,13 +460,17 @@ frappe.ui.form.on('Stock Entry', {
 					filters["item_code"] = child_doc.item_code;
 				}
 
-				filters["warehouse"] = child_doc.s_warehouse
+				filters["warehouse"] = child_doc.s_warehouse;
 			} else if (((frm.doc.purpose === "Material Receipt") && (child_doc.t_warehouse)) ||
 				(in_list(["Manufacture", "Repack"], frm.doc.purpose) && (!child_doc.s_warehouse && child_doc.t_warehouse))) {
 
 				filters["is_used"] = 0;
 			} else if (in_list(["Manufacture", "Repack"], frm.doc.purpose) && (!child_doc.s_warehouse && !child_doc.t_warehouse)) {
 				frappe.throw(__("Select Source or Target warehouse for Stock Entry Type {0}", [`<b>${frm.doc.stock_entry_type}</b>`]));
+			} else {
+				if (child_doc.item_code) {
+					filters["item_code"] = child_doc.item_code;
+				}
 			}
 
 			return {
@@ -496,13 +500,17 @@ frappe.ui.form.on('Stock Entry', {
 					filters["item_code"] = child_doc.item_code;
 				}
 
-				filters["warehouse"] = child_doc.s_warehouse
+				filters["warehouse"] = child_doc.s_warehouse;
 			} else if (((frm.doc.purpose === "Material Receipt") && (child_doc.t_warehouse)) ||
 				((in_list(["Manufacture", "Repack"], frm.doc.purpose)) && (!child_doc.s_warehouse && child_doc.t_warehouse))) {
 
 				filters["item_code"] = child_doc.item_code;
 			} else if (in_list(["Manufacture", "Repack"], frm.doc.purpose) && (!child_doc.s_warehouse && !child_doc.t_warehouse)) {
 				frappe.throw(__("Select Source or Target warehouse for Stock Entry Type {0}", [`<b>${frm.doc.stock_entry_type}</b>`]));
+			} else {
+				if (child_doc.item_code) {
+					filters["item_code"] = child_doc.item_code;
+				}
 			}
 
 			return {
