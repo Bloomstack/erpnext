@@ -1414,14 +1414,28 @@ class StockEntry(StockController):
 					set_details_in_package_tag(idx, item.package_tag, item.item_code, batch_no, coa_batch_no)
 
 	def update_package_tag_is_used(self, reset=False):
+		"""
+			Updates the following in Package Tag
+
+			is_used: denotes whether there are any transactions associated with the Package Tag
+			item_code, item_name: if there are no transctions associated, Package Tag is marked as empty
+		"""
 		for item in self.items:
 			if item.package_tag:
 				if not reset:
 					frappe.db.set_value("Package Tag", item.package_tag, "is_used", 1)
 				else:
 					exists = 1 if len(frappe.get_all("Stock Ledger Entry", {"package_tag": item.package_tag, "voucher_no": ["!=", self.name]})) else 0
-					frappe.db.set_value("Package Tag", item.package_tag, "is_used", exists)
+					package_tag = frappe.get_doc("Package Tag", item.package_tag)
+					package_tag.is_used = exists
 
+					if not exists:
+						package_tag.item_code = ""
+						package_tag.item_name = ""
+						package_tag.item_group = ""
+						package_tag.package_tag_quantity = ""
+
+					package_tag.save()
 
 def check_for_source_item(row, source_item, stock_entry_purpose):
 	if not source_item:
