@@ -1,6 +1,7 @@
 {
  "allow_import": 1,
  "allow_rename": 1,
+ "autoname": "field:batch_id",
  "creation": "2013-03-05 14:50:38",
  "doctype": "DocType",
  "document_type": "Setup",
@@ -226,7 +227,7 @@
  "idx": 1,
  "image_field": "image",
  "max_attachments": 5,
- "modified": "2021-04-27 00:38:04.673130",
+ "modified": "2021-05-03 00:52:50.809083",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Batch",
