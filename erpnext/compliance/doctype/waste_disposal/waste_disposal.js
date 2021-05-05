@@ -8,20 +8,6 @@ frappe.ui.form.on("Waste Disposal", {
 		erpnext.queries.setup_queries(frm, "Warehouse", function() {
 			return erpnext.queries.warehouse(frm.doc);
 		});
-
-		frm.set_query('batch_no', 'items', (frm, cdt, cdn) => {
-			const row = locals[cdt][cdn];
-			if (!row.warehouse) {
-				frappe.throw(__("Row #{0}: Please select a warehouse.", [row.idx]));
-			}
-			return {
-				query: 'erpnext.controllers.queries.get_batch_no',
-				filters: {
-					item_code: row.item_code,
-					warehouse: row.warehouse
-				},
-			};
-		});
 	},
 
 	refresh: function(frm) {
@@ -34,6 +20,23 @@ frappe.ui.form.on("Waste Disposal", {
 
 		frm.fields_dict.items.grid.get_field("item_code").get_query = function () {
 			return erpnext.queries.item({ is_stock_item: 1 });
+		};
+
+		frm.fields_dict.items.grid.get_field("batch_no").get_query = function (frm, cdt, cdn) {
+			let row = locals[cdt][cdn];
+
+			if (!row.warehouse) {
+				frappe.throw(__("Please select a warehouse"));
+			}
+
+			return {
+				query: "erpnext.stock.doctype.stock_entry.stock_entry.get_available_batches_in_warehouse",
+				filters: {
+					item: row.item_code,
+					s_warehouse: row.warehouse,
+					qty: row.qty || 0
+				}
+			};
 		};
 	},
 
