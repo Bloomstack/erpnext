@@ -1487,7 +1487,7 @@ erpnext.TransactionController = erpnext.taxes_and_totals.extend({
 
 		const r = await frappe.xcall("erpnext.stock.get_item_details.apply_price_list", {args: args});
 		if (!r.exc) {
-			frappe.run_serially([
+			await frappe.run_serially([
 				() => me.frm.set_value("price_list_currency", r.message.parent.price_list_currency),
 				() => me.frm.set_value("plc_conversion_rate", r.message.parent.plc_conversion_rate),
 				() => {
