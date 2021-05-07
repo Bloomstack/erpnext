@@ -20,7 +20,7 @@ class CouponCode(Document):
 				self.coupon_code =''.join([i for i in self.coupon_name if not i.isdigit()])[0:8].upper()
 			elif self.coupon_type == "Gift Card":
 				self.coupon_code = frappe.generate_hash()[:10].upper()
-		
+
 	def validate(self):
 		if self.coupon_type == "Gift Card":
 			self.maximum_use = 1
@@ -43,11 +43,12 @@ def apply_coupon(doc):
 	"""Applies coupon code to document. The passed document must be of type Quotation,
 	Sales Order or Sales Invoice.
 	"""
-	if not doc.coupon_code:
-		# Run undo script if coupon_code was removed and automation script exists
-		if hasattr(doc, "automation_data"):
-			run_coupon_undo_script(doc)
+	# Run undo script if coupon_code was removed and automation script exists
+	# Run undo script before setting coupon code else the calculated discount is added to the existing value
+	if hasattr(doc, "automation_data"):
+		run_coupon_undo_script(doc)
 
+	if not doc.coupon_code:
 		return
 
 	coupon = frappe.get_doc("Coupon Code", doc.coupon_code)
