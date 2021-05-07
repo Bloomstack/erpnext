@@ -11,21 +11,9 @@ jobs:
       fail-fast: false
 
       matrix:
-       include:
-        - TYPE: "server"
-          JOB_NAME: "Server.1"
-          RUN_COMMAND: cd ~/frappe-bench/ && bench --site test_site run-parallel-tests --with-coverage --ci-build-id $GITHUB_RUN_ID --app erpnext
-        - TYPE: "server"
-          JOB_NAME: "Server.2"
-          RUN_COMMAND: cd ~/frappe-bench/ && bench --site test_site run-parallel-tests --with-coverage --ci-build-id $GITHUB_RUN_ID --app erpnext
-        - TYPE: "server"
-          JOB_NAME: "Server.3"
-          RUN_COMMAND: cd ~/frappe-bench/ && bench --site test_site run-parallel-tests --with-coverage --ci-build-id $GITHUB_RUN_ID --app erpnext
-        - TYPE: "patch"
-          JOB_NAME: "Patch"
-          RUN_COMMAND: cd ~/frappe-bench/ && wget http://build.erpnext.com/20171108_190013_955977f8_database.sql.gz &&  bench --site test_site --force restore ~/frappe-bench/20171108_190013_955977f8_database.sql.gz && bench --site test_site migrate
+        container: [1, 2, 3]
 
-    name: ${{ matrix.JOB_NAME }}
+    name: Server Tests
 
     services:
       mysql:
@@ -85,7 +73,7 @@ jobs:
         run: bash ${GITHUB_WORKSPACE}/.github/helper/install.sh
 
       - name: Run Tests
-        run: cd ~/frappe-bench/ && bench --site test_site run-tests --app erpnext
+        run: cd ~/frappe-bench/ && bench --site test_site run-parallel-tests --app erpnext --build-number ${{ matrix.container }} --total-builds 3 --with-coverage
         env:
           TYPE: ${{ matrix.TYPE }}
 
