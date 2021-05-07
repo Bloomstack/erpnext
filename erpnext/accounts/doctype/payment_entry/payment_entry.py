@@ -68,8 +68,8 @@ class PaymentEntry(AccountsController):
 		if self.difference_amount:
 			frappe.throw(_("Difference Amount must be zero"))
 		self.make_gl_entries()
-		self.update_outstanding_amounts()
 		self.update_advance_paid()
+		self.update_outstanding_amounts()
 		self.update_expense_claim()
 		self.update_payment_schedule()
 		self.set_status()
@@ -547,7 +547,7 @@ class PaymentEntry(AccountsController):
 				})
 
 				gl_entries.append(gle)
-			
+
 			if self.total_discounted_amount:
 				for d in self.get("references"):
 					gle = party_gl_dict.copy()
