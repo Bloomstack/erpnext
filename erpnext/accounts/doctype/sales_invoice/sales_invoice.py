@@ -185,6 +185,7 @@ class SalesInvoice(SellingController):
 		self.update_serial_no()
 
 		if not cint(self.is_pos) == 1 and not self.is_return:
+			self.db_update()
 			self.update_against_document_in_jv()
 
 		self.update_time_sheet(self.name)

@@ -174,8 +174,10 @@ class PaymentEntry(AccountsController):
 					d.reference_name, self.party_account_currency)
 
 				for field, value in iteritems(ref_details):
-					if field == 'exchange_rate' or not d.get(field) or force:
+					if field == 'exchange_rate' or not d.get(field):
 						d.set(field, value)
+					elif force:
+						d.db_set(field, value)
 
 	def validate_payment_type(self):
 		if self.payment_type not in ("Receive", "Pay", "Internal Transfer"):
@@ -547,7 +549,7 @@ class PaymentEntry(AccountsController):
 				})
 
 				gl_entries.append(gle)
-			
+
 			if self.total_discounted_amount:
 				for d in self.get("references"):
 					gle = party_gl_dict.copy()
