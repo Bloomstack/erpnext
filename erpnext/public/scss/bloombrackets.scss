@@ -22,6 +22,14 @@ $bb-control-focused-outline-color: black;
     padding: 0;
   }
 
+  .frappe-control .form-group .clearfix label {
+    display: none;
+  }
+
+  .frappe-control .form-group .help-box {
+    display: none;
+  }
+
   &.bb-block-top {
     padding-left: 0;
   }

@@ -159,6 +159,7 @@
   },
   {
    "allow_on_submit": 1,
+   "default": "0",
    "depends_on": "billable",
    "fieldname": "billing_hours",
    "fieldtype": "Float",
@@ -232,7 +233,7 @@
  "idx": 1,
  "istable": 1,
  "links": [],
- "modified": "2020-07-28 22:04:44.829666",
+ "modified": "2021-05-05 12:57:05.316204",
  "modified_by": "Administrator",
  "module": "Projects",
  "name": "Timesheet Detail",

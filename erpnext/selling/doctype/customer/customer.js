@@ -134,6 +134,17 @@ frappe.ui.form.on("Customer", {
 		});
 	},
 
+	sync_with_leaflink: function(frm){
+		if(frm.doc.is_leaflink_customer){
+			frappe.call({
+				method: 'erpnext.erpnext_integrations.doctype.leaflink_settings.leaflink_settings.sync_customer_with_leaflink',
+				args: {
+					"customer_name": frm.doc.name
+				}
+			})
+		}
+	},
+
 	refresh: function(frm) {
 		if(frappe.defaults.get_default("cust_master_name")!="Naming Series") {
 			frm.toggle_display("naming_series", false);

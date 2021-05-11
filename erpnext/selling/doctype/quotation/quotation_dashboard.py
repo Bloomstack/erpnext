@@ -6,6 +6,8 @@ def get_data():
 		'fieldname': 'prevdoc_docname',
 		'non_standard_fieldnames': {
 			'Auto Repeat': 'reference_document',
+			'Payment Entry': 'reference_name',
+			'Payment Request': 'reference_name'
 		},
 		'transactions': [
 			{
@@ -15,6 +17,10 @@ def get_data():
 			{
 				'label': _('Subscription'),
 				'items': ['Auto Repeat']
+			},
+			{
+				'label': _('Payment'),
+				'items': ['Payment Entry', 'Payment Request']
 			},
 		]
 	}

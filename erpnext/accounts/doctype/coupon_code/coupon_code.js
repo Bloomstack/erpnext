@@ -1,10 +1,6 @@
 // Copyright (c) 2018, Frappe Technologies Pvt. Ltd. and contributors
 // For license information, please see license.txt
 frappe.ui.form.on('Coupon Code', {
-	setup: function(frm) {
-		const $container = $(frm.page.current_view).find('[data-fieldname=brackets_widget]');
-		$container.data("brackets_widget", new erpnext.bloombrackets.Component($container, frm, "brackets_code"));
-	},
 	coupon_name:function(frm){
 		if (frm.doc.__islocal===1) {
 			frm.trigger("make_coupon_code");
@@ -30,6 +26,7 @@ frappe.ui.form.on('Coupon Code', {
 	},
 	refresh: function(frm) {
 		const $container = $(frm.page.current_view).find('[data-fieldname=brackets_widget]');
+		$container.data("brackets_widget", new erpnext.bloombrackets.Component($container, frm, "brackets_code"));
 	}
 });
 

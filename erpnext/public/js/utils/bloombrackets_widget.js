@@ -84,7 +84,7 @@ class BloomBracketsComponent {
   }
 
   list_vars() {
-    return Object.keys(this.context['#VARMETA']);
+    return Object.keys(this.context['#VARMETA'] || {});
   }
 }
 

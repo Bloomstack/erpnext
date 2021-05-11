@@ -13,6 +13,7 @@
   "close_opportunity_after_days",
   "default_valid_till",
   "column_break_5",
+  "expected_delivery_days",
   "so_required",
   "dn_required",
   "sales_update_frequency",
@@ -132,12 +133,18 @@
    "fieldname": "hide_tax_id",
    "fieldtype": "Check",
    "label": "Hide Customer's Tax Id from Sales Transactions"
+  },
+  {
+   "default": "0",
+   "fieldname": "expected_delivery_days",
+   "fieldtype": "Int",
+   "label": "Expected Number of Days Between Sales Order and Delivery"
   }
  ],
  "icon": "fa fa-cog",
  "idx": 1,
  "issingle": 1,
- "modified": "2021-03-23 02:00:08.785848",
+ "modified": "2021-05-06 01:41:17.416732",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Selling Settings",
