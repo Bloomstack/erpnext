@@ -8,6 +8,7 @@ import datetime
 import requests
 import json
 from six import text_type
+from frappe import _
 from frappe.model.document import Document
 
 class FlowkanaSettings(Document):
