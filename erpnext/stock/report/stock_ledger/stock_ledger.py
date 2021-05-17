@@ -6,7 +6,7 @@ from __future__ import unicode_literals
 import frappe
 from erpnext.stock.utils import update_included_uom_in_report
 from frappe import _
-
+from erpnext.compliance.doctype.package_tag.package_tag import get_package_tag_batch_details
 
 def execute(filters=None):
 	include_uom = filters.get("include_uom")
@@ -15,6 +15,7 @@ def execute(filters=None):
 	sl_entries = get_stock_ledger_entries(filters, items)
 	item_details = get_item_details(items, sl_entries, include_uom)
 	opening_row = get_opening_balance(filters, columns)
+	package_tags = get_package_tag_batch_details()
 
 	data = []
 	conversion_factors = []
@@ -58,7 +59,12 @@ def execute(filters=None):
 					"finished_product": finished_product,
 					"finished_qty": finished_qty,
 				})
-
+		# Update report if stock ledger item has a package tag and coa batch no
+		if sle.item_code in package_tags:
+			sle.update({
+					"package_tag": package_tags[sle.item_code]["package_tag"],
+					"coa_batch_no": package_tags[sle.item_code]["coa_batch_no"],
+				})
 		data.append(sle)
 
 		if include_uom:
@@ -93,7 +99,10 @@ def get_columns():
 		{"label": _("Batch"), "fieldname": "batch_no", "fieldtype": "Link", "options": "Batch", "width": 100},
 		{"label": _("Serial #"), "fieldname": "serial_no", "fieldtype": "Link", "options": "Serial No", "width": 100},
 		{"label": _("Project"), "fieldname": "project", "fieldtype": "Link", "options": "Project", "width": 100},
-		{"label": _("Company"), "fieldname": "company", "fieldtype": "Link", "options": "Company", "width": 110}
+		{"label": _("Company"), "fieldname": "company", "fieldtype": "Link", "options": "Company", "width": 110},
+		{"label": _("Package Tag"), "fieldname": "package_tag", "fieldtype": "Link", "options": "Package Tag", "width": 110},
+		{"label": _("COA Batch No"), "fieldname": "coa_batch_no", "fieldtype": "Data", "options": "COA Batch No", "width": 100},
+
 	]
 
 	return columns
@@ -121,7 +130,8 @@ def get_stock_ledger_entries(filters, items):
 			serial_no,
 			company,
 			project,
-			stock_value_difference
+			stock_value_difference,
+			package_tag
 		FROM
 			`tabStock Ledger Entry` sle
 		WHERE

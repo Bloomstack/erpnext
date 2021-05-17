@@ -7,6 +7,7 @@ from frappe import _
 from frappe.utils import date_diff, flt
 from six import iteritems
 from erpnext.stock.doctype.serial_no.serial_no import get_serial_nos
+from erpnext.compliance.doctype.package_tag.package_tag import get_package_tag_batch_details
 
 def execute(filters=None):
 
@@ -14,6 +15,7 @@ def execute(filters=None):
 	item_details = get_fifo_queue(filters)
 	to_date = filters["to_date"]
 	_func = lambda x: x[1]
+	package_tags = get_package_tag_batch_details()
 
 	data = []
 	for item, item_dict in iteritems(item_details):
@@ -33,7 +35,11 @@ def execute(filters=None):
 			row.append(details.warehouse)
 
 		row.extend([item_dict.get("total_qty"), average_age,
-			earliest_age, latest_age, details.stock_uom])
+			earliest_age, latest_age, details.stock_uom, details.batch_no])
+
+		# Update report if stock aging item has a package tag and coa batch no
+		if item in package_tags:
+			row.extend([package_tags[item]["package_tag"], package_tags[item]["coa_batch_no"]])
 
 		data.append(row)
 
@@ -129,6 +135,27 @@ def get_columns(filters):
 			"fieldtype": "Link",
 			"options": "UOM",
 			"width": 100
+		},
+		{
+			"label": _("Package Tag"),
+			"fieldname": "package_tag",
+			"fieldtype": "Link",
+			"options": "Package Tag",
+			"width": 100
+		},
+		{
+			"fieldname":"batch_no",
+			"label": _("Batch No"),
+			"fieldtype": "Link",
+			"options": "Batch",
+			"width": 120
+		},
+		{
+			"fieldname":"coa_batch_no",
+			"label": _("COA Batch No"),
+			"fieldtype": "Data",
+			"options": "COA Batch",
+			"width": 120
 		}
 	])
 

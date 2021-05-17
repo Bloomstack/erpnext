@@ -1,3 +1,4 @@
+
 # Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
 # License: GNU General Public License v3. See license.txt
 
@@ -7,8 +8,8 @@ from frappe import _
 from frappe.utils import flt, cint, getdate, now, date_diff
 from erpnext.stock.utils import add_additional_uom_columns
 from erpnext.stock.report.stock_ledger.stock_ledger import get_item_group_condition
-
 from erpnext.stock.report.stock_ageing.stock_ageing import get_fifo_queue, get_average_age
+from erpnext.compliance.doctype.package_tag.package_tag import get_package_tag_batch_details
 
 from six import iteritems
 
@@ -24,6 +25,7 @@ def execute(filters=None):
 	columns = get_columns(filters)
 	items = get_items(filters)
 	sle = get_stock_ledger_entries(filters, items)
+	package_tags = get_package_tag_batch_details()
 
 	if filters.get('show_stock_ageing_data'):
 		filters['show_warehouse_wise_stock'] = True
@@ -81,7 +83,12 @@ def execute(filters=None):
 					stock_ageing_data['latest_age'] = date_diff(to_date, fifo_queue[-1][1])
 
 				report_data.update(stock_ageing_data)
-
+			# Update report if stock balance item has a package tag and coa batch no
+			if item in package_tags:
+			report_data.update({
+					"package_tag": package_tags[item]["package_tag"],
+					"coa_batch_no": package_tags[item]["coa_batch_no"],
+				})
 			data.append(report_data)
 
 	add_additional_uom_columns(columns, data, include_uom, conversion_factors)
@@ -107,7 +114,11 @@ def get_columns(filters):
 		{"label": _("Valuation Rate"), "fieldname": "val_rate", "fieldtype": "Currency", "width": 90, "convertible": "rate"},
 		{"label": _("Reorder Level"), "fieldname": "reorder_level", "fieldtype": "Float", "width": 80, "convertible": "qty"},
 		{"label": _("Reorder Qty"), "fieldname": "reorder_qty", "fieldtype": "Float", "width": 80, "convertible": "qty"},
-		{"label": _("Company"), "fieldname": "company", "fieldtype": "Link", "options": "Company", "width": 100}
+		{"label": _("Company"), "fieldname": "company", "fieldtype": "Link", "options": "Company", "width": 100},
+		{"label": _("Package Tag"), "fieldname": "package_tag", "fieldtype": "Link", "options": "Package Tag", "width": 110},
+		{"label": _("Batch"), "fieldname": "batch_no", "fieldtype": "Link", "options": "Batch", "width": 100},
+		{"label": _("COA Batch No"), "fieldname": "coa_batch_no", "fieldtype": "Data", "options": "COA Batch No", "width": 100},
+
 	]
 
 	if filters.get('show_stock_ageing_data'):
@@ -159,7 +170,7 @@ def get_stock_ledger_entries(filters, items):
 		select
 			sle.item_code, warehouse, sle.posting_date, sle.actual_qty, sle.valuation_rate,
 			sle.company, sle.voucher_type, sle.qty_after_transaction, sle.stock_value_difference,
-			sle.item_code as name, sle.voucher_no
+			sle.item_code as name, sle.voucher_no, sle.package_tag, sle.batch_no
 		from
 			`tabStock Ledger Entry` sle force index (posting_sort_index)
 		where sle.docstatus < 2 %s %s

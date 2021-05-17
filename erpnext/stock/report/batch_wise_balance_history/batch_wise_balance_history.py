@@ -6,7 +6,7 @@ from __future__ import unicode_literals
 import frappe
 from frappe import _
 from frappe.utils import cint, flt, getdate
-
+from erpnext.compliance.doctype.package_tag.package_tag import get_package_tag_batch_details
 
 def execute(filters=None):
 	if not filters: filters = {}
@@ -16,8 +16,9 @@ def execute(filters=None):
 	columns = get_columns(filters)
 	item_map = get_item_details(filters)
 	iwb_map = get_item_warehouse_batch_map(filters, float_precision)
-
+	package_tags = get_package_tag_batch_details()
 	data = []
+	package_tag={}
 	for item in sorted(iwb_map):
 		if not filters.get("item") or filters.get("item") == item:
 			for wh in sorted(iwb_map[item]):
@@ -29,7 +30,9 @@ def execute(filters=None):
 							flt(qty_dict.out_qty, float_precision), flt(qty_dict.bal_qty, float_precision),
 							item_map[item]["stock_uom"]
 						])
-
+					# Update report if batch balance item has a package tag and coa batch no
+					if item in package_tags:
+						data[len(data)-1].extend([package_tags[item]["package_tag"],package_tags[item]["coa_batch_no"]])
 	return columns, data
 
 
@@ -39,7 +42,7 @@ def get_columns(filters):
 	columns = [_("Item") + ":Link/Item:100"] + [_("Item Name") + "::150"] + [_("Description") + "::150"] + \
 		[_("Warehouse") + ":Link/Warehouse:100"] + [_("Batch") + ":Link/Batch:100"] + [_("Opening Qty") + ":Float:90"] + \
 		[_("In Qty") + ":Float:80"] + [_("Out Qty") + ":Float:80"] + [_("Balance Qty") + ":Float:90"] + \
-		[_("UOM") + "::90"]
+		[_("UOM") + "::90"]  + [_("Package Tag") + ":Link/Package Tag:100"] + [_("COA Batch No") + "::100"]
 
 	return columns
 
@@ -63,7 +66,7 @@ def get_conditions(filters):
 # get all details
 def get_stock_ledger_entries(filters):
 	return frappe.db.sql("""
-		select item_code, batch_no, warehouse, posting_date, sum(actual_qty) as actual_qty
+		select item_code, batch_no, warehouse, posting_date, sum(actual_qty) as actual_qty, package_tag
 		from `tabStock Ledger Entry`
 		where docstatus < 2 and ifnull(batch_no, '') != '' {conditions}
 		group by voucher_no, batch_no, item_code, warehouse

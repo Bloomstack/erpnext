@@ -37,6 +37,18 @@ frappe.query_reports["Stock Ageing"] = {
 			"options": "Brand"
 		},
 		{
+			"fieldname":"package_tag",
+			"label": __("Package Tag"),
+			"fieldtype": "Link",
+			"options": "Package Tag",
+		},
+		{
+			"fieldname":"batch_no",
+			"label": __("Batch No"),
+			"fieldtype": "Link",
+			"options": "Batch"
+		},
+		{
 			"fieldname":"show_warehouse_wise_stock",
 			"label": __("Show Warehouse-wise Stock"),
 			"fieldtype": "Check",
