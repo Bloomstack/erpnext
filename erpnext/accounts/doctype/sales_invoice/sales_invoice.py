@@ -1590,3 +1590,30 @@ def create_invoice_discounting(source_name, target_doc=None):
 def get_item_details(item_code):
 	item = frappe.get_doc("Item", item_code).as_dict()
 	return item
+
+@frappe.whitelist()
+def email_coa(docname):
+	sales_invoice = frappe.get_doc("Sales Invoice", docname).as_dict()
+
+	attachments = []
+	for item in sales_invoice.get("items"):
+		delivery_note = frappe.db.get_value("Delivery Note", item.delivery_note, "contact_email")
+		if not delivery_note:
+			frappe.throw(_("No contact email found in Delivery Note {0}").format(item.delivery_note))
+
+		coas = frappe.db.get_value("Delivery Note Item", {'item_code': item.item_code}, 'certificate_of_analysis')
+
+		if not coas:
+			frappe.msgprint(_("No Certificates of Analysis attached"))
+			return
+
+		coa_file_id = frappe.db.get_value("File", {"file_url": coas}, "name")
+		attachments.append({"fid": coa_file_id})
+
+	frappe.sendmail(
+		recipients=delivery_note.get("contact_email"),
+		subject="Certificate of Analysis",
+		attachments=attachments
+	)
+
+	return "success"
