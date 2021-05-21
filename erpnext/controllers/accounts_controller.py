@@ -451,6 +451,7 @@ class AccountsController(TransactionBase):
 	def apply_shipping_rule(self):
 		if self.shipping_rule:
 			shipping_rule = frappe.get_doc("Shipping Rule", self.shipping_rule)
+			shipping_rule.remove_duplicate_shipping_rule(self,"Shipping Rule", self.shipping_rule)
 			shipping_rule.apply(self)
 			self.calculate_taxes_and_totals()
 
@@ -907,12 +908,20 @@ def get_default_taxes_and_charges(master_doctype, tax_template=None, company=Non
 
 
 @frappe.whitelist()
-def get_taxes_and_charges(master_doctype, master_name):
+def get_taxes_and_charges(master_doctype, master_name, doc=None):
 	if not master_name:
 		return
-	from frappe.model import default_fields
-	tax_master = frappe.get_doc(master_doctype, master_name)
 
+	if isinstance(doc, str):
+		doc = json.loads(doc)	
+
+	if doc.get("taxes"):
+		taxes = remove_duplicate_taxes(doc.get("taxes"), doc)	
+	else:
+		taxes = []
+	from frappe.model import default_fields
+	tax_master = frappe.get_doc(master_doctype, master_name)	
+	
 	taxes_and_charges = []
 	for i, tax in enumerate(tax_master.get("taxes")):
 		tax = tax.as_dict()
@@ -921,9 +930,32 @@ def get_taxes_and_charges(master_doctype, master_name):
 			if fieldname in tax:
 				del tax[fieldname]
 
-		taxes_and_charges.append(tax)
+		# taxes_and_charges.append(tax)
+		# doc.append("taxes", tax)
+		taxes.append(tax)
+	return taxes
 
-	return taxes_and_charges
+def remove_duplicate_taxes(doc_taxes,doc):	
+	sales_taxes_accounts = frappe.get_all("Sales Taxes and Charges", fields={"account_head"})
+	# print("account heads $$$$$$",sales_taxes_accounts)
+	sales_taxes_names = [data['account_head'] for data in sales_taxes_accounts]
+	# print("sales", sales_taxes_names)
+	if doc_taxes:
+		
+		print("******@@@@@", doc_taxes)
+		to_remove = [d for d in doc_taxes
+			if (d['account_head'] in sales_taxes_names)]		
+		
+		for d in to_remove:
+			doc_taxes.remove(d)		
+
+		# for each_doc in doc.get("taxes"):
+		# 	if each_doc['account_head'] in sales_taxes_names:
+		# 		print("******",each_doc['account_head'])
+		# 		doc.get("taxes").remove(each_doc)
+		# 		print("*******____________ in the removed *******")	
+				
+	return doc_taxes
 
 
 def validate_conversion_rate(currency, conversion_rate, conversion_rate_label, company):

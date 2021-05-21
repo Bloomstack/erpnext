@@ -1583,23 +1583,32 @@ erpnext.TransactionController = erpnext.taxes_and_totals.extend({
 
 	taxes_and_charges: function() {
 		var me = this;
-		if(this.frm.doc.taxes_and_charges) {
+		debugger;
+		console.log(this.frm.doc);
+		if(this.frm.doc.taxes_and_charges) {			
 			return this.frm.call({
 				method: "erpnext.controllers.accounts_controller.get_taxes_and_charges",
 				args: {
-					"master_doctype": frappe.meta.get_docfield(this.frm.doc.doctype, "taxes_and_charges",
+					doc: this.frm.doc,
+					master_doctype: frappe.meta.get_docfield(this.frm.doc.doctype, "taxes_and_charges",
 						this.frm.doc.name).options,
-					"master_name": this.frm.doc.taxes_and_charges
+					master_name: this.frm.doc.taxes_and_charges
 				},
 				callback: function(r) {
+					debugger;
+					console.log(r);
 					if(!r.exc) {
+						refresh_field("taxes");
 						if(me.frm.doc.shipping_rule && me.frm.doc.taxes) {
+							debugger;
+							me.frm.doc.taxes =[];
 							for (let tax of r.message) {
-								me.frm.add_child("taxes", tax);
+								me.frm.add_child("taxes", tax);								
 							}
-
+							me.calculate_taxes_and_totals();
 							refresh_field("taxes");
 						} else {
+							debugger;
 							me.frm.set_value("taxes", r.message);
 							me.calculate_taxes_and_totals();
 						}
@@ -1608,7 +1617,7 @@ erpnext.TransactionController = erpnext.taxes_and_totals.extend({
 			});
 		}
 	},
-
+	
 	tax_category: function() {
 		var me = this;
 		if(!me.frm.doc.tax_category) return;

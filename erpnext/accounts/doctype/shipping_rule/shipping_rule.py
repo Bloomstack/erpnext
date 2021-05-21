@@ -87,6 +87,13 @@ class ShippingRule(Document):
 				frappe.throw(_('Shipping rule not applicable for country {0} in Shipping Address').format(shipping_country))
 
 	def add_shipping_rule_to_tax_table(self, doc, shipping_amount):
+		# print("****************",doc)
+		# for eachdata in doc:
+		# 	print(eachdata)
+		# tax_table = doc.get("taxes")
+		# if tax_table:
+		# 	print("--------",tax_table.as_dict())
+
 		shipping_charge = {
 			"charge_type": "Actual",
 			"account_head": self.account,
@@ -110,11 +117,79 @@ class ShippingRule(Document):
 		if existing_shipping_charge:
 			# take the last record found
 			existing_shipping_charge[-1].tax_amount = shipping_amount
+			
 		else:
 			shipping_charge["tax_amount"] = shipping_amount
-			shipping_charge["description"] = self.label
-			doc.append("taxes", shipping_charge)
+			shipping_charge["description"] = self.label			
+			
 
+			if doc.get("taxes"):
+				# for i, tax in enumerate(shipping_charge.items()):
+				# 	tax = tax.as_dict()
+				# for dataeach in doc.get("taxes"):
+				# 	print("--------",dataeach.as_dict())
+				# doc.append("taxes", shipping_charge)			
+					# for i, tax in enumerate(shipping_charge):
+					# 	tax = tax.as_dict()
+					# print("--------*******",tax)
+					# shipping_charge1 = []
+					# for key, value in list(shipping_charge.items()):
+					# 	# print("shipping key ***", key)
+					# 	# print("shipping value ****", value)
+					# 	shipping_charge1[value]= value				             
+					# shipping_charge = list(shipping_charge)
+				print("shipping value ****", shipping_charge)
+				doc.append("taxes", shipping_charge)
+
+			else:
+				print("in tax table empty condition ******")
+				doc.append("taxes", shipping_charge)
+		
+
+		# tax_table1 = doc.get("taxes")
+		# 	if tax_table1:
+		# 		print("--------",tax_table1.as_dict())	
+
+	def remove_duplicate_shipping_rule(self,doc, doctype, docname):
+		if not docname:
+			return
+
+		shipping_rule_accounts = frappe.get_all("Shipping Rule", fields={"account"})
+		# print("shipping rule account ",shipping_rule_accounts)
+		shipping_rule_names = [data['account'] for data in shipping_rule_accounts]
+		# print("shipping rule names ",shipping_rule_names)
+		# print("account name", self.account)
+
+		# if self.account in shipping_rule_names:
+		# 	shipping_rule_names.remove(self.account)
+		# 	print("removed shipping rule names ",shipping_rule_names)
+			
+		
+		# taxes_child_table = doc.get("taxes")
+		# for tax in doc.get("taxes")or []:			
+		# 	if(tax.account_head in shipping_rule_names):
+		# 		print("account head matched")
+		# 		doc.get("taxes").remove(tax.account_head)
+		
+		# tax_table2 = doc.get("taxes")
+		# 	if tax_table2:
+		# 		print("*********",tax_table2.as_dict())
+		
+		# print("******@@@@@****", doc.get("taxes"))		
+
+		to_remove = [d for d in doc.get("taxes")
+			if (d.account_head in shipping_rule_names)]
+		
+		
+		# for d in to_remove:
+		# 	doc.get("taxes").remove(d)
+			# self.reload()
+		[ doc.get("taxes").remove(d) for d in to_remove ]
+		
+			# for fieldname in default_fields:
+			# 	if fieldname in d:
+			# 		del doc.get("taxes")[fieldname]
+			
 	def sort_shipping_rule_conditions(self):
 		"""Sort Shipping Rule Conditions based on increasing From Value"""
 		self.shipping_rules_conditions = sorted(self.conditions, key=lambda d: flt(d.from_value))
