@@ -1593,10 +1593,10 @@ def get_item_details(item_code):
 
 @frappe.whitelist()
 def email_coa(docname):
-	sales_invoice = frappe.get_doc("Sales Invoice", docname).as_dict()
-
+	sales_invoice = frappe.get_doc("Sales Invoice", docname)
 	attachments = []
-	for item in sales_invoice.get("items"):
+
+	for item in sales_invoice.items:
 		delivery_note = frappe.db.get_value("Delivery Note", item.delivery_note, "contact_email")
 		if not delivery_note:
 			frappe.msgprint(_("No contact email found in Delivery Note {0}").format(item.delivery_note))
