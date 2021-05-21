@@ -1593,12 +1593,21 @@ def get_item_details(item_code):
 
 @frappe.whitelist()
 def email_coa(docname):
+	"""Email COA's from sales invoice
+
+	Args:
+		docname (str): Sales Invoice Document name
+
+	Returns:
+		success : if Certificates of Analysis are mailed successfully
+	"""
 	sales_invoice = frappe.get_doc("Sales Invoice", docname)
 	attachments = []
 
 	for item in sales_invoice.items:
-		delivery_note = frappe.db.get_value("Delivery Note", item.delivery_note, "contact_email")
-		if not delivery_note:
+		# checks certificate of analysis for each item in Sales Invoice Item List
+		delivery_note_email = frappe.db.get_value("Delivery Note", item.delivery_note, "contact_email")
+		if not delivery_note_email:
 			frappe.msgprint(_("No contact email found in Delivery Note {0}").format(item.delivery_note))
 			continue
 
@@ -1616,10 +1625,11 @@ def email_coa(docname):
 
 		attachments.append({"fid": coa_file_id})
 
-	frappe.sendmail(
-		recipients=delivery_note.get("contact_email"),
-		subject="Certificate of Analysis",
-		attachments=attachments
-	)
+	if delivery_note_email and attachments:
+		frappe.sendmail(
+			recipients=delivery_note_email,
+			subject="Certificate of Analysis",
+			attachments=attachments
+		)
 
 	return "success"
