@@ -1609,6 +1609,11 @@ def email_coa(docname):
 			return
 
 		coa_file_id = frappe.db.get_value("File", {"file_url": coas}, "name")
+
+		if not coa_file_id:
+			frappe.msgprint(_("No File found for {0}").format(coas))
+			return
+
 		attachments.append({"fid": coa_file_id})
 
 	frappe.sendmail(
