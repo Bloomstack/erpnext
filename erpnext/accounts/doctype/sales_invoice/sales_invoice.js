@@ -442,7 +442,7 @@ erpnext.accounts.SalesInvoiceController = erpnext.selling.SellingController.exte
 		frappe.call({
 			method: "erpnext.accounts.doctype.sales_invoice.sales_invoice.email_coa",
 			args: {
-				docname: doc.name
+				docname: this.frm.doc.name
 			},
 			callback: (r) => {
 				if(r && r.message == "success"){
