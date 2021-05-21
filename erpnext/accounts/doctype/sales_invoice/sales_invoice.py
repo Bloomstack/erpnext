@@ -1599,7 +1599,8 @@ def email_coa(docname):
 	for item in sales_invoice.get("items"):
 		delivery_note = frappe.db.get_value("Delivery Note", item.delivery_note, "contact_email")
 		if not delivery_note:
-			frappe.throw(_("No contact email found in Delivery Note {0}").format(item.delivery_note))
+			frappe.msgprint(_("No contact email found in Delivery Note {0}").format(item.delivery_note))
+			return
 
 		coas = frappe.db.get_value("Delivery Note Item", {'item_code': item.item_code}, 'certificate_of_analysis')
 
