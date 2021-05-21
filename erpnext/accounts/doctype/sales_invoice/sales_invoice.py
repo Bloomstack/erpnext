@@ -1612,7 +1612,7 @@ def email_coa(docname):
 
 		if not coa_file_id:
 			frappe.msgprint(_("No File found for {0}").format(coas))
-			return
+			continue
 
 		attachments.append({"fid": coa_file_id})
 
