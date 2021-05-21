@@ -1606,7 +1606,7 @@ def email_coa(docname):
 
 		if not coas:
 			frappe.msgprint(_("No Certificates of Analysis attached for Item {0} in Delivery Note {1}.").format(item.item_code, item.delivery_note))
-			return
+			continue
 
 		coa_file_id = frappe.db.get_value("File", {"file_url": coas}, "name")
 
