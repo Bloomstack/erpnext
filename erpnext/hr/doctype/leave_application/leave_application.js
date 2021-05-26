@@ -22,6 +22,7 @@ frappe.ui.form.on("Leave Application", {
 		if (!frm.doc.posting_date) {
 			frm.set_value("posting_date", frappe.datetime.get_today());
 		}
+		
 		if (frm.doc.docstatus == 0) {
 			return frappe.call({
 				method: "erpnext.hr.doctype.leave_application.leave_application.get_mandatory_approval",
@@ -84,6 +85,9 @@ frappe.ui.form.on("Leave Application", {
 			if (perm && perm['Employee']) {
 				frm.set_value('employee', perm['Employee'].map(perm_doc => perm_doc.doc)[0]);
 			}
+		}
+		if((!frm.doc.__islocal) && frm.doc.employee) {
+			 $('[data-fieldname="employee_name"]')[0].hidden = true
 		}
 	},
 
