@@ -7,6 +7,7 @@ from frappe import _
 from frappe.model.document import Document
 from frappe.model.mapper import get_mapped_doc
 
+
 class PackageTag(Document):
 	def validate(self):
 		if self.source_package_tag:
@@ -111,16 +112,3 @@ def make_package_tag_from_batch(source_name, target_doc=None):
 	}, target_doc)
 
 	return target_doc
-
-@frappe.whitelist()
-def get_package_tag_batch_details():
-	""" Function returns package tag, batch and COA Batch No details from tabPackage Tag for items
-
-	Returns:
-		dict: Dictionary of Package Tag details with item code as key.
-	"""	
-	package_tag_details = {}
-	for d in frappe.db.get_list('Package Tag', fields=['item_code', 'package_tag', 'batch_no', 'coa_batch_no']):
-		package_tag_details.setdefault(d.item_code, d)
-
-	return package_tag_details

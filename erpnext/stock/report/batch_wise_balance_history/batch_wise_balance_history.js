@@ -25,13 +25,6 @@ frappe.query_reports["Batch-Wise Balance History"] = {
 			"width": "80"
 		},
 		{
-			"fieldname":"package_tag",
-			"label": __("Package Tag"),
-			"fieldtype": "Link",
-			"options": "Package Tag",
-			"width": "100"
-		},
-		{
 			"fieldname":"warehouse",
 			"label": __("Warehouse"),
 			"fieldtype": "MultiSelectList",

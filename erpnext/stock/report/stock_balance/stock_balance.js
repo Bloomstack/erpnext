@@ -77,19 +77,6 @@ frappe.query_reports["Stock Balance"] = {
 			"options": "UOM"
 		},
 		{
-			"fieldname":"package_tag",
-			"label": __("Package Tag"),
-			"fieldtype": "Link",
-			"options": "Package Tag",
-			"width": "100"
-		},
-		{
-			"fieldname":"batch_no",
-			"label": __("Batch No"),
-			"fieldtype": "Link",
-			"options": "Batch"
-		},
-		{
 			"fieldname": "show_variant_attributes",
 			"label": __("Show Variant Attributes"),
 			"fieldtype": "Check"
