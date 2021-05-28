@@ -83,9 +83,6 @@ frappe.ui.form.on("Leave Application", {
 				frm.set_value('employee', perm['Employee'].map(perm_doc => perm_doc.doc)[0]);
 			}
 		}
-		if((!frm.doc.__islocal) && frm.doc.employee) {
-			 $('[data-fieldname="employee_name"]')[0].hidden = true
-		}
 	},
 
 	employee: function(frm) {
