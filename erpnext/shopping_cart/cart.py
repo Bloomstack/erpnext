@@ -298,10 +298,11 @@ def _get_cart_quotation(party=None):
 			"party_name": party.name
 		})
 
-		contacts = frappe.db.get_value("Contact", {"email_id": frappe.session.user}, ["name", "first_name", "last_name"], as_dict=True)
+		contact_email_parent = frappe.db.get_value("Contact Email", {"email_id": frappe.session.user}, ["parent"])
+		contacts = frappe.db.get_value("Contact", contact_email_parent, ["name", "title"])
 		if contacts:
 			qdoc.contact_person = contacts.name
-			qdoc.contact_display =  "%s %s" % (contacts.first_name, contacts.last_name)
+			qdoc.contact_display =  contacts.title
 			qdoc.contact_email = frappe.session.user
 
 		qdoc.flags.ignore_permissions = True
