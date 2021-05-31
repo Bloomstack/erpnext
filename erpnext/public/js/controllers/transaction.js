@@ -1589,20 +1589,20 @@ erpnext.TransactionController = erpnext.taxes_and_totals.extend({
 				args: {
 					"master_doctype": frappe.meta.get_docfield(this.frm.doc.doctype, "taxes_and_charges",
 						this.frm.doc.name).options,
-					"master_name": this.frm.doc.taxes_and_charges
+					"master_name": this.frm.doc.taxes_and_charges,
+					"doc": this.frm.doc
 				},
 				callback: function(r) {
 					if(!r.exc) {
 						if(me.frm.doc.shipping_rule && me.frm.doc.taxes) {
+							me.frm.doc.taxes =[];
 							for (let tax of r.message) {
 								me.frm.add_child("taxes", tax);
 							}
-
-							refresh_field("taxes");
 						} else {
 							me.frm.set_value("taxes", r.message);
-							me.calculate_taxes_and_totals();
 						}
+						me.calculate_taxes_and_totals();
 					}
 				}
 			});

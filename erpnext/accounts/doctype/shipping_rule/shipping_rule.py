@@ -113,7 +113,30 @@ class ShippingRule(Document):
 		else:
 			shipping_charge["tax_amount"] = shipping_amount
 			shipping_charge["description"] = self.label
-			doc.append("taxes", shipping_charge)
+
+			# Check if already tax is presnt & add new shipping taxes
+			if doc.get("taxes"):
+				for i, tax in enumerate(doc.get("taxes")):
+					tax = tax.as_dict()
+
+				doc.set("taxes", [])
+				doc.append("taxes", shipping_charge)
+				doc.append("taxes", tax)
+
+			else:
+				doc.append("taxes", shipping_charge)
+
+	def remove_duplicate_shipping_rule(self,doc, doctype, docname):
+		if not docname:
+			return
+
+		shipping_rule_accounts = frappe.get_all("Shipping Rule", fields={"account"})
+		shipping_rule_names = [data['account'] for data in shipping_rule_accounts]
+
+		to_remove = [d for d in doc.get("taxes")
+			if (d.account_head in shipping_rule_names)]
+
+		[ doc.get("taxes").remove(d) for d in to_remove ]
 
 	def sort_shipping_rule_conditions(self):
 		"""Sort Shipping Rule Conditions based on increasing From Value"""
