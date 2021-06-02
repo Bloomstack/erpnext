@@ -13,39 +13,39 @@
    "card": "Products Sold"
   },
   {
-   "card": "TOTAL INVOICES"
+   "card": "Total Invoices"
   },
   {
-   "card": "TOTAL PRODUCTS"
+   "card": "Total Products"
   }
  ],
  "charts": [
   {
-   "chart": "TOTAL REVENUE",
+   "chart": "Total Revenue",
    "width": "Half"
   },
   {
-   "chart": "TOP CUSTOMERS by Revenue",
+   "chart": "Top Customers by Revenue",
    "width": "Half"
   },
   {
-   "chart": "TOP CUSTOMERS GROUPS by Revenue",
+   "chart": "Top Customer Groups by Revenue",
    "width": "Half"
   },
   {
-   "chart": "TOP SALES PARTNERS by Revenue",
+   "chart": "Top Sales Partners by Revenue",
    "width": "Half"
   },
   {
-   "chart": "INVOICE BREAKDOWN by Status",
+   "chart": "Invoice Breakdown by Status",
    "width": "Half"
   },
   {
-   "chart": "TOP PRODUCTS by Revenue",
+   "chart": "Top Products by Revenue",
    "width": "Half"
   },
   {
-   "chart": "TOTAL SALES by Week",
+   "chart": "Total Sales by Week",
    "width": "Full"
   }
  ],
@@ -54,9 +54,9 @@
  "docstatus": 0,
  "doctype": "Dashboard",
  "idx": 0,
- "is_default": 0,
+ "is_default": 1,
  "is_standard": 1,
- "modified": "2021-04-21 01:40:45.066473",
+ "modified": "2021-06-02 03:08:38.208051",
  "modified_by": "Administrator",
  "module": "Insight Engine",
  "name": "Insight Engine",

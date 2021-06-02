@@ -21,14 +21,15 @@ default_sales_partner_type = ["Channel Partner", "Distributor", "Dealer", "Agent
 def install(country=None):
 	records = [
 		# domains
-		{ 'doctype': 'Domain', 'domain': 'Distribution'},
-		{ 'doctype': 'Domain', 'domain': 'Manufacturing'},
-		{ 'doctype': 'Domain', 'domain': 'Retail'},
-		{ 'doctype': 'Domain', 'domain': 'Services'},
-		{ 'doctype': 'Domain', 'domain': 'Education'},
-		{ 'doctype': 'Domain', 'domain': 'Healthcare'},
-		{ 'doctype': 'Domain', 'domain': 'Agriculture'},
-		{ 'doctype': 'Domain', 'domain': 'Non Profit'},
+		{'doctype': 'Domain', 'domain': 'Distribution'},
+		{'doctype': 'Domain', 'domain': 'Manufacturing'},
+		{'doctype': 'Domain', 'domain': 'Retail'},
+		{'doctype': 'Domain', 'domain': 'Services'},
+		{'doctype': 'Domain', 'domain': 'Education'},
+		{'doctype': 'Domain', 'domain': 'Healthcare'},
+		{'doctype': 'Domain', 'domain': 'Agriculture'},
+		{'doctype': 'Domain', 'domain': 'Non Profit'},
+		{'doctype': 'Domain', 'domain': 'Insight Engine'},
 
 		# address template
 		{'doctype':"Address Template", "country": country},
