@@ -126,7 +126,8 @@ class ShippingRule(Document):
 			else:
 				doc.append("taxes", shipping_charge)
 
-	def remove_duplicate_shipping_rule(self,doc, doctype, docname):
+	# remove existing shipping rule tax by its account head from taxes table
+	def remove_existing_shipping_rule(self, doc, doctype, docname):
 		if not docname:
 			return
 

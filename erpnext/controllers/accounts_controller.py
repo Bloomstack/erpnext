@@ -451,7 +451,7 @@ class AccountsController(TransactionBase):
 	def apply_shipping_rule(self):
 		if self.shipping_rule:
 			shipping_rule = frappe.get_doc("Shipping Rule", self.shipping_rule)
-			shipping_rule.remove_duplicate_shipping_rule(self,"Shipping Rule", self.shipping_rule)
+			shipping_rule.remove_existing_shipping_rule(self,"Shipping Rule", self.shipping_rule)
 			shipping_rule.apply(self)
 			self.calculate_taxes_and_totals()
 
@@ -916,7 +916,7 @@ def get_taxes_and_charges(master_doctype, master_name, doc=None):
 		doc = json.loads(doc)
 
 	if doc.get("taxes"):
-		taxes_and_charges = remove_duplicate_taxes(doc.get("taxes"))
+		taxes_and_charges = remove_existing_sales_taxes(doc.get("taxes"))
 	else:
 		taxes_and_charges = []
 	from frappe.model import default_fields
@@ -932,8 +932,8 @@ def get_taxes_and_charges(master_doctype, master_name, doc=None):
 		taxes_and_charges.append(tax)
 	return taxes_and_charges
 
-
-def remove_duplicate_taxes(doc_taxes):
+# remove existing Sales Taxes and Charges by its account head from taxes table
+def remove_existing_sales_taxes(doc_taxes):
 	sales_taxes_accounts = frappe.get_all("Sales Taxes and Charges", fields={"account_head"})
 	sales_taxes_names = [data['account_head'] for data in sales_taxes_accounts]
 	if doc_taxes:
