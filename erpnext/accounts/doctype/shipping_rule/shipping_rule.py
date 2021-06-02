@@ -131,7 +131,7 @@ class ShippingRule(Document):
 		if not docname:
 			return
 
-		shipping_rule_accounts = frappe.get_all("Shipping Rule", fields={"account"})
+		shipping_rule_accounts = frappe.get_all("Shipping Rule", fields=["account"])
 		shipping_rule_names = [data['account'] for data in shipping_rule_accounts]
 
 		to_remove = [d for d in doc.get("taxes")

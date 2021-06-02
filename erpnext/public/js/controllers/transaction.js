@@ -1595,7 +1595,7 @@ erpnext.TransactionController = erpnext.taxes_and_totals.extend({
 				callback: function(r) {
 					if(!r.exc) {
 						if(me.frm.doc.shipping_rule && me.frm.doc.taxes) {
-							me.frm.doc.taxes =[];
+							me.frm.doc.taxes = [];
 							for (let tax of r.message) {
 								me.frm.add_child("taxes", tax);
 							}

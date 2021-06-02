@@ -934,11 +934,10 @@ def get_taxes_and_charges(master_doctype, master_name, doc=None):
 
 # remove existing Sales Taxes and Charges by its account head from taxes table
 def remove_existing_sales_taxes(doc_taxes):
-	sales_taxes_accounts = frappe.get_all("Sales Taxes and Charges", fields={"account_head"})
+	sales_taxes_accounts = frappe.get_all("Sales Taxes and Charges", fields=["account_head"])
 	sales_taxes_names = [data['account_head'] for data in sales_taxes_accounts]
 	if doc_taxes:
-		to_remove = [d for d in doc_taxes
-			if (d['account_head'] in sales_taxes_names)]
+		to_remove = [d for d in doc_taxes if d['account_head'] in sales_taxes_names]
 
 		for d in to_remove:
 			doc_taxes.remove(d)
