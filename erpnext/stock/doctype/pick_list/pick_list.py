@@ -250,7 +250,6 @@ class PickList(Document):
 				if location.package_tag:
 					stock_entry = update_stock_entry_items_for_target(location, stock_entry)
 			stock_entry.set_stock_entry_type()
-			stock_entry.validate_item()
 			stock_entry.set_incoming_rate()
 			stock_entry.set_actual_qty()
 			stock_entry.calculate_rate_and_amount(update_finished_item_rate=False)
