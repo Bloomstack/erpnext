@@ -891,8 +891,8 @@ class Item(WebsiteGenerator):
 				frappe.msgprint(msg=_("You have to enable auto re-order in Stock Settings to maintain re-order levels."), title=_("Enable Auto Re-Order"), indicator="orange")
 
 	def validate_valuation_method(self):
-			if not self.valuation_method:
-				self.valuation_method = frappe.db.get_single_value("Stock Settings", "valuation_method")
+		if self.is_new() and not self.valuation_method:
+			self.valuation_method = frappe.db.get_single_value("Stock Settings", "valuation_method")
 
 def get_timeline_data(doctype, name):
 	'''returns timeline data based on stock ledger entry'''

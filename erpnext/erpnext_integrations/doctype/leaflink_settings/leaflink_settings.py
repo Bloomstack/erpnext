@@ -6,7 +6,7 @@ from __future__ import unicode_literals
 import frappe
 import json
 import pprint
-from frappe.utils import add_days, cint, cstr
+from frappe.utils import add_days, cint, cstr, flt
 import datetime
 import requests
 from frappe.model.document import Document
@@ -163,11 +163,15 @@ def sales_order_from_leaflink(**args):
 			batch_details = requests.get(leaflink_settings.get("base_url")+"/batches/", headers=legacy_header,params={"id": item_details.get("batch")}).json()
 			batch_name = batch_details.get("results")[0].get("production_batch_number")
 
+			#adjust rate or quantity when item is sold by case vs item is sold by gram
+			quantity = flt(item.get("quantity"))/flt(item.get("unit_multiplier")) if item_details.get("sold_by_case") else flt(item.get("quantity"))
+			rate = flt(item.get("sale_price")) if item_details.get("sold_by_case") else flt(item.get("sale_price"))/flt(item.get("unit_multiplier"))
+
 			#appending items to sales order document, might fail if item or batch_no is missing from bloomstack
 			sales_order_doc.append("items",{
 				"item_code": item.get("product").get("sku"),
-				"rate": item.get("sale_price"),
-				"qty": item.get("quantity"),
+				"rate": rate,
+				"qty": quantity,
 				"batch_no": batch_name,
 				"actual_qty": item.get("quantity"),
 				"delivery_date": add_days(datetime.datetime.now(), expected_delivery_days)

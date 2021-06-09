@@ -19,7 +19,8 @@ frappe.ui.form.on('Pick List', {
 			const row = frm.selected_doc || locals[cdt][cdn];
 			return {
 				filters: {
-					'item_code': row.item_code
+					'item_code': row.item_code,
+					"name": ['not in', row.package_tag]
 				}
 			};
 		});
@@ -55,7 +56,8 @@ frappe.ui.form.on('Pick List', {
 			const row = frm.selected_doc || locals[cdt][cdn];
 			return {
 				filters: {
-					"is_used" : 0
+					"is_used" : 0,
+					"name": ['not in', row.source_package_tag]
 				}
 			};
 		});

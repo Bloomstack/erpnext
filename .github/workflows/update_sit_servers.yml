@@ -1,0 +1,18 @@
+name: Deploy SIT Servers
+
+on:
+  push:
+    branches: [ staging ]
+  workflow_dispatch:
+
+jobs:
+  deployment:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Deploy on SIT Servers
+      uses: fjogeleit/http-request-action@master
+      with:
+        url: 'https://awx.bloomstack.org/api/v2/job_templates/9/launch/'
+        method: 'POST'
+        username: ${{ secrets.AWX_USERNAME }}
+        password: ${{ secrets.AWX_PASSWORD }}

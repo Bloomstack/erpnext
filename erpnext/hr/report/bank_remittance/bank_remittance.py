@@ -125,20 +125,22 @@ def get_salary_slips(payroll_entries):
 
 	# appending company debit accounts
 	for slip in salary_slips:
-		slip["debit_acc_no"] = payroll_entry_map[slip.payroll_entry]['company_account']
+		if slip.payroll_entry:
+			slip["debit_acc_no"] = payroll_entry_map[slip.payroll_entry]['company_account']
 
 	return salary_slips
 
 def get_emp_bank_ifsc_code(salary_slips):
 	emp_names = [d.employee for d in salary_slips]
-	ifsc_codes = get_all("Employee", [("name", "IN", emp_names)], ["ifsc_code", "name"])
+	if emp_names:
+		ifsc_codes = get_all("Employee", [("name", "IN", emp_names)], ["ifsc_code", "name"])
 
-	ifsc_codes_map = {}
-	for code in ifsc_codes:
-		ifsc_codes_map[code.name] = code
+		ifsc_codes_map = {}
+		for code in ifsc_codes:
+			ifsc_codes_map[code.name] = code
 
-	for slip in salary_slips:
-		slip["ifsc_code"] = ifsc_codes_map[code.name]['ifsc_code']
+		for slip in salary_slips:
+			slip["ifsc_code"] = ifsc_codes_map[code.name]['ifsc_code']
 
 	return salary_slips
 

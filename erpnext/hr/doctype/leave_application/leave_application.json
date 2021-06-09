@@ -59,6 +59,7 @@
    "search_index": 1
   },
   {
+   "fetch_from": "employee.employee_name",
    "fieldname": "employee_name",
    "fieldtype": "Data",
    "in_global_search": 1,
@@ -188,6 +189,7 @@
    "reqd": 1
   },
   {
+   "fetch_from": "employee.company",
    "fieldname": "company",
    "fieldtype": "Link",
    "label": "Company",
@@ -246,7 +248,7 @@
  "idx": 1,
  "is_submittable": 1,
  "max_attachments": 3,
- "modified": "2021-01-04 00:01:24.804887",
+ "modified": "2021-05-27 11:09:06.807537",
  "modified_by": "Administrator",
  "module": "HR",
  "name": "Leave Application",
@@ -327,6 +329,7 @@
   }
  ],
  "search_fields": "employee,leave_type,from_date,to_date,total_leave_days",
+ "show_title_field_in_link": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
  "timeline_field": "employee",

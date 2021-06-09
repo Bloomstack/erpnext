@@ -1,0 +1,23 @@
+{
+ "aggregate_function_based_on": "",
+ "creation": "2021-04-20 05:28:11.503066",
+ "docstatus": 0,
+ "doctype": "Number Card",
+ "document_type": "Item",
+ "dynamic_filters_json": "[]",
+ "filters_json": "[[\"Item\",\"is_sales_item\",\"=\",1,false]]",
+ "function": "Count",
+ "idx": 0,
+ "is_public": 1,
+ "is_standard": 1,
+ "label": "Total Products",
+ "modified": "2021-06-02 03:06:17.943606",
+ "modified_by": "Administrator",
+ "module": "Insight Engine",
+ "name": "TOTAL PRODUCTS",
+ "owner": "Administrator",
+ "report_function": "Sum",
+ "show_percentage_stats": 0,
+ "stats_time_interval": "Daily",
+ "type": "Document Type"
+}

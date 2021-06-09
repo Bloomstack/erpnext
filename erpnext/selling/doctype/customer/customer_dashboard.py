@@ -22,7 +22,7 @@ def get_data():
 		'transactions': [
 			{
 				'label': _('Pre Sales'),
-				'items': ['Opportunity', 'Quotation']
+				'items': ['Opportunity', 'Quotation', 'Quoting Sheet']
 			},
 			{
 				'label': _('Orders'),

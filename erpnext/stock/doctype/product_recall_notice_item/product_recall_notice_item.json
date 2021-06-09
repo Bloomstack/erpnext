@@ -1,0 +1,89 @@
+{
+ "creation": "2021-05-17 22:38:57.365333",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "item_code",
+  "item_name",
+  "batch_no",
+  "qty",
+  "package_tag",
+  "customer",
+  "warehouse",
+  "reference_doctype",
+  "reference_docname"
+ ],
+ "fields": [
+  {
+   "fieldname": "reference_doctype",
+   "fieldtype": "Data",
+   "label": "Reference Doctype",
+   "read_only": 1
+  },
+  {
+   "fieldname": "reference_docname",
+   "fieldtype": "Data",
+   "label": "Reference Docname",
+   "read_only": 1
+  },
+  {
+   "fieldname": "item_code",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Item",
+   "options": "Item"
+  },
+  {
+   "fetch_from": "item_code.item_name",
+   "fieldname": "item_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Item Name",
+   "read_only": 1
+  },
+  {
+   "fieldname": "batch_no",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Batch No",
+   "options": "Batch"
+  },
+  {
+   "fieldname": "package_tag",
+   "fieldtype": "Link",
+   "label": "Package Tag",
+   "options": "Package Tag"
+  },
+  {
+   "depends_on": "eval: parent.recall_from == \"Customer\"",
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "label": "Customer",
+   "options": "Customer"
+  },
+  {
+   "fieldname": "qty",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Quantity"
+  },
+  {
+   "fieldname": "warehouse",
+   "fieldtype": "Link",
+   "label": "Warehouse",
+   "options": "Warehouse"
+  }
+ ],
+ "istable": 1,
+ "modified": "2021-05-28 02:40:22.841238",
+ "modified_by": "Administrator",
+ "module": "Stock",
+ "name": "Product Recall Notice Item",
+ "owner": "Administrator",
+ "permissions": [],
+ "quick_entry": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

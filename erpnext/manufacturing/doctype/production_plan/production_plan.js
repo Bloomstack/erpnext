@@ -120,9 +120,6 @@ frappe.ui.form.on('Production Plan', {
 		frappe.confirm(__("Do you want to submit the material request"),
 			function() {
 				frm.events.create_material_request(frm, 1);
-			},
-			function() {
-				frm.events.create_material_request(frm, 0);
 			}
 		);
 	},

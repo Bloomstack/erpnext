@@ -7,6 +7,7 @@ import frappe
 import datetime
 import requests
 import json
+from frappe import _
 from six import text_type
 from frappe import _
 from frappe.model.document import Document
@@ -50,7 +51,7 @@ def send_delivery_request_to_flowkana(sales_order):
 			"external_item_code": item.item_code,
 			"unit_quantity": item.qty,
 			"unit_price": item.rate,
-			"warehouse": item.warehouse
+			"warehouse": item.warehouse or frappe.get_value("Flowkana Settings", "Flowkana Settings", "default_warehouse")
 			}
 		}
 		item_list.append(line_item)

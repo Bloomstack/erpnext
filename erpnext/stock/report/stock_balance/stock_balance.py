@@ -81,7 +81,6 @@ def execute(filters=None):
 					stock_ageing_data['latest_age'] = date_diff(to_date, fifo_queue[-1][1])
 
 				report_data.update(stock_ageing_data)
-
 			data.append(report_data)
 
 	add_additional_uom_columns(columns, data, include_uom, conversion_factors)

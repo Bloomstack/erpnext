@@ -298,8 +298,12 @@ def _get_cart_quotation(party=None):
 			"party_name": party.name
 		})
 
-		qdoc.contact_person = frappe.db.get_value("Contact", {"email_id": frappe.session.user})
-		qdoc.contact_email = frappe.session.user
+		contact_email_parent = frappe.db.get_value("Contact Email", {"email_id": frappe.session.user}, ["parent"])
+		contacts = frappe.db.get_value("Contact", contact_email_parent, ["name", "title"], as_dict=True)
+		if contacts:
+			qdoc.contact_person = contacts.name
+			qdoc.contact_display = contacts.title
+			qdoc.contact_email = frappe.session.user
 
 		qdoc.flags.ignore_permissions = True
 
@@ -310,9 +314,10 @@ def _get_cart_quotation(party=None):
 			if customer_name:
 				# override contact person
 				primary_contact = frappe.session.data.order_for.get("customer_primary_contact_name")
-
+				contact_details = frappe.db.get_value("Contact", primary_contact, ["title", "email_id"], as_dict=True)
 				qdoc.contact_person = primary_contact
-				qdoc.contact_email = frappe.get_value("Contact", primary_contact, "email_id")
+				qdoc.contact_display = contact_details.title
+				qdoc.contact_email = contact_details.email_id
 
 				# override customer
 				qdoc.party_name = customer_name
@@ -482,27 +487,23 @@ def get_party(user=None):
 
 		fullname = get_fullname(user)
 		contact = frappe.db.get_value("Contact Email", {"email_id": user}, "parent")
-		customer = frappe.db.get_value("Customer", {"customer_name": fullname}, "name")
 
-		if not customer:
-			customer = frappe.new_doc("Customer")
+		customer = frappe.new_doc("Customer")
+		customer.update({
+			"customer_name": fullname,
+			"customer_type": "Individual",
+			"customer_group": get_shopping_cart_settings().default_customer_group,
+			"territory": get_root_of("Territory"),
+			"customer_primary_contact": contact
+		})
+
+		if debtors_account:
 			customer.update({
-				"customer_name": fullname,
-				"customer_type": "Individual",
-				"customer_group": get_shopping_cart_settings().default_customer_group,
-				"territory": get_root_of("Territory"),
-				"customer_primary_contact": contact
+				"accounts": [{
+					"company": cart_settings.company,
+					"account": debtors_account
+				}]
 			})
-
-			if debtors_account:
-				customer.update({
-					"accounts": [{
-						"company": cart_settings.company,
-						"account": debtors_account
-					}]
-				})
-		else:
-			customer = frappe.get_doc("Customer", customer)
 
 		customer.customer_primary_contact = contact
 		customer.flags.ignore_mandatory = True
@@ -520,6 +521,9 @@ def get_party(user=None):
 		contact.append('links', dict(link_doctype='Customer', link_name=customer.name))
 		contact.flags.ignore_mandatory = True
 		contact.save(ignore_permissions=True)
+
+		if not customer.customer_primary_contact:
+			customer.customer_primary_contact = contact.name
 
 		return customer
 

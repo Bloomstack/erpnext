@@ -3,7 +3,7 @@
 
 from __future__ import unicode_literals
 import frappe
-from frappe.utils import cint, flt, cstr, comma_or
+from frappe.utils import cint, flt, cstr, comma_or, getdate, today
 from frappe import _, throw
 from erpnext.stock.get_item_details import get_bin_details
 from erpnext.stock.utils import get_incoming_rate
@@ -55,8 +55,22 @@ class SellingController(StockController):
 		if self.meta.get_field("coupon_code"):
 
 			if self.coupon_code:
-				coupon_customer = frappe.get_value("Coupon Code", self.coupon_code, "allowed_customer")
-				coupon_customer_group = frappe.get_value("Coupon Code", self.coupon_code, "allowed_customer_group")
+				coupon = frappe.get_doc("Coupon Code", self.coupon_code)
+
+				coupon_customer = coupon.allowed_customer
+				coupon_customer_group = coupon.allowed_customer_group
+
+				if not coupon.enabled:
+					frappe.throw(_("Coupon \"{}\" is not a valid coupon").format(self.coupon_code))
+
+				if coupon.valid_from and getdate(today()) < coupon.valid_from:
+					frappe.throw(_("Sorry, this coupon code's validity has not started"), title=_("Coupon Error"))
+
+				if coupon.valid_upto and getdate(today()) > coupon.valid_upto:
+					frappe.throw(_("Sorry, this coupon code's validity has expired"), title=_("Coupon Error"))
+
+				if coupon.maximum_use > 0 and coupon.used >= coupon.maximum_use:
+					frappe.throw(_("Sorry, this coupon code is no longer valid"), title=_("Coupon Error"))
 
 				party_name = self.customer_name if self.doctype != "Quotation" else self.party_name
 

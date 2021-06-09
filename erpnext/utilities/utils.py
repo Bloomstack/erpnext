@@ -38,3 +38,35 @@ def get_abbr(txt, max_length=2):
 
 	abbr = abbr.upper()
 	return abbr
+
+def retry(fn, retries=3, on_result=None, on_exception=None):
+	"""Retries the provided callable a certain number of times on exceptions
+	or if on_result predicate fails.
+
+	Args:
+		fn (function): Function to execute and retry
+		retries (int, optional): Number of times to retry fn. Defaults to 3.
+		on_result ([type], optional): Predicate used to test fn's result. Return true to stop retries. Defaults to None.
+		on_exception ([type], optional): Predicate used to test fn's exception. Return true to stop retries. Defaults to None.
+	"""
+	last_exception = None
+	for i in range(retries):
+		try:
+			result = fn(i)
+			if on_result:
+				result = on_result(result, i)
+				if result:
+					return result
+				else:
+					continue
+			return result
+		except Exception as ex:
+			if on_exception:
+				ex = on_exception(ex, i)
+				if ex:
+					return ex
+
+			last_exception = ex
+			continue
+		
+	return last_exception

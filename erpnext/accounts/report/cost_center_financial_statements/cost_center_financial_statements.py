@@ -21,7 +21,11 @@ def execute(filters=None):
 	if not filters.get('cost_center'):
 		frappe.msgprint(_("Please select at least one cost center."));
 
-	cost_centers = get_cost_centers_with_children(filters.cost_center)
+	if not filters.get('include_child_cost_centers'):
+		cost_centers = filters.cost_center
+	else:
+		cost_centers = get_cost_centers_with_children(filters.cost_center)
+
 	columns = get_columns(cost_centers)
 
 	if filters.get('report') == "Balance Sheet":
