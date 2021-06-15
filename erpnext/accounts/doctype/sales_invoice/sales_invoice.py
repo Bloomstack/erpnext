@@ -1590,3 +1590,47 @@ def create_invoice_discounting(source_name, target_doc=None):
 def get_item_details(item_code):
 	item = frappe.get_doc("Item", item_code).as_dict()
 	return item
+
+@frappe.whitelist()
+def email_coa(docname):
+	"""Email COA's from sales invoice
+	Args:
+		docname (str): Sales Invoice Document name
+	Returns:
+		success : if Certificates of Analysis are mailed successfully
+	"""
+	sales_invoice = frappe.get_doc("Sales Invoice", docname)
+	attachments = []
+
+ 	# get customer emails to send emails 
+	contact_person_email = frappe.db.get_value("Customer",sales_invoice.customer, "email_id")
+
+	if not contact_person_email:
+			frappe.msgprint(_("No contact email found in customer {0}").format(sales_invoice.customer))
+			
+	
+	for item in sales_invoice.items:
+		# checks certificate of analysis for each item in Sales Invoice Item List
+		
+		coas = frappe.db.get_value("Delivery Note Item", {'item_code': item.item_code}, 'certificate_of_analysis')
+
+		if not coas:
+			frappe.msgprint(_("No Certificates of Analysis attached for Item {0} in Delivery Note {1}.").format(item.item_code, item.delivery_note))
+			continue
+
+		coa_file_id = frappe.db.get_value("File", {"file_url": coas}, "name")
+
+		if not coa_file_id:
+			frappe.msgprint(_("No File found for {0}").format(coas))
+			continue
+
+		attachments.append({"fid": coa_file_id})
+	
+	if contact_person_email and attachments:
+		frappe.sendmail(
+			recipients=contact_person_email,
+			subject="Certificate of Analysis",
+			attachments=attachments
+		)
+
+	return "success"
