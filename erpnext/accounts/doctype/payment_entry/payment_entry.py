@@ -551,6 +551,8 @@ class PaymentEntry(AccountsController):
 				gl_entries.append(gle)
 
 			if self.total_discounted_amount:
+				self.base_total_discounted_amount  = self.total_discounted_amount
+
 				for d in self.get("references"):
 					gle = party_gl_dict.copy()
 					gle.update({

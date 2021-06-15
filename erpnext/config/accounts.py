@@ -183,26 +183,25 @@ def get_data():
 				},
 				{
 					"type": "doctype",
-					"label": _("Invoice Discounting"),
-					"name": "Invoice Discounting",
-				},
-				{
-					"type": "doctype",
 					"label": _("Update Bank Clearance Dates"),
 					"name": "Bank Clearance",
 					"description": _("Update bank payment dates with journals.")
 				},
 				{
 					"type": "doctype",
-					"label": _("Bank Transaction"),
-					"name": "Bank Transaction",
-					"doctype": "Bank Transaction"
+					"label": _("Invoice Discounting"),
+					"name": "Invoice Discounting",
 				},
 				{
 					"type": "report",
 					"name": "Bank Reconciliation Statement",
 					"is_query_report": True,
 					"doctype": "Journal Entry"
+				},{
+					"type": "page",
+					"name": "bank-reconciliation",
+					"label": _("Bank Reconciliation"),
+					"icon": "fa fa-bar-chart"
 				},
 				{
 					"type": "report",
