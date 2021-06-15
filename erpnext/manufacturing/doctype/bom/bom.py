@@ -254,6 +254,24 @@ class BOM(WebsiteGenerator):
 			if save:
 				d.db_update()
 
+		# update scrap item rate with valuation rate from Ledger
+		for d in self.get("scrap_items"):
+			rate = self.get_rm_rate({
+				"item_code": d.item_code,
+				"qty": d.stock_qty,
+				"stock_uom": d.stock_uom,
+			})
+
+			if rate:
+				d.rate = rate
+
+			d.amount = flt(d.rate) * flt(d.stock_qty)
+			d.base_rate = flt(d.rate) * flt(self.conversion_rate)
+			d.base_amount = flt(d.amount) * flt(self.conversion_rate)
+
+			if save:
+				d.db_update()
+
 		if self.docstatus == 1:
 			self.flags.ignore_validate_update_after_submit = True
 			self.calculate_cost()

@@ -79,8 +79,8 @@ class PaymentEntry(AccountsController):
 	def on_cancel(self):
 		self.setup_party_account_field()
 		self.make_gl_entries(cancel=1)
-		self.update_outstanding_amounts()
 		self.update_advance_paid()
+		self.update_outstanding_amounts()
 		self.update_expense_claim()
 		self.delink_advance_entry_references()
 		self.update_payment_schedule(cancel=1)
@@ -174,8 +174,10 @@ class PaymentEntry(AccountsController):
 					d.reference_name, self.party_account_currency)
 
 				for field, value in iteritems(ref_details):
-					if field == 'exchange_rate' or not d.get(field) or force:
+					if field == 'exchange_rate' or not d.get(field):
 						d.set(field, value)
+					elif force:
+						d.db_set(field, value)
 
 	def validate_payment_type(self):
 		if self.payment_type not in ("Receive", "Pay", "Internal Transfer"):

@@ -10,7 +10,7 @@ from collections import defaultdict
 from erpnext.stock.get_item_details import _get_item_tax_template
 from frappe.utils import unique
 
- # searches for active employees
+# searches for active employees
 def employee_query(doctype, txt, searchfield, start, page_len, filters):
 	conditions = []
 	fields = get_fields("Employee", ["name", "employee_name"])
@@ -68,7 +68,7 @@ def lead_query(doctype, txt, searchfield, start, page_len, filters):
 		})
 
 
- # searches for customer
+# searches for customer
 def customer_query(doctype, txt, searchfield, start, page_len, filters):
 	conditions = []
 	cust_master_name = frappe.defaults.get_user_default("cust_master_name")
@@ -375,7 +375,6 @@ def get_package_tags(doctype, txt, searchfield, start, page_len, filters):
 
 	if filters.get('warehouse'):
 		args.update({'warehouse': filters.get("warehouse")})
-
 		return frappe.db.sql("""
 			select sle.package_tag, tag.package_tag, tag.item_code, tag.item_name, tag.item_group, round(sum(sle.actual_qty),2)
 			from `tabStock Ledger Entry` sle
@@ -386,11 +385,13 @@ def get_package_tags(doctype, txt, searchfield, start, page_len, filters):
 				and sle.warehouse = %(warehouse)s
 				and sle.package_tag like %(txt)s
 				{batch_no}
+				{company}
 				{match_conditions}
 			group by sle.package_tag having sum(sle.actual_qty) > 0
 			limit %(start)s, %(page_len)s""".format(
 				item_code="tag.item_code = %(item_code)s" if filters.get("item_code") else "tag.item_code is null",
 				batch_no="and sle.batch_no = {0}".format(frappe.db.escape(filters.get("batch_no"))) if filters.get("batch_no") else "",
+				company="and sle.company = {0}".format(frappe.db.escape(filters.get("company"))) if filters.get("company") else "",
 				match_conditions=get_match_cond(doctype)
 		), args, debug=1, explain=1)
 	else:
@@ -402,12 +403,14 @@ def get_package_tags(doctype, txt, searchfield, start, page_len, filters):
 			{item_code}
 			{is_used}
 			{batch_no}
+			{company}
 			{match_conditions}
 			order by package_tag.name desc
 			limit %(start)s, %(page_len)s""".format(
 				item_code="and package_tag.item_code = %(item_code)s" if filters.get("item_code") else "",
 				is_used="and package_tag.is_used = %(is_used)s" if "is_used" in filters else "",
 				batch_no="and package_tag.batch_no = {0}".format(frappe.db.escape(filters.get("batch_no"))) if filters.get("batch_no") else "",
+				company = "and package_tag.company = {0}".format(frappe.db.escape(filters.get("company"))) if filters.get("company") else "",
 				match_conditions=get_match_cond(doctype)
 		), args)
 
@@ -530,7 +533,7 @@ def warehouse_query(doctype, txt, searchfield, start, page_len, filters):
 		CONCAT_WS(" : ", "Actual Qty", ifnull( ({sub_query}), 0) ) as actual_qty
 		from `tabWarehouse`
 		where
-		   `tabWarehouse`.`{key}` like {txt}
+			`tabWarehouse`.`{key}` like {txt}
 			{fcond} {mcond}
 		order by
 			`tabWarehouse`.name desc

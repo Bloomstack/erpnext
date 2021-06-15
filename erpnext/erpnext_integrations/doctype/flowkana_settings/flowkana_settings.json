@@ -8,8 +8,10 @@
   "enable_flowkana",
   "api_key",
   "api_value",
+  "column_break_5",
   "load_url_in_new_tab",
-  "url_tab"
+  "url_tab",
+  "default_warehouse"
  ],
  "fields": [
   {
@@ -47,10 +49,21 @@
    "fieldname": "url_tab",
    "fieldtype": "Data",
    "label": "URL Tab"
+  },
+  {
+   "fieldname": "column_break_5",
+   "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "eval: doc.enable_flowkana == 1",
+   "fieldname": "default_warehouse",
+   "fieldtype": "Link",
+   "label": "Default Warehouse",
+   "options": "Warehouse"
   }
  ],
  "issingle": 1,
- "modified": "2021-03-19 04:07:51.319530",
+ "modified": "2021-05-17 00:31:49.698164",
  "modified_by": "Administrator",
  "module": "ERPNext Integrations",
  "name": "Flowkana Settings",

@@ -6,6 +6,7 @@ from __future__ import unicode_literals
 import frappe
 from frappe import _
 from frappe.model.document import Document
+from erpnext.controllers.queries import get_fields
 
 class ItemAlternative(Document):
 	def validate(self):
@@ -43,13 +44,21 @@ class ItemAlternative(Document):
 			frappe.throw(_("Already record exists for the item {0}".format(self.item_code)))
 
 def get_alternative_items(doctype, txt, searchfield, start, page_len, filters):
-	return frappe.db.sql(""" (select alternative_item_code from `tabItem Alternative`
-			where item_code = %(item_code)s and alternative_item_code like %(txt)s)
-		union
-			(select item_code from `tabItem Alternative`
-			where alternative_item_code = %(item_code)s and item_code like %(txt)s
-			and two_way = 1) limit {0}, {1}
-		""".format(start, page_len), {
-			"item_code": filters.get('item_code'),
-			"txt": '%' + txt + '%'
+	fields = get_fields("Item Alternative", ["alternative_item_code", "item_code", "alternative_item_name"])
+	return frappe.db.sql("""
+		select
+			{fields}
+		from
+			`tabItem Alternative`
+		where
+			item_code = %(item_code)s and alternative_item_code like %(txt)s
+		limit %(start)s, %(page_len)s""".format(**{
+			'fields': ", ".join(fields),
+			'key': searchfield
+		}), {
+			'txt': "%%%s%%" % txt,
+			'item_code': filters.get('item_code'),
+			'_txt': txt.replace("%", ""),
+			'start': start,
+			'page_len': page_len
 		})

@@ -310,11 +310,12 @@ def install(country=None):
 
 def make_roles(roles=[]):
 	for role in roles:
-		frappe.get_doc({
-			"doctype": "Role",
-			"role_name": role.get("role_name"),
-			"for_mobile_application": role.get("for_mobile_application")
-		}).insert(ignore_permissions=True)
+		if not frappe.db.exists("Role", role.get("role_name")):
+			frappe.get_doc({
+				"doctype": "Role",
+				"role_name": role.get("role_name"),
+				"for_mobile_application": role.get("for_mobile_application")
+			}).insert(ignore_permissions=True)
 
 def set_more_defaults():
 	# Do more setup stuff that can be done here with no dependencies

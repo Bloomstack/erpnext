@@ -44,3 +44,12 @@ def get_document_links(doctype, docs):
 		})
 		links.append(link)
 	return links
+
+@frappe.whitelist()
+def create_authorization_request(dt, dn, contact_email, contact_name):
+	new_authorization_request = frappe.new_doc("Authorization Request")
+	new_authorization_request.linked_doctype = dt
+	new_authorization_request.linked_docname = dn
+	new_authorization_request.authorizer_email = contact_email
+	new_authorization_request.authorizer_name = contact_name
+	new_authorization_request.save()

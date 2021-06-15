@@ -1,0 +1,122 @@
+{
+ "creation": "2021-04-12 17:03:28.589509",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "enable_leaflink",
+  "leaflink_configurations_section",
+  "leaflink_id",
+  "api_key",
+  "api_value",
+  "legacy_api_key",
+  "incoming_api_authentication_key",
+  "column_break_7",
+  "base_url",
+  "orders_url",
+  "products_url",
+  "customers_url",
+  "default_customer_group",
+  "default_customer_territory"
+ ],
+ "fields": [
+  {
+   "fieldname": "api_key",
+   "fieldtype": "Data",
+   "label": "API Key"
+  },
+  {
+   "fieldname": "api_value",
+   "fieldtype": "Data",
+   "label": "API Value"
+  },
+  {
+   "default": "0",
+   "fieldname": "enable_leaflink",
+   "fieldtype": "Check",
+   "label": "Enable LeafLink"
+  },
+  {
+   "fieldname": "orders_url",
+   "fieldtype": "Data",
+   "label": "Orders URL"
+  },
+  {
+   "fieldname": "products_url",
+   "fieldtype": "Data",
+   "label": "Products URL"
+  },
+  {
+   "fieldname": "customers_url",
+   "fieldtype": "Data",
+   "label": "Customers URL"
+  },
+  {
+   "fieldname": "column_break_7",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "default_customer_group",
+   "fieldtype": "Link",
+   "label": "Default Customer Group",
+   "options": "Customer Group"
+  },
+  {
+   "fieldname": "default_customer_territory",
+   "fieldtype": "Link",
+   "label": "Default Customer Territory",
+   "options": "Territory"
+  },
+  {
+   "fieldname": "incoming_api_authentication_key",
+   "fieldtype": "Data",
+   "label": "Incoming API Authentication Key"
+  },
+  {
+   "depends_on": "eval:doc.enable_leaflink==1",
+   "fieldname": "leaflink_id",
+   "fieldtype": "Int",
+   "label": "LeafLink ID"
+  },
+  {
+   "collapsible": 1,
+   "collapsible_depends_on": "eval:doc.enable_leaflink==1",
+   "fieldname": "leaflink_configurations_section",
+   "fieldtype": "Section Break",
+   "in_standard_filter": 1,
+   "label": "LeafLink Configurations"
+  },
+  {
+   "fieldname": "base_url",
+   "fieldtype": "Data",
+   "label": "Base URL"
+  },
+  {
+   "fieldname": "legacy_api_key",
+   "fieldtype": "Data",
+   "label": "Legacy API Key"
+  }
+ ],
+ "issingle": 1,
+ "modified": "2021-05-10 01:30:12.918710",
+ "modified_by": "Administrator",
+ "module": "ERPNext Integrations",
+ "name": "LeafLink Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "quick_entry": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}
