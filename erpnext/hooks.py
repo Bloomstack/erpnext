@@ -345,6 +345,9 @@ scheduler_events = {
 		"erpnext.accounts.deferred_revenue.convert_deferred_revenue_to_income",
 		"erpnext.accounts.deferred_revenue.convert_deferred_expense_to_expense",
 		"erpnext.hr.utils.allocate_earned_leaves"
+	],
+	"weekly": [
+		"erpnext.hr.doctype.holiday_list.holiday_list.send_holiday_notification"
 	]
 }
 

@@ -2,7 +2,6 @@
  "allow_import": 1,
  "allow_rename": 1,
  "creation": "2018-04-12 06:32:04.582486",
- "default_print_format": "Bloomstack Contract",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
@@ -10,20 +9,28 @@
   "company",
   "party_type",
   "party_name",
+  "employee_name",
   "is_signed",
   "cb_party",
   "party_user",
   "party_address",
   "status",
   "fulfilment_status",
+  "sb_signature",
   "sb_terms",
   "start_date",
+  "project_template",
   "cb_date",
   "end_date",
+  "project",
   "ip_address",
+  "contract_amount_section",
+  "amount_in_figures",
   "sb_contract",
   "contract_template",
   "contract_terms",
+  "contract_terms_display",
+  "contract_terms_help",
   "sb_fulfilment",
   "requires_fulfilment",
   "fulfilment_deadline",
@@ -31,9 +38,13 @@
   "sb_signee",
   "signee",
   "signed_on",
+  "party_business_type",
+  "designation",
   "cb_user",
+  "customer_signature",
   "authorised_by_section",
   "signed_by_company",
+  "signed_by_company_date",
   "column_break_26",
   "signee_company",
   "sb_references",
@@ -50,8 +61,8 @@
    "fieldtype": "Select",
    "label": "Party Type",
    "options": "Customer\nSupplier\nEmployee",
-   "reqd": 1,
-   "print_hide": 1
+   "print_hide": 1,
+   "reqd": 1
   },
   {
    "allow_on_submit": 1,
@@ -179,13 +190,14 @@
    "fieldtype": "Text Editor",
    "in_list_view": 1,
    "label": "Contract Terms",
-   "reqd": 1,
-   "print_hide": 1
+   "print_hide": 1,
+   "reqd": 1
   },
   {
    "fieldname": "sb_fulfilment",
    "fieldtype": "Section Break",
-   "label": "Fulfilment Details"
+   "label": "Fulfilment Details",
+   "print_hide": 1
   },
   {
    "default": "0",
@@ -281,10 +293,90 @@
    "fieldtype": "Link",
    "label": "Letter Head",
    "options": "Letter Head"
+  },
+  {
+   "fieldname": "employee_name",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Employee Name"
+  },
+  {
+   "fieldname": "project_template",
+   "fieldtype": "Link",
+   "label": "Project Template",
+   "options": "Project Template",
+   "print_hide": 1
+  },
+  {
+   "depends_on": "eval:doc.project",
+   "fieldname": "project",
+   "fieldtype": "Link",
+   "label": "Project",
+   "options": "Project",
+   "read_only": 1
+  },
+  {
+   "fieldname": "contract_amount_section",
+   "fieldtype": "Section Break",
+   "label": "Contract Amount"
+  },
+  {
+   "fieldname": "amount_in_figures",
+   "fieldtype": "Data",
+   "label": "Amount In Figures"
+  },
+  {
+   "fieldname": "contract_terms_display",
+   "fieldtype": "Text",
+   "label": "Contract Terms Display",
+   "read_only": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "customer_signature",
+   "fieldtype": "Signature",
+   "label": "Customer Signature",
+   "print_hide": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "contract_terms_help",
+   "fieldtype": "HTML",
+   "label": "Contract Terms Help",
+   "options": "<h4>Contract Terms Example</h4>\n\n<pre>This contract is binding between the Company and '{{ doc.party_name }}'. Once signed, the contract will begin on '{{ doc.start_date }}'.\n\nDetails:\n\n\u2022 Contract: {{ doc.name }}\n\u2022 Party: {{ doc.party_name }}\n\u2022 Project: {{ doc.project }}\n\u2022 ...\n</pre>\n\n<p>You can insert values from all the Contract fields into the terms. To view all the fields, go to Setup &gt; Customize Form View and select Contract.</p>\n\n<h4>Templating</h4>\n\n<p>Templates are compiled using the Jinja Templating Langauge. To learn more about Jinja, <a class=\"strong\" href=\"http://jinja.pocoo.org/docs/dev/templates/\">read this documentation.</a></p>"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "party_business_type",
+   "fieldtype": "Select",
+   "label": "Party Business Type",
+   "options": "Individual\nCompany",
+   "read_only": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "designation",
+   "fieldtype": "Data",
+   "label": "Designation",
+   "read_only": 1
+  },
+  {
+   "fieldname": "signed_by_company_date",
+   "fieldtype": "Data",
+   "label": "Signed By Company Date",
+   "read_only": 1,
+   "translatable": 1
+  },
+  {
+   "collapsible": 1,
+   "depends_on": "eval:doc.customer_signature",
+   "fieldname": "sb_signature",
+   "fieldtype": "Section Break",
+   "label": "Signature"
   }
  ],
  "is_submittable": 1,
- "modified": "2021-01-14 23:42:26.144864",
+ "modified": "2021-05-26 04:52:22.819589",
  "modified_by": "Administrator",
  "module": "CRM",
  "name": "Contract",

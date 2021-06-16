@@ -443,7 +443,9 @@ frappe.ui.form.on('Stock Entry', {
 		frm.set_query("package_tag", "items", function(doc, cdt, cdn) {
 			let child_doc = locals[cdt][cdn];
 			let filters = {};
-
+			if (frm.doc.company) {
+				filters["company"] = frm.doc.company;
+			}
 			if (!child_doc.item_code) {
 				frappe.throw(__("Please enter Item Code to get Package Tag."));
 				return;

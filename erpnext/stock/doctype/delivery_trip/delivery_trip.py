@@ -12,6 +12,7 @@ from frappe import _
 from frappe.contacts.doctype.address.address import get_address_display
 from frappe.model.document import Document
 from frappe.utils import cint, flt, get_datetime, get_link_to_form, nowdate, today, unique
+from frappe.utils.password import get_decrypted_password
 
 
 class DeliveryTrip(Document):
@@ -269,13 +270,13 @@ class DeliveryTrip(Document):
 		Returns:
 			(dict): Route legs and, if `optimize` is `True`, optimized waypoint order
 		"""
-		if not frappe.db.get_single_value("Google Settings", "api_key"):
+		if not get_decrypted_password("Google Settings", "Google Settings", "api_key"):
 			frappe.throw(_("Enter API key in Google Settings."))
 
 		import googlemaps
 
 		try:
-			maps_client = googlemaps.Client(key=frappe.db.get_single_value("Google Settings", "api_key"))
+			maps_client = googlemaps.Client(key=get_decrypted_password("Google Settings", "Google Settings", "api_key"))
 		except Exception as e:
 			frappe.throw(e)
 

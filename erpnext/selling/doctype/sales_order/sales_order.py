@@ -1123,6 +1123,7 @@ def make_production_plan(source_name, target_doc=None):
 			'postprocess': update_item_data
 		}
 	}, target_doc, set_missing_values)
+	doc.run_method("get_items")
 	return doc
 
 @frappe.whitelist()

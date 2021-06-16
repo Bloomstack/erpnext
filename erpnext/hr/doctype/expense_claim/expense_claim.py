@@ -474,6 +474,7 @@ def update_expense_claim(expense_claim_detail, expense_date=None, expense_claim_
 	if amount:
 		expense_claim_detail.update({"amount":amount})
 	expense_claim_detail.save()
+	frappe.get_doc("Expense Claim", expense_claim_detail.parent).save(ignore_permissions=True)
 	return expense_claim_detail
 
 @frappe.whitelist()
