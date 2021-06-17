@@ -115,10 +115,10 @@ frappe.ui.form.on('Batch', {
 						var $btn = $(this);
 						const fields = [
 							{
-								fieldname: 'moveQty',
+								fieldname: 'qty',
 								label: __('Qty To Move'),
 								fieldtype: 'Float',
-								'default': $btn.attr('data-qty')
+								default: $btn.attr('data-qty')
 							},
 							{
 								fieldname: 'to_warehouse',
@@ -136,8 +136,7 @@ frappe.ui.form.on('Batch', {
 									args: {
 										item_code: frm.doc.item,
 										batch_no: frm.doc.name,
-										qty: data.moveQty,
-										// $btn.attr('data-qty'),
+										qty: data.qty,
 										from_warehouse: $btn.attr('data-warehouse'),
 										to_warehouse: data.to_warehouse,
 										source_document: frm.doc.reference_name,
