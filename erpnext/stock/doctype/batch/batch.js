@@ -124,7 +124,14 @@ frappe.ui.form.on('Batch', {
 								fieldname: 'to_warehouse',
 								label: __('To Warehouse'),
 								fieldtype: 'Link',
-								options: 'Warehouse'
+								options: 'Warehouse',
+								get_query: () => {
+									return {
+										filters: {
+											"is_group": 0
+										}
+									}
+								}
 							}
 						];
 
