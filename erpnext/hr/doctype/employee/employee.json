@@ -47,6 +47,7 @@
   "department",
   "designation",
   "reports_to",
+  "email_id_of_reports_to",
   "column_break_31",
   "grade",
   "branch",
@@ -139,8 +140,8 @@
    "label": "Series",
    "no_copy": 1,
    "options": "HR-EMP-",
-   "set_only_once": 1,
-   "reqd": 1
+   "reqd": 1,
+   "set_only_once": 1
   },
   {
    "fieldname": "salutation",
@@ -218,11 +219,11 @@
   {
    "fieldname": "employee_number",
    "fieldtype": "Data",
+   "hidden": 1,
    "in_global_search": 1,
    "label": "Employee Number",
    "oldfieldname": "employee_number",
-   "oldfieldtype": "Data",
-   "hidden": 1
+   "oldfieldtype": "Data"
   },
   {
    "fieldname": "employment_type",
@@ -236,11 +237,11 @@
   {
    "fieldname": "gender",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Gender",
    "oldfieldname": "gender",
    "oldfieldtype": "Select",
-   "options": "Gender",
-   "hidden": 1
+   "options": "Gender"
   },
   {
    "description": "You can enter any date manually",
@@ -535,9 +536,9 @@
   {
    "fieldname": "permanent_accommodation_type",
    "fieldtype": "Select",
+   "hidden": 1,
    "label": "Permanent Address Is",
-   "options": "\nRented\nOwned",
-   "hidden": 1
+   "options": "\nRented\nOwned"
   },
   {
    "fieldname": "permanent_address",
@@ -547,9 +548,9 @@
   {
    "fieldname": "current_accommodation_type",
    "fieldtype": "Select",
+   "hidden": 1,
    "label": "Current Address Is",
-   "options": "\nRented\nOwned",
-   "hidden": 1
+   "options": "\nRented\nOwned"
   },
   {
    "fieldname": "current_address",
@@ -602,30 +603,30 @@
   {
    "fieldname": "marital_status",
    "fieldtype": "Select",
+   "hidden": 1,
    "label": "Marital Status",
-   "options": "\nSingle\nMarried\nDivorced\nWidowed",
-   "hidden": 1
+   "options": "\nSingle\nMarried\nDivorced\nWidowed"
   },
   {
    "fieldname": "blood_group",
    "fieldtype": "Select",
+   "hidden": 1,
    "label": "Blood Group",
-   "options": "\nA+\nA-\nB+\nB-\nAB+\nAB-\nO+\nO-",
-   "hidden": 1
+   "options": "\nA+\nA-\nB+\nB-\nAB+\nAB-\nO+\nO-"
   },
   {
    "description": "Here you can maintain family details like name and occupation of parent, spouse and children",
    "fieldname": "family_background",
    "fieldtype": "Small Text",
-   "label": "Family Background",
-   "hidden": 1
+   "hidden": 1,
+   "label": "Family Background"
   },
   {
    "description": "Here you can maintain height, weight, allergies, medical concerns etc",
    "fieldname": "health_details",
    "fieldtype": "Small Text",
-   "label": "Health Details",
-   "hidden": 1
+   "hidden": 1,
+   "label": "Health Details"
   },
   {
    "collapsible": 1,
@@ -843,12 +844,18 @@
    "fieldname": "twitter",
    "fieldtype": "Data",
    "label": "Twitter"
+  },
+  {
+   "fieldname": "email_id_of_reports_to",
+   "fieldtype": "Data",
+   "label": "Email ID of Reports to",
+   "options": "Email"
   }
  ],
  "icon": "fa fa-user",
  "idx": 24,
  "image_field": "image",
- "modified": "2021-01-14 00:01:14.615309",
+ "modified": "2021-06-24 00:48:59.602292",
  "modified_by": "Administrator",
  "module": "HR",
  "name": "Employee",
