@@ -1604,25 +1604,23 @@ def email_coa(docname):
 	attachments = []
 
  	# get customer emails to send emails 
-	contact_person_email = frappe.db.get_value("Customer",sales_invoice.customer, "email_id")
+	contact_person_email = frappe.db.get_value("Customer", sales_invoice.customer, "email_id")
 
 	if not contact_person_email:
-			frappe.msgprint(_("No contact email found in customer {0}").format(sales_invoice.customer))
-			
+		frappe.throw(_("No contact email found in customer {0} .").format(sales_invoice.customer))
 	
 	for item in sales_invoice.items:
 		# checks certificate of analysis for each item in Sales Invoice Item List
-		
-		coas = frappe.db.get_value("Delivery Note Item", {'item_code': item.item_code}, 'certificate_of_analysis')
+		coas = frappe.db.get_value("Batch", item.batch_no, 'certificate_of_analysis')
 
 		if not coas:
-			frappe.msgprint(_("No Certificates of Analysis attached for Item {0} in Delivery Note {1}.").format(item.item_code, item.delivery_note))
+			frappe.throw(_("No Certificates of Analysis attached for Item {0} .").format(item.item_code))
 			continue
 
 		coa_file_id = frappe.db.get_value("File", {"file_url": coas}, "name")
 
 		if not coa_file_id:
-			frappe.msgprint(_("No File found for {0}").format(coas))
+			frappe.throw(_("No File found for {0}").format(coas))
 			continue
 
 		attachments.append({"fid": coa_file_id})

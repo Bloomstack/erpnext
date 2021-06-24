@@ -446,14 +446,14 @@ erpnext.accounts.SalesInvoiceController = erpnext.selling.SellingController.exte
 				docname: this.frm.doc.name
 			},
 			callback: (r) => {
-				if(r && r.message == "success"){
+				if(r && r.message){
 					frappe.show_alert({
 						indicator: 'green',
 						message: __('Email Sent')
 					});
 				}
 			}
-		})
+		});
 	}
 });
 
