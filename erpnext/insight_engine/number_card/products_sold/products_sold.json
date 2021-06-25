@@ -1,0 +1,23 @@
+{
+ "aggregate_function_based_on": "qty",
+ "creation": "2021-04-19 23:32:51.465527",
+ "docstatus": 0,
+ "doctype": "Number Card",
+ "document_type": "Sales Invoice Item",
+ "dynamic_filters_json": "[]",
+ "filters_json": "[]",
+ "function": "Sum",
+ "idx": 0,
+ "is_public": 0,
+ "is_standard": 1,
+ "label": "Products Sold",
+ "modified": "2021-04-21 01:36:49.285514",
+ "modified_by": "Administrator",
+ "module": "Insight Engine",
+ "name": "Products Sold",
+ "owner": "Administrator",
+ "report_function": "Sum",
+ "show_percentage_stats": 0,
+ "stats_time_interval": "Daily",
+ "type": "Document Type"
+}

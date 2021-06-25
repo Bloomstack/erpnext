@@ -105,6 +105,12 @@ frappe.query_reports["Cost Center Financial Statements"] = {
 			"label": __("Include Default Book Entries"),
 			"fieldtype": "Check",
 			"default": 1
+		},
+		{
+			"fieldname": 'include_child_cost_centers',
+			"label": __('Include Child Cost Centers'),
+			"fieldtype": 'Check',
+			"default": 1
 		}
 	],
 	"formatter": function(value, row, column, data, default_formatter) {

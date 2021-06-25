@@ -1,9 +1,6 @@
 // Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
 // License: GNU General Public License v3. See license.txt
 
-cur_frm.add_fetch('employee','employee_name','employee_name');
-cur_frm.add_fetch('employee','company','company');
-
 frappe.ui.form.on("Leave Application", {
 	setup: function(frm) {
 		frm.set_query("leave_approver", function() {
@@ -22,6 +19,7 @@ frappe.ui.form.on("Leave Application", {
 		if (!frm.doc.posting_date) {
 			frm.set_value("posting_date", frappe.datetime.get_today());
 		}
+		
 		if (frm.doc.docstatus == 0) {
 			return frappe.call({
 				method: "erpnext.hr.doctype.leave_application.leave_application.get_mandatory_approval",

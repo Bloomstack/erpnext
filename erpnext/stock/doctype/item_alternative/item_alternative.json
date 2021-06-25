@@ -1,4 +1,5 @@
 {
+ "autoname": "field:alternative_item_code",
  "creation": "2018-02-26 17:39:11.249778",
  "doctype": "DocType",
  "editable_grid": 1,
@@ -6,7 +7,6 @@
  "field_order": [
   "item_code",
   "alternative_item_code",
-  "two_way",
   "column_break_4",
   "item_name",
   "alternative_item_name"
@@ -26,13 +26,8 @@
    "in_list_view": 1,
    "label": "Alternative Item Code",
    "options": "Item",
-   "reqd": 1
-  },
-  {
-   "default": "0",
-   "fieldname": "two_way",
-   "fieldtype": "Check",
-   "label": "Two-way"
+   "reqd": 1,
+   "unique": 1
   },
   {
    "fieldname": "column_break_4",
@@ -48,10 +43,11 @@
    "fetch_from": "alternative_item_code.item_name",
    "fieldname": "alternative_item_name",
    "fieldtype": "Read Only",
+   "in_standard_filter": 1,
    "label": "Alternative Item Name"
   }
  ],
- "modified": "2021-01-04 22:03:02.951591",
+ "modified": "2021-05-20 23:11:59.703700",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Item Alternative",
@@ -94,6 +90,7 @@
    "write": 1
   }
  ],
+ "search_fields": "alternative_item_code",
  "sort_field": "modified",
  "sort_order": "DESC",
  "title_field": "item_code",

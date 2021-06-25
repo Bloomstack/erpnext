@@ -1,0 +1,201 @@
+{
+ "autoname": "QUOTING-SHEET-.#####",
+ "creation": "2021-05-26 22:47:35.747870",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "item_code",
+  "item_name",
+  "customer",
+  "lead",
+  "column_break_4",
+  "currency",
+  "conversion_rate",
+  "qty",
+  "section_break_8",
+  "raw_material_items",
+  "update_rate",
+  "rm_cost",
+  "section_break_11",
+  "packaging_charges",
+  "column_break_13",
+  "shipping_cost",
+  "section_break_15",
+  "profit_markup",
+  "bulk_discounting_section",
+  "section_break_16",
+  "total_price",
+  "column_break_17",
+  "price_per_unit",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "item_code",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Item",
+   "options": "Item",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "item_code.item_name",
+   "fieldname": "item_name",
+   "fieldtype": "Data",
+   "label": "Item Name",
+   "read_only": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Quoting Sheet",
+   "print_hide": 1,
+   "read_only": 1
+  },
+  {
+   "default": "1",
+   "fieldname": "qty",
+   "fieldtype": "Float",
+   "label": "Quantity",
+   "reqd": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "packaging_charges",
+   "fieldtype": "Currency",
+   "label": "Packaging Charges"
+  },
+  {
+   "default": "0",
+   "fieldname": "shipping_cost",
+   "fieldtype": "Currency",
+   "label": "Shipping Cost"
+  },
+  {
+   "default": "0",
+   "fieldname": "profit_markup",
+   "fieldtype": "Percent",
+   "label": "Profit Markup Percent"
+  },
+  {
+   "default": "0",
+   "fieldname": "total_price",
+   "fieldtype": "Currency",
+   "label": "Total Price",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "price_per_unit",
+   "fieldtype": "Currency",
+   "label": "Price Per Unit",
+   "read_only": 1
+  },
+  {
+   "fieldname": "conversion_rate",
+   "fieldtype": "Float",
+   "label": "Conversion Rate",
+   "reqd": 1
+  },
+  {
+   "fieldname": "currency",
+   "fieldtype": "Link",
+   "label": "Currency",
+   "options": "Currency",
+   "reqd": 1
+  },
+  {
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "label": "Customer",
+   "options": "Customer"
+  },
+  {
+   "fieldname": "column_break_4",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_8",
+   "fieldtype": "Section Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "rm_cost",
+   "fieldtype": "Currency",
+   "label": "Total Raw Material Cost",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_11",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "section_break_15",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_17",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_13",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_16",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "raw_material_items",
+   "fieldtype": "Table",
+   "label": "Raw Material",
+   "options": "Quoting Sheet Item",
+   "reqd": 1
+  },
+  {
+   "fieldname": "lead",
+   "fieldtype": "Link",
+   "label": "Lead",
+   "options": "Lead"
+  },
+  {
+   "fieldname": "bulk_discounting_section",
+   "fieldtype": "Section Break",
+   "label": "Bulk Discounting"
+  },
+  {
+   "depends_on": "eval: doc.docstatus != 1 & !doc.__unsaved",
+   "fieldname": "update_rate",
+   "fieldtype": "Button",
+   "label": "Update Rate"
+  }
+ ],
+ "is_submittable": 1,
+ "modified": "2021-06-02 23:07:43.385905",
+ "modified_by": "Administrator",
+ "module": "Selling",
+ "name": "Quoting Sheet",
+ "name_case": "UPPER CASE",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "quick_entry": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

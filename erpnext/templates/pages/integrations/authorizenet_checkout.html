@@ -7,7 +7,7 @@
 	{% include "templates/includes/integrations/authorizenet_checkout.js" %}
 </script>
 <script>
-	context = "{{ payment_context }}"
+	const context = {{ payment_context | json }};
 </script>
 {% endblock %}
 
@@ -15,7 +15,11 @@
 
 <div class="authorizenet">
 	<div class="col-md-12">
-		<h2 class="text-center">{{ payment_context.description }}</h2>
+		<h2 class="text-center">{{ description }}</h2>
+		<div id="please-wait">
+			Loading...
+		</div>
+
 		<form id="payment-form">
 			<div class="form-row row">
 
@@ -25,7 +29,7 @@
 							<label>{{ _("Card Holder Name") }}</label>
 						</div>
 						<div class="col-md-8 col-sm-6 pl-0 pr-0">
-							<input id="cardholder-name" name="cardholder-name" class="field w-100" placeholder="{{ _('John Doe') }}" />
+							<input id="cardholder-name" name="cardholder-name" class="field w-100" placeholder="{{ _('John Doe') }}" data-lpignore="true"/>
 						</div>
 					</div>
 
@@ -34,7 +38,7 @@
 							<label>{{ _("Email") }}</label>
 						</div>
 						<div class="col-md-8 col-sm-6 pl-0 pr-0">
-							<input id="cardholder-email" name="cardholder-email" class="field w-100" placeholder="{{ _('john@doe.com') }}" />
+							<input id="cardholder-email" name="cardholder-email" class="field w-100" placeholder="{{ _('john@doe.com') }}" data-lpignore="true"/>
 						</div>
 					</div>
 
@@ -43,7 +47,7 @@
 							<label>{{ _("Card Number") }}</label>
 						</div>
 						<div class="col-md-8 col-sm-6 p-0">
-							<input data-validation="digit" type="text" id="card-number" name="card-number" class="field" maxlength="19" placeholder="{{ _('XXXX XXXX XXXX XXXX') }}" />
+							<input data-validation="digit" type="text" id="card-number" name="card-number" class="field" maxlength="19" placeholder="{{ _('XXXX XXXX XXXX XXXX') }}"  data-lpignore="true"/>
 						</div>
 					</div>
 					<div class="group row card-details">
@@ -52,9 +56,9 @@
 						</div>
 						<div class="p-0">
 							<input data-validation="digit" type="text" id="card-expiry-month" name="card-expiry-month" class="field" maxlength="2"
-								placeholder="{{ _('MM') }}" />
+								placeholder="{{ _('MM') }}" data-lpignore="true"/>
 							<input data-validation="digit" type="text" id="card-expiry-year" name="card-expiry-year" class="field" maxlength="4"
-								placeholder="{{ _('YYYY') }}" />
+								placeholder="{{ _('YYYY') }}" data-lpignore="true"/>
 						</div>
 					</div>
 					<div class="group row card-details">
@@ -63,7 +67,7 @@
 						</div>
 						<div class="col-md-8 col-sm-6 p-0">
 							<input type="password" id="card-code" maxlength="4" name="card-code" class="field"
-								placeholder="{{ _('***') }}" />
+								placeholder="{{ _('***') }}" data-lpignore="true"/>
 						</div>
 
 					</div>

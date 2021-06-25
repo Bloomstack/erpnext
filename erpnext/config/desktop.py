@@ -208,4 +208,13 @@ def get_data():
 			'standard': 1,
 			"description": "Publish items to other ERPNext users."
 		},
+		{
+			"module_name": "Reports",
+			"category": "Modules",
+			"label": _("Reports"),
+			"color": "#3498db",
+			"icon": "octicon octicon-repo",
+			"type": "module",
+			"description": "Accounts, billing, payments, cost center and budgeting."
+		}
 	]

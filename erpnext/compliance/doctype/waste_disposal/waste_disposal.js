@@ -57,6 +57,12 @@ frappe.ui.form.on("Waste Disposal", {
 		});
 	},
 
+	s_warehouse: function(frm) {
+		for (let row of frm.doc.items) {
+			frappe.model.set_value(row.doctype, row.name, "warehouse", frm.doc.s_warehouse);
+		}
+	},
+
 	get_items: function (frm) {
 		frappe.prompt({
 			label: "Warehouse",

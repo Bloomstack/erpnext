@@ -22,7 +22,9 @@
   "stock_qty",
   "received_qty",
   "per_received",
-  "produced_qty"
+  "produced_qty",
+  "column_break_20",
+  "produced_percentage"
  ],
  "fields": [
   {
@@ -144,10 +146,19 @@
    "fieldname": "produced_qty",
    "fieldtype": "Float",
    "label": "Produced Qty"
+  },
+  {
+   "fieldname": "column_break_20",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "produced_percentage",
+   "fieldtype": "Percent",
+   "label": "Produced Percentage"
   }
  ],
  "istable": 1,
- "modified": "2021-01-04 00:32:03.534497",
+ "modified": "2021-05-31 05:41:02.723900",
  "modified_by": "Administrator",
  "module": "Manufacturing",
  "name": "Material Request Plan Item",

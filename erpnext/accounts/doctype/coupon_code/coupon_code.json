@@ -7,6 +7,7 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "enabled",
   "coupon_name",
   "coupon_type",
   "customer",
@@ -136,9 +137,16 @@
    "fieldtype": "Link",
    "label": "Customer Group",
    "options": "Customer Group"
+  },
+  {
+   "default": "1",
+   "fieldname": "enabled",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Enabled"
   }
  ],
- "modified": "2020-12-17 00:02:05.148366",
+ "modified": "2021-06-08 09:44:21.974315",
  "modified_by": "forellana@digithinkit.com",
  "module": "Accounts",
  "name": "Coupon Code",

@@ -204,6 +204,13 @@ class ProductionPlan(Document):
 
 		self.db_set("total_produced_qty", self.total_produced_qty, update_modified=False)
 
+	def calculate_produced_percentage(self):
+		# calculate produced_percentage on the basis on requested_qty and produced_qty
+		for mr_item in self.mr_items:
+			if mr_item.material_request_type == "Manufacture" and mr_item.produced_qty:
+				mr_item.produced_percentage = (flt(mr_item.requested_qty) / flt(mr_item.produced_qty)) * 100
+				mr_item.db_update()
+
 	def update_produced_qty(self, produced_qty, production_plan_item):
 		for data in self.po_items:
 			if data.name == production_plan_item:
@@ -221,6 +228,7 @@ class ProductionPlan(Document):
 				data.db_update()
 
 		self.calculate_total_produced_qty()
+		self.calculate_produced_percentage()
 		self.set_status()
 		self.db_set('status', self.status)
 		update_status_for_production_plan(self.name)

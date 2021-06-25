@@ -21,14 +21,15 @@ default_sales_partner_type = ["Channel Partner", "Distributor", "Dealer", "Agent
 def install(country=None):
 	records = [
 		# domains
-		{ 'doctype': 'Domain', 'domain': 'Distribution'},
-		{ 'doctype': 'Domain', 'domain': 'Manufacturing'},
-		{ 'doctype': 'Domain', 'domain': 'Retail'},
-		{ 'doctype': 'Domain', 'domain': 'Services'},
-		{ 'doctype': 'Domain', 'domain': 'Education'},
-		{ 'doctype': 'Domain', 'domain': 'Healthcare'},
-		{ 'doctype': 'Domain', 'domain': 'Agriculture'},
-		{ 'doctype': 'Domain', 'domain': 'Non Profit'},
+		{'doctype': 'Domain', 'domain': 'Distribution'},
+		{'doctype': 'Domain', 'domain': 'Manufacturing'},
+		{'doctype': 'Domain', 'domain': 'Retail'},
+		{'doctype': 'Domain', 'domain': 'Services'},
+		{'doctype': 'Domain', 'domain': 'Education'},
+		{'doctype': 'Domain', 'domain': 'Healthcare'},
+		{'doctype': 'Domain', 'domain': 'Agriculture'},
+		{'doctype': 'Domain', 'domain': 'Non Profit'},
+		{'doctype': 'Domain', 'domain': 'Insight Engine'},
 
 		# address template
 		{'doctype':"Address Template", "country": country},
@@ -310,11 +311,12 @@ def install(country=None):
 
 def make_roles(roles=[]):
 	for role in roles:
-		frappe.get_doc({
-			"doctype": "Role",
-			"role_name": role.get("role_name"),
-			"for_mobile_application": role.get("for_mobile_application")
-		}).insert(ignore_permissions=True)
+		if not frappe.db.exists("Role", role.get("role_name")):
+			frappe.get_doc({
+				"doctype": "Role",
+				"role_name": role.get("role_name"),
+				"for_mobile_application": role.get("for_mobile_application")
+			}).insert(ignore_permissions=True)
 
 def set_more_defaults():
 	# Do more setup stuff that can be done here with no dependencies

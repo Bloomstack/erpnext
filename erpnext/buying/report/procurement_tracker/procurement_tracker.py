@@ -136,6 +136,20 @@ def get_columns(filters):
 			"fieldtype": "Date",
 			"width": 140
 		},
+		{
+			"label": _("Batch No"),
+			"fieldname": "batch_no",
+			"fieldtype": "Link",
+			"options": "Batch",
+			"width": 140
+		},
+		{
+			"label": _("Package Tag"),
+			"fieldname": "package_tag",
+			"fieldtype": "Link",
+			"options": "Package Tag",
+			"width": 140
+		}
 	]
 	return columns
 
@@ -168,6 +182,13 @@ def get_data(filters):
 	if procurement_record_against_mr:
 		procurement_record += procurement_record_against_mr
 	for po in purchase_order_entry:
+		# get batch and package tag related information form purchase receipt.
+		posting_date, batch_no, package_tag = None, None, None
+		if pr_records.get(po.name):
+			posting_date = pr_records.get(po.name).get('posting_date')
+			batch_no = pr_records.get(po.name).get('batch_no')
+			package_tag = pr_records.get(po.name).get('package_tag')
+
 		# fetch material records linked to the purchase order item
 		mr_record = mr_records.get(po.material_request_item, [{}])[0]
 		procurement_detail = {
@@ -189,7 +210,9 @@ def get_data(filters):
 			"purchase_order_amt": flt(po.amount),
 			"purchase_order_amt_in_company_currency": flt(po.base_amount),
 			"expected_delivery_date": po.schedule_date,
-			"actual_delivery_date": pr_records.get(po.name)
+			"actual_delivery_date": posting_date,
+			"batch_no": batch_no,
+			"package_tag": package_tag
 		}
 		procurement_record.append(procurement_detail)
 	return procurement_record
@@ -252,17 +275,21 @@ def get_mapped_pi_records():
 		"""))
 
 def get_mapped_pr_records():
-	return frappe._dict(frappe.db.sql("""
+	pr_records = frappe.db.sql("""
 		SELECT
 			pr_item.purchase_order_item,
-			pr.posting_date
+			pr.posting_date,
+			pr_item.batch_no,
+			pr_item.package_tag
 		FROM `tabPurchase Receipt` pr, `tabPurchase Receipt Item` pr_item
 		WHERE
 			pr.docstatus=1
 			AND pr.name=pr_item.parent
 			AND pr_item.purchase_order_item IS NOT NULL
 			AND pr.status not in  ("Closed","Completed","Cancelled")
-		"""))
+		""", as_dict=1)
+	pr_records_dict = {item['purchase_order_item']:item for item in pr_records}
+	return pr_records_dict
 
 def get_po_entries(conditions):
 	return frappe.db.sql("""
