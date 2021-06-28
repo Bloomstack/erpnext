@@ -437,8 +437,6 @@ erpnext.accounts.SalesInvoiceController = erpnext.selling.SellingController.exte
 		this.frm.refresh_field("paid_amount");
 		this.frm.refresh_field("base_paid_amount");
 	},
-
-	
 	email_coa: function() {
 		frappe.call({
 			method: "erpnext.accounts.doctype.sales_invoice.sales_invoice.email_coa",

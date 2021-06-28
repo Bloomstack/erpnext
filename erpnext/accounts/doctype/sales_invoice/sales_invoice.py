@@ -1614,13 +1614,13 @@ def email_coa(docname):
 		coas = frappe.db.get_value("Batch", item.batch_no, 'certificate_of_analysis')
 
 		if not coas:
-			frappe.throw(_("No Certificates of Analysis attached for Item {0} .").format(item.item_code))
+			frappe.msgprint(_("No Certificates of Analysis attached for Item {0} .").format(item.item_code))
 			continue
 
 		coa_file_id = frappe.db.get_value("File", {"file_url": coas}, "name")
 
 		if not coa_file_id:
-			frappe.throw(_("No File found for {0}").format(coas))
+			frappe.msgprint(_("No File found for {0}").format(coas))
 			continue
 
 		attachments.append({"fid": coa_file_id})
