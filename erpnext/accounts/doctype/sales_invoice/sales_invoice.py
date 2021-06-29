@@ -1602,8 +1602,7 @@ def email_coa(docname):
 	"""
 	sales_invoice = frappe.get_doc("Sales Invoice", docname)
 	attachments = []
-
- 	# get customer emails to send emails 
+	# get customer emails to send emails 
 	contact_person_email = frappe.db.get_value("Customer", sales_invoice.customer, "email_id")
 
 	if not contact_person_email:
