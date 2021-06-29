@@ -443,8 +443,8 @@ def make_contract(source_name, target_doc=None):
 
 @frappe.whitelist()
 def get_reports_to_email(emp_id):
-	if frappe.get_value("Employee",emp_id,"company_email") is not None:
-		return frappe.get_value("Employee",emp_id,"company_email")
+	if frappe.get_value("Employee", emp_id, "company_email") is not None:
+		return frappe.get_value("Employee", emp_id, "company_email")
 	else:
-		return frappe.get_value("Employee",emp_id,"personal_email")
+		return frappe.get_value("Employee", emp_id, "personal_email")
 	
