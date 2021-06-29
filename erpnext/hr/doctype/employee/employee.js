@@ -88,7 +88,7 @@ frappe.ui.form.on('Employee',{
 			}
 		});
 	},
-	reports_to:function(frm){
+	reports_to: function(frm){
 		frappe.call({
 			method: "erpnext.hr.doctype.employee.employee.get_reports_to_email",
 			args: { emp_id: frm.doc.reports_to},
