@@ -94,7 +94,7 @@ frappe.ui.form.on('Employee',{
 			args: { emp_id: frm.doc.reports_to},
 			callback: function(r){
 				if(r.message){
-					cur_frm.doc.reports_to_email = r.message;
+					frm.set_value("reports_to_email", r.message);
 					refresh_field("reports_to_email");
 				}
 			}
