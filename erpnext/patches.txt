@@ -721,7 +721,4 @@ erpnext.patches.v13_0.delete_company_custom_fields
 execute:frappe.reload_doc('setup', 'doctype', 'company', force=True)
 erpnext.patches.v13_0.set_is_used #01-04-2021
 erpnext.patches.v13_0.set_coa_batch_in_batch
-erpnext.patches.v13_0.set_coupon_code_enabled
-erpnext.patches.v13_0.recalculate_outstanding_amount
-erpnext.patches.v13_0.add_insight_engine_module
 erpnext.patches.v13_0.delete_old_bank_reconciliation_doctypes
