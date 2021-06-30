@@ -42,6 +42,16 @@ frappe.ui.form.on("Bank Reconciliation Tool", {
 					},
 				})
 		);
+		frappe.db.get_value("Plaid Settings", "Plaid Settings", "enabled", (r) => {
+			if (r && r.enabled) {
+				frm.add_custom_button(__('Synchronize this account'), () => {
+					if (!frm.doc.bank_account) {
+						frappe.msgprint(__("Please select bank account"));
+					}
+					new erpnext.accounts.bankTransactionSync(frm);
+				});
+			}
+		});
 	},
 
 	after_save: function (frm) {
@@ -162,3 +172,38 @@ frappe.ui.form.on("Bank Reconciliation Tool", {
 		}
 	},
 });
+
+erpnext.accounts.bankTransactionSync = class bankTransactionSync {
+	constructor(frm) {
+		this.frm = frm;
+		this.data = [];
+		this.init_config()
+	}
+
+	init_config() {
+		const me = this;
+		frappe.xcall('erpnext.erpnext_integrations.doctype.plaid_settings.plaid_settings.get_plaid_configuration')
+			.then(result => {
+				me.plaid_env = result.plaid_env;
+				me.client_name = result.client_name;
+				me.link_token = result.link_token;
+				me.sync_transactions();
+			})
+	}
+	sync_transactions() {
+		const me = this;
+		frappe.db.get_value("Bank Account", cur_frm.doc.bank_account, "bank", (r) => {
+			frappe.xcall('erpnext.erpnext_integrations.doctype.plaid_settings.plaid_settings.sync_transactions', {
+				bank: r.bank,
+				bank_account: me.frm.doc.bank_account,
+				freeze: true
+			})
+			.then((result) => {
+				let result_title = (result && result.length > 0)
+					? __("{0} bank transaction(s) created", [result.length])
+					: __("This bank account is already synchronized");
+				frappe.show_alert({message: result_title, indicator: 'green'});
+			})
+		});
+	}
+}
