@@ -100,15 +100,16 @@
   },
   {
    "default": "0",
+
    "fieldname": "lost_or_destroyed",
    "fieldtype": "Check",
    "label": "Lost / Destroyed",
    "read_only": 1
   }
  ],
- "modified": "2021-04-01 10:01:04.941738",
+ "modified": "2021-06-29 21:33:43.094312",
  "modified_by": "Administrator",
- "module": "Compliance",
+ "module": "Stock",
  "name": "Package Tag",
  "owner": "Administrator",
  "permissions": [

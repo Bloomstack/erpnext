@@ -13,7 +13,7 @@ from frappe.utils import floor, flt, today, cint, unique
 from frappe.model.mapper import get_mapped_doc, map_child_doc
 from erpnext.stock.get_item_details import get_conversion_factor
 from erpnext.selling.doctype.sales_order.sales_order import make_delivery_note as create_delivery_note_from_sales_order
-from erpnext.compliance.doctype.package_tag.package_tag import get_package_tag_qty
+from erpnext.stock.doctype.package_tag.package_tag import get_package_tag_qty
 # TODO: Prioritize SO or WO group warehouse
 
 class PickList(Document):

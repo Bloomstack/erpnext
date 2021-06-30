@@ -5,7 +5,7 @@ frappe.ui.form.on('Package Tag', {
 	setup: (frm) => {
 		frm.make_methods = {
 			'Waste Disposal': () => frappe.model.open_mapped_doc({
-				method: "erpnext.compliance.doctype.package_tag.package_tag.make_waste_disposal",
+				method: "erpnext.stock.doctype.package_tag.package_tag.make_waste_disposal",
 				frm: frm,
 			})
 		};
@@ -22,7 +22,7 @@ frappe.ui.form.on('Package Tag', {
 	make_dashboard: (frm) => {
 		if(!frm.is_new()) {
 			frappe.call({
-				method: 'erpnext.compliance.doctype.package_tag.package_tag.get_package_tag_qty',
+				method: 'erpnext.stock.doctype.package_tag.package_tag.get_package_tag_qty',
 				args: {package_tag: frm.doc.name},
 				callback: (r) => {
 					if(!r.message) {
@@ -79,7 +79,7 @@ frappe.ui.form.on('Package Tag', {
 						],
 						(data) => {
 							frappe.call({
-								method: 'erpnext.compliance.doctype.package_tag.package_tag.make_stock_reconciliation',
+								method: 'erpnext.stock.doctype.package_tag.package_tag.make_stock_reconciliation',
 								args: {
 									item_code: frm.doc.item_code,
 									batch_no: frm.doc.batch_no,
