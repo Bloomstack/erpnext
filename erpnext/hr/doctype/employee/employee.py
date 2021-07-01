@@ -440,3 +440,11 @@ def make_contract(source_name, target_doc=None):
 		}}, target_doc)
 
 	return target_doc
+
+@frappe.whitelist()
+def get_reports_to_email(emp_id):
+	if frappe.get_value("Employee", emp_id, "company_email") is not None:
+		return frappe.get_value("Employee", emp_id, "company_email")
+	else:
+		return frappe.get_value("Employee", emp_id, "personal_email")
+	

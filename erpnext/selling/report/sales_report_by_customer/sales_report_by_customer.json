@@ -10,11 +10,11 @@
  "modified": "2020-04-30 19:49:02.303320",
  "modified_by": "Administrator",
  "module": "Selling",
- "name": "Sales Analytics",
+ "name": "Sales Report By Customer",
  "owner": "Administrator",
  "prepared_report": 0,
  "ref_doctype": "Sales Order",
- "report_name": "Sales Analytics",
+ "report_name": "Sales Report By Customer",
  "report_type": "Script Report",
  "roles": [
   {

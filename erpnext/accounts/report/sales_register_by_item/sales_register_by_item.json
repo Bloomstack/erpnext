@@ -10,10 +10,10 @@
  "modified": "2017-02-24 20:17:17.638545", 
  "modified_by": "Administrator", 
  "module": "Accounts", 
- "name": "Item-wise Sales Register", 
+ "name": "Sales Register By Item", 
  "owner": "Administrator", 
  "ref_doctype": "Sales Invoice", 
- "report_name": "Item-wise Sales Register", 
+ "report_name": "Sales Register By Item", 
  "report_type": "Script Report", 
  "roles": [
   {

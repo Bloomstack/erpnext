@@ -179,7 +179,7 @@ data_map = {
 			"company":["Company", "name"]
 		}
 	},
-	"Sales Order Item[Sales Analytics]": {
+	"Sales Order Item[Sales Report By Customer]": {
 		"columns": ["name", "parent", "item_code", "stock_qty as qty", "base_net_amount"],
 		"conditions": ["docstatus=1", "ifnull(parent, '')!=''"],
 		"order_by": "parent",
@@ -197,7 +197,7 @@ data_map = {
 			"company":["Company", "name"]
 		}
 	},
-	"Delivery Note Item[Sales Analytics]": {
+	"Delivery Note Item[Sales Report By Customer]": {
 		"columns": ["name", "parent", "item_code", "stock_qty as qty", "base_net_amount"],
 		"conditions": ["docstatus=1", "ifnull(parent, '')!=''"],
 		"order_by": "parent",

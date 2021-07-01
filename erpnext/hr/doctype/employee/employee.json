@@ -47,6 +47,7 @@
   "department",
   "designation",
   "reports_to",
+  "reports_to_email",
   "column_break_31",
   "grade",
   "branch",
@@ -843,12 +844,19 @@
    "fieldname": "twitter",
    "fieldtype": "Data",
    "label": "Twitter"
+  },
+  {
+   "fieldname": "reports_to_email",
+   "fieldtype": "Data",
+   "label": "Reports to Email",
+   "options": "Email",
+   "read_only": 1
   }
  ],
  "icon": "fa fa-user",
  "idx": 24,
  "image_field": "image",
- "modified": "2021-05-27 11:10:42.296966",
+ "modified": "2021-06-28 05:28:21.061707",
  "modified_by": "Administrator",
  "module": "HR",
  "name": "Employee",

@@ -30,13 +30,7 @@ class Analytics(object):
 		return self.columns, self.data, None, self.chart
 
 	def get_columns(self):
-		self.columns = [{
-				"label": _(self.filters.tree_type + " ID"),
-				"options": self.filters.tree_type if self.filters.tree_type != "Order Type" else "",
-				"fieldname": "entity",
-				"fieldtype": "Link" if self.filters.tree_type != "Order Type" else "Data",
-				"width": 140 if self.filters.tree_type != "Order Type" else 200
-			}]
+		self.columns = []
 
 		if self.filters.tree_type in ["Customer", "Supplier", "Item"]:
 			self.columns.append({
@@ -58,8 +52,8 @@ class Analytics(object):
 			if self.filters.tree_type == "Customer":
 				self.columns.extend([
 					{
-						"label": _("City"),
-						"fieldname": "city",
+						"label": _("Territory"),
+						"fieldname": "territory",
 						"fieldtype": "Data",
 						"width": 140
 					},
@@ -230,10 +224,9 @@ class Analytics(object):
 				address = get_default_address("Customer", entity)
 
 				row.update({
-					"city": frappe.db.get_value("Address", address, "city"),
+					"territory": frappe.db.get_value("Customer", entity, "territory"),
 					"sales_partner": frappe.db.get_value("Customer", entity, "default_sales_partner")
 				})
-
 			total = 0
 			for end_date in self.periodic_daterange:
 				period = self.get_period(end_date)
@@ -292,11 +285,11 @@ class Analytics(object):
 
 	def get_period(self, posting_date):
 		if self.filters.range == 'Weekly':
-			period = "Week " + str(posting_date.isocalendar()[1]) + " " + str(posting_date.year)
+			period = "Week " + str(posting_date.isocalendar()[1]) + ", " + str(posting_date.year)
 		elif self.filters.range == 'Monthly':
-			period = str(self.months[posting_date.month - 1]) + " " + str(posting_date.year)
+			period = str(self.months[posting_date.month - 1]) + ", " + str(posting_date.year)
 		elif self.filters.range == 'Quarterly':
-			period = "Quarter " + str(((posting_date.month - 1) // 3) + 1) + " " + str(posting_date.year)
+			period = "Q" + str(((posting_date.month - 1) // 3) + 1) + ", " + str(posting_date.year)
 		else:
 			year = get_fiscal_year(posting_date, company=self.filters.company)
 			period = str(year[0])

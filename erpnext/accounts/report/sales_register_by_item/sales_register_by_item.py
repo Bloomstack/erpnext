@@ -14,7 +14,6 @@ def execute(filters=None):
 
 def _execute(filters=None, additional_table_columns=None, additional_query_columns=None):
 	if not filters: filters = {}
-	filters.update({"from_date": filters.get("date_range") and filters.get("date_range")[0], "to_date": filters.get("date_range") and filters.get("date_range")[1]})
 	columns = get_columns(additional_table_columns, filters)
 
 	company_currency = frappe.get_cached_value('Company',  filters.get("company"),  "default_currency")
@@ -45,15 +44,9 @@ def _execute(filters=None, additional_table_columns=None, additional_query_colum
 			delivery_note = d.parent
 
 		row = {
-			'item_code': d.item_code,
+			'posting_date': d.posting_date,			
 			'item_name': d.item_name,
-			'item_group': d.item_group,
-			'description': d.description,
-			'invoice': d.parent,
-			'posting_date': d.posting_date,
 			'customer': d.customer,
-			'customer_name': d.customer_name,
-			'customer_group': d.customer_group,
 		}
 
 		if additional_query_columns:
@@ -63,15 +56,7 @@ def _execute(filters=None, additional_table_columns=None, additional_query_colum
 				})
 
 		row.update({
-			'debit_to': d.debit_to,
-			'mode_of_payment': ", ".join(mode_of_payments.get(d.parent, [])),
 			'territory': d.territory,
-			'project': d.project,
-			'company': d.company,
-			'sales_order': d.sales_order,
-			'delivery_note': d.delivery_note,
-			'income_account': d.income_account,
-			'cost_center': d.cost_center,
 			'stock_qty': d.stock_qty,
 			'stock_uom': d.stock_uom
 		})
@@ -86,6 +71,12 @@ def _execute(filters=None, additional_table_columns=None, additional_query_colum
 				'rate': d.base_net_rate,
 				'amount': d.base_net_amount
 			})
+		
+		row.update({
+			'batch_no': d.batch_no,
+			'package_tag': d.package_tag,
+			'sales_order': d.sales_order,
+		})
 
 		total_tax = 0
 		for tax in tax_columns:
@@ -125,16 +116,18 @@ def _execute(filters=None, additional_table_columns=None, additional_query_colum
 def get_columns(additional_table_columns, filters):
 	columns = []
 
+	columns.extend([
+		{
+			'label': _('Transaction Date'),
+			'fieldname': 'posting_date',
+			'fieldtype': 'Date',
+			'width': 120
+		}
+	])
+
 	if filters.get('group_by') != ('Item'):
 		columns.extend(
 			[
-				{
-					'label': _('Item Code'),
-					'fieldname': 'item_code',
-					'fieldtype': 'Link',
-					'options': 'Item',
-					'width': 120
-				},
 				{
 					'label': _('Item Name'),
 					'fieldname': 'item_name',
@@ -144,49 +137,6 @@ def get_columns(additional_table_columns, filters):
 			]
 		)
 
-	if filters.get('group_by') not in ('Item', 'Item Group'):
-		columns.extend([
-			{
-				'label': _('Item Group'),
-				'fieldname': 'item_group',
-				'fieldtype': 'Link',
-				'options': 'Item Group',
-				'width': 120
-			}
-		])
-
-	columns.extend([
-		{
-			'label': _('Description'),
-			'fieldname': 'description',
-			'fieldtype': 'Data',
-			'width': 150
-		},
-		{
-			'label': _('Invoice'),
-			'fieldname': 'invoice',
-			'fieldtype': 'Link',
-			'options': 'Sales Invoice',
-			'width': 120
-		},
-		{
-			'label': _('Posting Date'),
-			'fieldname': 'posting_date',
-			'fieldtype': 'Date',
-			'width': 120
-		}
-	])
-
-	if filters.get('group_by') != 'Customer':
-		columns.extend([
-			{
-				'label': _('Customer Group'),
-				'fieldname': 'customer_group',
-				'fieldtype': 'Link',
-				'options': 'Customer Group',
-				'width': 120
-			}
-		])
 
 	if filters.get('group_by') not in ('Customer', 'Customer Group'):
 		columns.extend([
@@ -196,89 +146,25 @@ def get_columns(additional_table_columns, filters):
 				'fieldtype': 'Link',
 				'options': 'Customer',
 				'width': 120
-			},
-			{
-				'label': _('Customer Name'),
-				'fieldname': 'customer_name',
-				'fieldtype': 'Data',
-				'width': 120
 			}
 		])
 
 	if additional_table_columns:
 		columns += additional_table_columns
 
-	columns += [
+
+	columns.extend([
 		{
-			'label': _('Receivable Account'),
-			'fieldname': 'debit_to',
+			'label': _("Territory"),
+			'fieldname': 'territory',
 			'fieldtype': 'Link',
-			'options': 'Account',
+			'options': 'Territory',
 			'width': 80
-		},
-		{
-			'label': _('Mode Of Payment'),
-			'fieldname': 'mode_of_payment',
-			'fieldtype': 'Data',
-			'width': 120
 		}
-	]
-
-	if filters.get('group_by') != 'Terriotory':
-		columns.extend([
-			{
-				'label': _("Territory"),
-				'fieldname': 'territory',
-				'fieldtype': 'Link',
-				'options': 'Territory',
-				'width': 80
-			}
-		])
+	])
 
 
 	columns += [
-		{
-			'label': _('Project'),
-			'fieldname': 'project',
-			'fieldtype': 'Link',
-			'options': 'Project',
-			'width': 80
-		},
-		{
-			'label': _('Company'),
-			'fieldname': 'company',
-			'fieldtype': 'Link',
-			'options': 'Company',
-			'width': 80
-		},
-		{
-			'label': _('Sales Order'),
-			'fieldname': 'sales_order',
-			'fieldtype': 'Link',
-			'options': 'Sales Order',
-			'width': 100
-		},
-		{
-			'label': _("Delivery Note"),
-			'fieldname': 'delivery_note',
-			'fieldtype': 'Link',
-			'options': 'Delivery Note',
-			'width': 100
-		},
-		{
-			'label': _('Income Account'),
-			'fieldname': 'income_account',
-			'fieldtype': 'Link',
-			'options': 'Account',
-			'width': 100
-		},
-		{
-			'label': _("Cost Center"),
-			'fieldname': 'cost_center',
-			'fieldtype': 'Link',
-			'options': 'Cost Center',
-			'width': 100
-		},
 		{
 			'label': _('Stock Qty'),
 			'fieldname': 'stock_qty',
@@ -300,19 +186,33 @@ def get_columns(additional_table_columns, filters):
 			'width': 100
 		},
 		{
-			'label': _('Amount'),
+			'label': _('Total Amount'),
 			'fieldname': 'amount',
 			'fieldtype': 'Currency',
 			'options': 'currency',
 			'width': 100
 		},
 		{
-			'fieldname': 'currency',
-			'label': _('Currency'),
-			'fieldtype': 'Currency',
-			'width': 80,
-			'hidden': 1
-		}
+			'label': _('Batch Number'),
+			'fieldname': 'batch_no',
+			'fieldtype': 'Link',
+			'options': 'Batch',
+			'width': 100
+		},
+		{
+			'label': _('Package Tag'),
+			'fieldname': 'package_tag',
+			'fieldtype': 'Link',
+			'options': 'Package Tag',
+			'width': 100
+		},
+		{
+			'label': _('Sales Order'),
+			'fieldname': 'sales_order',
+			'fieldtype': 'Link',
+			'options': 'Sales Order',
+			'width': 100
+		},
 	]
 
 	if filters.get('group_by'):
@@ -331,8 +231,8 @@ def get_conditions(filters):
 	for opts in (("company", " and company=%(company)s"),
 		("customer", " and `tabSales Invoice`.customer = %(customer)s"),
 		("item_code", " and `tabSales Invoice Item`.item_code = %(item_code)s"),
-		("from_date", " and `tabSales Invoice`.posting_date>=%(from_date)s"),
-		("to_date", " and `tabSales Invoice`.posting_date<=%(to_date)s")):
+		("start_date", " and `tabSales Invoice`.posting_date>=%(start_date)s"),
+		("end_date", " and `tabSales Invoice`.posting_date<=%(end_date)s")):
 			if filters.get(opts[0]):
 				conditions += opts[1]
 
@@ -340,6 +240,9 @@ def get_conditions(filters):
 		conditions += """ and exists(select name from `tabSales Invoice Payment`
 			where parent=`tabSales Invoice`.name
 				and ifnull(`tabSales Invoice Payment`.mode_of_payment, '') = %(mode_of_payment)s)"""
+	
+	if filters.get("item_name"):
+		conditions += """and ifnull(`tabSales Invoice Item`.item_code, '') = %(item_name)s"""
 
 	if filters.get("warehouse"):
 		conditions +=  """and ifnull(`tabSales Invoice Item`.warehouse, '') = %(warehouse)s"""
@@ -359,13 +262,9 @@ def get_conditions(filters):
 	return conditions
 
 def get_group_by_conditions(filters, doctype):
-	if filters.get("group_by") == 'Invoice':
-		return "ORDER BY `tab{0} Item`.parent desc".format(doctype)
-	elif filters.get("group_by") == 'Item':
+	if filters.get("group_by") == 'Item':
 		return "ORDER BY `tab{0} Item`.`item_code`".format(doctype)
-	elif filters.get("group_by") == 'Item Group':
-		return "ORDER BY `tab{0} Item`.{1}".format(doctype, frappe.scrub(filters.get('group_by')))
-	elif filters.get("group_by") in ('Customer', 'Customer Group', 'Territory', 'Supplier'):
+	elif filters.get("group_by") in ('Customer'):
 		return "ORDER BY `tab{0}`.{1}".format(doctype, frappe.scrub(filters.get('group_by')))
 
 def get_items(filters, additional_query_columns):
@@ -388,6 +287,7 @@ def get_items(filters, additional_query_columns):
 			`tabSales Invoice Item`.cost_center, `tabSales Invoice Item`.stock_qty,
 			`tabSales Invoice Item`.stock_uom, `tabSales Invoice Item`.base_net_rate,
 			`tabSales Invoice Item`.base_net_amount, `tabSales Invoice`.customer_name,
+			`tabSales Invoice Item`.batch_no, `tabSales Invoice Item`.package_tag,
 			`tabSales Invoice`.customer_group, `tabSales Invoice Item`.so_detail,
 			`tabSales Invoice`.update_stock, `tabSales Invoice Item`.uom, `tabSales Invoice Item`.qty {0}
 		from `tabSales Invoice`, `tabSales Invoice Item`
@@ -418,8 +318,7 @@ def get_grand_total(filters, doctype):
 		SUM(`tab{0}`.base_grand_total)
 		FROM `tab{0}`
 		WHERE `tab{0}`.docstatus = 1
-		and posting_date between %s and %s
-	""".format(doctype), (filters.get('from_date'), filters.get('to_date')))[0][0] #nosec
+		and posting_date between %s and %s """.format(doctype), (filters.get('start_date'), filters.get('end_date')))[0][0] #nosec
 
 def get_deducted_taxes():
 	return frappe.db.sql_list("select name from `tabPurchase Taxes and Charges` where add_deduct_tax = 'Deduct'")
@@ -523,22 +422,6 @@ def get_tax_accounts(item_list, columns, company_currency,
 			'width': 100
 		})
 
-	columns += [
-		{
-			'label': _('Total Tax'),
-			'fieldname': 'total_tax',
-			'fieldtype': 'Currency',
-			'options': 'currency',
-			'width': 100
-		},
-		{
-			'label': _('Total'),
-			'fieldname': 'total',
-			'fieldtype': 'Currency',
-			'options': 'currency',
-			'width': 100
-		}
-	]
 
 	return itemised_tax, tax_columns
 

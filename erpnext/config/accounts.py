@@ -50,7 +50,7 @@ def get_data():
 				},
 				{
 					"type": "report",
-					"name": "Item-wise Sales Register",
+					"name": "Sales Register By Item",
 					"is_query_report": True,
 					"doctype": "Sales Invoice"
 				},

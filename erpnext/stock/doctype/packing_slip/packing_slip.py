@@ -5,6 +5,7 @@ from __future__ import unicode_literals
 
 import frappe
 from frappe import _
+from frappe.model.mapper import get_mapped_doc
 from frappe.model import no_value_fields
 from frappe.model.document import Document
 from frappe.utils import cint, flt
@@ -30,6 +31,9 @@ class PackingSlip(Document):
 		validate_uom_is_integer(self, "stock_uom", "qty")
 		validate_uom_is_integer(self, "weight_uom", "net_weight")
 
+	def on_submit(self):
+		self.create_stock_entry(target_doc = None)
+		
 	def validate_delivery_note(self):
 		"""
 			Validates if delivery note has status as draft
@@ -178,6 +182,37 @@ class PackingSlip(Document):
 						ch.set(d.fieldname, item.get(d.fieldname))
 
 		self.update_item_details()
+
+	def create_stock_entry(self, target_doc):
+		"""Creation of stock entry using frappe model mapper to map one doctype fields to another doctype"""
+		def set_missing_values(source, target):
+			target.stock_entry_type = "Material Transfer"
+			target.company = frappe.db.get_value("Delivery Note", source.delivery_note, "company")
+			packing_warehouse = frappe.db.get_single_value("Delivery Settings", "packing_warehouse")
+
+			for item in target.items:
+				if not item.t_warehouse:
+					item.t_warehouse = packing_warehouse
+			
+		doc = get_mapped_doc("Packing Slip", self.name, {
+			"Packing Slip": {
+				"doctype": "Stock Entry",
+				"validation": {
+					"docstatus": ["=", 1]
+				}
+			},
+			"Packing Slip Item": {
+				"doctype": "Stock Entry Detail",
+				"field_map": {
+					"serial_no": "serial_no",
+					"batch_no": "batch_no",
+					"source_warehouse": "s_warehouse",
+					"target_warehouse": "t_warehouse"
+				},
+			}
+		}, target_doc, set_missing_values)
+		doc.save()
+		doc.submit()
 
 def item_details(doctype, txt, searchfield, start, page_len, filters):
 	from erpnext.controllers.queries import get_match_cond

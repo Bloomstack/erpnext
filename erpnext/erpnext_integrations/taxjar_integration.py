@@ -16,6 +16,7 @@ SUPPORTED_COUNTRY_CODES = ["AT", "AU", "BE", "BG", "CA", "CY", "CZ", "DE", "DK",
 	"FR", "GB", "GR", "HR", "HU", "IE", "IT", "LT", "LU", "LV", "MT", "NL", "PL", "PT", "RO",
 	"SE", "SI", "SK", "US"]
 
+class AddressError(frappe.ValidationError): pass
 
 def get_client():
 	taxjar_settings = frappe.get_single("TaxJar Settings")
@@ -60,7 +61,8 @@ def create_transaction(doc, method):
 	try:
 		client.create_order(tax_dict)
 	except taxjar.exceptions.TaxJarResponseError as err:
-		frappe.throw(_(sanitize_error_response(err)))
+		error_msg = """There seems to be an error in Address<br><br>{0}""".format(sanitize_error_response(err))
+		frappe.throw(_(error_msg), AddressError, _("Address Error"))
 	except Exception as ex:
 		print(traceback.format_exc(ex))
 
@@ -181,7 +183,8 @@ def validate_tax_request(tax_dict):
 	try:
 		tax_data = client.tax_for_order(tax_dict)
 	except taxjar.exceptions.TaxJarResponseError as err:
-		frappe.throw(_(sanitize_error_response(err)))
+		error_msg = """There seems to be an error in Address<br><br>{0}""".format(sanitize_error_response(err))
+		frappe.throw(_(error_msg), AddressError, _("Address Error"))
 	else:
 		return tax_data
 

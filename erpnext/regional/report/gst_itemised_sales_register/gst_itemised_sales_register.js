@@ -5,7 +5,7 @@
 {% include "erpnext/accounts/report/item_wise_sales_register/item_wise_sales_register.js" %}
 {% include "erpnext/regional/report/india_gst_common/india_gst_common.js" %}
 
-let filters = frappe.query_reports["Item-wise Sales Register"]["filters"];
+let filters = frappe.query_reports["Sales Register By Item"]["filters"];
 
 // Add GSTIN filter
 filters = filters.concat({

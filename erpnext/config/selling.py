@@ -202,7 +202,7 @@ def get_data():
 				{
 					"type": "report",
 					"is_query_report": True,
-					"name": "Sales Analytics",
+					"name": "Sales Report By Customer",
 					"doctype": "Sales Order",
 					"onboard": 1,
 				},

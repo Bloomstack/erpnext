@@ -12,6 +12,10 @@
   "batch_no",
   "desc_section",
   "description",
+  "warehouse_details_section",
+  "source_warehouse",
+  "column_break_9",
+  "target_warehouse",
   "quantity_section",
   "qty",
   "net_weight",
@@ -24,7 +28,8 @@
   "box_type",
   "no_of_boxes_required",
   "page_break",
-  "dn_detail"
+  "dn_detail",
+  "batch_barcode"
  ],
  "fields": [
   {
@@ -155,11 +160,37 @@
    "fieldname": "no_of_boxes_required",
    "fieldtype": "Data",
    "label": "No. of boxes required"
+  },
+  {
+   "fieldname": "warehouse_details_section",
+   "fieldtype": "Section Break",
+   "label": "Warehouse Details"
+  },
+  {
+   "fieldname": "source_warehouse",
+   "fieldtype": "Link",
+   "label": "Source Warehouse",
+   "options": "Warehouse"
+  },
+  {
+   "fieldname": "column_break_9",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "target_warehouse",
+   "fieldtype": "Link",
+   "label": "Target Warehouse",
+   "options": "Warehouse"
+  },
+  {
+   "fieldname": "batch_barcode",
+   "fieldtype": "Barcode",
+   "label": "Batch Barcode"
   }
  ],
  "idx": 1,
  "istable": 1,
- "modified": "2021-03-16 00:44:18.015863",
+ "modified": "2021-06-23 14:12:28.291517",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Packing Slip Item",
