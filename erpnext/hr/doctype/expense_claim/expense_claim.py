@@ -450,7 +450,7 @@ def list_expense_claims(user,filters=None):
 		fields=["name", "employee_name", "approval_status", "expense_approver", "project", "`tabExpense Claim Detail`.*"])
 
 	if not expense_claims:
-		 return return_error_message_dict(_("No Claim Found for {0}.").format(user))
+		return return_error_message_dict(_("No Claim Found for {0}.").format(user))
 
 	return expense_claims
 
