@@ -401,7 +401,7 @@ def create_expense_claim(user, expense_date, expense_claim_type, description, am
 			expense_approver = expense_approver[os.urandom(1)[0] % len(expense_approver)]
 
 	# Creating expense claim doc.
-	frappe.get_doc({
+	expense_claim = frappe.get_doc({
 		"doctype": "Expense Claim",
 		"employee": employee.name,
 		"payable_account": frappe.get_value('Company', employee.company, 'default_payable_account'),
@@ -416,7 +416,11 @@ def create_expense_claim(user, expense_date, expense_claim_type, description, am
 			}
 		]
 	}).insert(ignore_permissions=True, ignore_mandatory=True)
-	return True
+
+	return {
+		"status" : 200,
+		"expenseId" : expense_claim.name,
+	}
 
 @frappe.whitelist()
 def list_expense_claims(user,filters=None):
