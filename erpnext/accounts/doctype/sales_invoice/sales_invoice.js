@@ -436,6 +436,23 @@ erpnext.accounts.SalesInvoiceController = erpnext.selling.SellingController.exte
 		this.frm.refresh_field("outstanding_amount");
 		this.frm.refresh_field("paid_amount");
 		this.frm.refresh_field("base_paid_amount");
+	},
+
+	email_coa: function() {
+		frappe.call({
+			method: "erpnext.accounts.doctype.sales_invoice.sales_invoice.email_coa",
+			args: {
+				docname: this.frm.doc.name
+			},
+			callback: (r) => {
+				if(r && r.message == "success"){
+					frappe.show_alert({
+						indicator: 'green',
+						message: __('Email Sent')
+					});
+				}
+			}
+		});
 	}
 });
 
