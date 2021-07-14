@@ -177,6 +177,7 @@ def sync_transactions(bank, bank_account):
 				len(result), bank_account, start_date, end_date))
 
 			frappe.db.set_value("Bank Account", bank_account, "last_integration_date", last_transaction_date)
+		return result
 	except Exception:
 		frappe.log_error(frappe.get_traceback(), _("Plaid transactions sync error"))
 

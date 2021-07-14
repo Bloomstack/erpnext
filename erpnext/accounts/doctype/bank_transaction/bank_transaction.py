@@ -8,6 +8,7 @@ from erpnext.controllers.status_updater import StatusUpdater
 from frappe.utils import flt
 from six.moves import reduce
 from frappe import _
+from frappe.utils import nowdate
 
 class BankTransaction(StatusUpdater):
 	def after_insert(self):
@@ -21,6 +22,14 @@ class BankTransaction(StatusUpdater):
 		self.update_allocations()
 		self.clear_linked_payment_entries()
 		self.set_status(update=True)
+		self.update_payment_list()
+
+	def update_payment_list(self):
+		payment_entries_references = self.payment_entries_references.split(",") if self.payment_entries_references else []
+		for d in self.payment_entries:
+			if d.payment_entry and not d.payment_entry in payment_entries_references:
+				payment_entries_references.append(d.payment_entry)
+		frappe.db.set_value(self.doctype, self.name, "payment_entries_references", ", ".join(payment_entries_references))
 
 	def update_allocations(self):
 		if self.payment_entries:
@@ -39,6 +48,7 @@ class BankTransaction(StatusUpdater):
 		amount = self.deposit or self.withdrawal
 		if amount == self.allocated_amount:
 			frappe.db.set_value(self.doctype, self.name, "status", "Reconciled")
+			frappe.db.set_value(self.doctype, self.name, "reconcile_date", nowdate())
 
 		self.reload()
 

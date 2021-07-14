@@ -1,5 +1,4 @@
 {
- "actions": [],
  "allow_import": 1,
  "autoname": "naming_series:",
  "creation": "2018-10-22 18:19:02.784533",
@@ -14,9 +13,6 @@
   "bank_account",
   "company",
   "section_break_4",
-  "deposit",
-  "withdrawal",
-  "column_break_7",
   "currency",
   "section_break_10",
   "description",
@@ -24,14 +20,18 @@
   "reference_number",
   "transaction_id",
   "payment_entries",
+  "payment_entries_references",
   "section_break_18",
   "allocated_amount",
   "amended_from",
+  "reconcile_date",
   "column_break_17",
   "unallocated_amount",
   "party_section",
   "party_type",
-  "party"
+  "party",
+  "deposit",
+  "withdrawal"
  ],
  "fields": [
   {
@@ -82,10 +82,6 @@
   {
    "fieldname": "section_break_4",
    "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "column_break_7",
-   "fieldtype": "Column Break"
   },
   {
    "fieldname": "currency",
@@ -155,6 +151,18 @@
    "label": "Unallocated Amount"
   },
   {
+   "allow_on_submit": 1,
+   "fieldname": "reconcile_date",
+   "fieldtype": "Date",
+   "label": "Reconcile Date"
+  },
+  {
+   "fieldname": "payment_entries_references",
+   "fieldtype": "Code",
+   "label": "Payment Entries References",
+   "read_only": 1
+  },
+  {
    "fieldname": "party_section",
    "fieldtype": "Section Break",
    "label": "Payment From / To"
@@ -175,22 +183,19 @@
   },
   {
    "fieldname": "deposit",
-   "oldfieldname": "debit",
    "fieldtype": "Currency",
    "in_list_view": 1,
    "label": "Deposit"
   },
   {
    "fieldname": "withdrawal",
-   "oldfieldname": "credit",
    "fieldtype": "Currency",
    "in_list_view": 1,
    "label": "Withdrawal"
   }
  ],
  "is_submittable": 1,
- "links": [],
- "modified": "2020-12-30 19:40:54.221070",
+ "modified": "2021-07-12 22:46:18.691360",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Bank Transaction",
@@ -240,6 +245,5 @@
  ],
  "sort_field": "date",
  "sort_order": "DESC",
- "title_field": "bank_account",
- "track_changes": 1
+ "title_field": "bank_account"
 }

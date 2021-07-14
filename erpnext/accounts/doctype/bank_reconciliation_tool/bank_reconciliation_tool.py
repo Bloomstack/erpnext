@@ -14,6 +14,7 @@ from erpnext import get_company_currency
 from erpnext.accounts.utils import get_balance_on
 from erpnext.accounts.report.bank_reconciliation_statement.bank_reconciliation_statement import get_entries, get_amounts_not_reflected_in_system
 from erpnext.accounts.doctype.bank_transaction.bank_transaction import get_paid_amount
+from frappe.utils import getdate, nowdate
 
 
 class BankReconciliationTool(Document):
@@ -35,6 +36,27 @@ def get_bank_transactions(bank_account, from_date = None, to_date = None):
 		fields = ['date', 'deposit', 'withdrawal', 'currency',
 		'description', 'name', 'bank_account', 'company',
 		'unallocated_amount', 'reference_number', 'party_type', 'party'],
+		filters = filters
+	)
+	return transactions
+
+@frappe.whitelist()
+def get_reconciled_bank_transactions(bank_account, from_date = None, to_date = None):
+	# returns bank transactions for a bank account
+	filters = [
+		['bank_account', '=', bank_account],
+		['docstatus', '=', 1],
+		['allocated_amount', '>', 0]
+	]
+	if to_date:
+		filters.append(['date', '<=', to_date])
+	if from_date:
+		filters.append(['date', '>=', from_date])
+	transactions = frappe.get_all(
+		'Bank Transaction',
+		fields = ['date', 'deposit', 'withdrawal', 'currency',
+		'description', 'name', 'bank_account', 'company',
+		'allocated_amount', 'reference_number', 'party_type', 'party', 'reconcile_date', 'payment_entries_references'],
 		filters = filters
 	)
 	return transactions
@@ -72,6 +94,7 @@ def update_bank_transaction(bank_transaction_name, reference_number, party_type=
 	bank_transaction.reference_number = reference_number
 	bank_transaction.party_type = party_type
 	bank_transaction.party = party
+	bank_transaction.reconcile_date = getdate(nowdate())
 	bank_transaction.save()
 	return frappe.db.get_all('Bank Transaction',
 		filters={
@@ -80,7 +103,7 @@ def update_bank_transaction(bank_transaction_name, reference_number, party_type=
 		fields=['date', 'deposit', 'withdrawal', 'currency',
 			'description', 'name', 'bank_account', 'company',
 			'unallocated_amount', 'reference_number',
-			 'party_type', 'party'],
+			'party_type', 'party', 'reconcile_date'],
 	)[0]
 
 

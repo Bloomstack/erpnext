@@ -1,5 +1,4 @@
 {
- "actions": [],
  "creation": "2020-12-02 10:13:02.148040",
  "doctype": "DocType",
  "editable_grid": 1,
@@ -16,7 +15,9 @@
   "section_break_1",
   "reconciliation_tool_cards",
   "reconciliation_tool_dt",
-  "no_bank_transactions"
+  "no_bank_transactions",
+  "reconciled_entries_section",
+  "reconciled_tool_dt"
  ],
  "fields": [
   {
@@ -69,7 +70,7 @@
   {
    "fieldname": "section_break_1",
    "fieldtype": "Section Break",
-   "label": "Reconcile"
+   "label": "Un-Reconciled Entries"
   },
   {
    "fieldname": "reconciliation_tool_cards",
@@ -83,13 +84,20 @@
    "fieldname": "no_bank_transactions",
    "fieldtype": "HTML",
    "options": "<div class=\"text-muted text-center\">No Matching Bank Transactions Found</div>"
+  },
+  {
+   "fieldname": "reconciled_entries_section",
+   "fieldtype": "Section Break",
+   "label": "Reconciled Entries "
+  },
+  {
+   "fieldname": "reconciled_tool_dt",
+   "fieldtype": "HTML"
   }
  ],
  "hide_toolbar": 1,
- "index_web_pages_for_search": 1,
  "issingle": 1,
- "links": [],
- "modified": "2021-04-21 11:13:49.831769",
+ "modified": "2021-07-06 01:17:36.364210",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Bank Reconciliation Tool",

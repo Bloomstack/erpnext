@@ -169,6 +169,23 @@ frappe.ui.form.on("Bank Reconciliation Tool", {
 					cards_manager: frm.cards_manager,
 				}
 			);
+			frm.bank_reconciled_data_table_manager = new erpnext.accounts.bank_reconciliation.DataTableManagerReconciled(
+				{
+					company: frm.doc.company,
+					bank_account: frm.doc.bank_account,
+					$reconciled_tool_dt: frm.get_field(
+						"reconciled_tool_dt"
+					).$wrapper,
+					$no_bank_transactions: frm.get_field(
+						"no_bank_transactions"
+					).$wrapper,
+					bank_statement_from_date: frm.doc.bank_statement_from_date,
+					bank_statement_to_date: frm.doc.bank_statement_to_date,
+					bank_statement_closing_balance:
+						frm.doc.bank_statement_closing_balance,
+					cards_manager: frm.cards_manager,
+				}
+			);
 		}
 	},
 });

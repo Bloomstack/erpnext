@@ -44,12 +44,12 @@ erpnext.accounts.bank_reconciliation.DataTableManager = class DataTableManager {
 			{
 				name: "Party",
 				editable: false,
-				width: 150,
+				width: 250,
 			},
 			{
 				name: "Description",
 				editable: false,
-				width: 360,
+				width: 310,
 			},
 			{
 				name: "Deposit",
@@ -81,7 +81,7 @@ erpnext.accounts.bank_reconciliation.DataTableManager = class DataTableManager {
 			{
 				name: "Reference Number",
 				editable: false,
-				width: 200,
+				width: 150,
 			},
 			{
 				name: "Actions",
@@ -133,10 +133,6 @@ erpnext.accounts.bank_reconciliation.DataTableManager = class DataTableManager {
 			checkboxColumn: false,
 			inlineFilters: true
 		};
-		// this.datatable = new frappe.DataTable(
-		// 	this.$reconciliation_tool_dt.get(0),
-		// 	datatable_options
-		// );
 		this.datatable = new DataTable(this.$reconciliation_tool_dt.get(0),
 			datatable_options
 		);
@@ -223,3 +219,142 @@ erpnext.accounts.bank_reconciliation.DataTableManager = class DataTableManager {
 		}
 	}
 };
+
+
+
+erpnext.accounts.bank_reconciliation.DataTableManagerReconciled = class DataTableManager {
+	constructor(opts) {
+		Object.assign(this, opts);
+		this.dialog_manager = new erpnext.accounts.bank_reconciliation.DialogManager(
+			this.company,
+			this.bank_account
+		);
+		this.make_dt();
+	}
+
+	make_dt() {
+		var me = this;
+		frappe.call({
+			method:
+				"erpnext.accounts.doctype.bank_reconciliation_tool.bank_reconciliation_tool.get_reconciled_bank_transactions",
+			args: {
+				bank_account: this.bank_account,
+			},
+			callback: function (response) {
+				me.format_data(response.message);
+				me.get_dt_columns();
+				me.get_datatable();
+			},
+		});
+	}
+
+	get_dt_columns() {
+		this.columns = [
+			{
+				name: "Date",
+				editable: false,
+				width: 100,
+			},
+			{
+				name: "Bank Transaction ID",
+				editable: false,
+				width: 150,
+			},
+			{
+				name: "System Transaction ID",
+				editable: false,
+				width: 250,
+			},
+			{
+				name: "Description",
+				editable: false,
+				width: 310,
+			},
+			{
+				name: "Deposit",
+				editable: false,
+				width: 150,
+				format: (value) =>
+					"<span style='color:green;'>" +
+					format_currency(value, this.currency) +
+					"</span>",
+			},
+			{
+				name: "Withdrawal",
+				editable: false,
+				width: 150,
+				format: (value) =>
+					"<span style='color:red;'>" +
+					format_currency(value, this.currency) +
+					"</span>",
+			},
+			{
+				name: "Reconciled Amount",
+				editable: false,
+				width: 200,
+				format: (value) =>
+					"<span style='color:blue;'>" +
+					format_currency(value, this.currency) +
+					"</span>",
+			},
+			{
+				name: "Reconcile Date",
+				editable: false,
+				width: 200,
+			}
+		];
+	}
+
+	format_data(transactions) {
+		this.transactions = [];
+		if (transactions[0]) {
+			this.currency = transactions[0]["currency"];
+		}
+		this.transaction_dt_map = {};
+		let length;
+		transactions.forEach((row) => {
+			length = this.transactions.push(this.format_row(row));
+			this.transaction_dt_map[row["name"]] = length - 1;
+		});
+	}
+
+	format_row(row) {
+		return [
+			row["date"],
+			frappe.utils.get_form_link("Bank Transaction", row["name"], " ", row["name"]),
+			row["payment_entries_references"],
+			row["description"],
+			row["deposit"],
+			row["withdrawal"],
+			row["allocated_amount"],
+			row["reconcile_date"]
+		];
+	}
+
+	get_datatable() {
+		const datatable_options = {
+			columns: this.columns,
+			data: this.transactions,
+			dynamicRowHeight: true,
+			checkboxColumn: false,
+			inlineFilters: true
+		};
+		this.datatable = new DataTable(this.$reconciled_tool_dt.get(0),
+			datatable_options
+		);
+
+		$(`.${this.datatable.style.scopeClass} .dt-scrollable`).css(
+			"max-height",
+			"calc(100vh - 400px)"
+		);
+
+		if (this.transactions.length > 0) {
+			this.$reconciled_tool_dt.show();
+			this.$no_bank_transactions.hide();
+		} else {
+			this.$reconciled_tool_dt.hide();
+			this.$no_bank_transactions.show();
+		}
+	}
+};
+
