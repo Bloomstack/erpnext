@@ -1,0 +1,408 @@
+[
+    {
+        "name": "Sales Order-To Bill",
+        "document_type": "Sales Order",
+        "status": "To Bill",
+        "condition": "eval:(self.per_delivered == 100 or self.skip_delivery_note) and self.per_billed < 100 and self.docstatus == 1",
+        "enabled": 1
+    },
+    {
+        "name": "Sales Order-Draft",
+        "document_type": "Sales Order",
+        "status": "Draft",
+        "condition": "",
+        "enabled": 1
+    },
+    {
+        "name": "Sales Order-To Pick",
+        "document_type": "Sales Order",
+        "status": "To Pick",
+        "condition": "eval:self.per_picked > 0 and self.per_delivered < 100 and self.per_billed == 100 and self.docstatus == 1",
+        "enabled": 1
+    },
+    {
+        "name": "Sales Order-To Pick and Bill",
+        "document_type": "Sales Order",
+        "status": "To Pick and Bill",
+        "condition": "eval:self.per_picked > 0 and self.per_delivered < 100 and self.per_billed < 100 and self.docstatus == 1",
+        "enabled": 1
+    },
+    {
+        "name": "Sales Order-To Deliver and Bill",
+        "document_type": "Sales Order",
+        "status": "To Deliver and Bill",
+        "condition": "eval:self.per_picked > 0 and self.per_delivered < 100 and self.per_billed < 100 and self.docstatus == 1",
+        "enabled": 1
+    },
+    {
+        "name": "Sales Order-To Deliver",
+        "document_type": "Sales Order",
+        "status": "To Deliver",
+        "condition": "eval:self.per_delivered < 100 and self.per_billed == 100 and self.docstatus == 1 and not self.skip_delivery_note",
+        "enabled": 1
+    },
+    {
+        "name": "Sales Order-Completed",
+        "document_type": "Sales Order",
+        "status": "Completed",
+        "condition": "eval:self.per_delivered == 100 and self.per_billed == 100 and self.docstatus == 1",
+        "enabled": 1
+    },
+    {
+        "name": "Sales Order-Cancelled",
+        "document_type": "Sales Order",
+        "status": "Cancelled",
+        "condition": "eval:self.docstatus==2",
+        "enabled": 1
+    },
+    {
+        "name": "Sales Order-Closed",
+        "document_type": "Sales Order",
+        "status": "Closed",
+        "condition": "eval:self.status=='Closed'",
+        "enabled": 1
+    },
+    {
+        "name": "Sales Order-On Hold",
+        "document_type": "Sales Order",
+        "status": "On Hold",
+        "condition": "eval:self.status=='On Hold'",
+        "enabled": 1
+    },
+    {
+        "name": "Delivery Note-Draft",
+        "document_type": "Delivery Note",
+        "status": "Draft",
+        "condition": "",
+        "enabled": 1
+    },
+    {
+        "name": "Delivery Note-To Deliver",
+        "document_type": "Delivery Note",
+        "status": "To Deliver",
+        "condition": "eval: not self.delivered",
+        "enabled": 1
+    },
+    {
+        "name": "Delivery Note-Delivered",
+        "document_type": "Delivery Note",
+        "status": "Delivered",
+        "condition": "eval:self.status=='Delivered'",
+        "enabled": 1
+    },
+    {
+        "name": "Delivery Note-In Transit",
+        "document_type": "Delivery Note",
+        "status": "In Transit",
+        "condition": "eval:self.status=='In Transit'",
+        "enabled": 1
+    },
+    {
+        "name": "Delivery Note-To Bill",
+        "document_type": "Delivery Note",
+        "status": "To Bill",
+        "condition": "eval:self.per_billed < 100 and self.docstatus == 1",
+        "enabled": 1
+    },
+    {
+        "name": "Delivery Note-Completed",
+        "document_type": "Delivery Note",
+        "status": "Completed",
+        "condition": "eval:self.per_billed == 100 and self.docstatus == 1",
+        "enabled": 1
+    },
+    {
+        "name": "Delivery Note-Cancelled",
+        "document_type": "Delivery Note",
+        "status": "Cancelled",
+        "condition": "eval:self.docstatus==2",
+        "enabled": 1
+    },
+    {
+        "name": "Delivery Note-Closed",
+        "document_type": "Delivery Note",
+        "status": "Closed",
+        "condition": "eval:self.status=='Closed'",
+        "enabled": 1
+    },
+    {
+        "name": "Lead-Lost Quotation",
+        "document_type": "Lead",
+        "status": "Lost Quotation",
+        "condition": "has_lost_quotation",
+        "enabled": 1
+    },
+    {
+        "name": "Lead-Opportunity",
+        "document_type": "Lead",
+        "status": "Opportunity",
+        "condition": "has_opportunity",
+        "enabled": 1
+    },
+    {
+        "name": "Lead-Opportunity",
+        "document_type": "Lead",
+        "status": "Opportunity",
+        "condition": "has_opportunity",
+        "enabled": 1
+    },
+    {
+        "name": "Lead-Quotation",
+        "document_type": "Lead",
+        "status": "Quotation",
+        "condition": "has_quotation",
+        "enabled": 1
+    },
+    {
+        "name": "Lead-Converted",
+        "document_type": "Lead",
+        "status": "Converted",
+        "condition": "has_customer",
+        "enabled": 1
+    },
+    {
+        "name": "Opportunity-Lost",
+        "document_type": "Opportunity",
+        "status": "Lost",
+        "condition": "eval:self.status=='Lost'",
+        "enabled": 1
+    },
+    {
+        "name": "Opportunity-Converted",
+        "document_type": "Opportunity",
+        "status": "Converted",
+        "condition": "has_ordered_quotation",
+        "enabled": 1
+    },
+    {
+        "name": "Opportunity-Closed",
+        "document_type": "Opportunity",
+        "status": "Closed",
+        "condition": "eval:self.status=='Closed'",
+        "enabled": 1
+    },
+    {
+        "name": "Quotation-Draft",
+        "document_type": "Quotation",
+        "status": "Draft",
+        "condition": "",
+        "enabled": 1
+    },
+    {
+        "name": "Quotation-Open",
+        "document_type": "Quotation",
+        "status": "Open",
+        "condition": "eval:self.docstatus==1",
+        "enabled": 1
+    },
+    {
+        "name": "Quotation-Lost",
+        "document_type": "Quotation",
+        "status": "Lost",
+        "condition": "eval:self.status=='Lost'",
+        "enabled": 1
+    },
+    {
+        "name": "Quotation-Ordered",
+        "document_type": "Quotation",
+        "status": "Ordered",
+        "condition": "has_sales_order",
+        "enabled": 1
+    },
+    {
+        "name": "Purchase Order-Draft",
+        "document_type": "Purchase Order",
+        "status": "Draft",
+        "condition": "",
+        "enabled": 1
+    },
+    {
+        "name": "Purchase Order-To Receive and Bill",
+        "document_type": "Purchase Order",
+        "status": "To Receive and Bill",
+        "condition": "eval:self.per_received < 100 and self.per_billed < 100 and self.docstatus == 1",
+        "enabled": 1
+    },
+    {
+        "name": "Purchase Order-To Bill",
+        "document_type": "Purchase Order",
+        "status": "To Bill",
+        "condition": "eval:self.per_received >= 100 and self.per_billed < 100 and self.docstatus == 1",
+        "enabled": 1
+    },
+    {
+        "name": "Purchase Order-To Receive",
+        "document_type": "Purchase Order",
+        "status": "To Receive",
+        "condition": "eval:self.per_received < 100 and self.per_billed == 100 and self.docstatus == 1",
+        "enabled": 1
+    },
+    {
+        "name": "Purchase Order-Completed",
+        "document_type": "Purchase Order",
+        "status": "Completed",
+        "condition": "eval:self.per_received >= 100 and self.per_billed == 100 and self.docstatus == 1",
+        "enabled": 1
+    },
+    {
+        "name": "Purchase Order-Delivered",
+        "document_type": "Purchase Order",
+        "status": "Delivered",
+        "condition": "eval:self.status=='Delivered'",
+        "enabled": 1
+    },
+    {
+        "name": "Purchase Order-Cancelled",
+        "document_type": "Purchase Order",
+        "status": "Delivered",
+        "condition": "eval:self.docstatus==2",
+        "enabled": 1
+    },
+    {
+        "name": "Purchase Order-On Hold",
+        "document_type": "Purchase Order",
+        "status": "On Hold",
+        "condition": "eval:self.status=='On Hold'",
+        "enabled": 1
+    },
+    {
+        "name": "Purchase Order-Closed",
+        "document_type": "Purchase Order",
+        "status": "Closed",
+        "condition": "eval:self.status=='Closed'",
+        "enabled": 1
+    },
+    {
+        "name": "Purchase Receipt-Draft",
+        "document_type": "Purchase Receipt",
+        "status": "Draft",
+        "condition": "",
+        "enabled": 1
+    },
+    {
+        "name": "Purchase Receipt-To Bill",
+        "document_type": "Purchase Receipt",
+        "status": "To Bill",
+        "condition": "eval:self.per_billed < 100 and self.docstatus == 1",
+        "enabled": 1
+    },
+    {
+        "name": "Purchase Receipt-Completed",
+        "document_type": "Purchase Receipt",
+        "status": "Completed",
+        "condition": "eval:self.per_billed == 100 and self.docstatus == 1",
+        "enabled": 1
+    },
+    {
+        "name": "Purchase Receipt-Cancelled",
+        "document_type": "Purchase Receipt",
+        "status": "Cancelled",
+        "condition": "eval:self.docstatus==2",
+        "enabled": 1
+    },
+    {
+        "name": "Purchase Receipt-Closed",
+        "document_type": "Purchase Receipt",
+        "status": "Closed",
+        "condition": "eval:self.status=='Closed'",
+        "enabled": 1
+    },
+    {
+        "name": "Material Request-Draft",
+        "document_type": "Material Request",
+        "status": "Draft",
+        "condition": "",
+        "enabled": 1
+    },
+    {
+        "name": "Material Request-Draft",
+        "document_type": "Material Request",
+        "status": "Draft",
+        "condition": "",
+        "enabled": 1
+    },
+    {
+        "name": "Material Request-Stopped",
+        "document_type": "Material Request",
+        "status": "Stopped",
+        "condition": "eval:self.status == 'Stopped'",
+        "enabled": 1
+    },
+    {
+        "name": "Material Request-Cancelled",
+        "document_type": "Material Request",
+        "status": "Cancelled",
+        "condition": "eval:self.docstatus == 2",
+        "enabled": 1
+    },
+    {
+        "name": "Material Request-Pending",
+        "document_type": "Material Request",
+        "status": "Pending",
+        "condition": "eval:self.status != 'Stopped' and self.per_ordered == 0 and self.docstatus == 1",
+        "enabled": 1
+    },
+    {
+        "name": "Material Request-Partially Ordered",
+        "document_type": "Material Request",
+        "status": "Partially Ordered",
+        "condition": "eval:self.status != 'Stopped' and self.per_ordered < 100 and self.per_ordered > 0 and self.docstatus == 1",
+        "enabled": 1
+    },
+    {
+        "name": "Material Request-Ordered",
+        "document_type": "Material Request",
+        "status": "Ordered",
+        "condition": "eval:self.status != 'Stopped' and self.per_ordered == 100 and self.docstatus == 1 and self.material_request_type == 'Purchase'",
+        "enabled": 1
+    },
+    {
+        "name": "Material Request-Transferred",
+        "document_type": "Material Request",
+        "status": "Transferred",
+        "condition": "eval:self.status != 'Stopped' and self.per_ordered == 100 and self.docstatus == 1 and self.material_request_type == 'Material Transfer'",
+        "enabled": 1
+    },
+    {
+        "name": "Material Request-Issued",
+        "document_type": "Material Request",
+        "status": "Issued",
+        "condition": "eval:self.status != 'Stopped' and self.per_ordered == 100 and self.docstatus == 1 and self.material_request_type == 'Material Issue'",
+        "enabled": 1
+    },
+    {
+        "name": "Material Request-Received",
+        "document_type": "Material Request",
+        "status": "Received",
+        "condition": "eval:self.status != 'Stopped' and self.per_received == 100 and self.docstatus == 1 and self.material_request_type == 'Purchase'",
+        "enabled": 1
+    },
+    {
+        "name": "Material Request-Partially Received",
+        "document_type": "Material Request",
+        "status": "Partially Received",
+        "condition": "eval:self.status != 'Stopped' and self.per_received > 0 and self.per_received < 100 and self.docstatus == 1 and self.material_request_type == 'Purchase'",
+        "enabled": 1
+    },
+    {
+        "name": "Material Request-Manufactured",
+        "document_type": "Material Request",
+        "status": "Manufactured",
+        "condition": "eval:self.status != 'Stopped' and self.per_ordered == 100 and self.docstatus == 1 and self.material_request_type == 'Manufacture'",
+        "enabled": 1
+    },
+    {
+        "name": "Bank Transaction-Unreconciled",
+        "document_type": "Bank Transaction",
+        "status": "Unreconciled",
+        "condition": "eval:self.docstatus == 1 and self.unallocated_amount>0",
+        "enabled": 1
+    },
+    {
+        "name": "Bank Transaction-Reconciled",
+        "document_type": "Bank Transaction",
+        "status": "Reconciled",
+        "condition": "eval:self.docstatus == 1 and self.unallocated_amount<=0",
+        "enabled": 1
+    }
+]

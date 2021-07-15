@@ -11,8 +11,8 @@
   "contact_by",
   "address_html",
   "contact_html",
-  "lead_details",
   "territory",
+  "lead_details",
   "naming_series",
   "lead_name",
   "company_name",
@@ -70,8 +70,8 @@
   {
    "fieldname": "lead_details",
    "fieldtype": "Section Break",
-   "options": "fa fa-user",
-   "label": "Lead"
+   "label": "Lead",
+   "options": "fa fa-user"
   },
   {
    "fieldname": "naming_series",
@@ -128,14 +128,14 @@
   {
    "default": "Lead",
    "fieldname": "status",
-   "fieldtype": "Select",
+   "fieldtype": "Link",
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Status",
    "no_copy": 1,
    "oldfieldname": "status",
    "oldfieldtype": "Select",
-   "options": "Lead\nOpen\nReplied\nOpportunity\nQuotation\nLost Quotation\nInterested\nConverted\nNot Qualified\nInvestor\nDo Not Contact\nSpam",
+   "options": "Status",
    "reqd": 1,
    "search_index": 1
   },
@@ -149,9 +149,9 @@
   {
    "fieldname": "gender",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Gender",
-   "options": "Gender",
-   "hidden": 1
+   "options": "Gender"
   },
   {
    "fieldname": "source",
@@ -439,7 +439,7 @@
  "icon": "fa fa-user",
  "idx": 5,
  "image_field": "image",
- "modified": "2021-01-14 11:33:47.171097",
+ "modified": "2021-06-04 03:17:42.742501",
  "modified_by": "Administrator",
  "module": "CRM",
  "name": "Lead",

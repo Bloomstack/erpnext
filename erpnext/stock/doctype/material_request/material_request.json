@@ -36,7 +36,8 @@
   "tc_name",
   "terms",
   "reference",
-  "job_card"
+  "job_card",
+  "request_for"
  ],
  "fields": [
   {
@@ -181,13 +182,13 @@
   },
   {
    "fieldname": "status",
-   "fieldtype": "Select",
+   "fieldtype": "Link",
    "in_standard_filter": 1,
    "label": "Status",
    "no_copy": 1,
    "oldfieldname": "status",
    "oldfieldtype": "Select",
-   "options": "\nDraft\nSubmitted\nStopped\nCancelled\nPending\nPartially Ordered\nOrdered\nIssued\nTransferred\nReceived",
+   "options": "Status",
    "print_hide": 1,
    "print_width": "100px",
    "read_only": 1,
@@ -279,10 +280,10 @@
    "read_only": 1
   },
   {
-    "fieldname": "request_for",
-    "fieldtype": "Select",
-    "label": "Request For",
-    "options": "\nLabels"
+   "fieldname": "request_for",
+   "fieldtype": "Select",
+   "label": "Request For",
+   "options": "\nLabels"
   },
   {
    "fieldname": "warehouse_section",
@@ -314,7 +315,7 @@
  "icon": "fa fa-ticket",
  "idx": 70,
  "is_submittable": 1,
- "modified": "2021-02-23 23:57:51.032892",
+ "modified": "2021-06-04 03:19:53.229804",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Material Request",

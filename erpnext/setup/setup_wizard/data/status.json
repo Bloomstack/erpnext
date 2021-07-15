@@ -1,0 +1,101 @@
+[   
+    {
+        "status": "Setteled",
+    },
+    {
+        "status": "Pending",
+    },
+    {
+        "status": "Reconciled"
+    },
+    {
+        "status": "Unreconciled"
+    },
+    {
+        "status": "Manufactured"
+    },
+    {
+        "status": "Partially Received"
+    },
+    {
+        "status": "Received"
+    },
+    {
+        "status": "Issued"
+    },
+    {
+        "status": "Transferred"
+    },
+    {
+        "status": "Partially Ordered"
+    },
+    {
+        "status": "Pending"
+    },
+    {
+        "status": "Stopped"
+    },
+    {
+        "status": "To Receive"
+    },
+    {
+        "status": "To Receive and Bill"
+    },
+    {
+        "status": "Ordered"
+    },
+    {
+        "status": "Open"
+    },
+    {
+        "status": "Lost"
+    },
+    {
+        "status": "Converted"
+    },
+    {
+        "status": "Quotation"
+    },
+    {
+        "status": "Opportunity"
+    },
+    {
+        "status": "Lost Quotation"
+    },
+    {
+        "status": "In Transit"
+    },
+    {
+        "status": "Delivered"
+    },
+    {
+        "status": "To Pick and Bill"
+    },
+    {
+        "status": "To Pick"
+    },
+    {
+        "status": "On Hold"
+    },
+    {
+        "status": "Closed"
+    },
+    {
+        "status": "Cancelled"
+    },
+    {
+        "status": "To Deliver"
+    },
+    {
+        "status": "To Bill"
+    },
+    {
+        "status": "To Deliver and Bill"
+    },
+    {
+        "status": "Completed"
+    },
+    {
+        "status": "Draft"
+    }
+]

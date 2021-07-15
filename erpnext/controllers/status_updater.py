@@ -13,87 +13,6 @@ def validate_status(status, options):
 	if status not in options:
 		frappe.throw(_("Status must be one of {0}").format(comma_or(options)))
 
-status_map = {
-	"Lead": [
-		["Lost Quotation", "has_lost_quotation"],
-		["Opportunity", "has_opportunity"],
-		["Quotation", "has_quotation"],
-		["Converted", "has_customer"],
-	],
-	"Opportunity": [
-		["Lost", "eval:self.status=='Lost'"],
-		["Lost", "has_lost_quotation"],
-		["Quotation", "has_active_quotation"],
-		["Converted", "has_ordered_quotation"],
-		["Closed", "eval:self.status=='Closed'"]
-	],
-	"Quotation": [
-		["Draft", None],
-		["Open", "eval:self.docstatus==1"],
-		["Lost", "eval:self.status=='Lost'"],
-		["Ordered", "has_sales_order"],
-		["Cancelled", "eval:self.docstatus==2"],
-	],
-	"Sales Order": [
-		["Draft", None],
-		["To Pick", "eval:self.per_picked > 0 and self.per_delivered < 100 and self.per_billed == 100 and self.docstatus == 1"],
-		["To Pick and Bill", "eval:self.per_picked > 0 and self.per_delivered < 100 and self.per_billed < 100 and self.docstatus == 1"],
-		["To Deliver and Bill", "eval:self.per_delivered < 100 and self.per_billed < 100 and self.docstatus == 1"],
-		["To Bill", "eval:(self.per_delivered == 100 or self.skip_delivery_note) and self.per_billed < 100 and self.docstatus == 1"],
-		["To Deliver", "eval:self.per_delivered < 100 and self.per_billed == 100 and self.docstatus == 1 and not self.skip_delivery_note"],
-		["Completed", "eval:(self.per_delivered == 100 or self.skip_delivery_note) and self.per_billed == 100 and self.docstatus == 1"],
-		["Cancelled", "eval:self.docstatus==2"],
-		["Closed", "eval:self.status=='Closed'"],
-		["On Hold", "eval:self.status=='On Hold'"],
-	],
-	"Purchase Order": [
-		["Draft", None],
-		["To Receive and Bill", "eval:self.per_received < 100 and self.per_billed < 100 and self.docstatus == 1"],
-		["To Bill", "eval:self.per_received >= 100 and self.per_billed < 100 and self.docstatus == 1"],
-		["To Receive", "eval:self.per_received < 100 and self.per_billed == 100 and self.docstatus == 1"],
-		["Completed", "eval:self.per_received >= 100 and self.per_billed == 100 and self.docstatus == 1"],
-		["Delivered", "eval:self.status=='Delivered'"],
-		["Cancelled", "eval:self.docstatus==2"],
-		["On Hold", "eval:self.status=='On Hold'"],
-		["Closed", "eval:self.status=='Closed'"],
-	],
-	"Delivery Note": [
-		["Draft", None],
-		["To Deliver", "eval: not self.delivered"],
-		["Delivered", "eval:self.status=='Delivered'"],
-		["In Transit", "eval:self.status=='In Transit'"],
-		["To Bill", "eval:self.per_billed < 100 and self.docstatus == 1"],
-		["Completed", "eval:self.per_billed == 100 and self.docstatus == 1"],
-		["Cancelled", "eval:self.docstatus==2"],
-		["Closed", "eval:self.status=='Closed'"],
-	],
-	"Purchase Receipt": [
-		["Draft", None],
-		["To Bill", "eval:self.per_billed < 100 and self.docstatus == 1"],
-		["Completed", "eval:self.per_billed == 100 and self.docstatus == 1"],
-		["Cancelled", "eval:self.docstatus==2"],
-		["Closed", "eval:self.status=='Closed'"],
-	],
-	"Material Request": [
-		["Draft", None],
-		["Stopped", "eval:self.status == 'Stopped'"],
-		["Cancelled", "eval:self.docstatus == 2"],
-		["Pending", "eval:self.status != 'Stopped' and self.per_ordered == 0 and self.docstatus == 1"],
-		["Partially Ordered", "eval:self.status != 'Stopped' and self.per_ordered < 100 and self.per_ordered > 0 and self.docstatus == 1"],
-		["Ordered", "eval:self.status != 'Stopped' and self.per_ordered == 100 and self.docstatus == 1 and self.material_request_type == 'Purchase'"],
-		["Transferred", "eval:self.status != 'Stopped' and self.per_ordered == 100 and self.docstatus == 1 and self.material_request_type == 'Material Transfer'"],
-		["Issued", "eval:self.status != 'Stopped' and self.per_ordered == 100 and self.docstatus == 1 and self.material_request_type == 'Material Issue'"],
-		["Received", "eval:self.status != 'Stopped' and self.per_received == 100 and self.docstatus == 1 and self.material_request_type == 'Purchase'"],
-		["Partially Received", "eval:self.status != 'Stopped' and self.per_received > 0 and self.per_received < 100 and self.docstatus == 1 and self.material_request_type == 'Purchase'"],
-		["Manufactured", "eval:self.status != 'Stopped' and self.per_ordered == 100 and self.docstatus == 1 and self.material_request_type == 'Manufacture'"]
-	],
-	"Bank Transaction": [
-		["Unreconciled", "eval:self.docstatus == 1 and self.unallocated_amount>0"],
-		["Reconciled", "eval:self.docstatus == 1 and self.unallocated_amount<=0"]
-	]
-
-}
-
 class StatusUpdater(Document):
 	"""
 		Updates the status of the calling records
@@ -107,17 +26,32 @@ class StatusUpdater(Document):
 		self.validate_qty()
 
 	def set_status(self, update=False, status=None, update_modified=True):
+		"""
+			{
+				Doctype: [
+					[status1, condition1],
+					[status2, condition2]
+				]
+			}
+		"""
 		if self.is_new():
 			if self.get('amended_from'):
 				self.status = 'Draft'
 			return
 
-		if self.doctype in status_map:
+		# try to make doctype key with status and condition as list of list. be careful before modifying this structure...
+		status_map= frappe.get_all("Status Workflow", filters={"document_type":self.doctype}, fields=["*"])
+		records = {}
+		records = {item['document_type']:[] for item in status_map}
+		for item in status_map:
+			records[item['document_type']].append([item.status, item.condition])
+
+		if self.doctype in records:
 			_status = self.status
 			if status and update:
 				self.db_set("status", status)
 
-			sl = status_map[self.doctype][:]
+			sl = records[self.doctype][:]
 			sl.reverse()
 			for s in sl:
 				if not s[1]:
