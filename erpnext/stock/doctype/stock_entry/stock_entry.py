@@ -703,7 +703,7 @@ class StockEntry(StockController):
 				items_without_batch_no.append('Row ' + str(idx))
 
 		if items_without_batch_no:
-			frappe.throw(_('Batch number is mandatory for Item at : <br><b>' + ', '.join(items_without_batch_no)))
+			frappe.throw(_('Batch number is mandatory for Item at : <br><b> {0}').format(', '.join(items_without_batch_no)))
 
 	def update_batch_with_customer_provided_item(self):
 		# update batch doc with provided by customer
