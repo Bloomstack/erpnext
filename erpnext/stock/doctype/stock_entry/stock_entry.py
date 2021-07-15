@@ -83,7 +83,7 @@ class StockEntry(StockController):
 		self.calculate_rate_and_amount(update_finished_item_rate=False)
 
 	def on_submit(self):
-
+		self.validate_mandatory_batch_number()
 		self.update_stock_ledger()
 
 		update_serial_nos_after_submit(self, "items")
@@ -689,6 +689,21 @@ class StockEntry(StockController):
 			sl_entries.reverse()
 
 		self.make_sl_entries(sl_entries, self.amended_from and 'Yes' or 'No')
+
+	def validate_mandatory_batch_number(self):
+		"""
+			validate the stock items batch number is present or not
+		"""
+		items_without_batch_no = []
+
+		for idx, item in enumerate(self.get("items"), start=1):
+			_item = frappe.get_doc("Item", item.item_code)
+			# validate the Has Batch No from Item doc was mark checked or not
+			if not item.batch_no and _item.has_batch_no:
+				items_without_batch_no.append('Row ' + str(idx))
+
+		if items_without_batch_no:
+			frappe.throw(_('Batch number is mandatory for Item at : <br><b>' + ', '.join(items_without_batch_no)))
 
 	def update_batch_with_customer_provided_item(self):
 		# update batch doc with provided by customer
