@@ -63,9 +63,7 @@ class HolidayList(Document):
 	def clear_table(self):
 		self.set('holidays', [])
 
-	def on_update(self):
-		frappe.enqueue(create_events, holiday_list=self.name)
-
+@frappe.whitelist()
 def create_events(holiday_list):
 	def create_holiday_event(holiday, holiday_list):
 		frappe.get_doc({
@@ -101,6 +99,7 @@ def create_events(holiday_list):
 
 			create_holiday_event(holiday, doc.name)
 
+	return True
 
 @frappe.whitelist()
 def get_events(start, end, filters=None):
