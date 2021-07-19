@@ -20,7 +20,6 @@ frappe.ui.form.on('Holiday List', {
 						holiday_list: frm.doc.name
 					},
 					callback: function(r) {
-						console.log(r)
 						if (r && r.message) {
 							frappe.show_alert({
 								message:__("Calendar Events created."),
