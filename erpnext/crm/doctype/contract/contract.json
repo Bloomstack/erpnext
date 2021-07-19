@@ -257,7 +257,8 @@
   {
    "fieldname": "signee_company",
    "fieldtype": "Signature",
-   "label": "Signature (Company)"
+   "label": "Signature (Company)",
+   "no_copy": 1
   },
   {
    "fieldname": "signed_by_company",
@@ -322,8 +323,9 @@
   },
   {
    "fieldname": "amount_in_figures",
-   "fieldtype": "Data",
-   "label": "Amount In Figures"
+   "fieldtype": "Currency",
+   "label": "Amount In Figures",
+   "options": "Company:company:default_currency"
   },
   {
    "fieldname": "contract_terms_display",
@@ -336,6 +338,7 @@
    "fieldname": "customer_signature",
    "fieldtype": "Signature",
    "label": "Customer Signature",
+   "no_copy": 1,
    "print_hide": 1,
    "read_only": 1
   },
@@ -376,7 +379,7 @@
   }
  ],
  "is_submittable": 1,
- "modified": "2021-05-26 04:52:22.819589",
+ "modified": "2021-07-19 02:04:04.822710",
  "modified_by": "Administrator",
  "module": "CRM",
  "name": "Contract",
