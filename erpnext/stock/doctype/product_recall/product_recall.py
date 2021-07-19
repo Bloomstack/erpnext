@@ -9,8 +9,16 @@ from frappe import _
 from frappe.utils import comma_and
 
 class ProductRecall(Document):
+	def validate(self):
+		self.validate_batch_qty()
+
 	def on_submit(self):
 		self.create_product_recall_notice()
+
+	def validate_batch_qty(self):
+		if not frappe.db.get_value("Batch", self.batch_no, "batch_qty"):
+			frappe.throw(_("Select Batch with Quantity greater than zero."))
+	
 
 	def create_product_recall_notice(self):
 		"""
@@ -51,7 +59,7 @@ class ProductRecall(Document):
 			if sle_item.voucher_type == "Stock Entry":
 				se = frappe.get_doc("Stock Entry", sle_item.voucher_no).as_dict()
 				for item in se.get("items"):
-					if (item.item_code and item.batch_no and item.parent) not in items_in_warehouse and item.batch_no:
+					if (item.item_code and item.batch_no and item.parent) not in items_in_warehouse and item.batch_no and item.t_warehouse != self.recall_warehouse:
 						items_in_warehouse = items_in_warehouse + [{
 							"item_code": item.item_code,
 							"item_name": item.item_name,
