@@ -1,5 +1,4 @@
 {
- "actions": [],
  "creation": "2017-06-15 08:21:24.624315",
  "doctype": "DocType",
  "document_type": "Setup",
@@ -28,7 +27,7 @@
    "fieldname": "api_key",
    "fieldtype": "Password",
    "in_list_view": 1,
-   "label": "Live API Key",
+   "label": "Live API Token",
    "reqd": 1
   },
   {
@@ -61,7 +60,7 @@
   {
    "fieldname": "sandbox_api_key",
    "fieldtype": "Password",
-   "label": "Sandbox API Key"
+   "label": "Sandbox API Token"
   },
   {
    "fieldname": "configuration_cb",
@@ -85,8 +84,7 @@
   }
  ],
  "issingle": 1,
- "links": [],
- "modified": "2020-04-30 04:38:03.311089",
+ "modified": "2021-07-19 03:07:54.492285",
  "modified_by": "Administrator",
  "module": "ERPNext Integrations",
  "name": "TaxJar Settings",
