@@ -1,11 +1,11 @@
 {
- "actions": [],
  "creation": "2017-06-15 08:21:24.624315",
  "doctype": "DocType",
  "document_type": "Setup",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "is_enable",
   "is_sandbox",
   "taxjar_calculate_tax",
   "taxjar_create_transactions",
@@ -20,6 +20,7 @@
  ],
  "fields": [
   {
+   "depends_on": "is_enable",
    "fieldname": "credentials",
    "fieldtype": "Section Break",
    "label": "Credentials"
@@ -32,6 +33,7 @@
    "reqd": 1
   },
   {
+   "depends_on": "is_enable",
    "fieldname": "configuration",
    "fieldtype": "Section Break",
    "label": "Configuration"
@@ -54,6 +56,7 @@
   },
   {
    "default": "0",
+   "depends_on": "is_enable",
    "fieldname": "is_sandbox",
    "fieldtype": "Check",
    "label": "Sandbox Mode"
@@ -69,12 +72,14 @@
   },
   {
    "default": "0",
+   "depends_on": "is_enable",
    "fieldname": "taxjar_create_transactions",
    "fieldtype": "Check",
    "label": "Create TaxJar Transaction"
   },
   {
    "default": "0",
+   "depends_on": "is_enable",
    "fieldname": "taxjar_calculate_tax",
    "fieldtype": "Check",
    "label": "Enable Tax Calculation"
@@ -82,11 +87,16 @@
   {
    "fieldname": "cb_keys",
    "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_enable",
+   "fieldtype": "Check",
+   "label": "Enable"
   }
  ],
  "issingle": 1,
- "links": [],
- "modified": "2020-04-30 04:38:03.311089",
+ "modified": "2021-07-20 00:14:45.098471",
  "modified_by": "Administrator",
  "module": "ERPNext Integrations",
  "name": "TaxJar Settings",
