@@ -29,12 +29,14 @@ def get_client():
 		api_url = taxjar.SANDBOX_API_URL
 
 	if api_key and api_url:
-		return taxjar.Client(api_key=api_key, api_url=api_url)
-
+		client =  taxjar.Client(api_key=api_key, api_url=api_url)
+		client.set_api_config('headers', {
+			'x-api-version': '2020-08-07'
+		})
+		return client
 
 def create_transaction(doc, method):
 	"""Create an order transaction in TaxJar"""
-
 	if not TAXJAR_CREATE_TRANSACTIONS:
 		return
 
