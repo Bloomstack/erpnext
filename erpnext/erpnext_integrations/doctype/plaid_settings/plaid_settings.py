@@ -85,16 +85,19 @@ def add_bank_accounts(response, bank, company):
 
 		if not existing_bank_account:
 			try:
+				# find out parant account so that we it will create account head under that class.
 				parent_account = frappe.db.get_value("Account",
 					filters={"account_type": "Bank", "root_type": "Asset", "is_group": 0, "company": company}, fieldname="parent_account")
 				if not parent_account:
 					parent_account = frappe.db.get_value("Account",
 						filters={"account_type": "Bank", "root_type": "Asset", "is_group": 1, "company": company})
 
+				# create unquie account head for bank accounts.
 				new_account_head=frappe.get_doc({
 					"doctype": "Account",
 					"account_name": bank["bank_name"] + "-" + account["name"],
 					"parent_account": parent_account,
+					"account_number": get_max_account_number(parent_account),
 					"company": company
 					})
 				new_account_head.insert()
@@ -286,3 +289,29 @@ def automatic_synchronization():
 def get_link_token_for_update(access_token):
 	plaid = PlaidConnector(access_token)
 	return plaid.get_link_token(update_mode=True)
+
+def get_max_account_number(parent_account):
+	"""
+		Return new account number for account head.
+
+			Parameter:
+				parent_account(str): Parent account of new account head.
+
+			Returns:
+				new_account_number (int): it will find largest account number and increase by specified interval and return.
+	"""
+
+	INCREASING_ORDER_BY = 10
+	accounts = frappe.get_all("Account", filters={"parent_account": parent_account}, fields=["name","account_number"])
+	account_number_list = []
+	for account in accounts:
+		if account.account_number:
+			account_number_list.append(account.account_number)
+
+	if not account_number_list:
+		return
+
+	formated_account_number_list = list(map(int, account_number_list))
+	formated_account_number_list.sort()
+	new_account_number = formated_account_number_list[-1] + INCRESING_ORDER_BY
+	return new_account_number
