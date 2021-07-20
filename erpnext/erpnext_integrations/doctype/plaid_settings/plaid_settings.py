@@ -85,27 +85,10 @@ def add_bank_accounts(response, bank, company):
 
 		if not existing_bank_account:
 			try:
-				# find out parant account so that we it will create account head under that class.
-				parent_account = frappe.db.get_value("Account",
-					filters={"account_type": "Bank", "root_type": "Asset", "is_group": 0, "company": company}, fieldname="parent_account")
-				if not parent_account:
-					parent_account = frappe.db.get_value("Account",
-						filters={"account_type": "Bank", "root_type": "Asset", "is_group": 1, "company": company})
-
-				# create unquie account head for bank accounts.
-				new_account_head=frappe.get_doc({
-					"doctype": "Account",
-					"account_name": bank["bank_name"] + "-" + account["name"],
-					"parent_account": parent_account,
-					"account_number": get_max_account_number(parent_account),
-					"company": company
-					})
-				new_account_head.insert()
-
 				new_account = frappe.get_doc({
 					"doctype": "Bank Account",
 					"bank": bank["bank_name"],
-					"account": new_account_head.name,
+					"account": create_account_head(company, bank, account),
 					"account_name": account["name"],
 					"account_type": account["type"] or "",
 					"account_subtype": account["subtype"] or "",
@@ -290,6 +273,25 @@ def get_link_token_for_update(access_token):
 	plaid = PlaidConnector(access_token)
 	return plaid.get_link_token(update_mode=True)
 
+def create_account_head(company, bank, account):
+	# find out parant account so that we it will create account head under that class.
+	parent_account = frappe.db.get_value("Account",
+		filters={"account_type": "Bank", "root_type": "Asset", "is_group": 0, "company": company}, fieldname="parent_account")
+	if not parent_account:
+		parent_account = frappe.db.get_value("Account",
+			filters={"account_type": "Bank", "root_type": "Asset", "is_group": 1, "company": company})
+
+	# create unquie account head for bank accounts.
+	new_account_head=frappe.get_doc({
+		"doctype": "Account",
+		"account_name": bank["bank_name"] + "-" + account["name"],
+		"parent_account": parent_account,
+		"account_number": get_max_account_number(parent_account),
+		"company": company
+		})
+	new_account_head.insert()
+	return new_account_head.name
+
 def get_max_account_number(parent_account):
 	"""
 		Return new account number for account head.
@@ -313,5 +315,5 @@ def get_max_account_number(parent_account):
 
 	formated_account_number_list = list(map(int, account_number_list))
 	formated_account_number_list.sort()
-	new_account_number = formated_account_number_list[-1] + INCRESING_ORDER_BY
+	new_account_number = formated_account_number_list[-1] + INCREASING_ORDER_BY
 	return new_account_number
