@@ -7,3 +7,8 @@ frappe.ui.form.on('TaxJar Settings', {
 		frm.toggle_reqd("sandbox_api_key", frm.doc.is_sandbox);
 	}
 });
+frappe.ui.form.on("TaxJar Settings", "refresh", function(frm) {
+	frm.add_custom_button("Sign Up For Taxjar", function() {
+		window.open('https://app.taxjar.com/api_sign_up');
+	});
+});
