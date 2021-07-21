@@ -112,7 +112,8 @@ def get_tax_data(doc):
 		'to_street': to_address.address_line1,
 		'to_state': to_shipping_state,
 		'shipping': shipping,
-		'amount': doc.net_total
+		'amount': doc.net_total,
+		'plugin': '[bloomstack]'
 	}
 
 	return tax_dict
