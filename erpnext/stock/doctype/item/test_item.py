@@ -16,9 +16,11 @@ from erpnext.stock.doctype.stock_entry.stock_entry_utils import make_stock_entry
 from erpnext.stock.get_item_details import get_item_details
 
 from six import iteritems
+from frappe.test_runner import make_test_records
 
 test_ignore = ["BOM"]
 test_dependencies = ["Warehouse", "Item Group", "Item Tax Template", "Brand"]
+make_test_records("Warehouse")
 
 def make_item(item_code, properties=None):
 	if frappe.db.exists("Item", item_code):
