@@ -282,13 +282,13 @@ def create_account_head(company, bank, account):
 			filters={"account_type": "Bank", "root_type": "Asset", "is_group": 1, "company": company})
 
 	# create unquie account head for bank accounts.
-	new_account_head=frappe.get_doc({
+	new_account_head = frappe.get_doc({
 		"doctype": "Account",
 		"account_name": bank["bank_name"] + "-" + account["name"],
 		"parent_account": parent_account,
 		"account_number": get_max_account_number(parent_account),
 		"company": company
-		})
+	})
 	new_account_head.insert()
 	return new_account_head.name
 
