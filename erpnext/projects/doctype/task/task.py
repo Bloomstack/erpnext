@@ -92,8 +92,9 @@ class Task(NestedSet):
 
 		if self.status == 'Completed':
 			self.progress = 100
-		else:
-			self.progress = 0
+
+		if self.status != 'Completed' and self.progress == 100:
+			frappe.throw(_("Task progress cannot be set 100% untill status is not set as Completed"))
 
 	def update_depends_on(self):
 		depends_on_tasks = self.depends_on_tasks or ""
