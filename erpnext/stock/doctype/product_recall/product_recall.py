@@ -18,6 +18,7 @@ class ProductRecall(Document):
 	def validate_batch_qty(self):
 		if not frappe.db.get_value("Batch", self.batch_no, "batch_qty"):
 			frappe.throw(_("Select Batch with Quantity greater than zero."))
+
 	def create_product_recall_notice(self):
 		"""
 		Create Product Recall Notice with items from the batch entered.
