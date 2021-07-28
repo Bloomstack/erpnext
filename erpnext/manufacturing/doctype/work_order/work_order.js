@@ -5,8 +5,7 @@ frappe.ui.form.on("Work Order", {
 	setup: function(frm) {
 		frm.custom_make_buttons = {
 			'Stock Entry': 'Start',
-			'Pick List': 'Create Pick List',
-			'Job Card': 'Create Job Card'
+			'Pick List': 'Create Pick List'
 		};
 
 		frm.set_query("sales_order", function() {
