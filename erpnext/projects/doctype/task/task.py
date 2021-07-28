@@ -35,6 +35,7 @@ class Task(NestedSet):
 		self.validate_progress()
 		self.validate_status()
 		self.update_depends_on()
+		self.validate_default_project()
 
 	def before_save(self):
 		change_idx = False
@@ -104,6 +105,27 @@ class Task(NestedSet):
 
 	def update_nsm_model(self):
 		frappe.utils.nestedset.update_nsm(self)
+	
+	def validate_default_project(self):
+		""" Validate projects table in task."""
+
+		unique_project = list(set([project.project for project in self.projects]))
+		if len(self.projects) != len(unique_project):
+			frappe.throw(_("Please remove duplicate project before proceeding."))
+
+		if len(self.projects) == 1:
+			# auto-set default project if only one is found
+			self.projects[0].is_default = 1
+			self.project = self.projects[0].project
+		elif len(self.projects) > 1:
+			default_projects = [project for project in self.projects if project.is_default]
+			# prevent users from setting multiple default projects.
+			if not default_projects:
+				frappe.throw(_("There must be atleast one default project, found none"))
+			elif len(default_projects) > 1:
+				frappe.throw(_("There can be only one default project for {0}, found {1}").format(self.name, len(default_projects)))
+			else:
+				self.project = default_projects[0].project
 
 	def on_update(self):
 		self.update_nsm_model()

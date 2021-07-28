@@ -21,6 +21,8 @@
   "completed_by",
   "color",
   "parent_task",
+  "project_details_section",
+  "projects",
   "sb_timeline",
   "exp_start_date",
   "expected_time",
@@ -73,6 +75,7 @@
    "oldfieldname": "project",
    "oldfieldtype": "Link",
    "options": "Project",
+   "read_only": 1,
    "remember_last_selected_value": 1,
    "search_index": 1
   },
@@ -383,13 +386,24 @@
    "fieldtype": "Table MultiSelect",
    "label": "Assign To",
    "options": "Task Users"
+  },
+  {
+   "fieldname": "project_details_section",
+   "fieldtype": "Section Break",
+   "label": "Project Details"
+  },
+  {
+   "fieldname": "projects",
+   "fieldtype": "Table",
+   "label": "Projects",
+   "options": "Project Item"
   }
  ],
  "icon": "fa fa-check",
  "idx": 1,
  "is_tree": 1,
  "max_attachments": 5,
- "modified": "2021-05-24 04:27:27.283316",
+ "modified": "2021-07-28 01:50:04.141920",
  "modified_by": "Administrator",
  "module": "Projects",
  "name": "Task",
