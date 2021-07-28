@@ -126,6 +126,9 @@ class Task(NestedSet):
 				frappe.throw(_("There can be only one default project for {0}, found {1}").format(self.name, len(default_projects)))
 			else:
 				self.project = default_projects[0].project
+		elif not len(self.projects):
+			# if no projects aviliable in projects make parent project empty
+			self.project = None
 
 	def on_update(self):
 		self.update_nsm_model()
