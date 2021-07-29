@@ -727,3 +727,4 @@ erpnext.patches.v13_0.add_insight_engine_module
 execute:frappe.delete_doc_if_exists("Page", "welcome-to-erpnext")
 execute:frappe.delete_doc_if_exists("Report", "Item-Wise Sales Register")
 execute:frappe.delete_doc_if_exists("Report", "Sales Analytics")
+erpnext.patches.v13_0.add_default_project_into_project_details_child_table

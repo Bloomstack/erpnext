@@ -121,9 +121,9 @@ class Task(NestedSet):
 			default_projects = [project for project in self.projects if project.is_default]
 			# prevent users from setting multiple default projects.
 			if not default_projects:
-				frappe.throw(_("There must be atleast one default project, found none"))
+				frappe.throw(_("There must be atleast one default Project."))
 			elif len(default_projects) > 1:
-				frappe.throw(_("There can be only one default project for {0}, found {1}").format(self.name, len(default_projects)))
+				frappe.throw(_("There can be only one default project, found {0}.").format(len(default_projects)))
 			else:
 				self.project = default_projects[0].project
 		elif not len(self.projects):
