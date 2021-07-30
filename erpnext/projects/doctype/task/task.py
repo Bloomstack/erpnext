@@ -113,7 +113,7 @@ class Task(NestedSet):
 		unique_projects = list(set([project.project for project in self.projects]))
 		if len(self.projects) != len(unique_projects):
 			task_projects = list([project.project for project in self.projects])
-			d =  Counter(task_projects)
+			d = Counter(task_projects)
 			res = [k for k, v in d.items() if v > 1]
 			frappe.throw(_("Please remove duplicate project before proceeding. <ul><li>{0}</li></ul>".format('<li>'.join(res))))
 
@@ -127,7 +127,7 @@ class Task(NestedSet):
 			if not default_project:
 				frappe.throw(_("There must be atleast one default Project."))
 			elif len(default_project) > 1:
-				frappe.throw(_("There can be only one default project, found {0}.").format(len(default_projects)))
+				frappe.throw(_("There can be only one default project, found {0}.").format(len(default_project)))
 			else:
 				self.project = default_project[0].project
 		elif not len(self.projects):
