@@ -5,7 +5,8 @@ frappe.ui.form.on("Work Order", {
 	setup: function(frm) {
 		frm.custom_make_buttons = {
 			'Stock Entry': 'Start',
-			'Pick List': 'Create Pick List'
+			'Pick List': 'Create Pick List',
+			'Job Card': 'Create Job Card'
 		};
 
 		frm.set_query("sales_order", function() {
@@ -111,9 +112,9 @@ frappe.ui.form.on("Work Order", {
 			});
 
 			if(not_completed && not_completed.length) {
-				frm.add_custom_button(__('Create'), () => {
+				frm.add_custom_button(__('Create Job Card'), () => {
 					frm.trigger("make_job_card");
-				},__('Job Card'));
+				});
 
 				frm.add_custom_button(__('Start All'), () => {
 					frm.trigger("start_job_cards");
