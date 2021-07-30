@@ -396,14 +396,14 @@
    "fieldname": "projects",
    "fieldtype": "Table",
    "label": "Projects",
-   "options": "Project Item"
+   "options": "Task Project"
   }
  ],
  "icon": "fa fa-check",
  "idx": 1,
  "is_tree": 1,
  "max_attachments": 5,
- "modified": "2021-07-28 04:43:27.967082",
+ "modified": "2021-07-30 00:43:04.777292",
  "modified_by": "Administrator",
  "module": "Projects",
  "name": "Task",

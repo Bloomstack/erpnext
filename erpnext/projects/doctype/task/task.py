@@ -12,6 +12,7 @@ from frappe.model.mapper import get_mapped_doc
 from frappe.utils import add_days, cstr, date_diff, get_link_to_form, getdate, today
 from frappe.utils.nestedset import NestedSet
 from frappe.desk.doctype.notification_log.notification_log import enqueue_create_notification
+from collections import Counter
 
 
 class CircularReferenceError(frappe.ValidationError): pass
@@ -109,23 +110,26 @@ class Task(NestedSet):
 	def validate_default_project(self):
 		""" Validate projects table in task."""
 
-		unique_project = list(set([project.project for project in self.projects]))
-		if len(self.projects) != len(unique_project):
-			frappe.throw(_("Please remove duplicate project before proceeding."))
+		unique_projects = list(set([project.project for project in self.projects]))
+		if len(self.projects) != len(unique_projects):
+			task_projects = list([project.project for project in self.projects])
+			d =  Counter(task_projects)
+			res = [k for k, v in d.items() if v > 1]
+			frappe.throw(_("Please remove duplicate project before proceeding. <ul><li>{0}</li></ul>".format('<li>'.join(res))))
 
 		if len(self.projects) == 1:
 			# auto-set default project if only one is found
 			self.projects[0].is_default = 1
 			self.project = self.projects[0].project
 		elif len(self.projects) > 1:
-			default_projects = [project for project in self.projects if project.is_default]
+			default_project = [project for project in self.projects if project.is_default]
 			# prevent users from setting multiple default projects.
-			if not default_projects:
+			if not default_project:
 				frappe.throw(_("There must be atleast one default Project."))
-			elif len(default_projects) > 1:
+			elif len(default_project) > 1:
 				frappe.throw(_("There can be only one default project, found {0}.").format(len(default_projects)))
 			else:
-				self.project = default_projects[0].project
+				self.project = default_project[0].project
 		elif not len(self.projects):
 			# if no projects aviliable in projects make parent project empty
 			self.project = None

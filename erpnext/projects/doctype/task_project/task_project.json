@@ -30,7 +30,7 @@
   },
   {
    "fieldname": "time_consumed",
-   "fieldtype": "Data",
+   "fieldtype": "Float",
    "in_list_view": 1,
    "label": "Time Consumed"
   },
@@ -43,10 +43,10 @@
   }
  ],
  "istable": 1,
- "modified": "2021-07-29 23:06:05.412289",
+ "modified": "2021-07-30 00:33:10.827343",
  "modified_by": "Administrator",
  "module": "Projects",
- "name": "Project Item",
+ "name": "Task Project",
  "owner": "Administrator",
  "permissions": [],
  "quick_entry": 1,

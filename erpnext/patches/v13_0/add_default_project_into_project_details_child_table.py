@@ -3,12 +3,11 @@ import frappe
 
 def execute():
 	frappe.reload_doc('projects', 'doctype', 'task')
-	frappe.reload_doc('projects', 'doctype', 'project_item')
+	frappe.reload_doc('projects', 'doctype', 'task_project')
 
 	tasks = frappe.db.get_all("Task", fields=["*"])
 	for task in tasks:
-		project_item = frappe.db.get_all("Project Item", filters={"parent":task.name}, fields=["*"])
-		if not project_item:
+		if task.project:
 			doc = frappe.get_doc("Task", task.name)
 			doc.append("projects", {
 				"project": task.project,
