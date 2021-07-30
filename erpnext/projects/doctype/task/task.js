@@ -26,10 +26,6 @@ frappe.ui.form.on("Task", {
 				frm: frm
 			})
 		}
-		// frappe.model.with_doctype("Task", () => {
-		// 	let meta = frappe.get_meta("Task");
-		// 	frm.toggle_display('submit_after_import', meta.is_submittable);
-		// });
 	},
 
 	onload: function (frm) {
