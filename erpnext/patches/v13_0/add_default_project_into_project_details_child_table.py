@@ -13,5 +13,5 @@ def execute():
 			doc.append("projects", {
 				"project": task.project,
 				"status": task.status
-				})
+			})
 			doc.save()
