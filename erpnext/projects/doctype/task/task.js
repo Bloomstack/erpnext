@@ -47,7 +47,7 @@ frappe.ui.form.on("Task", {
 	refresh: function (frm) {
 		frm.set_query("parent_task", { "is_group": 1 });
 		frappe.model.with_doctype('Task', () => {
-			const Parent_field = frappe.meta.get_docfield("Task", "status", frm.docname)
+			const Parent_field = frappe.meta.get_docfield("Task", "status", frm.docname);
 			const field = frappe.meta.get_docfield("Project Item", "status", frm.docname);
 			field.fieldtype = 'Select';
 			field.options = Parent_field.options;
