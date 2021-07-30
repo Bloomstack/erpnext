@@ -26,6 +26,10 @@ frappe.ui.form.on("Task", {
 				frm: frm
 			})
 		}
+		// frappe.model.with_doctype("Task", () => {
+		// 	let meta = frappe.get_meta("Task");
+		// 	frm.toggle_display('submit_after_import', meta.is_submittable);
+		// });
 	},
 
 	onload: function (frm) {
@@ -42,6 +46,13 @@ frappe.ui.form.on("Task", {
 
 	refresh: function (frm) {
 		frm.set_query("parent_task", { "is_group": 1 });
+		frappe.model.with_doctype('Task', () => {
+			const Parent_field = frappe.meta.get_docfield("Task", "status", frm.docname)
+			const field = frappe.meta.get_docfield("Project Item", "status", frm.docname);
+			field.fieldtype = 'Select';
+			field.options = Parent_field.options;
+			frm.fields_dict.filter_fields.grid.refresh();
+		});
 	},
 
 	is_group: function (frm) {
