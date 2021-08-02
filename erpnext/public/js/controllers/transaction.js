@@ -903,6 +903,7 @@ erpnext.TransactionController = erpnext.taxes_and_totals.extend({
 
 	shipping_rule: function() {
 		var me = this;
+		if (this.frm.doc.shipping_rule) {
 			return this.frm.call({
 				doc: this.frm.doc,
 				method: "apply_shipping_rule",
@@ -918,6 +919,7 @@ erpnext.TransactionController = erpnext.taxes_and_totals.extend({
 					}
 				}
 			}).fail(() => this.frm.set_value('shipping_rule', ''));
+		}
 	},
 
 	set_margin_amount_based_on_currency: function(exchange_rate) {
