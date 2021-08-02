@@ -27,24 +27,28 @@ $(document).bind('toolbar_setup', function() {
 	$('<li><a href="https://github.com/frappe/erpnext/issues" \
 		target="_blank">'+__('Report an Issue')+'</a></li>').insertBefore($help_menu);
 
+
+	console.log(frappe.app, frappe.app.on);
+
+	// preferred modules for breadcrumbs
+	$.extend(frappe.breadcrumbs.preferred, {
+		"Item Group": "Stock",
+		"Customer Group": "Selling",
+		"Supplier Group": "Buying",
+		"Territory": "Selling",
+		"Sales Person": "Selling",
+		"Sales Partner": "Selling",
+		"Brand": "Stock"
+	});
+
+	$.extend(frappe.breadcrumbs.module_map, {
+		'ERPNext Integrations': 'Integrations',
+		'Geo': 'Settings',
+		'Portal': 'Website',
+		'Utilities': 'Settings',
+		'Shopping Cart': 'Website',
+		'Contacts': 'CRM'
+	});
+
 });
 
-// preferred modules for breadcrumbs
-$.extend(frappe.breadcrumbs.preferred, {
-	"Item Group": "Stock",
-	"Customer Group": "Selling",
-	"Supplier Group": "Buying",
-	"Territory": "Selling",
-	"Sales Person": "Selling",
-	"Sales Partner": "Selling",
-	"Brand": "Stock"
-});
-
-$.extend(frappe.breadcrumbs.module_map, {
-	'ERPNext Integrations': 'Integrations',
-	'Geo': 'Settings',
-	'Portal': 'Website',
-	'Utilities': 'Settings',
-	'Shopping Cart': 'Website',
-	'Contacts': 'CRM'
-});
