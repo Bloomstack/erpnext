@@ -110,9 +110,9 @@ class Task(NestedSet):
 	def validate_default_project(self):
 		""" Validate projects table in task."""
 
-		unique_projects = list(set([project.project for project in self.projects]))
-		if len(self.projects) != len(unique_projects):
-			task_projects = list([project.project for project in self.projects])
+		_projects = [project.project for project in self.projects]
+		if len(_projects) != len(list(set(_projects))):
+			task_projects = _projects
 			d = Counter(task_projects)
 			res = [k for k, v in d.items() if v > 1]
 			frappe.throw(_("Please remove duplicate project before proceeding. <ul><li>{0}</li></ul>".format('<li>'.join(res))))
