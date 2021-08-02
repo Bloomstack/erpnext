@@ -157,7 +157,7 @@ class Timesheet(Document):
 			if log.task:
 				project = frappe.db.get_value("Task", log.task, "project")
 				if project and project is not log.project:
-					frappe.throw(_("Row #{0}. The task {1} not belongs to project {2}". format(log.idx, log.task, log.project)))
+					frappe.throw(_("Row #{0}. Project {1} is not set as default project for Task {2}. ". format(log.idx, log.project, log.task)))
 
 			log.project = log.project or frappe.db.get_value("Task", log.task, "project")
 
