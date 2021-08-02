@@ -44,10 +44,7 @@ frappe.ui.form.on("Task", {
 		frm.set_query("parent_task", { "is_group": 1 });
 		frappe.model.with_doctype('Task', () => {
 			const Parent_field = frappe.meta.get_docfield("Task", "status", frm.docname);
-			const field = frappe.meta.get_docfield("Task Project", "status", frm.docname);
-			field.fieldtype = 'Select';
-			field.options = Parent_field.options;
-			frm.fields_dict.filter_fields.grid.refresh();
+			frm.set_df_property("status", "options", Parent_field.options, frm.docname, "projects")
 		});
 	},
 
