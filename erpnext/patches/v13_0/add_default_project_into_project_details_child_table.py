@@ -5,12 +5,14 @@ def execute():
 	frappe.reload_doc('projects', 'doctype', 'task_project')
 	frappe.reload_doc('projects', 'doctype', 'task')
 
-	tasks = frappe.db.get_all("Task", fields=["*"])
+	tasks = frappe.db.get_all("Task", fields=["name", "project", "status"])
 	for task in tasks:
 		if task.project:
 			doc = frappe.get_doc("Task", task.name)
 			doc.append("projects", {
 				"project": task.project,
-				"status": task.status
+				"status": task.status,
+				"is_default": 1
 			})
+			doc.flags.ignore_validate=True
 			doc.save()
