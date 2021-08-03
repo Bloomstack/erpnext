@@ -154,6 +154,11 @@ class Timesheet(Document):
 
 	def validate_task_project(self):
 		for log in self.time_logs:
+			if log.task:
+				project = frappe.db.get_value("Task", log.task, "project")
+				if project and project is not log.project:
+					frappe.throw(_("Row #{0}. Project {1} is not set as default project for Task {2}. ". format(log.idx, log.project, log.task)))
+
 			log.project = log.project or frappe.db.get_value("Task", log.task, "project")
 
 	def validate_overlap_for(self, fieldname, args, value, ignore_validation=False):
