@@ -94,6 +94,8 @@ class Task(NestedSet):
 
 		if self.status == 'Completed':
 			self.progress = 100
+		elif self.status ==  'Closed':
+			self.progress = 0
 
 		if self.status != 'Completed' and self.progress == 100:
 			frappe.throw(_("Task progress cannot be set 100% until status is not set as Completed"))

@@ -9,6 +9,8 @@ def execute():
 	for task in tasks:
 		if task.project:
 			doc = frappe.get_doc("Task", task.name)
+			if not doc.status:
+				doc.status = "Closed"
 			doc.append("projects", {
 				"project": task.project,
 				"status": task.status,
