@@ -872,7 +872,7 @@ $(document).on('app_ready', function() {
 							links_text = "<ul>" + links_text + "</ul>";
 
 							confirm_message = `${frm.doc.name.bold()} is linked with the following documents: ${links_text}`;
-							frappe.confirm(__(`${confirm_message} Do you want to set them as <strong>{0}</strong> too?`, [frm.doc.is_frozen ? "is_frozen" : "not_is_frozen"]),
+							frappe.confirm(__(`${confirm_message} Do you want to set them as <strong>{0}</strong> too?`, [frm.doc.is_frozen ? "Freeze" : "Not Freeze"]),
 								() => {
 									frappe.call({
 										method: "erpnext.projects.utils.update_task_projects",
