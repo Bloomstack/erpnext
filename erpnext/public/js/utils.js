@@ -879,7 +879,7 @@ $(document).on('app_ready', function() {
 										args: {
 											ref_dt: frm.doctype,
 											ref_dn: frm.doc.name,
-											is_frozen: frm.doc.is_frozen
+											freeze: frm.doc.freeze
 										},
 										callback: (r) => {
 											frm.save();
