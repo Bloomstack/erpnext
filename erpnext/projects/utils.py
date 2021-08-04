@@ -79,3 +79,8 @@ def get_project_time_logs(project):
 def get_task_time_logs(task):
 	return frappe.get_all("Timesheet Detail", filters={"task": task.name})
 
+@frappe.whitelist()
+def update_task_projects(ref_dt, ref_dn, is_frozen):
+	task_projects = frappe.get_all("Task Project", filters={frappe.scrub(ref_dt): ref_dn})
+	for project in task_projects:
+		frappe.db.set_value("Task Project", project.name, "is_frozen", is_frozen)

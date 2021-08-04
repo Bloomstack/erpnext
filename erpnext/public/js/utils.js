@@ -840,4 +840,60 @@ $(document).on('app_ready', function() {
 			}
 		});
 	});
+
+	$.each(["Project", "Task"], function (i, doctype) {
+		frappe.ui.form.on(doctype, {
+			freeze: (frm) => {
+				let confirm_message = "";
+				frappe.call({
+					method: "frappe.desk.form.linked_with.get_submitted_linked_docs",
+					args: {
+						doctype: frm.doc.doctype,
+						name: frm.doc.name,
+						only_submittable: false,
+						skip_doctypes: ["Activity Log", "Comment", "Timesheet"]
+					},
+					freeze: true,
+					callback: (r) => {
+						if (!r.exc && r.message.count > 0) {
+							// add confirmation message for cancelling all linked docs
+							let links_text = "";
+							let links = r.message.docs;
+							const doctypes = Array.from(new Set(links.map((link) => link.doctype)));
+
+							for (let doctype of doctypes) {
+								let docnames = links
+									.filter((link) => link.doctype === doctype)
+									.map((link) => frappe.utils.get_form_link(link.doctype, link.name, true))
+									.join(", ");
+								links_text += `<li><strong>${doctype}</strong>: ${docnames}</li>`;
+
+							}
+							links_text = "<ul>" + links_text + "</ul>";
+
+							confirm_message = `${frm.doc.name.bold()} is linked with the following documents: ${links_text}`;
+							frappe.confirm(__(`${confirm_message} Do you want to set them as <strong>{0}</strong> too?`, [frm.doc.is_frozen ? "is_frozen" : "not_is_frozen"]),
+								() => {
+									frappe.call({
+										method: "erpnext.projects.utils.update_task_projects",
+										args: {
+											ref_dt: frm.doctype,
+											ref_dn: frm.doc.name,
+											is_frozen: frm.doc.is_frozen
+										},
+										callback: (r) => {
+											frm.save();
+										}
+									})
+								},
+								() => {
+									frm.save();
+								}
+							);
+						}
+					}
+				});
+			}
+		});
+	});
 });
