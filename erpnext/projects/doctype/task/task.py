@@ -81,8 +81,8 @@ class Task(NestedSet):
 	def validate_status(self):
 		if self.status!=self.get_db_value("status") and self.status == "Completed":
 			for d in self.depends_on:
-				if frappe.db.get_value("Task", d.task, "status") not in ("Completed", "Cancelled"):
-					frappe.throw(_("Cannot complete task {0} as its dependant tasks {1} are not completed / cancelled.").format(frappe.bold(self.name), frappe.bold(d.task)))
+				if frappe.db.get_value("Task", d.task, "status") not in ("Completed", "Closed"):
+					frappe.throw(_("Cannot complete task {0} as its dependant tasks {1} are not completed / closed.").format(frappe.bold(self.name), frappe.bold(d.task)))
 
 			if frappe.db.get_single_value("Projects Settings", "remove_assignment_on_task_completion"):
 				close_all_assignments(self.doctype, self.name)
@@ -148,7 +148,7 @@ class Task(NestedSet):
 	def unassign_todo(self):
 		if self.status == "Completed" and frappe.db.get_single_value("Projects Settings", "remove_assignment_on_task_completion"):
 			close_all_assignments(self.doctype, self.name)
-		if self.status == "Cancelled":
+		if self.status == "Closed":
 			clear(self.doctype, self.name)
 
 	def assign_todo(self):
@@ -241,7 +241,7 @@ class Task(NestedSet):
 		self.update_nsm_model()
 
 	def update_status(self):
-		if self.status not in ('Cancelled', 'Completed') and self.exp_end_date:
+		if self.status not in ('Closed', 'Completed') and self.exp_end_date:
 			from datetime import datetime
 			if self.exp_end_date < datetime.now().date():
 				self.db_set('status', 'Overdue', update_modified=False)
@@ -300,7 +300,7 @@ def set_multiple_status(names, status):
 		task.save()
 
 def set_tasks_as_overdue():
-	tasks = frappe.get_all("Task", filters={"status": ["not in", ["Cancelled", "Completed"]]}, fields=["name", "status", "review_date"])
+	tasks = frappe.get_all("Task", filters={"status": ["not in", ["Closed", "Completed"]]}, fields=["name", "status", "review_date"])
 	for task in tasks:
 		if task.status == "Pending Review":
 			if getdate(task.review_date) > getdate(today()):

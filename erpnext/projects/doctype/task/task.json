@@ -80,6 +80,21 @@
    "search_index": 1
   },
   {
+   "fetch_from": "project.project_team",
+   "fieldname": "team",
+   "fieldtype": "Link",
+   "label": "Team",
+   "options": "Project Team",
+   "read_only": 1
+  },
+  {
+   "depends_on": "eval:doc.team",
+   "fieldname": "assign_to",
+   "fieldtype": "Table MultiSelect",
+   "label": "Assign To",
+   "options": "Task Users"
+  },
+  {
    "fieldname": "issue",
    "fieldtype": "Link",
    "label": "Issue",
@@ -100,6 +115,12 @@
    "label": "Is Group"
   },
   {
+   "default": "0",
+   "fieldname": "billable",
+   "fieldtype": "Check",
+   "label": "Billable"
+  },
+  {
    "fieldname": "column_break0",
    "fieldtype": "Column Break",
    "oldfieldtype": "Column Break",
@@ -116,7 +137,7 @@
    "no_copy": 1,
    "oldfieldname": "status",
    "oldfieldtype": "Select",
-   "options": "Open\nWorking\nPending Review\nOverdue\nCompleted\nCancelled"
+   "options": "Open\nWorking\nPending Review\nOverdue\nCompleted\nClosed"
   },
   {
    "fieldname": "priority",
@@ -128,6 +149,18 @@
    "oldfieldtype": "Select",
    "options": "Low\nMedium\nHigh\nUrgent",
    "search_index": 1
+  },
+  {
+   "fetch_from": "type.weight",
+   "fieldname": "task_weight",
+   "fieldtype": "Float",
+   "label": "Weight"
+  },
+  {
+   "fieldname": "completed_by",
+   "fieldtype": "Link",
+   "label": "Completed By",
+   "options": "User"
   },
   {
    "fieldname": "color",
@@ -142,6 +175,17 @@
    "label": "Parent Task",
    "options": "Task",
    "search_index": 1
+  },
+  {
+   "fieldname": "project_details_section",
+   "fieldtype": "Section Break",
+   "label": "Project Details"
+  },
+  {
+   "fieldname": "projects",
+   "fieldtype": "Table",
+   "label": "Projects",
+   "options": "Task Project"
   },
   {
    "collapsible": 1,
@@ -165,12 +209,6 @@
    "label": "Expected Time (in hours)",
    "oldfieldname": "exp_total_hrs",
    "oldfieldtype": "Data"
-  },
-  {
-   "fetch_from": "type.weight",
-   "fieldname": "task_weight",
-   "fieldtype": "Float",
-   "label": "Weight"
   },
   {
    "fieldname": "column_break_11",
@@ -359,51 +397,13 @@
    "ignore_user_permissions": 1,
    "label": "Old Parent",
    "read_only": 1
-  },
-  {
-   "fieldname": "completed_by",
-   "fieldtype": "Link",
-   "label": "Completed By",
-   "options": "User"
-  },
-  {
-   "default": "0",
-   "fieldname": "billable",
-   "fieldtype": "Check",
-   "label": "Billable"
-  },
-  {
-   "fetch_from": "project.project_team",
-   "fieldname": "team",
-   "fieldtype": "Link",
-   "label": "Team",
-   "options": "Project Team",
-   "read_only": 1
-  },
-  {
-   "depends_on": "eval:doc.team",
-   "fieldname": "assign_to",
-   "fieldtype": "Table MultiSelect",
-   "label": "Assign To",
-   "options": "Task Users"
-  },
-  {
-   "fieldname": "project_details_section",
-   "fieldtype": "Section Break",
-   "label": "Project Details"
-  },
-  {
-   "fieldname": "projects",
-   "fieldtype": "Table",
-   "label": "Projects",
-   "options": "Task Project"
   }
  ],
  "icon": "fa fa-check",
  "idx": 1,
  "is_tree": 1,
  "max_attachments": 5,
- "modified": "2021-07-30 00:43:04.777292",
+ "modified": "2021-08-04 04:30:16.582374",
  "modified_by": "Administrator",
  "module": "Projects",
  "name": "Task",

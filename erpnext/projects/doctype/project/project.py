@@ -110,7 +110,7 @@ class Project(Document):
 			if (self.percent_complete_method == "Task Completion" and total > 0) or (
 				not self.percent_complete_method and total > 0):
 				completed = frappe.db.sql("""select count(name) from tabTask where
-					project=%s and status in ('Cancelled', 'Completed')""", self.name)[0][0]
+					project=%s and status in ('Closed', 'Completed')""", self.name)[0][0]
 				self.percent_complete = flt(flt(completed) / total * 100, 2)
 
 			if (self.percent_complete_method == "Task Progress" and total > 0):
