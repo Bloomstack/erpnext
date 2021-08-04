@@ -5,17 +5,26 @@
 
 {% block head_include %}
 <style>
-	.image-body {
-		align-self: center;
-		color: #d1d8dd;
-		font-size: 24px;
-		font-weight: 600;
-		line-height: 1;
-		padding: 20px;
+	* {
+		scrollbar-width: thin;
+		scrollbar-color: #ccc #000;
+	}
+
+	*::-webkit-scrollbar {
+		width: 5px;
+	}
+
+	*::-webkit-scrollbar-track {
+		background: #ccc;
+	}
+
+	*::-webkit-scrollbar-thumb {
+		background-color: #000;
+		border-radius: 20px;
 	}
 
 	section {
-		padding: 5rem 0 5rem 0;
+		padding: 4rem 0 3rem 0;
 	}
 
 	.course-progress {
@@ -52,32 +61,30 @@
 		font-weight: bold;
 	}
 
-.topic .topic-item li.active-parent {
-  background-color: #99d9ea;
-}
+	.topic .topic-item li.active-parent {
+		background-color: #99d9ea;
+	}
 
-.topic .topic-item li a.active {
-  color: black;
-}
+	.topic .topic-item li a.active {
+		color: black;
+	}
 
-.topic .topic-item .list-group-item a {
-  text-decoration: none;
-  color: inherit;
-	cursor: pointer;
-}
+	.topic .topic-item .list-group-item a {
+		text-decoration: none;
+		color: inherit;
+		cursor: pointer;
+	}
 
-.topic a[aria-selected="true"]:not(.active) {
-	color: blue;
-}
+	.topic a[aria-selected="true"]:not(.active) {
+		color: blue;
+	}
 
-/* .topic a[aria-selected="false"] {
-	pointer-events: none;
-} */
-
-/* .topic li:first-of-type a {
-	pointer-events: visible;
-} */
-
+	.side-nav,
+	.side-container {
+		height: 70vh;
+		overflow-y: scroll;
+		padding-top: 1rem;
+	}
 </style>
 {% endblock %}
 
@@ -104,18 +111,22 @@
 
 {% block content %}
 <section class="section row mx-0">
-	<div class='container col-sm-3 pl-5'>
-		<div class="row mt-5 topic">
+	<div class='container col-sm-3 pl-5 side-nav'>
+		<div class="row mt-1 topic">
 			{% for topic in topics %}
 			{{ card(topic) }}
 			{% endfor %}
-
 		</div>
 	</div>
-	<div class="container col-sm-9">
+	<div class="container col-sm-9 side-container">
+
 		<div class="d-flex flex-row justify-content-between">
 			<div class="course-title col-md-9">
 				{{ hero(course.course_name, course.description, has_access, {'name': 'Program', 'url': '/lms/program?program=' + program }) }}
+				<div class="searched-content">
+					<div class="details"></div>
+					<div class="error-message"></div>
+				</div>
 				{% if ongoing_topic %}
 				<a href="/lms/topic?program={{ program }}&course={{ course.name }}&topic={{ ongoing_topic }}"
 					class="btn continue-learning-btn">Continue Learning</a>
@@ -132,8 +143,13 @@
 				{% endif %}
 			</div>
 		</div>
+		<!-- <div class="searched-content">
+			<div class="details"></div>
+			<div class="error-message"></div>
+		</div> -->
 	</div>
 </section>
+
 {% endblock %}
 
 {% block script %}

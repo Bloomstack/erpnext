@@ -35,3 +35,8 @@ def get_ongoing_topic(topics, progress):
 		if progress.get(topic).get("started") == True and progress.get(topic).get("completed") == False:
 			ongoing_topic = topic
 	return ongoing_topic
+
+@frappe.whitelist(allow_guest=True)
+def get_content_details(type, content_name):
+    content = frappe.get_doc(type, content_name)
+    return content
