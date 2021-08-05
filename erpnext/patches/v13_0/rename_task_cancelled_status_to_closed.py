@@ -14,6 +14,6 @@ def execute():
 		SET 
 			status = "Closed" 
 		WHERE
-			status = 'Cancelled' or status = 'Canceled'
+			status in ('Cancelled', 'Canceled')
 		"""
 	)
