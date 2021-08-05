@@ -2,58 +2,115 @@
 {% block title %}{{ content.name or 'Content Page' }}{% endblock %}
 
 {% block head_include %}
-	<style>
-		.lms-content {
-			line-height: 1.8em;
-		}
-		.lms-content h1 {
-			margin-top: 1em;
-		}
-		.lms-content h2 {
-			margin-top: 1em;
-		}
-		.lms-content h3 {
-			margin-top: 0.8em;
-		}
-		.lms-content h4 {
-			margin-top: 0.6em;
-		}
-		section {
-			padding: 5rem 0 5rem 0;
-		}
-		.plyr--video .plyr__control.plyr__tab-focus,
-		.plyr--video .plyr__control:hover,
-		.plyr--video .plyr__control[aria-expanded='true'] {
-			 background: #5e64ff !important;
-		}
-		.plyr__control--overlaid:focus,
-		.plyr__control--overlaid:hover {
-		  background: #5e64ff !important;
-		}
-		.plyr__menu__container .plyr__control[role=menuitemradio][aria-checked=true]::before {
-    		background: #5e64ff !important;
-		}
-		.plyr__menu__container
-		.plyr__control[role='menuitemradio'][aria-checked='true']::before {
-		  background: #5e64ff;
-		}
-		.plyr--full-ui input[type='range'] {
-		  color: #5e64ff !important;
-		}
-		.plyr__control--overlaid {
-			background: rgba(94, 100, 255, 0.8) !important;
-		}
-		.timer_text {
-			display: block;
-			font-size: 14px;
-			text-transform: uppercase;
-		}
-		#timer {
-			font-size: 46px;
-			color: #8d99a6;
-			line-height: 1;
-			text-align: right;
-		}
+<style>
+	.lms-content {
+		line-height: 1.8em;
+	}
+
+	.lms-content h1 {
+		margin-top: 1em;
+	}
+
+	.lms-content h2 {
+		margin-top: 1em;
+	}
+
+	.lms-content h3 {
+		margin-top: 0.8em;
+	}
+
+	.lms-content h4 {
+		margin-top: 0.6em;
+	}
+
+	section {
+		padding: 5rem 0 5rem 0;
+	}
+
+	.plyr--video .plyr__control.plyr__tab-focus,
+	.plyr--video .plyr__control:hover,
+	.plyr--video .plyr__control[aria-expanded='true'] {
+		background: #5e64ff !important;
+	}
+
+	.plyr__control--overlaid:focus,
+	.plyr__control--overlaid:hover {
+		background: #5e64ff !important;
+	}
+
+	.plyr__menu__container .plyr__control[role=menuitemradio][aria-checked=true]::before {
+		background: #5e64ff !important;
+	}
+
+	.plyr__menu__container .plyr__control[role='menuitemradio'][aria-checked='true']::before {
+		background: #5e64ff;
+	}
+
+	.plyr--full-ui input[type='range'] {
+		color: #5e64ff !important;
+	}
+
+	.plyr__control--overlaid {
+		background: rgba(94, 100, 255, 0.8) !important;
+	}
+
+	.timer_text {
+		display: block;
+		font-size: 14px;
+		text-transform: uppercase;
+	}
+
+	#timer {
+		font-size: 46px;
+		color: #8d99a6;
+		line-height: 1;
+		text-align: right;
+	}
+
+	* {
+		scrollbar-width: thin;
+		scrollbar-color: #ccc #000;
+	}
+
+	*::-webkit-scrollbar {
+		width: 5px;
+	}
+
+	*::-webkit-scrollbar-track {
+		background: #ccc;
+	}
+
+	*::-webkit-scrollbar-thumb {
+		background-color: #000;
+		border-radius: 20px;
+	}
+
+	section {
+		padding: 4rem 0 2rem 0;
+	}
+
+	.topic-name {
+		font-size: 18px;
+		color: black;
+		font-weight: bold;
+	}
+
+	.content-name,
+	.content-name:hover {
+		color: black;
+		text-decoration: none;
+	}
+
+	.side-nav,
+	.side-container {
+		height: 70vh;
+		overflow-y: scroll;
+		padding-top: 1rem;
+	}
+
+	li.active-parent {
+		background-color: lightblue;
+	}
 	</style>
 	<link rel="stylesheet" href="https://cdn.plyr.io/3.5.3/plyr.css" />
 {% endblock %}
@@ -143,10 +200,31 @@
 </div>
 {% endmacro %}
 
+{% macro menu(topic) %}
+	<div class="col-sm-12 mb-4 topic pl-5 pr-0">
+		<ol class="list-unstyled">
+			<h4 class="topic-name">{{ topic.name }}</h4>
+			{% for content in topic.topic_content %}
+			<li class="ml-3 py-1 px-2">
+				<a class="content-name" id="{{content.content}}"
+					href="/lms/content?program={{ program }}&course={{ course }}&topic={{ topic.name }}&type={{ content.content_type }}&content={{ content.content }}">
+					{{ content.content }}
+				</a>
+			</li>
+			{% endfor %}
+		</ol>
+	</div>
+{% endmacro %}
+
 {% block content %}
 <section class="section">
-	<div>
-		<div class='container pb-5'>
+	<div class='row mx-0'>
+		<div class="col-sm-3 side-nav pr-0">
+			{% for topic in topics %}
+			{{ menu(topic) }}
+			{% endfor %}
+		</div>
+		<div class="col-sm-9 side-container">
 			{% if content_type=='Video' %}
 				{{ video() }}
 			{% elif content_type=='Article'%}
@@ -169,6 +247,35 @@
 		<script src='/assets/erpnext/js/education/lms/quiz.js'></script>
 	{% endif  %}
 	<script>
+		ongoing_topic = decodeURIComponent(getURLParameter(location.href, "content"));
+		$('.content-name').filter(function () {
+			return $(this).attr("id") == ongoing_topic
+		}).css({ 'color': 'black' }).parent('li').addClass('active-parent');
+
+		function getURLParameter(url, name) {
+			return (RegExp(name + '=' + '(.+?)(&|$)').exec(url) || [, null])[1];
+		}
+
+		completed_topic = decodeURIComponent(getURLParameter(location.href, "course"));
+		frappe.call({
+			method: "erpnext.www.lms.content.get_completed_topic_list",
+			args: {
+				course_name: completed_topic
+			},
+			callback: (r) => {
+				console.log(r);
+				r.message.forEach(e => {
+					console.log(e.content);
+					$('.content-name').filter(function () {
+						return $(this).attr("id") == e.content
+					}).css({
+						'color': 'blue'
+					})
+
+				});
+			}
+		});
+
 		{% if content_type == 'Video' %}
 			const player = new Plyr('#player');
 		{% elif content_type == 'Quiz' %}
@@ -189,7 +296,7 @@
 				})
 				window.quiz = quiz;
 			})
-		{% endif  %}
+		{% endif %}
 
 		{% if content_type != 'Quiz' %}
 
