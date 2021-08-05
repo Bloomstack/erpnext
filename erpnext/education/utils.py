@@ -397,3 +397,8 @@ def get_total_program_progress(topics,course_name):
 	completed_article = frappe.db.count("Course Activity",{"course": course_name },"content")
 	total_progress = int((completed_article * 100) / total_article)
 	return total_progress
+
+@frappe.whitelist(allow_guest=True)
+def get_completed_topic_list(course_name):
+	completed_topic = frappe.get_all("Course Activity", filters={"course": course_name},fields= ["content","content_type","enrollment"])
+	return completed_topic

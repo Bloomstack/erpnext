@@ -5,153 +5,162 @@
 
 {% block head_include %}
 <style>
-	* {
-		scrollbar-width: thin;
-		scrollbar-color: #ccc #000;
-	}
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #ccc #000;
+  }
 
-	*::-webkit-scrollbar {
-		width: 5px;
-	}
+  *::-webkit-scrollbar {
+    width: 5px;
+  }
 
-	*::-webkit-scrollbar-track {
-		background: #ccc;
-	}
+  *::-webkit-scrollbar-track {
+    background: #ccc;
+  }
 
-	*::-webkit-scrollbar-thumb {
-		background-color: #000;
-		border-radius: 20px;
-	}
+  *::-webkit-scrollbar-thumb {
+    background-color: #000;
+    border-radius: 20px;
+  }
 
-	section {
-		padding: 4rem 0 3rem 0;
-	}
+  section {
+    padding: 4rem 0 2rem 0;
+  }
 
-	.course-progress {
-		margin-top: 2.5rem;
-	}
+  .course-progress {
+    margin-top: 2.5rem;
+  }
 
-	.course-progress .progress {
-		border-radius: 1rem;
-		border: 1px solid #7ec45e;
-		height: 0.5rem;
-	}
+  .course-progress .progress {
+    border-radius: 1rem;
+    border: 1px solid #7ec45e;
+    height: 0.5rem;
+  }
 
-	.course-progress .progress-bar {
-		background-color: #7ec45e;
-	}
+  .course-progress .progress-bar {
+    background-color: #7ec45e;
+  }
 
-	.continue-learning-btn {
-		background-color: #76c2ba;
-		color: #fff;
-		border: 2px solid #76c2ba;
-		border-radius: 8px;
-		padding: 10px 30px;
-		text-transform: uppercase;
-		outline: 0;
-	}
+  .continue-learning-btn {
+    background-color: #76c2ba;
+    color: #fff;
+    border: 2px solid #76c2ba;
+    border-radius: 8px;
+    padding: 10px 30px;
+    text-transform: uppercase;
+    outline: 0;
+  }
 
-	.continue-learning-btn:hover {
-		background-color: #fff;
-		color: #76c2ba;
-	}
+  .continue-learning-btn:hover {
+    background-color: #fff;
+    color: #76c2ba;
+  }
 
-	.topic-item h4 {
-		font-size: 18px;
-		font-weight: bold;
-	}
+  .topic-item h4 {
+    font-size: 18px;
+    font-weight: bold;
+  }
 
-	.topic .topic-item li.active-parent {
-		background-color: #99d9ea;
-	}
+  .topic .topic-item li.active-parent {
+    background-color: #99d9ea;
+  }
 
-	.topic .topic-item li a.active {
-		color: black;
-	}
+  .topic .topic-item li a.active {
+    color: black;
+  }
 
-	.topic .topic-item .list-group-item a {
-		text-decoration: none;
-		color: inherit;
-		cursor: pointer;
-	}
+  .topic .topic-item .list-group-item a {
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+  }
 
-	.topic a[aria-selected="true"]:not(.active) {
-		color: blue;
-	}
+  .topic a[aria-selected="true"]:not(.active) {
+    color: blue;
+  }
 
-	.side-nav,
-	.side-container {
-		height: 70vh;
-		overflow-y: scroll;
-		padding-top: 1rem;
-	}
+  .side-nav,
+  .side-container {
+    height: 70vh;
+    overflow-y: scroll;
+    padding-top: 1rem;
+  }
+
+  .topic-name {
+    font-size: 18px;
+    color: black;
+    font-weight: bold;
+  }
+
+  .content-name,
+  .content-name:hover {
+    color: black;
+    text-decoration: none;
+  }
+
 </style>
 {% endblock %}
 
 
 {% macro card(topic) %}
-<div class="text-left col-sm-12 px-0">
-	<div class="nav flex-column nav-pills py-2" role="tablist" aria-orientation="vertical">
-		<div class="nav-item topic-item">
-			<h4>{{topic.name}}</h4>
-			<ul class="list-group pl-3">
-				{% for content in topic.topic_content %}
-				<li class="list-group-item border-0 rounded">
-					<a class="content-name" data-toggle="pill" role="tab" aria-selected="false"
-						href="/lms/content?program={{ program }}&course={{ course.name }}&topic={{ topic.name }}&type={{ content.content_type }}&content={{ content.content }}">
-						{{ content.content }}
-					</a>
-				</li>
-				{% endfor %}
-			</ul>
-		</div>
-	</div>
+<div class="col-sm-12 mb-4 topic pl-5 pr-0">
+  {% if has_access %}
+  <div class="flex-column">
+    <div class="flex-column">
+      <ol class="list-unstyled">
+        <h4 class="topic-name">{{ topic.topic_name }}</h4>
+        {% for content in topic.topic_content %}
+        {% if has_access %}
+        <li class="ml-3 py-1 px-2">
+          <a class="content-name" id="{{content.content}}"
+            href="/lms/content?program={{ program }}&course={{ course.name }}&topic={{ topic.name }}&type={{ content.content_type }}&content={{ content.content }}">
+            {{ content.content }}
+          </a>
+        </li>
+        {% else %}
+        <span class="text-muted">{{ content.content }}</span>
+        {% endif %}
+        {% endfor %}
+      </ol>
+    </div>
+  </div>
+  {% endif %}
 </div>
 {% endmacro %}
 
 {% block content %}
 <section class="section row mx-0">
-	<div class='container col-sm-3 pl-5 side-nav'>
-		<div class="row mt-1 topic">
-			{% for topic in topics %}
-			{{ card(topic) }}
-			{% endfor %}
-		</div>
-	</div>
-	<div class="container col-sm-9 side-container">
+  <div class='container col-sm-3 side-nav'>
+    <div class="row mt-3">
+      {% for topic in topics %}
+      {{ card(topic) }}
+      {% endfor %}
+    </div>
+  </div>
+  <div class="container col-sm-9 side-container">
+    <div class="d-flex flex-row justify-content-between">
+      <div class="course-title col-md-9">
+        {{ hero(course.course_name, course.description, has_access, {'name': 'Program', 'url': '/lms/program?program=' + program }) }}
+        {% if ongoing_topic %}
+        <a href="/lms/topic?program={{ program }}&course={{ course.name }}&topic={{ ongoing_topic }}"
+          class="btn continue-learning-btn">Continue Learning</a>
+        {% endif %}
+      </div>
+      <div class="course-progress col-md-3">
+        {% if has_access and not has_super_access and not frappe.session.user == 'Administrator' %}
+        <p class="text-right mb-0">{{program}} </p>
+        <div class="progress">
+          <div class="progress-bar" role="progressbar" style="width: {{total_progress}}%;"
+            aria-valuenow="{{total_progress}}" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+        <p class="text-right mb-0">{{total_progress}}% Completed </p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
 
-		<div class="d-flex flex-row justify-content-between">
-			<div class="course-title col-md-9">
-				{{ hero(course.course_name, course.description, has_access, {'name': 'Program', 'url': '/lms/program?program=' + program }) }}
-				<div class="searched-content">
-					<div class="details"></div>
-					<div class="error-message"></div>
-				</div>
-				{% if ongoing_topic %}
-				<a href="/lms/topic?program={{ program }}&course={{ course.name }}&topic={{ ongoing_topic }}"
-					class="btn continue-learning-btn">Continue Learning</a>
-				{% endif %}
-			</div>
-			<div class="course-progress col-md-3">
-				{% if has_access and not has_super_access and not frappe.session.user == 'Administrator' %}
-				<p class="text-right mb-0">{{program}} </p>
-				<div class="progress">
-					<div class="progress-bar" role="progressbar" style="width: {{total_progress}}%;"
-						aria-valuenow="{{total_progress}}" aria-valuemin="0" aria-valuemax="100"></div>
-				</div>
-				<p class="text-right mb-0">{{total_progress}}% Completed </p>
-				{% endif %}
-			</div>
-		</div>
-		<!-- <div class="searched-content">
-			<div class="details"></div>
-			<div class="error-message"></div>
-		</div> -->
-	</div>
-</section>
+  {% endblock %}
 
-{% endblock %}
-
-{% block script %}
-<script src="/assets/erpnext/js/education/lms/course.js"></script>
-{% endblock %}
+  {% block script %}
+  <script src="/assets/erpnext/js/education/lms/course.js"></script>
+  {% endblock %}

@@ -38,5 +38,10 @@ def get_ongoing_topic(topics, progress):
 
 @frappe.whitelist(allow_guest=True)
 def get_content_details(type, content_name):
-    content = frappe.get_doc(type, content_name)
-    return content
+	content = frappe.get_doc(type, content_name)
+	return content
+
+@frappe.whitelist(allow_guest=True)
+def get_completed_topic_list(course_name):
+	completed_topic = frappe.get_all("Course Activity", filters={"course": course_name},fields= ["content","content_type","enrollment"])
+	return completed_topic
