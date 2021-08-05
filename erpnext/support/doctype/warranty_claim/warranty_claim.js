@@ -15,8 +15,6 @@ frappe.ui.form.on("Warranty Claim", {
 		frm.add_fetch('serial_no', 'maintenance_status', 'warranty_amc_status');
 		frm.add_fetch('serial_no', 'warranty_expiry_date', 'warranty_expiry_date');
 		frm.add_fetch('serial_no', 'amc_expiry_date', 'amc_expiry_date');
-		frm.add_fetch('serial_no', 'customer', 'customer');
-		frm.add_fetch('serial_no', 'customer_name', 'customer_name');
 		frm.add_fetch('item_code', 'item_name', 'item_name');
 		frm.add_fetch('item_code', 'description', 'description');
 	},
