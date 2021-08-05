@@ -9,9 +9,11 @@ def execute():
 
 	frappe.db.sql(
 		"""
-		UPDATE `tabTask`
-			SET status = CASE
-				WHEN status = 'Cancelled' or status = 'Canceled' THEN 'Closed'
-			END
+		UPDATE 
+			`tabTask` 
+		SET 
+			status = "Closed" 
+		WHERE
+			status = 'Cancelled' or status = 'Canceled'
 		"""
 	)
