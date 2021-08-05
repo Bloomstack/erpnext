@@ -46,6 +46,18 @@ frappe.ui.form.on('Quoting Sheet', {
 		}
 	},
 
+	qty: (frm) => {
+		if (frm.doc.qty) {
+			frappe.call({
+				method: "set_raw_materials_qty_against_quoting_qty",
+				doc: frm.doc,
+				callback: () => {
+					frm.refresh_fields();
+				},
+			});
+		}
+	},
+
 	bom: function (frm) {
 		if (frm.doc.bom) {
 			frappe.call({
@@ -54,6 +66,7 @@ frappe.ui.form.on('Quoting Sheet', {
 				callback: () => {
 					frm.refresh_field("raw_material_items");
 					frm.refresh_field("rm_cost");
+					frm.refresh_field("qty");
 				},
 			});
 		}
