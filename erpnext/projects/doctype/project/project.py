@@ -558,3 +558,9 @@ def set_project_status(project, status):
 
 	project.status = status
 	project.save()
+
+@frappe.whitelist()
+def update_task_projects(ref_dt, ref_dn, freeze):
+	task_projects = frappe.get_all("Task Project", filters={frappe.scrub(ref_dt): ref_dn})
+	for project in task_projects:
+		frappe.db.set_value("Task Project", project.name, "freeze", freeze)

@@ -21,6 +21,7 @@
   "priority",
   "department",
   "billable",
+  "freeze",
   "customer_details",
   "customer",
   "column_break_14",
@@ -453,12 +454,18 @@
    "fieldtype": "Link",
    "label": "Project Team",
    "options": "Project Team"
+  },
+  {
+   "default": "0",
+   "fieldname": "freeze",
+   "fieldtype": "Check",
+   "label": "Freeze"
   }
  ],
  "icon": "fa fa-puzzle-piece",
  "idx": 29,
  "max_attachments": 4,
- "modified": "2020-11-11 03:29:29.658278",
+ "modified": "2021-08-06 03:48:39.623682",
  "modified_by": "Administrator",
  "module": "Projects",
  "name": "Project",
