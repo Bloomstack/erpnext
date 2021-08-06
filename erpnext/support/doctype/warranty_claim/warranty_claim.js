@@ -9,22 +9,14 @@ frappe.ui.form.on("Warranty Claim", {
 		frm.set_query('customer_address', erpnext.queries.address_query);
 		frm.set_query('customer', erpnext.queries.customer);
 		frm.set_query('serial_no',() => {
-			if(frm.doc.customer) {
-					return {
-							filters: [
-							["Serial No", "customer", "=", frm.doc.customer]
-							]
-					}
+			if (frm.doc.customer) {
+				return {
+					filters: [
+						["Serial No", "customer", "=", frm.doc.customer]
+					]
+				};
 			}
 		});
-	// 	frm.add_fetch('serial_no', 'item_code', 'item_code');
-	// 	frm.add_fetch('serial_no', 'item_name', 'item_name');
-	// 	frm.add_fetch('serial_no', 'description', 'description');
-	// 	frm.add_fetch('serial_no', 'maintenance_status', 'warranty_amc_status');
-	// 	frm.add_fetch('serial_no', 'warranty_expiry_date', 'warranty_expiry_date');
-	// 	frm.add_fetch('serial_no', 'amc_expiry_date', 'amc_expiry_date');
-	// 	frm.add_fetch('item_code', 'item_name', 'item_name');
-	// 	frm.add_fetch('item_code', 'description', 'description');
 	},
 	serial_no: function(frm) {
 		if (!frm.doc.serial_no) {

@@ -75,7 +75,7 @@ def get_serial_no_values(serial_no):
 		'item_code' : doc.item_code,
 		'item_name' : doc.item_name,
 		'description' : doc.description,
-		'maintenance_status' : doc.maintenance_status,
+		'warranty_amc_status' : doc.maintenance_status,
 		'warranty_expiry_date' : doc.warranty_expiry_date,
 		'amc_expiry_date' : doc.amc_expiry_date,
 		'customer' : doc.customer,
