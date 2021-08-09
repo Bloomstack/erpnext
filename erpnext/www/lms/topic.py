@@ -21,8 +21,8 @@ def get_context(context):
 	context.has_super_access = utils.has_super_access()
 	context.ongoing_topic = get_ongoing_topic(context.contents)
 	course_details = frappe.get_doc('Course',course)
-	course_topics = course_details.get_topics()
-	context.total_progress = utils.get_total_program_progress(course_topics,course)
+	context.course_topics = course_details.get_topics()
+	context.total_progress = utils.get_total_program_progress(context.course_topics,course)
 
 def get_contents(topic, course, program):
 	student = utils.get_current_student()

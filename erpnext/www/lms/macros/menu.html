@@ -1,0 +1,15 @@
+{% macro menu(topic, program, course) %}
+	<div class="col-sm-12 mb-4 topic pl-5 pr-0">
+		<ol class="list-unstyled">
+			<h4 class="topic-name">{{ topic.name }}</h4>
+			{% for content in topic.topic_content %}
+			<li class="ml-3 py-1 px-2">
+				<a class="content-name" id="{{content.content}}"
+					href="/lms/content?program={{ program }}&course={{ course }}&topic={{ topic.name }}&type={{ content.content_type }}&content={{ content.content }}">
+					{{ content.content }}
+				</a>
+			</li>
+			{% endfor %}
+		</ol>
+	</div>
+{% endmacro %}

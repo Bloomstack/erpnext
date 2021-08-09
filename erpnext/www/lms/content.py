@@ -34,16 +34,19 @@ def get_context(context):
 	context.topic = topic
 	course = frappe.get_doc('Course', context.course)
 	context.topics = course.get_topics()
-	topic = frappe.get_doc("Topic", topic)
-	context.content_list = [{'content_type':item.content_type, 'content':item.content} for item in topic.topic_content]
+	topic_doc = frappe.get_doc("Topic", topic)
+	content_list = []
+	for t in context.topics:
+		for topic_content in t.topic_content:
+			content_list.append({'content_type':topic_content.content_type, 'content':topic_content.content})
 
 	# Set context for progress numbers
-	context.position = context.content_list.index({'content': content, 'content_type': content_type})
-	context.length = len(context.content_list)
+	context.position = content_list.index({'content': content, 'content_type': content_type})
+	context.length = len(content_list)
 
 	# Set context for navigation
-	context.previous = utils.get_previous_content(context.content_list, context.position)
-	context.next = utils.get_next_content(context.content_list, context.position)
+	context.previous = utils.get_previous_content(content_list, context.position)
+	context.next = utils.get_next_content(content_list, context.position)
 
 def allowed_content_access(program, content, content_type):
 	contents_of_program = frappe.db.sql("""select `tabTopic Content`.content, `tabTopic Content`.content_type
