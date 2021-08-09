@@ -8,7 +8,7 @@ frappe.ui.form.on("Warranty Claim", {
 		frm.set_query('contact_person', erpnext.queries.contact_query);
 		frm.set_query('customer_address', erpnext.queries.address_query);
 		frm.set_query('customer', erpnext.queries.customer);
-		frm.set_query('serial_no',() => {
+		frm.set_query('serial_no', () => {
 			if (frm.doc.customer) {
 				return {
 					filters: [
@@ -29,10 +29,12 @@ frappe.ui.form.on("Warranty Claim", {
 			},
 			callback: function(res) {
 				if(res.message) {
-					frm.set_value(res.message)
+					for (let key in res.message) {
+						frm.set_value(key, res.message[key]);
+					}
 				}
 			}
-		})
+		});
 	},
 
 	onload: function(frm) {
