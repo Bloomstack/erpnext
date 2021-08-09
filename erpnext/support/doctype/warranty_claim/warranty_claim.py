@@ -70,7 +70,7 @@ def make_maintenance_visit(source_name, target_doc=None):
 
 @frappe.whitelist()
 def get_serial_no_values(serial_no):
-	doc= frappe.get_doc("Serial No", serial_no)
+	doc = frappe.get_doc("Serial No", serial_no)
 	return {
 		'item_code' : doc.item_code,
 		'item_name' : doc.item_name,
