@@ -15,6 +15,9 @@ frappe.ui.form.on("Project", {
 			'Purchase Invoice': () => {
 				open_form(frm, "Purchase Invoice", "Purchase Invoice Item", "items");
 			},
+			'Task': () => {
+				open_form(frm, "Task", "Task Project", "projects");
+			}
 		};
 	},
 	onload: function (frm) {
