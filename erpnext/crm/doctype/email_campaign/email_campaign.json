@@ -52,15 +52,14 @@
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Email Campaign For ",
-   "options": "\nLead\nContact",
+   "options": "\nLead\nContact\nEmail Group",
    "reqd": 1
   },
   {
    "fieldname": "recipient",
    "fieldtype": "Dynamic Link",
    "label": "Recipient",
-   "options": "email_campaign_for",
-   "reqd": 1
+   "options": "email_campaign_for"
   },
   {
    "default": "__user",
@@ -70,7 +69,7 @@
    "options": "User"
   }
  ],
- "modified": "2019-11-11 17:18:47.342839",
+ "modified": "2021-08-10 22:08:02.170649",
  "modified_by": "Administrator",
  "module": "CRM",
  "name": "Email Campaign",
