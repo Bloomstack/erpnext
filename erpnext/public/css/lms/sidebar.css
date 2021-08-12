@@ -115,3 +115,20 @@ section {
 .side-nav li:not(.completed-parent) {
 	cursor: not-allowed;
 }
+
+.side-nav li.topic-content {
+	background-color: lightblue;
+	cursor: pointer;
+}
+
+.side-nav li.topic-content a {
+	color: black !important;
+	pointer-events: all !important;
+}
+
+.btn-next:not(:disabled):not(.disabled):active,
+.btn-next:not(:disabled):not(.disabled).active,
+.show>.btn-next.dropdown-toggle {
+	background-color: #80bd9e;
+	border-color: #80bd9e;
+}
