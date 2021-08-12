@@ -12,20 +12,17 @@ frappe.ready(() => {
 
     completed_topic = decodeURIComponent(getURLParameter(location.href, "course"));
     frappe.call({
-        method: "erpnext.www.lms.content.get_completed_topic_list",
+        method: "erpnext.education.utils.get_completed_topic_list",
         args: {
             course_name: completed_topic
         },
         callback: (r) => {
-            console.log(r);
             r.message.forEach(e => {
-                console.log(e.content);
                 $('.content-name').filter(function () {
                     return $(this).attr("id") == e.content
                 }).css({
                     'color': 'blue'
-                })
-
+                }).addClass('completed-article').parent('li').addClass('completed-parent');
             });
         }
     });

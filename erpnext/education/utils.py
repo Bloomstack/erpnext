@@ -175,18 +175,14 @@ def has_super_access():
 
 @frappe.whitelist()
 def add_activity(course, content_type, content, program):
-	if has_super_access():
-		return None
-
 	student = get_current_student()
-	if not student:
-		return frappe.throw(_("Student with email {0} does not exist".format(frappe.session.user)), frappe.DoesNotExistError)
 
-	enrollment = get_or_create_course_enrollment(course, program)
-	if content_type == 'Quiz':
-		return
-	else:
-		return enrollment.add_activity(content_type, content)
+	if student:
+		enrollment = get_or_create_course_enrollment(course, program)
+		if content_type == 'Quiz':
+			return
+		else:
+			return enrollment.add_activity(content_type, content)
 
 @frappe.whitelist()
 def evaluate_quiz(quiz_response, quiz_name, course, program):
@@ -390,10 +386,16 @@ def get_previous_content(content_list, current_index):
 	else:
 		return content_list[current_index - 1]
 
-def get_total_program_progress(topics,course_name):
+def get_total_program_progress(topics, course_name, student):
 	total_article = 0
 	for topic in topics:
 		total_article = total_article + len(topic.topic_content)
-	completed_article = frappe.db.count("Course Activity",{"course": course_name },"content")
+	completed_article = frappe.db.count("Course Activity", {"course": course_name, "student": student.name}, "content")
 	total_progress = int((completed_article * 100) / total_article)
 	return total_progress
+
+@frappe.whitelist(allow_guest=True)
+def get_completed_topic_list(course_name):
+	student = get_current_student()
+	completed_topic = frappe.get_all("Course Activity", filters={"course": course_name, "student": student.name},fields= ["content", "content_type", "enrollment", "student"])
+	return completed_topic
