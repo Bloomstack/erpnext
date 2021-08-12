@@ -59,7 +59,8 @@
    "fieldname": "recipient",
    "fieldtype": "Dynamic Link",
    "label": "Recipient",
-   "options": "email_campaign_for"
+   "options": "email_campaign_for",
+   "reqd": 1
   },
   {
    "default": "__user",
@@ -69,7 +70,7 @@
    "options": "User"
   }
  ],
- "modified": "2021-08-10 22:08:02.170649",
+ "modified": "2021-08-11 23:35:37.827221",
  "modified_by": "Administrator",
  "module": "CRM",
  "name": "Email Campaign",
