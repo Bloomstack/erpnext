@@ -25,10 +25,10 @@ section {
 .plyr--video .plyr__control.plyr__tab-focus,
 .plyr--video .plyr__control:hover,
 .plyr--video .plyr__control[aria-expanded='true'],
-.plyr__control--overlaid:hover,
-.plyr__control--overlaid:focus,
 .plyr__menu__container .plyr__control[role=menuitemradio][aria-checked=true]::before,
 .plyr__menu__container .plyr__control[role='menuitemradio'][aria-checked='true']::before,
+.plyr__control--overlaid:hover,
+.plyr__control--overlaid:focus,
 .plyr--full-ui input[type='range'],
 .plyr__control--overlaid {
   background: #5e64ff !important;
