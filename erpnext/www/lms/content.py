@@ -34,7 +34,6 @@ def get_context(context):
 	context.topic = topic
 	course = frappe.get_doc('Course', context.course)
 	context.topics = course.get_topics()
-	topic_doc = frappe.get_doc("Topic", topic)
 	content_list = []
 	for t in context.topics:
 		for topic_content in t.topic_content:
