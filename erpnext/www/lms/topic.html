@@ -49,7 +49,7 @@
 				{% if ongoing_topic %}
 					<a href="/lms/content?program={{ program }}&course={{ course }}&topic={{ topic.name }}&type={{ ongoing_topic.doctype }}&content={{ ongoing_topic.name }}" class="btn continue-learning-btn">Continue Learning</a>
 				{% else %}
-					<a href="/lms/content?program={{ program }}&course={{ course }}&topic={{ topic.name }}&type={{ course_topics[0].topic_content[0].content_type }}&content={{ course_topics[0].topic_content[0].content }}" class="btn btn-primary btn-next">Next</a>
+					<a href="/lms/content?program={{ program }}&course={{ course }}&topic={{ topic.name }}&type={{ course_topics[0].topic_content[0].content_type }}&content={{ course_topics[0].topic_content[0].content }}" class="btn btn-primary btn-next ml-3">Next</a>
 				{% endif %}
 			</div>
 			<div class="course-progress col-md-3">
