@@ -397,5 +397,5 @@ def get_total_program_progress(topics, course_name, student):
 @frappe.whitelist(allow_guest=True)
 def get_completed_topic_list(course_name):
 	student = get_current_student()
-	completed_topic = frappe.get_all("Course Activity", filters={"course": course_name, "student": student.name},fields= ["content", "content_type", "enrollment", "student"])
+	completed_topic = frappe.get_all("Course Activity", filters={"course": course_name, "student": student.name}, fields=["content", "content_type", "enrollment", "student"])
 	return completed_topic
