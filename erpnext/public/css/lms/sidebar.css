@@ -28,17 +28,17 @@ section.section {
 	background: #5e64ff !important;
 }
 
-.plyr__control--overlaid:focus,
-.plyr__control--overlaid:hover {
-	background: #5e64ff !important;
-}
-
 .plyr__menu__container .plyr__control[role=menuitemradio][aria-checked=true]::before {
 	background: #5e64ff !important;
 }
 
 .plyr__menu__container .plyr__control[role='menuitemradio'][aria-checked='true']::before {
 	background: #5e64ff;
+}
+
+.plyr__control--overlaid:focus,
+.plyr__control--overlaid:hover {
+	background: #5e64ff !important;
 }
 
 .plyr--full-ui input[type='range'] {
