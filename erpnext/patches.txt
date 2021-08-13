@@ -728,4 +728,4 @@ erpnext.patches.v13_0.add_cannabis_domain
 execute:frappe.delete_doc_if_exists("Page", "welcome-to-erpnext")
 execute:frappe.delete_doc_if_exists("Report", "Item-Wise Sales Register")
 execute:frappe.delete_doc_if_exists("Report", "Sales Analytics")
-erpnext.patches.v13_0.update_accounts_taxjar_setting
+erpnext.patches.v13_0.update_accounts_taxjar_setting #
