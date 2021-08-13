@@ -59,8 +59,6 @@ frappe.ui.form.on("Project", {
 			frm.web_link && frm.web_link.remove();
 		} else {
 			frm.add_web_link("/projects?project=" + encodeURIComponent(frm.doc.name));
-
-			frm.trigger('show_dashboard');
 		}
 		frm.events.set_buttons(frm);
 	},

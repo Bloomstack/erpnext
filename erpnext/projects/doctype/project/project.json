@@ -12,8 +12,8 @@
   "project_type",
   "project_team",
   "is_active",
-  "percent_complete_method",
   "percent_complete",
+  "use_task_weight",
   "column_break_5",
   "project_template",
   "expected_start_date",
@@ -107,17 +107,10 @@
    "options": "Yes\nNo"
   },
   {
-   "default": "Task Completion",
-   "fieldname": "percent_complete_method",
-   "fieldtype": "Select",
-   "label": "% Complete Method",
-   "options": "Manual\nTask Completion\nTask Progress\nTask Weight"
-  },
-  {
    "bold": 1,
    "fieldname": "percent_complete",
    "fieldtype": "Percent",
-   "label": "% Completed",
+   "label": "Percent Completed",
    "no_copy": 1,
    "read_only": 1
   },
@@ -460,12 +453,18 @@
    "fieldname": "freeze",
    "fieldtype": "Check",
    "label": "Freeze"
+  },
+  {
+   "default": "0",
+   "fieldname": "use_task_weight",
+   "fieldtype": "Check",
+   "label": "Use Task Weight for % Completed"
   }
  ],
  "icon": "fa fa-puzzle-piece",
  "idx": 29,
  "max_attachments": 4,
- "modified": "2021-08-06 03:48:39.623682",
+ "modified": "2021-08-14 03:09:24.010508",
  "modified_by": "Administrator",
  "module": "Projects",
  "name": "Project",

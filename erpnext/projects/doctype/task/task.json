@@ -12,6 +12,7 @@
   "assign_to",
   "issue",
   "type",
+  "parent_task",
   "is_group",
   "billable",
   "column_break0",
@@ -20,7 +21,6 @@
   "task_weight",
   "completed_by",
   "color",
-  "parent_task",
   "project_details_section",
   "projects",
   "sb_timeline",
@@ -63,21 +63,6 @@
    "in_standard_filter": 1,
    "label": "Subject",
    "reqd": 1
-  },
-  {
-   "bold": 1,
-   "fieldname": "project",
-   "fieldtype": "Link",
-   "in_global_search": 1,
-   "in_list_view": 1,
-   "in_standard_filter": 1,
-   "label": "Default Project",
-   "oldfieldname": "project",
-   "oldfieldtype": "Link",
-   "options": "Project",
-   "read_only": 1,
-   "remember_last_selected_value": 1,
-   "search_index": 1
   },
   {
    "fetch_from": "project.project_team",
@@ -397,13 +382,28 @@
    "ignore_user_permissions": 1,
    "label": "Old Parent",
    "read_only": 1
+  },
+  {
+   "bold": 1,
+   "fieldname": "project",
+   "fieldtype": "Link",
+   "in_global_search": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Default Project",
+   "oldfieldname": "project",
+   "oldfieldtype": "Link",
+   "options": "Project",
+   "read_only": 1,
+   "remember_last_selected_value": 1,
+   "search_index": 1
   }
  ],
  "icon": "fa fa-check",
  "idx": 1,
  "is_tree": 1,
  "max_attachments": 5,
- "modified": "2021-08-04 04:30:16.582374",
+ "modified": "2021-08-14 02:04:04.363607",
  "modified_by": "Administrator",
  "module": "Projects",
  "name": "Task",
@@ -427,7 +427,6 @@
  "show_title_field_in_link": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
- "timeline_field": "project",
  "title_field": "subject",
  "track_seen": 1
 }
