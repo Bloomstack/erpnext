@@ -12,45 +12,43 @@
   "assign_to",
   "issue",
   "type",
-  "parent_task",
+  "is_milestone",
   "is_group",
   "billable",
   "column_break0",
   "status",
   "priority",
   "task_weight",
-  "completed_by",
-  "color",
+  "parent_task",
   "project_details_section",
   "projects",
   "sb_timeline",
   "exp_start_date",
+  "act_start_date",
+  "review_date",
+  "closing_date",
   "expected_time",
   "column_break_11",
   "exp_end_date",
-  "progress",
-  "is_milestone",
+  "act_end_date",
+  "reviewed__by",
+  "completed_by",
+  "actual_time",
   "sb_details",
   "description",
   "sb_depends_on",
   "depends_on",
   "depends_on_tasks",
-  "sb_actual",
-  "act_start_date",
-  "actual_time",
-  "column_break_15",
-  "act_end_date",
   "sb_costing",
   "total_costing_amount",
   "total_expense_claim",
   "column_break_20",
   "total_billing_amount",
   "sb_more_info",
-  "review_date",
-  "closing_date",
-  "column_break_22",
-  "department",
   "company",
+  "department",
+  "column_break_22",
+  "color",
   "lft",
   "rgt",
   "old_parent"
@@ -210,11 +208,6 @@
    "search_index": 1
   },
   {
-   "fieldname": "progress",
-   "fieldtype": "Percent",
-   "label": "% Progress"
-  },
-  {
    "default": "0",
    "fieldname": "is_milestone",
    "fieldtype": "Check",
@@ -257,13 +250,6 @@
    "read_only": 1
   },
   {
-   "fieldname": "sb_actual",
-   "fieldtype": "Section Break",
-   "oldfieldtype": "Column Break",
-   "print_width": "50%",
-   "width": "50%"
-  },
-  {
    "fieldname": "act_start_date",
    "fieldtype": "Date",
    "label": "Actual Start Date (via Time Sheet)",
@@ -276,10 +262,6 @@
    "fieldtype": "Float",
    "label": "Actual Time (in hours)",
    "read_only": 1
-  },
-  {
-   "fieldname": "column_break_15",
-   "fieldtype": "Column Break"
   },
   {
    "fieldname": "act_end_date",
@@ -328,7 +310,6 @@
    "label": "More Info"
   },
   {
-   "depends_on": "eval:doc.status == \"Closed\" || doc.status == \"Pending Review\"",
    "fieldname": "review_date",
    "fieldtype": "Date",
    "label": "Review Date",
@@ -336,7 +317,6 @@
    "oldfieldtype": "Date"
   },
   {
-   "depends_on": "eval:doc.status == \"Closed\"",
    "fieldname": "closing_date",
    "fieldtype": "Date",
    "label": "Closing Date",
@@ -397,13 +377,19 @@
    "read_only": 1,
    "remember_last_selected_value": 1,
    "search_index": 1
+  },
+  {
+   "fieldname": "reviewed__by",
+   "fieldtype": "Link",
+   "label": "Reviewed  By",
+   "options": "User"
   }
  ],
  "icon": "fa fa-check",
  "idx": 1,
  "is_tree": 1,
  "max_attachments": 5,
- "modified": "2021-08-14 02:04:04.363607",
+ "modified": "2021-08-14 06:31:42.965246",
  "modified_by": "Administrator",
  "module": "Projects",
  "name": "Task",

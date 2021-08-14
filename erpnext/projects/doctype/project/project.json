@@ -31,7 +31,7 @@
   "copied_from",
   "section_break0",
   "notes",
-  "task_completion_status",
+  "task_completion_statuses",
   "section_break_18",
   "actual_start_date",
   "actual_time",
@@ -461,15 +461,15 @@
   },
   {
    "description": "The Task will be considered 'Completed' for this project if moved under these statuses. ",
-   "fieldname": "task_completion_status",
+   "fieldname": "task_completion_statuses",
    "fieldtype": "Data",
-   "label": "Task Completion Status"
+   "label": "Task Completion Statuses "
   }
  ],
  "icon": "fa fa-puzzle-piece",
  "idx": 29,
  "max_attachments": 4,
- "modified": "2021-08-14 04:02:15.772962",
+ "modified": "2021-08-14 07:03:08.405102",
  "modified_by": "Administrator",
  "module": "Projects",
  "name": "Project",

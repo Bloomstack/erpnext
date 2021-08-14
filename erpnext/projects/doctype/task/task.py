@@ -36,6 +36,7 @@ class Task(NestedSet):
 		self.validate_status()
 		self.update_depends_on()
 		self.validate_default_project()
+		self.update_completion_date()
 
 	def before_save(self):
 		change_idx = False
@@ -122,6 +123,16 @@ class Task(NestedSet):
 		elif not len(self.projects):
 			# if no projects aviliable in projects make parent project empty
 			self.project = None
+
+	def update_completion_date(self):
+		for task_project in self.projects:
+			project = frappe.get_cached_doc("Project", task_project.project)
+			complete_statuses = ['Completed']
+			#needs to be replaced with a Table Multiselect after status is channged into a linked feild.
+			if project.task_completion_statuses:
+				complete_statuses = list(project.task_completion_statuses.split(","))
+			if not task_project.completion_date and task_project.status in complete_statuses:
+				task_project.completion_date = today()
 
 	def on_update(self):
 		self.update_nsm_model()

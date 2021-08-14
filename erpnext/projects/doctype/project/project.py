@@ -90,11 +90,11 @@ class Project(Document):
 
 	def update_percent_complete(self):
 		total = frappe.db.count('Task Project', {"project": self.name, "status": ['!=', 'Closed']})
-		complete_status = ['Completed']
+		complete_statuses = ['Completed']
 
-		#needs to be replaced with a Table Multiselect after status is channged into a linked feild.
-		if self.task_completion_status:
-			complete_status = list(self.task_completion_status.split(","))
+		#needs to be replaced with a Table Multiselect after status is changed into a linked feild.
+		if self.task_completion_statuses:
+			complete_statuses = list(self.task_completion_statuses.split(","))
 
 		if not total:
 			self.percent_complete = 0
@@ -106,12 +106,12 @@ class Project(Document):
 					where task.name= task_project.parent and task_project.project=%s""", self.name, as_dict=1)
 				pct_complete = 0
 				for row in weighted_progress:
-					if row["status"] in complete_status:
+					if row["status"] in complete_statuses:
 						pct_complete += frappe.utils.safe_div(row["task_weight"], weight_sum) *100
 				self.percent_complete = flt(flt(pct_complete), 2)
 			else:
 				completed = frappe.db.sql("""select count(name) from `tabTask Project` where
-					project=%s and status in %s""", (self.name, complete_status))[0][0]
+					project=%s and status in %s""", (self.name, complete_statuses))[0][0]
 				self.percent_complete = flt(flt(completed) / total * 100, 2)
 
 		# don't update status if it is cancelled
