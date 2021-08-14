@@ -89,8 +89,13 @@ class Project(Document):
 			frappe.db.set_value("Sales Order", self.sales_order, "project", self.name)
 
 	def update_percent_complete(self):
-		total = frappe.db.count('Task Project', dict(project=self.name))
-		complete_status = ['Closed', 'Completed']
+		total = frappe.db.count('Task Project', {"project": self.name, "status": ['!=', 'Closed']})
+		complete_status = ['Completed']
+
+		#needs to be replaced with a Table Multiselect after status is channged into a linked feild.
+		if self.task_completion_status:
+			complete_status = list(self.task_completion_status.split(","))
+
 		if not total:
 			self.percent_complete = 0
 		else:
