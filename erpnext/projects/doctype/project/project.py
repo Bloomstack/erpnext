@@ -28,10 +28,11 @@ class Project(Document):
 	def validate(self):
 		if not self.is_new():
 			self.copy_from_template()
+		self.validate_end_date()
 		self.send_welcome_email()
 		self.update_costing()
 		self.update_percent_complete()
-
+		
 	def copy_from_template(self):
 		'''
 		Copy tasks from template
@@ -67,6 +68,10 @@ class Project(Document):
 						'assign_to' : [task.assigned_user],
 					}
 					add(args)
+
+	def validate_end_date(self):
+		if self.expected_start_date > self.expected_end_date:
+			frappe.throw(_("Expected End date cannot be greater that Expected Start Date."))
 
 	def is_row_updated(self, row, existing_task_data, fields):
 		if self.get("__islocal") or not existing_task_data: return True
