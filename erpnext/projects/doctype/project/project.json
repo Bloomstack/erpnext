@@ -10,8 +10,8 @@
   "project_name",
   "status",
   "project_type",
+  "project_owner",
   "project_team",
-  "is_active",
   "percent_complete",
   "use_task_weight",
   "column_break_5",
@@ -97,14 +97,6 @@
    "oldfieldname": "project_type",
    "oldfieldtype": "Data",
    "options": "Project Type"
-  },
-  {
-   "fieldname": "is_active",
-   "fieldtype": "Select",
-   "label": "Is Active",
-   "oldfieldname": "is_active",
-   "oldfieldtype": "Select",
-   "options": "Yes\nNo"
   },
   {
    "bold": 1,
@@ -459,12 +451,18 @@
    "fieldname": "use_task_weight",
    "fieldtype": "Check",
    "label": "Use Task Weight for % Completed"
+  },
+  {
+   "fieldname": "project_owner",
+   "fieldtype": "Link",
+   "label": "Project Owner",
+   "options": "User"
   }
  ],
  "icon": "fa fa-puzzle-piece",
  "idx": 29,
  "max_attachments": 4,
- "modified": "2021-08-14 03:09:24.010508",
+ "modified": "2021-08-14 03:38:46.682501",
  "modified_by": "Administrator",
  "module": "Projects",
  "name": "Project",
@@ -501,7 +499,7 @@
   }
  ],
  "quick_entry": 1,
- "search_fields": "customer, status, priority, is_active",
+ "search_fields": "customer, status, priority",
  "show_name_in_global_search": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
