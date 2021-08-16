@@ -20,7 +20,7 @@ def execute(filters=None):
 	actual_effort = {}
 	querry = """select task_project.completion_date completion_date, 
 		sum(task_weight) total_effort from `tabTask` task, `tabTask Project` task_project 
-		where task.name= task_project.parent and task_project.project=%s 
+		where task.name=task_project.parent and task_project.project=%s 
 		group by completion_date order by completion_date"""
 	
 	for day in frappe.db.sql(querry, project.name, as_dict=1):
