@@ -106,7 +106,7 @@ class Project(Document):
 		else:
 			if self.use_task_weight:
 				weight_sum = frappe.db.sql("""select sum(task.task_weight) from `tabTask` task, `tabTask Project` task_project 
-					where task.name= task_project.parent and task_project.project=%s""", self.name)[0][0]
+					where task.name=task_project.parent and task_project.project=%s""", self.name)[0][0]
 				weighted_progress = frappe.db.sql("""select task_project.status status, task_weight from `tabTask` task, `tabTask Project` task_project 
 					where task.name= task_project.parent and task_project.project=%s""", self.name, as_dict=1)
 				pct_complete = 0
