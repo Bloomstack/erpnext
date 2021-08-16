@@ -41,6 +41,6 @@ def execute(filters=None):
 	for date in sprint_days:
 		total_effort -= ideal_burn_rate
 		data.append(["Day " + str(day), cint(total_effort), sprint_days.get(date)])
-		day +=1
+		day += 1
 	return columns, data
 
