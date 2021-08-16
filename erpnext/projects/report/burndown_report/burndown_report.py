@@ -9,7 +9,7 @@ def execute(filters=None):
 	columns = ['Day', 'Ideal', 'Actual']
 	project = frappe.get_doc('Project', filters.get("project"))
 	total_effort = frappe.db.sql("""select sum(task.task_weight) from `tabTask` task, `tabTask Project` task_project 
-		where task.name= task_project.parent and task_project.project=%s""", project.name)[0][0]
+		where task.name=task_project.parent and task_project.project=%s""", project.name)[0][0]
 
 	holidays = []
 	sprint_days={}
