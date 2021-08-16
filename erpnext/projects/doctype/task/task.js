@@ -50,7 +50,6 @@ frappe.ui.form.on("Task", {
 			frm.toggle_display("project", 0);
 		}
 	},
-	
 	is_group: function (frm) {
 		frappe.call({
 			method: "erpnext.projects.doctype.task.task.check_if_child_exists",
