@@ -24,7 +24,7 @@ def execute(filters=None):
 		group by completion_date order by completion_date"""
 	
 	for day in frappe.db.sql(querry, project.name, as_dict=1):
-		actual_effort[day.completion_date]= day.total_effort
+		actual_effort[day.completion_date] = day.total_effort
 
 	pending_effort = total_effort
 	date = project.expected_start_date
