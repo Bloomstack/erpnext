@@ -385,11 +385,13 @@ def get_total_program_progress(topics, course_name, student):
 	for topic in topics:
 		total_article = total_article + len(topic.topic_content)
 	completed_article = frappe.db.count("Course Activity", {"course": course_name, "student": student.name}, "content")
-	total_progress = int((completed_article * 100) / total_article)
+	completed_quiz =  frappe.db.count("Quiz Activity", {"course": course_name, "student": student.name}, "content")
+	total_progress = int(((completed_article + completed_quiz) * 100) / total_article)
 	return total_progress
 
 @frappe.whitelist(allow_guest=True)
 def get_completed_topic_list(course_name):
 	student = get_current_student()
 	completed_topic = frappe.get_all("Course Activity", filters={"course": course_name, "student": student.name}, fields=["content", "content_type", "enrollment", "student"])
-	return completed_topic
+	completed_quiz = frappe.get_all("Quiz Activity", filters={"course": course_name, "student": student.name}, fields=["quiz", "status", "enrollment", "student"])
+	return completed_topic + completed_quiz

@@ -19,7 +19,7 @@ frappe.ready(() => {
 		callback: (r) => {
 			r.message.forEach(e => {
 				$('.content-name').filter(function () {
-					return $(this).attr("id") == e.content;
+					return $(this).attr("id") == e.content || e.quiz;
 				}).css({
 					'color': 'blue'
 				}).addClass('completed-article').parent('li').addClass('completed-parent');

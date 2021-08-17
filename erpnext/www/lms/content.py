@@ -57,8 +57,3 @@ def allowed_content_access(program, content, content_type):
 			and `tabProgram Course`.parent = %(program)s""", {'program': program})
 
 	return (content, content_type) in contents_of_program
-
-@frappe.whitelist(allow_guest=True)
-def get_completed_topic_list(course_name):
-	completed_topic = frappe.get_all("Course Activity", filters={"course": course_name}, fields= ["content", "content_type", "enrollment"])
-	return completed_topic
