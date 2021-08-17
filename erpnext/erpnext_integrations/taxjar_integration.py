@@ -159,7 +159,7 @@ def set_sales_tax(doc, method):
 		return
 
 	tax_dict['nexus_address'] = [{
-		'id': doc.get("company_address"),
+		'id': get_company_address_details(doc).name,
 		'country': tax_dict.get("from_country"),
 		'zip': tax_dict.get("from_zip"),
 		'state': tax_dict.get("from_state"),
