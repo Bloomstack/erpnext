@@ -1,5 +1,4 @@
 {
- "actions": [],
  "allow_import": 1,
  "autoname": "naming_series:",
  "creation": "2013-05-21 16:16:39",
@@ -17,6 +16,7 @@
   "column_break1",
   "transaction_date",
   "schedule_date",
+  "sales_order",
   "order_confirmation_no",
   "order_confirmation_date",
   "amended_from",
@@ -1050,13 +1050,18 @@
    "fieldtype": "Link",
    "label": "Set Reserve Warehouse",
    "options": "Warehouse"
+  },
+  {
+   "fieldname": "sales_order",
+   "fieldtype": "Link",
+   "label": "Sales Order",
+   "options": "Sales Order"
   }
  ],
  "icon": "fa fa-file-text",
  "idx": 105,
  "is_submittable": 1,
- "links": [],
- "modified": "2020-06-12 14:08:11.777120",
+ "modified": "2021-08-17 05:58:20.336097",
  "modified_by": "Administrator",
  "module": "Buying",
  "name": "Purchase Order",
