@@ -45,7 +45,7 @@
 	<div class="col-sm-9 side-container">
 		<div class="d-flex flex-row justify-content-between">
 			<div class="course-title col-md-9">
-				{{ hero(topic.topic_name, topic.description, has_access, {'name': 'Course', 'url': '/lms/course?name=' + course +'&program=' + program}) }}
+				{{ hero(topic.topic_name, topic.description,student, has_access, {'name': 'Course', 'url': '/lms/course?name=' + course +'&program=' + program}) }}
 				{% if ongoing_topic %}
 					<a href="/lms/content?program={{ program }}&course={{ course }}&topic={{ topic.name }}&type={{ ongoing_topic.doctype }}&content={{ ongoing_topic.name }}" class="btn continue-learning-btn">Continue Learning</a>
 				{% else %}
@@ -53,7 +53,7 @@
 				{% endif %}
 			</div>
 			<div class="course-progress col-md-3">
-				{% if has_access and not has_super_access and not frappe.session.user == 'Administrator' %}
+				{% if student and not frappe.session.user == 'Administrator' %}
 					<p class="text-right mb-0">{{program}} </p>
 					<div class="progress">
 						<div class="progress-bar" role="progressbar" style="width: {{total_progress}}%;" aria-valuenow="{{total_progress}}" aria-valuemin="0" aria-valuemax="100"></div>

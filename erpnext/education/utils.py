@@ -97,8 +97,7 @@ def allowed_program_access(program, student=None):
 	Returns:
 		bool: Is current user enrolled or not
 	"""
-	if has_super_access():
-		return True
+
 	if not student:
 		student = get_current_student()
 	if student and get_enrollment('program', program, student.name):
@@ -139,8 +138,6 @@ def enroll_in_program(program_name, student=None):
 	Returns:
 		string: name of the program enrollment document
 	"""
-	if has_super_access():
-		return
 
 	if not student == None:
 		student = frappe.get_doc("Student", student)
@@ -194,9 +191,6 @@ def evaluate_quiz(quiz_response, quiz_name, course, program):
 	quiz = frappe.get_doc("Quiz", quiz_name)
 	result, score, status = quiz.evaluate(quiz_response, quiz_name)
 
-	if has_super_access():
-		return {'result': result, 'score': score, 'status': status}
-
 	if student:
 		enrollment = get_or_create_course_enrollment(course, program)
 		if quiz.allowed_attempt(enrollment, quiz_name):
@@ -222,8 +216,8 @@ def get_quiz(quiz_name, course):
 					for option in question.options],
 		} for question in questions]
 
-	if has_super_access():
-		return {'questions': questions, 'activity': None}
+	# if has_super_access():
+	# 	return {'questions': questions, 'activity': None}
 
 	student = get_current_student()
 	course_enrollment = get_enrollment("course", course, student.name)

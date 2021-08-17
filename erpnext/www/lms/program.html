@@ -65,7 +65,7 @@
 			<h5 class='card-title'>{{ course.course_name }}</h5>
 			<div class="text-muted">{{ course.intro if course.intro else '' }}</div>
 		</div>
-		{% if has_access and progress[course.name] %}
+		{% if has_access and student and progress[course.name] %}
 		<div class='card-footer'>
 			{% if progress[course.name].completed %}
 			<span class="indicator green">Completed</span>
@@ -83,7 +83,7 @@
 
 {% block content %}
 <section class="section">
-	{{ hero(program.program_name, program.description, has_access, {'name': 'Home', 'url': '/lms'}) }}
+	{{ hero(program.program_name, program.description, student, has_access, {'name': 'Home', 'url': '/lms'}) }}
 	<div class='container'>
 		<div class="row mt-5">
 			{% for course in courses %}
