@@ -81,10 +81,10 @@ frappe.listview_settings['Purchase Order'] = {
 								let existing_orders = r.message.filter(order => order.created === false);
 								for (let order of existing_orders) {
 									let purchase_invoices = order.purchase_invoices
-										.map(purchase_receipt => frappe.utils.get_form_link("Purchase Invoice", purchase_receipt, true))
+										.map(purchase_invoice => frappe.utils.get_form_link("Purchase Invoice", purchase_invoice, true))
 										.join(", ");
 
-									existing_order_message += `<li><strong>${order.customer}</strong> (${order.sales_order}): ${purchase_invoices || "No available items to pick"}</li>`;
+									existing_order_message += `<li><strong>${order.supplier}</strong> (${order.purchase_order}): ${purchase_invoices || "No available items to pick"}</li>`;
 								}
 
 								if (existing_order_message) {

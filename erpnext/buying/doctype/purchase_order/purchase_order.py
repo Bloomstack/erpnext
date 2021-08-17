@@ -570,6 +570,7 @@ def create_multiple_purchase_invoices(orders):
 				["Purchase Invoice Item", "purchase_order", "=", order]
 			],
 			distinct=True)
+		purchase_invoices = list(map(lambda doc : doc['name'], purchase_invoices))
 
 		# if none are found, then create a new Purchase Invoice.
 		if not purchase_invoices:
