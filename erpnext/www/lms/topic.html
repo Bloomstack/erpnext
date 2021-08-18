@@ -46,10 +46,20 @@
 		<div class="d-flex flex-row justify-content-between">
 			<div class="course-title col-md-9">
 				{{ hero(topic.topic_name, topic.description,student, has_access, {'name': 'Course', 'url': '/lms/course?name=' + course +'&program=' + program}) }}
-				{% if ongoing_topic %}
-					<a href="/lms/content?program={{ program }}&course={{ course }}&topic={{ topic.name }}&type={{ ongoing_topic.doctype }}&content={{ ongoing_topic.name }}" class="btn continue-learning-btn">Continue Learning</a>
+				{% if total_progress == 0 %}
+					<a href="/lms/content?program={{ program }}&course={{ course }}&topic={{ topic.name }}&type={{ course_topics[0].topic_content[0].content_type }}&content={{ course_topics[0].topic_content[0].content }}" class="btn btn-primary btn-next ml-3">Start Learning</a>
 				{% else %}
-					<a href="/lms/content?program={{ program }}&course={{ course }}&topic={{ topic.name }}&type={{ course_topics[0].topic_content[0].content_type }}&content={{ course_topics[0].topic_content[0].content }}" class="btn btn-primary btn-next ml-3">Next</a>
+					{% if previous %}
+						<a href="/lms/content?program={{ program }}&course={{ course }}&topic={{ topic }}&type={{ previous.content_type }}&content={{ previous.content }}" class='btn text-muted' style="box-shadow: none;">Previous</a>
+					{% else %}
+						<a href="/lms/course?name={{ course }}&program={{ program }}" class='btn text-muted' style="box-shadow: none;">Back to Course</a>
+					{% endif %}
+
+					{% if next %}
+						<a href="/lms/content?program={{ program }}&course={{ course }}&topic={{ topic }}&type={{ next.content_type }}&content={{ next.content }}" class='btn btn-primary'>Next</a>
+					{% else %}
+						<a href="/lms/course?name={{ course }}&program={{ program }}' class='btn btn-primary">Finish Topic</button>
+					{% endif %}
 				{% endif %}
 			</div>
 			<div class="course-progress col-md-3">
