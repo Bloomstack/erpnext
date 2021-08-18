@@ -385,7 +385,7 @@ def get_total_program_progress(topics, course_name, student):
 	for topic in topics:
 		total_article = total_article + len(topic.topic_content)
 	completed_article = frappe.db.count("Course Activity", {"course": course_name, "student": student.name}, "content")
-	completed_quiz =  frappe.db.count("Quiz Activity", {"course": course_name, "student": student.name}, "content")
+	completed_quiz = frappe.db.count("Quiz Activity", {"course": course_name, "student": student.name}, "content")
 	total_progress = int(((completed_article + completed_quiz) * 100) / total_article)
 	return total_progress
 
