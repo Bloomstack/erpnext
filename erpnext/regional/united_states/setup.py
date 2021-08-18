@@ -37,6 +37,10 @@ def make_custom_fields():
 		'Quotation': [
 			dict(fieldname='exempt_from_sales_tax', fieldtype='Check', insert_after='taxes_and_charges',
 				label='Is customer exempted from sales tax?')
+		],
+		'Lead': [
+			dict(fieldname='exempt_from_sales_tax', fieldtype='Check', insert_after='email_id',
+				label='Is Lead exempted from sales tax?')
 		]
 	}
 	create_custom_fields(custom_fields)

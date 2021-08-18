@@ -52,7 +52,7 @@
 	<div class='container'>
 		<div class="row mt-5">
 			{% for program in featured_programs %}
-				{{ program_card(program.program, program.has_access) }}
+				{{ program_card(program.program, program.has_access, student) }}
 			{% endfor %}
 			{% if featured_programs %}
 				{% for n in range( (3 - (featured_programs|length)) %3) %}

@@ -42,6 +42,7 @@ class TestTaxes(unittest.TestCase):
             'item_code': uuid4(),
             'item_group': self.item_group.name,
             'is_stock_item': 0,
+            'is_sales_item':1,
             'taxes': [
                 {
                     'item_tax_template': self.item_tax_template.name,

@@ -12,6 +12,7 @@ from frappe.model.mapper import get_mapped_doc
 from frappe.utils import add_days, cstr, date_diff, get_link_to_form, getdate, today
 from frappe.utils.nestedset import NestedSet
 from frappe.desk.doctype.notification_log.notification_log import enqueue_create_notification
+from collections import Counter
 
 
 class CircularReferenceError(frappe.ValidationError): pass
@@ -32,9 +33,10 @@ class Task(NestedSet):
 	def validate(self):
 		self.validate_dates()
 		self.validate_parent_project_dates()
-		self.validate_progress()
 		self.validate_status()
 		self.update_depends_on()
+		self.validate_default_project()
+		self.update_completion_date()
 
 	def before_save(self):
 		change_idx = False
@@ -79,21 +81,11 @@ class Task(NestedSet):
 	def validate_status(self):
 		if self.status!=self.get_db_value("status") and self.status == "Completed":
 			for d in self.depends_on:
-				if frappe.db.get_value("Task", d.task, "status") not in ("Completed", "Cancelled"):
-					frappe.throw(_("Cannot complete task {0} as its dependant tasks {1} are not completed / cancelled.").format(frappe.bold(self.name), frappe.bold(d.task)))
+				if frappe.db.get_value("Task", d.task, "status") not in ("Completed", "Closed"):
+					frappe.throw(_("Cannot complete task {0} as its dependant tasks {1} are not completed / closed.").format(frappe.bold(self.name), frappe.bold(d.task)))
 
 			if frappe.db.get_single_value("Projects Settings", "remove_assignment_on_task_completion"):
 				close_all_assignments(self.doctype, self.name)
-
-	def validate_progress(self):
-		if (self.progress or 0) > 100:
-			frappe.throw(_("Progress % for a task cannot be more than 100."))
-
-		if self.progress == 100:
-			self.status = 'Completed'
-
-		if self.status == 'Completed':
-			self.progress = 100
 
 	def update_depends_on(self):
 		depends_on_tasks = self.depends_on_tasks or ""
@@ -104,6 +96,43 @@ class Task(NestedSet):
 
 	def update_nsm_model(self):
 		frappe.utils.nestedset.update_nsm(self)
+	
+	def validate_default_project(self):
+		""" Validate projects table in task."""
+
+		_projects = [project.project for project in self.projects]
+		if len(_projects) != len(list(set(_projects))):
+			task_projects = _projects
+			d = Counter(task_projects)
+			res = [k for k, v in d.items() if v > 1]
+			frappe.throw(_("Please remove duplicate project before proceeding. <ul><li>{0}</li></ul>".format('<li>'.join(res))))
+
+		if len(self.projects) == 1:
+			# auto-set default project if only one is found
+			self.projects[0].is_default = 1
+			self.project = self.projects[0].project
+		elif len(self.projects) > 1:
+			default_project = [project for project in self.projects if project.is_default]
+			# prevent users from setting multiple default projects.
+			if not default_project:
+				frappe.throw(_("There must be atleast one default Project."))
+			elif len(default_project) > 1:
+				frappe.throw(_("There can be only one default project, found {0}.").format(len(default_project)))
+			else:
+				self.project = default_project[0].project
+		elif not len(self.projects):
+			# if no projects aviliable in projects make parent project empty
+			self.project = None
+
+	def update_completion_date(self):
+		for task_project in self.projects:
+			project = frappe.get_cached_doc("Project", task_project.project)
+			complete_statuses = ['Completed']
+			#needs to be replaced with a Table Multiselect after status is channged into a linked feild.
+			if project.task_completion_statuses:
+				complete_statuses = list(project.task_completion_statuses.split(","))
+			if not task_project.completion_date and task_project.status in complete_statuses:
+				task_project.completion_date = today()
 
 	def on_update(self):
 		self.update_nsm_model()
@@ -118,7 +147,7 @@ class Task(NestedSet):
 	def unassign_todo(self):
 		if self.status == "Completed" and frappe.db.get_single_value("Projects Settings", "remove_assignment_on_task_completion"):
 			close_all_assignments(self.doctype, self.name)
-		if self.status == "Cancelled":
+		if self.status == "Closed":
 			clear(self.doctype, self.name)
 
 	def assign_todo(self):
@@ -150,7 +179,8 @@ class Task(NestedSet):
 
 	def update_project(self):
 		if self.project and not self.flags.from_project:
-			frappe.get_cached_doc("Project", self.project).update_project()
+			for task_project in self.projects:
+				frappe.get_cached_doc("Project", task_project.project).update_project()
 
 	def check_recursion(self):
 		if self.flags.ignore_recursion_check: return
@@ -211,7 +241,7 @@ class Task(NestedSet):
 		self.update_nsm_model()
 
 	def update_status(self):
-		if self.status not in ('Cancelled', 'Completed') and self.exp_end_date:
+		if self.status not in ('Closed', 'Completed') and self.exp_end_date:
 			from datetime import datetime
 			if self.exp_end_date < datetime.now().date():
 				self.db_set('status', 'Overdue', update_modified=False)
@@ -270,7 +300,7 @@ def set_multiple_status(names, status):
 		task.save()
 
 def set_tasks_as_overdue():
-	tasks = frappe.get_all("Task", filters={"status": ["not in", ["Cancelled", "Completed"]]}, fields=["name", "status", "review_date"])
+	tasks = frappe.get_all("Task", filters={"status": ["not in", ["Closed", "Completed"]]}, fields=["name", "status", "review_date"])
 	for task in tasks:
 		if task.status == "Pending Review":
 			if getdate(task.review_date) > getdate(today()):

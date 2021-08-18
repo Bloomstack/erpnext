@@ -267,6 +267,7 @@ def create_records():
 		"doctype": "Item",
 		"item_code": "Loyal Item",
 		"item_name": "Loyal Item",
+		"is_sales_item": 1,
 		"item_group": "All Item Groups",
 		"company": "_Test Company",
 		"is_stock_item": 1,

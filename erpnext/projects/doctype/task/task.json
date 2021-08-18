@@ -12,43 +12,43 @@
   "assign_to",
   "issue",
   "type",
+  "is_milestone",
   "is_group",
   "billable",
   "column_break0",
   "status",
   "priority",
   "task_weight",
-  "completed_by",
-  "color",
   "parent_task",
+  "project_details_section",
+  "projects",
   "sb_timeline",
   "exp_start_date",
+  "act_start_date",
+  "review_date",
+  "closing_date",
   "expected_time",
   "column_break_11",
   "exp_end_date",
-  "progress",
-  "is_milestone",
+  "act_end_date",
+  "reviewed__by",
+  "completed_by",
+  "actual_time",
   "sb_details",
   "description",
   "sb_depends_on",
   "depends_on",
   "depends_on_tasks",
-  "sb_actual",
-  "act_start_date",
-  "actual_time",
-  "column_break_15",
-  "act_end_date",
   "sb_costing",
   "total_costing_amount",
   "total_expense_claim",
   "column_break_20",
   "total_billing_amount",
   "sb_more_info",
-  "review_date",
-  "closing_date",
-  "column_break_22",
-  "department",
   "company",
+  "department",
+  "column_break_22",
+  "color",
   "lft",
   "rgt",
   "old_parent"
@@ -63,18 +63,19 @@
    "reqd": 1
   },
   {
-   "bold": 1,
-   "fieldname": "project",
+   "fetch_from": "project.project_team",
+   "fieldname": "team",
    "fieldtype": "Link",
-   "in_global_search": 1,
-   "in_list_view": 1,
-   "in_standard_filter": 1,
-   "label": "Project",
-   "oldfieldname": "project",
-   "oldfieldtype": "Link",
-   "options": "Project",
-   "remember_last_selected_value": 1,
-   "search_index": 1
+   "label": "Team",
+   "options": "Project Team",
+   "read_only": 1
+  },
+  {
+   "depends_on": "eval:doc.team",
+   "fieldname": "assign_to",
+   "fieldtype": "Table MultiSelect",
+   "label": "Assign To",
+   "options": "Task Users"
   },
   {
    "fieldname": "issue",
@@ -97,6 +98,12 @@
    "label": "Is Group"
   },
   {
+   "default": "0",
+   "fieldname": "billable",
+   "fieldtype": "Check",
+   "label": "Billable"
+  },
+  {
    "fieldname": "column_break0",
    "fieldtype": "Column Break",
    "oldfieldtype": "Column Break",
@@ -113,7 +120,7 @@
    "no_copy": 1,
    "oldfieldname": "status",
    "oldfieldtype": "Select",
-   "options": "Open\nWorking\nPending Review\nOverdue\nCompleted\nCancelled"
+   "options": "Open\nWorking\nPending Review\nOverdue\nCompleted\nClosed"
   },
   {
    "fieldname": "priority",
@@ -125,6 +132,18 @@
    "oldfieldtype": "Select",
    "options": "Low\nMedium\nHigh\nUrgent",
    "search_index": 1
+  },
+  {
+   "fetch_from": "type.weight",
+   "fieldname": "task_weight",
+   "fieldtype": "Float",
+   "label": "Weight"
+  },
+  {
+   "fieldname": "completed_by",
+   "fieldtype": "Link",
+   "label": "Completed By",
+   "options": "User"
   },
   {
    "fieldname": "color",
@@ -139,6 +158,17 @@
    "label": "Parent Task",
    "options": "Task",
    "search_index": 1
+  },
+  {
+   "fieldname": "project_details_section",
+   "fieldtype": "Section Break",
+   "label": "Project Details"
+  },
+  {
+   "fieldname": "projects",
+   "fieldtype": "Table",
+   "label": "Projects",
+   "options": "Task Project"
   },
   {
    "collapsible": 1,
@@ -164,12 +194,6 @@
    "oldfieldtype": "Data"
   },
   {
-   "fetch_from": "type.weight",
-   "fieldname": "task_weight",
-   "fieldtype": "Float",
-   "label": "Weight"
-  },
-  {
    "fieldname": "column_break_11",
    "fieldtype": "Column Break"
   },
@@ -182,11 +206,6 @@
    "oldfieldname": "exp_end_date",
    "oldfieldtype": "Date",
    "search_index": 1
-  },
-  {
-   "fieldname": "progress",
-   "fieldtype": "Percent",
-   "label": "% Progress"
   },
   {
    "default": "0",
@@ -231,13 +250,6 @@
    "read_only": 1
   },
   {
-   "fieldname": "sb_actual",
-   "fieldtype": "Section Break",
-   "oldfieldtype": "Column Break",
-   "print_width": "50%",
-   "width": "50%"
-  },
-  {
    "fieldname": "act_start_date",
    "fieldtype": "Date",
    "label": "Actual Start Date (via Time Sheet)",
@@ -250,10 +262,6 @@
    "fieldtype": "Float",
    "label": "Actual Time (in hours)",
    "read_only": 1
-  },
-  {
-   "fieldname": "column_break_15",
-   "fieldtype": "Column Break"
   },
   {
    "fieldname": "act_end_date",
@@ -302,7 +310,6 @@
    "label": "More Info"
   },
   {
-   "depends_on": "eval:doc.status == \"Closed\" || doc.status == \"Pending Review\"",
    "fieldname": "review_date",
    "fieldtype": "Date",
    "label": "Review Date",
@@ -310,7 +317,6 @@
    "oldfieldtype": "Date"
   },
   {
-   "depends_on": "eval:doc.status == \"Closed\"",
    "fieldname": "closing_date",
    "fieldtype": "Date",
    "label": "Closing Date",
@@ -358,38 +364,32 @@
    "read_only": 1
   },
   {
-   "fieldname": "completed_by",
+   "bold": 1,
+   "fieldname": "project",
    "fieldtype": "Link",
-   "label": "Completed By",
+   "in_global_search": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Default Project",
+   "oldfieldname": "project",
+   "oldfieldtype": "Link",
+   "options": "Project",
+   "read_only": 1,
+   "remember_last_selected_value": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "reviewed__by",
+   "fieldtype": "Link",
+   "label": "Reviewed  By",
    "options": "User"
-  },
-  {
-   "default": "0",
-   "fieldname": "billable",
-   "fieldtype": "Check",
-   "label": "Billable"
-  },
-  {
-   "fetch_from": "project.project_team",
-   "fieldname": "team",
-   "fieldtype": "Link",
-   "label": "Team",
-   "options": "Project Team",
-   "read_only": 1
-  },
-  {
-   "depends_on": "eval:doc.team",
-   "fieldname": "assign_to",
-   "fieldtype": "Table MultiSelect",
-   "label": "Assign To",
-   "options": "Task Users"
   }
  ],
  "icon": "fa fa-check",
  "idx": 1,
  "is_tree": 1,
  "max_attachments": 5,
- "modified": "2021-05-24 04:27:27.283316",
+ "modified": "2021-08-14 06:31:42.965246",
  "modified_by": "Administrator",
  "module": "Projects",
  "name": "Task",
@@ -413,7 +413,6 @@
  "show_title_field_in_link": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
- "timeline_field": "project",
  "title_field": "subject",
  "track_seen": 1
 }

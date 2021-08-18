@@ -10,7 +10,7 @@ def get_context(context):
 		frappe.local.flags.redirect_location = '/'
 		raise frappe.Redirect
 	context.featured_programs = get_featured_programs()
-
+	context.student = utils.get_current_student()
 
 def get_featured_programs():
 	return utils.get_portal_programs()

@@ -42,8 +42,14 @@ frappe.ui.form.on("Task", {
 
 	refresh: function (frm) {
 		frm.set_query("parent_task", { "is_group": 1 });
+		frappe.model.with_doctype('Task', () => {
+			const status_df = frappe.meta.get_docfield("Task", "status", frm.docname);
+			frm.set_df_property("status", "options", status_df.options, frm.docname, "projects");
+		});
+		if (frm.is_new()) {
+			frm.toggle_display("project", 0);
+		}
 	},
-
 	is_group: function (frm) {
 		frappe.call({
 			method: "erpnext.projects.doctype.task.task.check_if_child_exists",

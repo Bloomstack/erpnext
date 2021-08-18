@@ -6,24 +6,26 @@
  "engine": "InnoDB",
  "field_order": [
   "item_code",
-  "item_name",
-  "customer",
-  "lead",
+  "bom",
+  "quote_to",
+  "party_name",
   "column_break_4",
+  "item_name",
   "currency",
-  "conversion_rate",
   "qty",
   "section_break_8",
+  "section_break_15",
   "raw_material_items",
   "update_rate",
   "rm_cost",
   "section_break_11",
   "packaging_charges",
+  "profit_margin",
   "column_break_13",
   "shipping_cost",
-  "section_break_15",
-  "profit_markup",
   "bulk_discounting_section",
+  "bulk_discount_scheme",
+  "bulk_discount",
   "section_break_16",
   "total_price",
   "column_break_17",
@@ -75,30 +77,16 @@
    "label": "Shipping Cost"
   },
   {
-   "default": "0",
-   "fieldname": "profit_markup",
-   "fieldtype": "Percent",
-   "label": "Profit Markup Percent"
-  },
-  {
-   "default": "0",
    "fieldname": "total_price",
    "fieldtype": "Currency",
    "label": "Total Price",
    "read_only": 1
   },
   {
-   "default": "0",
    "fieldname": "price_per_unit",
    "fieldtype": "Currency",
    "label": "Price Per Unit",
    "read_only": 1
-  },
-  {
-   "fieldname": "conversion_rate",
-   "fieldtype": "Float",
-   "label": "Conversion Rate",
-   "reqd": 1
   },
   {
    "fieldname": "currency",
@@ -106,12 +94,6 @@
    "label": "Currency",
    "options": "Currency",
    "reqd": 1
-  },
-  {
-   "fieldname": "customer",
-   "fieldtype": "Link",
-   "label": "Customer",
-   "options": "Customer"
   },
   {
    "fieldname": "column_break_4",
@@ -156,12 +138,6 @@
    "reqd": 1
   },
   {
-   "fieldname": "lead",
-   "fieldtype": "Link",
-   "label": "Lead",
-   "options": "Lead"
-  },
-  {
    "fieldname": "bulk_discounting_section",
    "fieldtype": "Section Break",
    "label": "Bulk Discounting"
@@ -171,10 +147,46 @@
    "fieldname": "update_rate",
    "fieldtype": "Button",
    "label": "Update Rate"
+  },
+  {
+   "fieldname": "bom",
+   "fieldtype": "Link",
+   "label": "BOM",
+   "options": "BOM"
+  },
+  {
+   "fieldname": "bulk_discount",
+   "fieldtype": "Table",
+   "label": "Bulk Discount",
+   "options": "Bulk Discount"
+  },
+  {
+   "fieldname": "bulk_discount_scheme",
+   "fieldtype": "Link",
+   "label": "Bulk Discount Scheme",
+   "options": "Bulk Discount Scheme"
+  },
+  {
+   "default": "0",
+   "fieldname": "profit_margin",
+   "fieldtype": "Percent",
+   "label": "Profit Margin %"
+  },
+  {
+   "fieldname": "party_name",
+   "fieldtype": "Dynamic Link",
+   "label": "Party",
+   "options": "quote_to"
+  },
+  {
+   "fieldname": "quote_to",
+   "fieldtype": "Link",
+   "label": "Quote To",
+   "options": "DocType"
   }
  ],
  "is_submittable": 1,
- "modified": "2021-06-02 23:07:43.385905",
+ "modified": "2021-07-15 05:44:41.738772",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Quoting Sheet",
@@ -191,6 +203,7 @@
    "report": 1,
    "role": "System Manager",
    "share": 1,
+   "submit": 1,
    "write": 1
   }
  ],

@@ -11,7 +11,7 @@ from frappe import _
 from frappe.utils.password import get_decrypted_password
 
 class Asana(Document):
-	def validate(self):
+	def after_save(self):
 		self.authorize()
 
 
@@ -42,8 +42,9 @@ class Asana(Document):
 		for workspace in workspaces:
 			workspace = workspace.strip()
 			asana_workspace = next((item for item in asana_workspaces if item["name"] == workspace), None)
-			if not workspace:
+			if not asana_workspace:
 				frappe.msgprint(_("Workspace {0} not found in Asana.".format(asana_workspace)))
+				continue
 
 			projects = self.projects.split(",")
 			asana_projects = client.projects.find_all({"workspace": asana_workspace["gid"]})
@@ -52,6 +53,7 @@ class Asana(Document):
 				asana_project = next((item for item in asana_projects if item["name"] == project), None)
 				if not asana_project:
 					frappe.msgprint(_("Project {0} not found in Asana.".format(asana_project)))
+					continue
 
 				sections = self.sections.split(",")
 				asana_sections = client.sections.get_sections_for_project(asana_project["gid"])
@@ -60,10 +62,12 @@ class Asana(Document):
 					asana_section = next((item for item in asana_sections if item["name"] == section), None)
 					if not asana_section:
 						frappe.msgprint(_("Section {0} not found in Asana.".format(asana_section)))
+						continue
 
 					tasks = client.tasks.find_all({"section": asana_section["gid"]})
 					for task in list(tasks):
 						asana_task = client.tasks.get_task(task["gid"])
+						asana_task_url = "https://app.asana.com/0/{0}/{1}".format(asana_project["gid"], task["gid"])
 						stories = list(client.stories.get_stories_for_task(asana_task["gid"]))
 						assignee_email = client.users.get_user(asana_task["assignee"]["gid"])["email"]
 						comment_added = False
@@ -74,10 +78,19 @@ class Asana(Document):
 								now_date = datetime.utcnow().strftime("%Y-%m-%d")
 								if ((datetime.strptime(asana_task_last_updated, "%Y-%m-%d") -
 										datetime.strptime(now_date, "%Y-%m-%d")).days <= -self.number_of_stale_days):
-									frappe.sendmail(recipients=[assignee_email], message="task {0} is not updated in the last {1} days!!".format(asana_task["name"], self.number_of_stale_days))
+									frappe.sendmail(
+										recipients=[assignee_email],
+										message="Task <a href='{2}'>{0}</a> is not updated in the last {1} days!!.".format(asana_task["name"],
+											self.number_of_stale_days, asana_task_url),
+										subject="Reminder for Asana Task Updates"
+									)
 								break
 						if not comment_added:
-							frappe.sendmail(recipients=[assignee_email], message="No comment added for task {0}!!".format(asana_task["name"]))
+							frappe.sendmail(
+								recipients=[assignee_email],
+								subject="Reminder for Asana Task Updates",
+								message="No updates added for Task <a href='{1}'>{0}</a>!!.".format(asana_task["name"], asana_task_url)
+							)
 
 
 def daily_asana_email_notification():

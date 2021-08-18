@@ -13,7 +13,7 @@ from erpnext.controllers.stock_controller import QualityInspectionRejectedError,
 
 class TestQualityInspection(unittest.TestCase):
 	def setUp(self):
-		create_item("_Test Item with QA")
+		create_item("_Test Item with QA",is_sales_item=1)
 		frappe.db.set_value("Item", "_Test Item with QA", "inspection_required_before_delivery", 1)
 
 	def test_qa_for_delivery(self):

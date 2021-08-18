@@ -8,10 +8,10 @@ from erpnext import get_default_company
 from frappe import _
 from frappe.contacts.doctype.address.address import get_company_address
 
-TAX_ACCOUNT_HEAD = frappe.db.get_single_value("TaxJar Settings", "tax_account_head")
-SHIP_ACCOUNT_HEAD = frappe.db.get_single_value("TaxJar Settings", "shipping_account_head")
+
 TAXJAR_CREATE_TRANSACTIONS = frappe.db.get_single_value("TaxJar Settings", "taxjar_create_transactions")
 TAXJAR_CALCULATE_TAX = frappe.db.get_single_value("TaxJar Settings", "taxjar_calculate_tax")
+TAXJAR_ENABLED = frappe.db.get_single_value("TaxJar Settings", "enabled")
 SUPPORTED_COUNTRY_CODES = ["AT", "AU", "BE", "BG", "CA", "CY", "CZ", "DE", "DK", "EE", "ES", "FI",
 	"FR", "GB", "GR", "HR", "HU", "IE", "IT", "LT", "LU", "LV", "MT", "NL", "PL", "PT", "RO",
 	"SE", "SI", "SK", "US"]
@@ -19,6 +19,9 @@ SUPPORTED_COUNTRY_CODES = ["AT", "AU", "BE", "BG", "CA", "CY", "CZ", "DE", "DK",
 class AddressError(frappe.ValidationError): pass
 
 def get_client():
+	if not TAXJAR_ENABLED:
+		return
+
 	taxjar_settings = frappe.get_single("TaxJar Settings")
 
 	if not taxjar_settings.is_sandbox:
@@ -29,8 +32,11 @@ def get_client():
 		api_url = taxjar.SANDBOX_API_URL
 
 	if api_key and api_url:
-		return taxjar.Client(api_key=api_key, api_url=api_url)
-
+		client = taxjar.Client(api_key=api_key, api_url=api_url)
+		client.set_api_config('headers', {
+			'x-api-version': '2020-08-07'
+		})
+		return client
 
 def create_transaction(doc, method):
 	"""Create an order transaction in TaxJar"""
@@ -42,6 +48,9 @@ def create_transaction(doc, method):
 
 	if not client:
 		return
+
+	account_heads = get_account_heads(doc.company)
+	TAX_ACCOUNT_HEAD = account_heads['TAX_ACCOUNT_HEAD']
 
 	sales_tax = sum([tax.tax_amount for tax in doc.taxes if tax.account_head == TAX_ACCOUNT_HEAD])
 
@@ -56,7 +65,7 @@ def create_transaction(doc, method):
 	tax_dict['transaction_id'] = doc.name
 	tax_dict['transaction_date'] = frappe.utils.today()
 	tax_dict['sales_tax'] = sales_tax
-	tax_dict['amount'] = doc.total + tax_dict['shipping']
+	tax_dict['amount'] = doc.net_total + tax_dict['shipping']
 
 	try:
 		client.create_order(tax_dict)
@@ -95,10 +104,15 @@ def get_tax_data(doc):
 	if to_country_code not in SUPPORTED_COUNTRY_CODES:
 		return
 
+	account_heads = get_account_heads(doc.company)
+	SHIP_ACCOUNT_HEAD = account_heads['SHIP_ACCOUNT_HEAD']
+
 	shipping = sum([tax.tax_amount for tax in doc.taxes if tax.account_head == SHIP_ACCOUNT_HEAD])
 
 	if to_shipping_state is not None:
 		to_shipping_state = get_iso_3166_2_state_code(to_address)
+
+	line_items = get_line_items(doc)
 
 	tax_dict = {
 		'from_country': from_country_code,
@@ -112,7 +126,9 @@ def get_tax_data(doc):
 		'to_street': to_address.address_line1,
 		'to_state': to_shipping_state,
 		'shipping': shipping,
-		'amount': doc.net_total
+		'amount': doc.net_total,
+		'line_items': line_items,
+		'plugin': '[bloomstack]'
 	}
 
 	return tax_dict
@@ -125,9 +141,20 @@ def set_sales_tax(doc, method):
 	if not doc.items:
 		return
 
+	# if doctype is Quotation and it is created for lead set sales_tax_exempted to zero
+	if doc.doctype == "Quotation" and doc.quotation_to == "Lead":
+		sales_tax_exempted = hasattr(doc, "exempt_from_sales_tax") and doc.exempt_from_sales_tax \
+			or frappe.db.has_column("Lead", "exempt_from_sales_tax") and frappe.db.get_value("Lead", doc.party_name, "exempt_from_sales_tax")
 	# if the party is exempt from sales tax, then set all tax account heads to zero
-	sales_tax_exempted = hasattr(doc, "exempt_from_sales_tax") and doc.exempt_from_sales_tax \
-		or frappe.db.has_column("Customer", "exempt_from_sales_tax") and frappe.db.get_value("Customer", doc.customer, "exempt_from_sales_tax")
+	else:
+		sales_tax_exempted = hasattr(doc, "exempt_from_sales_tax") and doc.exempt_from_sales_tax \
+			or frappe.db.has_column("Customer", "exempt_from_sales_tax") and frappe.db.get_value("Customer", doc.customer, "exempt_from_sales_tax")
+
+	account_heads = get_account_heads(doc.company)
+	TAX_ACCOUNT_HEAD = account_heads['TAX_ACCOUNT_HEAD']
+
+	if not TAX_ACCOUNT_HEAD:
+		frappe.throw(_("Please add accounts in taxjar setting for company " + doc.company))
 
 	if sales_tax_exempted:
 		for tax in doc.taxes:
@@ -144,6 +171,15 @@ def set_sales_tax(doc, method):
 		# Remove existing tax rows if address is changed from a taxable state/country
 		setattr(doc, "taxes", [tax for tax in doc.taxes if tax.account_head != TAX_ACCOUNT_HEAD])
 		return
+
+	tax_dict['nexus_address'] = [{
+		'id': get_company_address_details(doc).name,
+		'country': tax_dict.get("from_country"),
+		'zip': tax_dict.get("from_zip"),
+		'state': tax_dict.get("from_state"),
+		'city': tax_dict.get("from_city"),
+		'street': tax_dict.get("from_street")
+	}]
 
 	tax_data = validate_tax_request(tax_dict)
 
@@ -192,7 +228,7 @@ def validate_tax_request(tax_dict):
 def get_company_address_details(doc):
 	"""Return default company address details"""
 
-	company_address = get_company_address(get_default_company()).company_address
+	company_address = get_company_address(doc.company).company_address
 
 	if not company_address:
 		frappe.throw(_("Please set a default company address"))
@@ -257,3 +293,41 @@ def sanitize_error_response(response):
 		response = response.replace(k, v)
 
 	return response
+
+
+def get_line_items(doc):
+	if not doc.items:
+		return
+
+	discout_percent = 0.0
+
+	if doc.discount_amount:
+		discout_percent = ((doc.discount_amount / doc.total) * 100)
+
+	line_items = []
+	for item in doc.items:
+		if discout_percent:
+			item.discount_amount = ((item.price_list_rate * discout_percent) / 100)
+		line_item = {
+			'id': item.name,
+			'description': item.item_name,
+			'quantity': item.qty,
+			'unit_price': item.price_list_rate,
+			'discount': round(item.discount_amount * item.qty)
+		}
+		line_items.append(line_item)
+
+	return line_items
+
+
+def get_account_heads(current_company):
+	company_account_heads = frappe.get_all("TaxJar Company", filters={"company_name": current_company}, fields=["tax_account_head","shipping_account_head"])
+	account_heads = dict()
+	if not company_account_heads:
+		account_heads['TAX_ACCOUNT_HEAD'] = None
+		account_heads['SHIP_ACCOUNT_HEAD'] = None
+	else:
+		account_heads['TAX_ACCOUNT_HEAD'] = company_account_heads[0]['tax_account_head']
+		account_heads['SHIP_ACCOUNT_HEAD'] = company_account_heads[0]['shipping_account_head']
+
+	return account_heads

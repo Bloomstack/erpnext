@@ -458,7 +458,7 @@ class TestSalesOrder(unittest.TestCase):
 	def test_service_type_product_bundle(self):
 		from erpnext.selling.doctype.product_bundle.test_product_bundle import make_product_bundle
 		from erpnext.stock.doctype.item.test_item import make_item
-		make_item("_Test Service Product Bundle", {"is_stock_item": 0})
+		make_item("_Test Service Product Bundle", {"is_stock_item": 0 ,"is_sales_item": 1})
 		make_item("_Test Service Product Bundle Item 1", {"is_stock_item": 0})
 		make_item("_Test Service Product Bundle Item 2", {"is_stock_item": 0})
 
@@ -473,7 +473,7 @@ class TestSalesOrder(unittest.TestCase):
 	def test_mix_type_product_bundle(self):
 		from erpnext.selling.doctype.product_bundle.test_product_bundle import make_product_bundle
 		from erpnext.stock.doctype.item.test_item import make_item
-		make_item("_Test Mix Product Bundle", {"is_stock_item": 0})
+		make_item("_Test Mix Product Bundle", {"is_stock_item": 0,"is_sales_item": 1})
 		make_item("_Test Mix Product Bundle Item 1", {"is_stock_item": 1})
 		make_item("_Test Mix Product Bundle Item 2", {"is_stock_item": 0})
 
@@ -484,7 +484,7 @@ class TestSalesOrder(unittest.TestCase):
 
 	def test_auto_insert_price(self):
 		from erpnext.stock.doctype.item.test_item import make_item
-		make_item("_Test Item for Auto Price List", {"is_stock_item": 0})
+		make_item("_Test Item for Auto Price List", {"is_stock_item": 0,"is_sales_item": 1})
 		frappe.db.set_value("Stock Settings", None, "auto_insert_price_list_rate_if_missing", 1)
 
 		item_price = frappe.db.get_value("Item Price", {"price_list": "_Test Price List",
@@ -519,9 +519,9 @@ class TestSalesOrder(unittest.TestCase):
 
 		make_stock_entry(target="_Test Warehouse - _TC", qty=10, rate=100)
 		from erpnext.stock.doctype.item.test_item import make_item
-		po_item = make_item("_Test Item for Drop Shipping", {"is_stock_item": 1, "delivered_by_supplier": 1})
+		po_item = make_item("_Test Item for Drop Shipping", {"is_stock_item": 1, "delivered_by_supplier": 1,"is_sales_item": 1})
 
-		dn_item = make_item("_Test Regular Item", {"is_stock_item": 1})
+		dn_item = make_item("_Test Regular Item", {"is_stock_item": 1,"is_sales_item": 1})
 
 		so_items = [
 			{
@@ -716,6 +716,7 @@ class TestSalesOrder(unittest.TestCase):
 		from erpnext.stock.doctype.item.test_item import make_item
 		item = make_item("_Reserved_Serialized_Item", {"is_stock_item": 1,
 					"maintain_stock": 1,
+					"is_sales_item": 1,
 					"has_serial_no": 1,
 					"serial_no_series": "SI.####",
 					"valuation_rate": 500,
@@ -728,6 +729,7 @@ class TestSalesOrder(unittest.TestCase):
 		frappe.db.sql("""delete from `tabSerial No` where item_code=%s""", (item.item_code))
 		make_item("_Test Item A", {"maintain_stock": 1,
 					"valuation_rate": 100,
+					"is_sales_item": 1,
 					"item_defaults": [
 						{
 							"default_warehouse": "_Test Warehouse - _TC",
@@ -736,6 +738,7 @@ class TestSalesOrder(unittest.TestCase):
 					})
 		make_item("_Test Item B", {"maintain_stock": 1,
 					"valuation_rate": 200,
+					"is_sales_item": 1,
 					"item_defaults": [
 						{
 							"default_warehouse": "_Test Warehouse - _TC",
@@ -839,6 +842,7 @@ class TestSalesOrder(unittest.TestCase):
 		item = make_item("_Test Finished Item", {"is_stock_item": 1,
 			"maintain_stock": 1,
 			"valuation_rate": 500,
+			"is_sales_item": 1,
 			"item_defaults": [
 				{
 					"default_warehouse": "_Test Warehouse - _TC",
@@ -847,6 +851,7 @@ class TestSalesOrder(unittest.TestCase):
 			})
 		make_item("_Test Raw Item A", {"maintain_stock": 1,
 					"valuation_rate": 100,
+					"is_sales_item": 1,
 					"item_defaults": [
 						{
 							"default_warehouse": "_Test Warehouse - _TC",
@@ -855,6 +860,7 @@ class TestSalesOrder(unittest.TestCase):
 					})
 		make_item("_Test Raw Item B", {"maintain_stock": 1,
 					"valuation_rate": 200,
+					"is_sales_item": 1,
 					"item_defaults": [
 						{
 							"default_warehouse": "_Test Warehouse - _TC",

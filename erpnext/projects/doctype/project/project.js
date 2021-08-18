@@ -15,6 +15,9 @@ frappe.ui.form.on("Project", {
 			'Purchase Invoice': () => {
 				open_form(frm, "Purchase Invoice", "Purchase Invoice Item", "items");
 			},
+			'Task': () => {
+				open_form(frm, "Task", "Task Project", "projects");
+			}
 		};
 	},
 	onload: function (frm) {
@@ -56,8 +59,6 @@ frappe.ui.form.on("Project", {
 			frm.web_link && frm.web_link.remove();
 		} else {
 			frm.add_web_link("/projects?project=" + encodeURIComponent(frm.doc.name));
-
-			frm.trigger('show_dashboard');
 		}
 		frm.events.set_buttons(frm);
 	},
@@ -142,6 +143,57 @@ frappe.ui.form.on("Project", {
 				}
 			});
 		}
+	},
+
+	freeze: (frm) => {
+		let confirm_message = "";
+		frappe.call({
+			method: "frappe.desk.form.linked_with.get_submitted_linked_docs",
+			args: {
+				doctype: frm.doc.doctype,
+				name: frm.doc.name,
+				only_submittable: false,
+				skip_doctypes: ["Activity Log", "Comment", "Timesheet"]
+			},
+			freeze: true,
+			callback: (r) => {
+				if (!r.exc && r.message.count > 0) {
+					// add confirmation message for cancelling all linked docs
+					let links_text = "";
+					let links = r.message.docs;
+					const doctypes = Array.from(new Set(links.map((link) => link.doctype)));
+
+					for (let doctype of doctypes) {
+						let docnames = links
+							.filter((link) => link.doctype === doctype)
+							.map((link) => frappe.utils.get_form_link(link.doctype, link.name, true))
+							.join(", ");
+						links_text += `<li><strong>${doctype}</strong>: ${docnames}</li>`;
+
+					}
+					links_text = "<ul>" + links_text + "</ul>";
+					confirm_message = __(`{0} is linked with the following documents: {1}`, [frm.doc.name.bold(), links_text]);
+					frappe.confirm(__(`{0} Do you want to set them as <strong>{1}</strong> too?`, [confirm_message, frm.doc.freeze ? "Freeze" : "Not Freeze"]),
+						() => {
+							frappe.call({
+								method: "erpnext.projects.doctype.project.project.update_task_projects",
+								args: {
+									ref_dt: frm.doctype,
+									ref_dn: frm.doc.name,
+									freeze: frm.doc.freeze
+								},
+								callback: (r) => {
+									frm.save();
+								}
+							})
+						},
+						() => {
+							frm.save();
+						}
+					);
+				}
+			}
+		});
 	}
 
 });

@@ -16,7 +16,7 @@ class TestProductionPlan(unittest.TestCase):
 	def setUp(self):
 		for item in ['Test Production Item 1', 'Subassembly Item 1',
 			'Raw Material Item 1', 'Raw Material Item 2']:
-			create_item(item, valuation_rate=100)
+			create_item(item, valuation_rate=100,is_sales_item=1)
 
 			sr = frappe.db.get_value('Stock Reconciliation Item',
 				{'item_code': item, 'docstatus': 1}, 'parent')
@@ -24,7 +24,7 @@ class TestProductionPlan(unittest.TestCase):
 				sr_doc = frappe.get_doc('Stock Reconciliation', sr)
 				sr_doc.cancel()
 
-		create_item('Test Non Stock Raw Material', is_stock_item=0)
+		create_item('Test Non Stock Raw Material', is_stock_item=0,is_sales_item=1)
 		for item, raw_materials in {'Subassembly Item 1': ['Raw Material Item 1', 'Raw Material Item 2'],
 			'Test Production Item 1': ['Raw Material Item 1', 'Subassembly Item 1',
 			'Test Non Stock Raw Material']}.items():

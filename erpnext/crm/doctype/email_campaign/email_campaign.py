@@ -70,7 +70,11 @@ def send_email_to_leads_or_contacts():
 				send_mail(entry, email_campaign)
 
 def send_mail(entry, email_campaign):
-	recipient = frappe.db.get_value(email_campaign.email_campaign_for, email_campaign.get("recipient"), 'email_id')
+	if email_campaign.email_campaign_for == "Email Group":
+		recipients = frappe.get_all("Email Group Member", {"email_group": email_campaign.get("recipient")}, "email")
+		recipient = [d.email for d in recipients]
+	else:
+		recipient = frappe.db.get_value(email_campaign.email_campaign_for, email_campaign.get("recipient"), 'email_id')
 
 	email_template = frappe.get_doc("Email Template", entry.get("email_template"))
 	sender = frappe.db.get_value("User", email_campaign.get("sender"), 'email')

@@ -4,7 +4,7 @@
 from __future__ import unicode_literals
 import frappe
 import json
-from frappe.utils import cint, getdate, formatdate, today, add_days, get_date_str
+from frappe.utils import cint, getdate, formatdate, today, add_days, get_date_str, add_to_date
 from frappe import throw, _
 from frappe.model.document import Document
 
@@ -24,6 +24,7 @@ class HolidayList(Document):
 			ch.description = self.weekly_off
 			ch.holiday_date = d
 			ch.idx = last_idx + i + 1
+			ch.is_weekly_off = 1
 
 	def validate_values(self):
 		if not self.weekly_off:
@@ -61,6 +62,44 @@ class HolidayList(Document):
 
 	def clear_table(self):
 		self.set('holidays', [])
+
+@frappe.whitelist()
+def create_events(holiday_list):
+	def create_holiday_event(holiday, holiday_list):
+		frappe.get_doc({
+			"doctype": "Event",
+			"subject": "Holiday " + add_to_date(holiday.holiday_date, as_string=True),
+			"starts_on": holiday.holiday_date,
+			"event_category": "Holiday",
+			"holiday_list": holiday_list,
+			"event_type": "Public",
+			"all_day":1
+		}).insert(ignore_permissions=True)
+
+	doc = frappe.get_doc("Holiday List", holiday_list)
+	calendar_events = frappe.get_all("Event", filters={"holiday_list": doc.name}, fields=["name", "starts_on"])
+	if not calendar_events:
+		for holiday in doc.holidays:
+			if holiday.is_weekly_off:
+				continue
+
+			create_holiday_event(holiday, doc.name)
+	else:
+		holidays = [frappe.utils.get_datetime_str(holiday.holiday_date) for holiday in doc.holidays if not holiday.is_weekly_off]
+		starts_on = []
+
+		for event in calendar_events:
+			starts_on.append(frappe.utils.get_datetime_str(event.starts_on))
+			if not frappe.utils.get_datetime_str(event.starts_on) in holidays:
+				frappe.delete_doc("Event", event.name)
+
+		for holiday in doc.holidays:
+			if holiday.is_weekly_off or frappe.utils.get_datetime_str(holiday.holiday_date) in starts_on:
+				continue
+
+			create_holiday_event(holiday, doc.name)
+
+	return True
 
 @frappe.whitelist()
 def get_events(start, end, filters=None):

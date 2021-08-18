@@ -18,15 +18,7 @@ from frappe.model.document import Document
 from frappe.desk.doctype.notification_log.notification_log import enqueue_create_notification
 
 class Project(Document):
-	def get_feed(self):
-		return '{0}: {1}'.format(_(self.status), frappe.safe_decode(self.project_name))
-
 	def onload(self):
-		self.set_onload('activity_summary', frappe.db.sql('''select activity_type,
-			sum(hours) as total_hours
-			from `tabTimesheet Detail` where project=%s and docstatus < 2 group by activity_type
-			order by total_hours desc''', self.name, as_dict=True))
-
 		self.update_costing()
 
 	def before_print(self):
@@ -36,10 +28,11 @@ class Project(Document):
 	def validate(self):
 		if not self.is_new():
 			self.copy_from_template()
+		self.validate_end_date()
 		self.send_welcome_email()
 		self.update_costing()
 		self.update_percent_complete()
-
+		
 	def copy_from_template(self):
 		'''
 		Copy tasks from template
@@ -72,9 +65,13 @@ class Project(Document):
 					args = {
 						'doctype': 'Task',
 						'name': task_doc.name,
-						'assign_to' : task.assigned_user,
+						'assign_to' : [task.assigned_user],
 					}
 					add(args)
+
+	def validate_end_date(self):
+		if self.expected_start_date > self.expected_end_date:
+			frappe.throw(_("Expected End date cannot be greater that Expected Start Date."))
 
 	def is_row_updated(self, row, existing_task_data, fields):
 		if self.get("__islocal") or not existing_task_data: return True
@@ -97,36 +94,30 @@ class Project(Document):
 			frappe.db.set_value("Sales Order", self.sales_order, "project", self.name)
 
 	def update_percent_complete(self):
-		if self.percent_complete_method == "Manual":
-			if self.status == "Completed":
-				self.percent_complete = 100
-			return
+		total = frappe.db.count('Task Project', {"project": self.name, "status": ['!=', 'Closed']})
+		complete_statuses = ['Completed']
 
-		total = frappe.db.count('Task', dict(project=self.name))
+		#needs to be replaced with a Table Multiselect after status is changed into a linked feild.
+		if self.task_completion_statuses:
+			complete_statuses = list(self.task_completion_statuses.split(","))
 
 		if not total:
 			self.percent_complete = 0
 		else:
-			if (self.percent_complete_method == "Task Completion" and total > 0) or (
-				not self.percent_complete_method and total > 0):
-				completed = frappe.db.sql("""select count(name) from tabTask where
-					project=%s and status in ('Cancelled', 'Completed')""", self.name)[0][0]
-				self.percent_complete = flt(flt(completed) / total * 100, 2)
-
-			if (self.percent_complete_method == "Task Progress" and total > 0):
-				progress = frappe.db.sql("""select sum(progress) from tabTask where
-					project=%s""", self.name)[0][0]
-				self.percent_complete = flt(flt(progress) / total, 2)
-
-			if (self.percent_complete_method == "Task Weight" and total > 0):
-				weight_sum = frappe.db.sql("""select sum(task_weight) from tabTask where
-					project=%s""", self.name)[0][0]
-				weighted_progress = frappe.db.sql("""select progress, task_weight from tabTask where
-					project=%s""", self.name, as_dict=1)
+			if self.use_task_weight:
+				weight_sum = frappe.db.sql("""select sum(task.task_weight) from `tabTask` task, `tabTask Project` task_project 
+					where task.name=task_project.parent and task_project.project=%s""", self.name)[0][0]
+				weighted_progress = frappe.db.sql("""select task_project.status status, task_weight from `tabTask` task, `tabTask Project` task_project 
+					where task.name=task_project.parent and task_project.project=%s""", self.name, as_dict=1)
 				pct_complete = 0
 				for row in weighted_progress:
-					pct_complete += row["progress"] * frappe.utils.safe_div(row["task_weight"], weight_sum)
+					if row["status"] in complete_statuses:
+						pct_complete += frappe.utils.safe_div(row["task_weight"], weight_sum) *100
 				self.percent_complete = flt(flt(pct_complete), 2)
+			else:
+				completed = frappe.db.sql("""select count(name) from `tabTask Project` where
+					project=%s and status in %s""", (self.name, complete_statuses))[0][0]
+				self.percent_complete = flt(flt(completed) / total * 100, 2)
 
 		# don't update status if it is cancelled
 		if self.status == 'Cancelled':
@@ -391,7 +382,6 @@ def create_duplicate_project(prev_doc, project_name):
 		new_task.depends_on = None
 		new_task.status = 'Open'
 		new_task.completed_by = ''
-		new_task.progress = 0
 		new_task.insert()
 		assigned_user = frappe.db.get_value("ToDo", filters={'reference_name' : task.name}, fieldname="owner")
 		if assigned_user:
@@ -558,3 +548,9 @@ def set_project_status(project, status):
 
 	project.status = status
 	project.save()
+
+@frappe.whitelist()
+def update_task_projects(ref_dt, ref_dn, freeze):
+	task_projects = frappe.get_all("Task Project", filters={frappe.scrub(ref_dt): ref_dn})
+	for project in task_projects:
+		frappe.db.set_value("Task Project", project.name, "freeze", freeze)

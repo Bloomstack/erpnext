@@ -153,7 +153,8 @@ def create_records():
 		"item_name": "Consulting",
 		"item_group": "All Item Groups",
 		"company": "_Test Company",
-		"is_stock_item": 0
+		"is_stock_item": 0,
+  		"is_sales_item": 1
 	}).insert()
 
 	# item price

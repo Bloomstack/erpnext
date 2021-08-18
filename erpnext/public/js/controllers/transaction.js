@@ -903,19 +903,22 @@ erpnext.TransactionController = erpnext.taxes_and_totals.extend({
 
 	shipping_rule: function() {
 		var me = this;
-		if(this.frm.doc.shipping_rule) {
+		if (this.frm.doc.shipping_rule) {
 			return this.frm.call({
 				doc: this.frm.doc,
 				method: "apply_shipping_rule",
 				callback: function(r) {
-					if(!r.exc) {
+					if(!r.exc && r.message) {
+						if(me.frm.doc.taxes) {
+							me.frm.doc.taxes = [];
+							for (let tax of r.message) {
+								me.frm.add_child("taxes", tax);
+							}
+						}
 						me.calculate_taxes_and_totals();
 					}
 				}
 			}).fail(() => this.frm.set_value('shipping_rule', ''));
-		}
-		else {
-			me.calculate_taxes_and_totals();
 		}
 	},
 
@@ -1583,30 +1586,29 @@ erpnext.TransactionController = erpnext.taxes_and_totals.extend({
 
 	taxes_and_charges: function() {
 		var me = this;
-		if(this.frm.doc.taxes_and_charges) {
 			return this.frm.call({
 				method: "erpnext.controllers.accounts_controller.get_taxes_and_charges",
 				args: {
 					"master_doctype": frappe.meta.get_docfield(this.frm.doc.doctype, "taxes_and_charges",
 						this.frm.doc.name).options,
-					"master_name": this.frm.doc.taxes_and_charges
+					"master_name": this.frm.doc.taxes_and_charges,
+					"doc": this.frm.doc
 				},
 				callback: function(r) {
 					if(!r.exc) {
 						if(me.frm.doc.shipping_rule && me.frm.doc.taxes) {
+							me.frm.doc.taxes = [];
 							for (let tax of r.message) {
 								me.frm.add_child("taxes", tax);
 							}
-
-							refresh_field("taxes");
 						} else {
+							me.frm.doc.taxes = [];
 							me.frm.set_value("taxes", r.message);
-							me.calculate_taxes_and_totals();
 						}
+						me.calculate_taxes_and_totals();
 					}
 				}
 			});
-		}
 	},
 
 	tax_category: function() {

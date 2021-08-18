@@ -67,3 +67,17 @@ def make_maintenance_visit(source_name, target_doc=None):
 			map_child_doc(source_doc, target_doc, table_map, source_doc)
 
 		return target_doc
+
+@frappe.whitelist()
+def get_serial_no_values(serial_no):
+	doc = frappe.get_doc("Serial No", serial_no)
+	return {
+		'item_code' : doc.item_code,
+		'item_name' : doc.item_name,
+		'description' : doc.description,
+		'warranty_amc_status' : doc.maintenance_status,
+		'warranty_expiry_date' : doc.warranty_expiry_date,
+		'amc_expiry_date' : doc.amc_expiry_date,
+		'customer' : doc.customer,
+		'customer_name' : doc.customer_name
+	}

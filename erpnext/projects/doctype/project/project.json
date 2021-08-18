@@ -10,10 +10,10 @@
   "project_name",
   "status",
   "project_type",
+  "project_owner",
   "project_team",
-  "is_active",
-  "percent_complete_method",
   "percent_complete",
+  "use_task_weight",
   "column_break_5",
   "project_template",
   "expected_start_date",
@@ -21,6 +21,7 @@
   "priority",
   "department",
   "billable",
+  "freeze",
   "customer_details",
   "customer",
   "column_break_14",
@@ -30,6 +31,11 @@
   "copied_from",
   "section_break0",
   "notes",
+  "more_info_section",
+  "company",
+  "holiday_list",
+  "column_break_28",
+  "task_completion_statuses",
   "section_break_18",
   "actual_start_date",
   "actual_time",
@@ -40,8 +46,7 @@
   "total_costing_amount",
   "total_expense_claim",
   "total_purchase_cost",
-  "company",
-  "column_break_28",
+  "column_break_40",
   "total_sales_amount",
   "total_billable_amount",
   "total_billed_amount",
@@ -53,7 +58,6 @@
   "per_gross_margin",
   "monitor_progress",
   "collect_progress",
-  "holiday_list",
   "frequency",
   "from_time",
   "to_time",
@@ -98,25 +102,10 @@
    "options": "Project Type"
   },
   {
-   "fieldname": "is_active",
-   "fieldtype": "Select",
-   "label": "Is Active",
-   "oldfieldname": "is_active",
-   "oldfieldtype": "Select",
-   "options": "Yes\nNo"
-  },
-  {
-   "default": "Task Completion",
-   "fieldname": "percent_complete_method",
-   "fieldtype": "Select",
-   "label": "% Complete Method",
-   "options": "Manual\nTask Completion\nTask Progress\nTask Weight"
-  },
-  {
    "bold": 1,
    "fieldname": "percent_complete",
    "fieldtype": "Percent",
-   "label": "% Completed",
+   "label": "Percent Completed",
    "no_copy": 1,
    "read_only": 1
   },
@@ -376,6 +365,7 @@
   },
   {
    "depends_on": "collect_progress",
+   "fetch_from": "company.default_holiday_list",
    "fieldname": "holiday_list",
    "fieldtype": "Link",
    "label": "Holiday List",
@@ -453,12 +443,46 @@
    "fieldtype": "Link",
    "label": "Project Team",
    "options": "Project Team"
+  },
+  {
+   "default": "0",
+   "fieldname": "freeze",
+   "fieldtype": "Check",
+   "label": "Freeze"
+  },
+  {
+   "default": "0",
+   "fieldname": "use_task_weight",
+   "fieldtype": "Check",
+   "label": "Use Task Weight for % Completed"
+  },
+  {
+   "fieldname": "project_owner",
+   "fieldtype": "Link",
+   "label": "Project Owner",
+   "options": "User"
+  },
+  {
+   "description": "The Task will be considered 'Completed' for this project if moved under these statuses.",
+   "fieldname": "task_completion_statuses",
+   "fieldtype": "Data",
+   "label": "Task Completion Statuses "
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "more_info_section",
+   "fieldtype": "Section Break",
+   "label": "More Info"
+  },
+  {
+   "fieldname": "column_break_40",
+   "fieldtype": "Column Break"
   }
  ],
  "icon": "fa fa-puzzle-piece",
  "idx": 29,
  "max_attachments": 4,
- "modified": "2020-11-11 03:29:29.658278",
+ "modified": "2021-08-14 07:47:56.018318",
  "modified_by": "Administrator",
  "module": "Projects",
  "name": "Project",
@@ -495,7 +519,7 @@
   }
  ],
  "quick_entry": 1,
- "search_fields": "customer, status, priority, is_active",
+ "search_fields": "customer, status, priority",
  "show_name_in_global_search": 1,
  "sort_field": "modified",
  "sort_order": "DESC",

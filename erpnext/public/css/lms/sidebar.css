@@ -1,0 +1,134 @@
+.lms-content {
+	line-height: 1.8em;
+}
+
+.lms-content h1 {
+	margin-top: 1em;
+}
+
+.lms-content h2 {
+	margin-top: 1em;
+}
+
+.lms-content h3 {
+	margin-top: 0.8em;
+}
+
+.lms-content h4 {
+	margin-top: 0.6em;
+}
+
+section.section {
+	padding: 5rem 0 5rem 0;
+}
+
+.plyr--video .plyr__control.plyr__tab-focus,
+.plyr--video .plyr__control:hover,
+.plyr--video .plyr__control[aria-expanded='true'] {
+	background: #5e64ff !important;
+}
+
+.plyr__menu__container .plyr__control[role=menuitemradio][aria-checked=true]::before {
+	background: #5e64ff !important;
+}
+
+.plyr__menu__container .plyr__control[role='menuitemradio'][aria-checked='true']::before {
+	background: #5e64ff;
+}
+
+.plyr__control--overlaid:focus,
+.plyr__control--overlaid:hover {
+	background: #5e64ff !important;
+}
+
+.plyr--full-ui input[type='range'] {
+	color: #5e64ff !important;
+}
+
+.plyr__control--overlaid {
+	background: rgba(94, 100, 255, 0.8) !important;
+}
+
+.timer_text {
+	display: block;
+	font-size: 14px;
+	text-transform: uppercase;
+}
+
+#timer {
+	font-size: 46px;
+	color: #8d99a6;
+	line-height: 1;
+	text-align: right;
+}
+
+* {
+	scrollbar-width: thin;
+	scrollbar-color: #ccc #000;
+}
+
+*::-webkit-scrollbar {
+	width: 5px;
+}
+
+*::-webkit-scrollbar-track {
+	background: #ccc;
+}
+
+*::-webkit-scrollbar-thumb {
+	background-color: #000;
+	border-radius: 20px;
+}
+
+section {
+	padding: 4rem 0 2rem 0;
+}
+
+.topic-name {
+	font-size: 18px;
+	color: black;
+	font-weight: bold;
+}
+
+.content-name,
+.content-name:hover {
+	color: black;
+	text-decoration: none;
+}
+
+.side-nav,
+.side-container {
+	height: 70vh;
+	overflow-y: scroll;
+	padding-top: 1rem;
+}
+
+.side-nav li.active-parent {
+	background-color: lightblue;
+}
+
+.side-nav li:not(.completed-parent) a:not(.completed-article) {
+	pointer-events: none;
+	color: #8d99a6;
+}
+
+.side-nav li:not(.completed-parent) {
+	cursor: not-allowed;
+}
+
+.side-nav li.topic-content {
+	background-color: lightblue;
+	cursor: pointer;
+}
+
+.side-nav li.topic-content a {
+	color: black !important;
+	pointer-events: all !important;
+}
+
+.btn-next:not(:disabled):not(.disabled):active,
+.btn-next:not(:disabled):not(.disabled).active,
+.show>.btn-next.dropdown-toggle {
+	background-color: #80bd9e;
+	border-color: #80bd9e;
+}

@@ -18,6 +18,7 @@ def get_context(context):
 	context.has_access = utils.allowed_program_access(program)
 	context.has_super_access = utils.has_super_access()
 	context.progress = get_course_progress(context.courses, program)
+	context.student = utils.get_current_student()
 
 def get_program(program_name):
 	try:

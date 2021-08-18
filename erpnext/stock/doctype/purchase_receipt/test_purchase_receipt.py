@@ -605,6 +605,10 @@ def make_purchase_receipt(**args):
 	rejected_qty = args.rejected_qty or flt(received_qty) - flt(qty)
 
 	item_code = args.item or args.item_code or "_Test Item"
+	if not frappe.db.exists('Item', item_code):
+		make_item(item_code, {'is_stock_item':0,
+				'stock_uom': 'Box', 'is_fixed_asset': 1, 'auto_create_assets': 1,
+				'asset_naming_series': 'ABC.###','is_sales_item': 1})
 	uom = args.uom or frappe.db.get_value("Item", item_code, "stock_uom") or "_Test UOM"
 	pr.append("items", {
 		"item_code": item_code,

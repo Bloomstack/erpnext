@@ -1642,7 +1642,7 @@ class TestSalesInvoice(unittest.TestCase):
 		deferred_account = create_account(account_name="Deferred Revenue",
 			parent_account="Current Liabilities - _TC", company="_Test Company")
 
-		item = create_item("_Test Item for Deferred Accounting")
+		item = create_item("_Test Item for Deferred Accounting",is_sales_item=1)
 		item.enable_deferred_revenue = 1
 		item.deferred_revenue_account = deferred_account
 		item.no_of_months = 12

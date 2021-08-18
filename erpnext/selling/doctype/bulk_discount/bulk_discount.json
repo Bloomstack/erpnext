@@ -1,0 +1,84 @@
+{
+ "creation": "2021-06-29 23:42:47.804616",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "minimum_qty",
+  "maximum_qty",
+  "column_break_3",
+  "discount_type",
+  "discount_percentage",
+  "discount_amount",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "minimum_qty",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Minimum Qty"
+  },
+  {
+   "fieldname": "maximum_qty",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Maximum Qty"
+  },
+  {
+   "fieldname": "column_break_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "discount_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Discount type",
+   "options": "\nPercentage\nAmount"
+  },
+  {
+   "depends_on": "eval:doc.discount_type==\"Percentage\"",
+   "fieldname": "discount_percentage",
+   "fieldtype": "Percent",
+   "in_list_view": 1,
+   "label": "Discount Percentage"
+  },
+  {
+   "depends_on": "eval:doc.discount_type==\"Amount\"",
+   "fieldname": "discount_amount",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Discount Amount"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Bulk Discount",
+   "print_hide": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Bulk Discount",
+   "print_hide": 1,
+   "read_only": 1
+  }
+ ],
+ "is_submittable": 1,
+ "istable": 1,
+ "modified": "2021-06-30 01:01:34.307743",
+ "modified_by": "Administrator",
+ "module": "Selling",
+ "name": "Bulk Discount",
+ "owner": "Administrator",
+ "permissions": [],
+ "quick_entry": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

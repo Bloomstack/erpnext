@@ -5,7 +5,7 @@ from __future__ import unicode_literals
 import frappe
 import frappe.defaults
 import unittest
-from erpnext.selling.report.sales_analytics.sales_analytics import execute
+from erpnext.selling.report.sales_report_by_customer.sales_report_by_customer import execute
 from erpnext.selling.doctype.sales_order.test_sales_order import make_sales_order
 
 class TestAnalytics(unittest.TestCase):

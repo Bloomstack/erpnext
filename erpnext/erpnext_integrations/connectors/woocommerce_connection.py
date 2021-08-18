@@ -159,6 +159,7 @@ def link_items(items_list, woocommerce_settings, sys_lang):
 		item.item_code = _("woocommerce - {0}", sys_lang).format(item_data.get("product_id"))
 		item.woocommerce_id = item_data.get("product_id")
 		item.item_group = _("WooCommerce Products", sys_lang)
+		item.is_sales_item = 1
 		item.stock_uom = woocommerce_settings.uom or _("Nos", sys_lang)
 		item.flags.ignore_mandatory = True
 		item.save()

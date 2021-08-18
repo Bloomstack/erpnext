@@ -48,6 +48,7 @@ class TestEmployeeOnboarding(unittest.TestCase):
 		onboarding.reload()
 		employee = make_employee(onboarding.name)
 		employee.first_name = employee.employee_name
+		employee.last_name = "Doe"
 		employee.date_of_joining = nowdate()
 		employee.date_of_birth = '1990-05-08'
 		employee.gender = 'Female'

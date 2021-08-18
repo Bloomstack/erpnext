@@ -12,40 +12,7 @@ from erpnext.hr.doctype.leave_type.test_leave_type import create_leave_type
 from erpnext.hr.doctype.leave_allocation.test_leave_allocation import create_leave_allocation
 
 test_dependencies = ["Leave Allocation", "Leave Block List"]
-
-_test_records = [
- {
-  "company": "_Test Company",
-  "doctype": "Leave Application",
-  "employee": "_T-Employee-00001",
-  "from_date": "2013-05-01",
-  "description": "_Test Reason",
-  "leave_type": "_Test Leave Type",
-  "posting_date": "2013-01-02",
-  "to_date": "2013-05-05"
- },
- {
-  "company": "_Test Company",
-  "doctype": "Leave Application",
-  "employee": "_T-Employee-00002",
-  "from_date": "2013-05-01",
-  "description": "_Test Reason",
-  "leave_type": "_Test Leave Type",
-  "posting_date": "2013-01-02",
-  "to_date": "2013-05-05"
- },
- {
-  "company": "_Test Company",
-  "doctype": "Leave Application",
-  "employee": "_T-Employee-00001",
-  "from_date": "2013-01-15",
-  "description": "_Test Reason",
-  "leave_type": "_Test Leave Type LWP",
-  "posting_date": "2013-01-02",
-  "to_date": "2013-01-15"
- }
-]
-
+_test_records = frappe.get_test_records('Leave Application')
 
 class TestLeaveApplication(unittest.TestCase):
 	def setUp(self):
@@ -55,6 +22,7 @@ class TestLeaveApplication(unittest.TestCase):
 	@classmethod
 	def setUpClass(cls):
 		set_leave_approver()
+		update_email_notification()
 
 	def tearDown(self):
 		frappe.set_user("Administrator")
@@ -301,7 +269,7 @@ class TestLeaveApplication(unittest.TestCase):
 			to_date = add_days(date, 2),
 			company = "_Test Company",
 			docstatus = 1,
-            status = "Approved"
+			status = "Approved"
 		))
 		leave_application.submit()
 
@@ -314,7 +282,7 @@ class TestLeaveApplication(unittest.TestCase):
 			to_date = add_days(date, 8),
 			company = "_Test Company",
 			docstatus = 1,
-            status = "Approved"
+			status = "Approved"
 		))
 		self.assertRaises(frappe.ValidationError, leave_application.insert)
 
@@ -340,7 +308,7 @@ class TestLeaveApplication(unittest.TestCase):
 			to_date = add_days(date, 4),
 			company = "_Test Company",
 			docstatus = 1,
-            status = "Approved"
+			status = "Approved"
 		))
 
 		self.assertRaises(frappe.ValidationError, leave_application.insert)
@@ -362,7 +330,7 @@ class TestLeaveApplication(unittest.TestCase):
 			to_date = add_days(date, 4),
 			company = "_Test Company",
 			docstatus = 1,
-            status = "Approved"
+			status = "Approved"
 		))
 
 		self.assertTrue(leave_application.insert())
@@ -392,7 +360,7 @@ class TestLeaveApplication(unittest.TestCase):
 			to_date = add_days(date, 4),
 			company = "_Test Company",
 			docstatus = 1,
-            status = "Approved"
+			status = "Approved"
 		))
 
 		self.assertRaises(frappe.ValidationError, leave_application.insert)
@@ -493,7 +461,7 @@ class TestLeaveApplication(unittest.TestCase):
 			description = "_Test Reason",
 			company = "_Test Company",
 			docstatus = 1,
-            status = "Approved"
+			status = "Approved"
 		))
 		leave_application.submit()
 		leave_ledger_entry = frappe.get_all('Leave Ledger Entry', fields='*', filters=dict(transaction_name=leave_application.name))
@@ -508,6 +476,9 @@ class TestLeaveApplication(unittest.TestCase):
 
 	def test_ledger_entry_creation_on_intermediate_allocation_expiry(self):
 		employee = get_employee()
+		if not frappe.db.exists("Salary Component","Leave Encashment"):
+			from erpnext.hr.doctype.salary_component.test_salary_component import create_salary_component
+			create_salary_component("Leave Encashment")
 		leave_type = create_leave_type(
 			leave_type_name="_Test_CF_leave_expiry",
 			is_carry_forward=1,
@@ -525,7 +496,7 @@ class TestLeaveApplication(unittest.TestCase):
 			description = "_Test Reason",
 			company = "_Test Company",
 			docstatus = 1,
-            status = "Approved"
+			status = "Approved"
 		))
 		leave_application.submit()
 
@@ -593,6 +564,10 @@ def set_leave_approver():
 		'approver': 'test@example.com'
 	})
 	dept_doc.save(ignore_permissions=True)
+
+def update_email_notification():
+	frappe.db.set_value("HR Settings", None, "leave_status_notification_template", "")
+	frappe.db.set_value("HR Settings", None, "leave_approval_notification_template", "")
 
 def get_leave_period():
 	leave_period_name = frappe.db.exists({

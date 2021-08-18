@@ -16,13 +16,31 @@ def get_context(context):
 	context.program = program
 	context.course = course
 	context.topic = frappe.get_doc("Topic", topic)
+	context.student = utils.get_current_student()
+	course_details = frappe.get_doc('Course',course)
+	context.course_topics = course_details.get_topics()
+
 	context.contents = get_contents(context.topic, course, program)
 	context.has_access =  utils.allowed_program_access(program)
 	context.has_super_access = utils.has_super_access()
 	context.ongoing_topic = get_ongoing_topic(context.contents)
-	course_details = frappe.get_doc('Course',course)
-	course_topics = course_details.get_topics()
-	context.total_progress = utils.get_total_program_progress(course_topics,course)
+	context.total_progress = utils.get_total_program_progress(context.course_topics, course, context.student)
+	# Get all topics
+	content_list = []
+	for t in context.course_topics:
+		for topic_content in t.topic_content:
+			content_list.append({'content_type':topic_content.content_type, 'content':topic_content.content})
+
+	context.length = len(content_list)
+	context.completed_topics = utils.get_completed_topic_list(course)
+
+	# Set context for progress numbers
+	context.position = len(context.completed_topics)
+
+	# Set context for navigation
+	context.previous = utils.get_previous_content(content_list, context.position)
+	context.next = utils.get_next_content(content_list, context.position-1)
+
 
 def get_contents(topic, course, program):
 	student = utils.get_current_student()

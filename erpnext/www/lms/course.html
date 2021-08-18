@@ -114,13 +114,13 @@
 	<div class="container">
 	<div class="d-flex flex-row justify-content-between">
 		<div class="course-title col-md-9">
-			{{ hero(course.course_name, course.description, has_access, {'name': 'Program', 'url': '/lms/program?program=' + program }) }}
+			{{ hero(course.course_name, course.description, student, has_access, {'name': 'Program', 'url': '/lms/program?program=' + program }) }}
 			{% if ongoing_topic %}
 			<a href="/lms/topic?program={{ program }}&course={{ course.name }}&topic={{ ongoing_topic }}" class="btn continue-learning-btn">Continue Learning</a>
 			{% endif %}
 		</div>
 		<div class="course-progress col-md-3">
-			{% if has_access and not has_super_access and not frappe.session.user == 'Administrator' %}
+			{% if student and not frappe.session.user == 'Administrator' %}
 			<p class="text-right mb-0">{{program}} </p>
 			<div class="progress">
 				<div class="progress-bar" role="progressbar" style="width: {{total_progress}}%;" aria-valuenow="{{total_progress}}" aria-valuemin="0" aria-valuemax="100"></div>

@@ -113,7 +113,13 @@ class ShippingRule(Document):
 		else:
 			shipping_charge["tax_amount"] = shipping_amount
 			shipping_charge["description"] = self.label
-			doc.append("taxes", shipping_charge)
+
+			# Check if already tax is present & add new shipping taxes
+			if doc.get("taxes"):
+				taxes_and_charges = doc.get("taxes")
+				doc.set("taxes", [shipping_charge] + taxes_and_charges)
+			else:
+				doc.append("taxes", shipping_charge)
 
 	def sort_shipping_rule_conditions(self):
 		"""Sort Shipping Rule Conditions based on increasing From Value"""

@@ -18,7 +18,8 @@ class TestShoppingCart(unittest.TestCase):
 	"""
 	def setUp(self):
 		frappe.set_user("Administrator")
-		create_test_contact_and_address()
+		if not frappe.db.get_value("Contact", dict(email_id="test_contact_customer@example.com")):
+			create_test_contact_and_address()
 		self.enable_shopping_cart()
 
 	def tearDown(self):
@@ -32,7 +33,7 @@ class TestShoppingCart(unittest.TestCase):
 		quotation = _get_cart_quotation()
 		self.assertEqual(quotation.quotation_to, "Customer")
 		self.assertEqual(quotation.contact_person,
-			frappe.db.get_value("Contact", dict(email_id="test_cart_user@example.com")))
+			frappe.db.get_value("Contact", dict(email_id="test_contact_customer@example.com")))
 		self.assertEqual(quotation.contact_email, frappe.session.user)
 
 		return quotation
@@ -187,8 +188,8 @@ class TestShoppingCart(unittest.TestCase):
 		frappe.local.shopping_cart_settings = None
 
 	def login_as_new_user(self):
-		self.create_user_if_not_exists("test_cart_user@example.com")
-		frappe.set_user("test_cart_user@example.com")
+		self.create_user_if_not_exists("test_contact_customer@example.com")
+		frappe.set_user("test_contact_customer@example.com")
 
 	def login_as_customer(self):
 		self.create_user_if_not_exists("test_contact_customer@example.com",

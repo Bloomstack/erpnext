@@ -821,6 +821,23 @@ frappe.ui.form.on('Sales Invoice', {
 			method: "erpnext.accounts.doctype.sales_invoice.sales_invoice.create_invoice_discounting",
 			frm: frm
 		});
+	},
+
+	email_coas: function(frm) {
+		frappe.call({
+			method: "erpnext.accounts.doctype.sales_invoice.sales_invoice.email_coas",
+			args: {
+				docname: frm.doc.name
+			},
+			callback: (r) => {
+				if(r && r.message == "success"){
+					frappe.show_alert({
+						indicator: 'green',
+						message: __('Email Queued')
+					})
+				}
+			}
+		})
 	}
 })
 

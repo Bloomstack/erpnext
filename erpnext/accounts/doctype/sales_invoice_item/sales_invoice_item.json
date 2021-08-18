@@ -455,7 +455,6 @@
    "print_hide": 1
   },
   {
-   "default": ":Company",
    "fieldname": "cost_center",
    "fieldtype": "Link",
    "label": "Cost Center",
@@ -800,7 +799,7 @@
  ],
  "idx": 1,
  "istable": 1,
- "modified": "2020-10-30 01:53:51.592340",
+ "modified": "2021-08-09 21:53:57.828480",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Sales Invoice Item",

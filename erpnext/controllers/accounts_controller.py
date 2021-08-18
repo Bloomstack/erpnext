@@ -449,10 +449,28 @@ class AccountsController(TransactionBase):
 			and allocated_amount = 0""" % (childtype, '%s', '%s'), (parentfield, self.name))
 
 	def apply_shipping_rule(self):
+		existing_rule = self.get_existing_shipping_rule(self)
+		[self.get("taxes").remove(d) for d in existing_rule]
+
 		if self.shipping_rule:
 			shipping_rule = frappe.get_doc("Shipping Rule", self.shipping_rule)
 			shipping_rule.apply(self)
-			self.calculate_taxes_and_totals()
+		else:
+			taxes_and_charges = self.get("taxes")
+			return taxes_and_charges
+
+		self.calculate_taxes_and_totals()
+
+	# get existing shipping rule tax by its account head from taxes table
+	def get_existing_shipping_rule(self, doc):
+		existing_rule = []
+		shipping_rule_names = [rule.get('account') for rule in frappe.get_all("Shipping Rule", fields=["account"])]
+
+		for d in doc.get("taxes"):
+			if d.get("charge_type") == "Actual" and d.get("account_head") in shipping_rule_names:
+				existing_rule.append(d)
+
+		return existing_rule
 
 	def get_shipping_address(self):
 		'''Returns Address object from shipping address fields if present'''
@@ -907,24 +925,45 @@ def get_default_taxes_and_charges(master_doctype, tax_template=None, company=Non
 
 
 @frappe.whitelist()
-def get_taxes_and_charges(master_doctype, master_name):
-	if not master_name:
+def get_taxes_and_charges(master_doctype, master_name=None, doc=None):
+	if not master_doctype:
 		return
-	from frappe.model import default_fields
-	tax_master = frappe.get_doc(master_doctype, master_name)
 
-	taxes_and_charges = []
-	for i, tax in enumerate(tax_master.get("taxes")):
-		tax = tax.as_dict()
+	if isinstance(doc, str):
+		doc = json.loads(doc)
 
-		for fieldname in default_fields:
-			if fieldname in tax:
-				del tax[fieldname]
+	if doc and doc.get("taxes"):
+		taxes_and_charges = remove_existing_sales_taxes(doc.get("taxes"))
+	else:
+		taxes_and_charges = []
 
-		taxes_and_charges.append(tax)
+	if master_name:
+		from frappe.model import default_fields
+		tax_master = frappe.get_doc(master_doctype, master_name)
 
+		for i, tax in enumerate(tax_master.get("taxes")):
+			tax = tax.as_dict()
+
+			for fieldname in default_fields:
+				if fieldname in tax:
+					del tax[fieldname]
+
+			taxes_and_charges.append(tax)
 	return taxes_and_charges
 
+# remove existing Sales Taxes and Charges by its account head from taxes table
+def remove_existing_sales_taxes(taxes):
+	sales_taxes_names = [{'charge_type': rule.get('charge_type'), 'account_head':rule.get('account_head')} for rule in frappe.get_all("Sales Taxes and Charges", filters = {"parenttype": "Sales Taxes and Charges Template"}, fields=["charge_type","account_head"])]
+
+	if taxes:
+		to_remove = []
+		for d in taxes:
+			for t in sales_taxes_names:
+				if d['charge_type'] == t['charge_type'] and d['account_head'] == t['account_head']:
+					to_remove.append(d)
+
+		[taxes.remove(d) for d in to_remove]
+	return taxes
 
 def validate_conversion_rate(currency, conversion_rate, conversion_rate_label, company):
 	"""common validation for currency and price list currency"""

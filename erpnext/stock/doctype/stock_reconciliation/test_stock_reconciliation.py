@@ -224,13 +224,13 @@ def create_batch_or_serial_no_items():
 	create_warehouse("_Test Warehouse for Stock Reco2",
 		{"is_group": 0, "parent_warehouse": "_Test Warehouse Group - _TC"})
 
-	serial_item_doc = create_item("Stock-Reco-Serial-Item-1", is_stock_item=1)
+	serial_item_doc = create_item("Stock-Reco-Serial-Item-1", is_stock_item=1,is_sales_item=1)
 	if not serial_item_doc.has_serial_no:
 		serial_item_doc.has_serial_no = 1
 		serial_item_doc.serial_no_series = "SRSI.####"
 		serial_item_doc.save(ignore_permissions=True)
 
-	batch_item_doc = create_item("Stock-Reco-batch-Item-1", is_stock_item=1)
+	batch_item_doc = create_item("Stock-Reco-batch-Item-1", is_stock_item=1,is_sales_item=1)
 	if not batch_item_doc.has_batch_no:
 		batch_item_doc.has_batch_no = 1
 		batch_item_doc.create_new_batch = 1

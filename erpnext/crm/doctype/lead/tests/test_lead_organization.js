@@ -41,7 +41,7 @@ QUnit.test("test: lead", function (assert) {
 		() => frappe.set_route('Form', 'Lead', cur_frm.doc.links[0].link_name),
 		() => frappe.timeout(1),
 		() => frappe.click_link('Address & Contact'),
-		() => assert.ok($('.address-box').text().includes('John'),
+		() => assert.ok($('.contact-box').text().includes('John'),
 			'contact is seen in contact box'),
 
 		// make customer

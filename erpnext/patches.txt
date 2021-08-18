@@ -681,7 +681,7 @@ erpnext.patches.v12_0.set_employee_preferred_emails
 erpnext.patches.v12_0.set_job_offer_applicant_email
 erpnext.patches.v12_0.add_affirm_integration_field
 erpnext.patches.v12_0.update_payment_gateway_account_in_shopping_cart_settings
-erpnext.patches.v12_0.add_taxjar_integration_field
+erpnext.patches.v12_0.add_taxjar_integration_field #2021-08-12
 erpnext.patches.v12_0.update_uom_conversion_factor
 erpnext.patches.v12_0.update_sales_taxes_and_charges_template
 erpnext.patches.v13_0.update_customer_total_sales
@@ -724,6 +724,10 @@ erpnext.patches.v13_0.set_coa_batch_in_batch
 erpnext.patches.v13_0.set_coupon_code_enabled
 erpnext.patches.v13_0.recalculate_outstanding_amount
 erpnext.patches.v13_0.add_insight_engine_module
+erpnext.patches.v13_0.add_cannabis_domain
 execute:frappe.delete_doc_if_exists("Page", "welcome-to-erpnext")
 execute:frappe.delete_doc_if_exists("Report", "Item-Wise Sales Register")
 execute:frappe.delete_doc_if_exists("Report", "Sales Analytics")
+erpnext.patches.v13_0.update_accounts_taxjar_setting #
+erpnext.patches.v13_0.rename_task_cancelled_status_to_closed
+erpnext.patches.v13_0.add_default_project_into_project_details_child_table

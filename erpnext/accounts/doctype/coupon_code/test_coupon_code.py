@@ -20,6 +20,7 @@ def test_create_test_data():
 		"has_serial_no": 0,
 		"inspection_required": 0,
 		"is_stock_item": 1,
+		"is_sales_item":1,
 		"opening_stock":100,
 		"is_sub_contracted_item": 0,
 		"item_code": "_Test Tesla Car",

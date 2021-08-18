@@ -1,5 +1,4 @@
 {
- "actions": [],
  "allow_import": 1,
  "allow_rename": 1,
  "autoname": "field:serial_no",
@@ -12,6 +11,7 @@
   "details",
   "column_break0",
   "serial_no",
+  "company",
   "item_code",
   "warehouse",
   "batch_no",
@@ -56,7 +56,6 @@
   "warranty_period",
   "more_info",
   "serial_no_details",
-  "company",
   "status"
  ],
  "fields": [
@@ -410,7 +409,6 @@
    "fieldtype": "Link",
    "label": "Company",
    "options": "Company",
-   "read_only": 1,
    "remember_last_selected_value": 1,
    "reqd": 1,
    "search_index": 1
@@ -426,8 +424,7 @@
  ],
  "icon": "fa fa-barcode",
  "idx": 1,
- "links": [],
- "modified": "2020-05-21 19:29:58.517772",
+ "modified": "2021-07-09 00:12:59.513799",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Serial No",
