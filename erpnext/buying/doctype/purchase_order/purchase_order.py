@@ -576,7 +576,7 @@ def create_multiple_purchase_invoices(orders):
 		if not purchase_invoices:
 			order_doc = make_purchase_invoice(order)
 
-			# if no items can be avilable, do not create an empty Purchase Invoice.
+			# if no items can be available, do not create an empty Purchase Invoice.
 			if order_doc.get("items"):
 				order_doc.save()
 				purchase_invoices = [order_doc.name]
