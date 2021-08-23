@@ -44,42 +44,6 @@ class TestPlaidSettings(unittest.TestCase):
 		add_account_subtype("loan")
 		self.assertEqual(frappe.get_doc("Account Subtype", "loan").name, "loan")
 
-	def test_default_bank_account(self):
-		if not frappe.db.exists("Bank", "Citi"):
-			frappe.get_doc({
-				"doctype": "Bank",
-				"bank_name": "Citi"
-			}).insert()
-
-		bank_accounts = {
-			'account': {
-				'subtype': 'checking',
-				'mask': '0000',
-				'type': 'depository',
-				'id': '6GbM6RRQgdfy3lAqGz4JUnpmR948WZFg8DjQK',
-				'name': 'Plaid Checking'
-			},
-			'account_id': '6GbM6RRQgdfy3lAqGz4JUnpmR948WZFg8DjQK',
-			'link_session_id': 'db673d75-61aa-442a-864f-9b3f174f3725',
-			'accounts': [{
-				'type': 'depository',
-				'subtype': 'checking',
-				'mask': '0000',
-				'id': '6GbM6RRQgdfy3lAqGz4JUnpmR948WZFg8DjQK',
-				'name': 'Plaid Checking'
-			}],
-			'institution': {
-				'institution_id': 'ins_6',
-				'name': 'Citi'
-			}
-		}
-
-		bank = json.dumps(frappe.get_doc("Bank", "Citi").as_dict(), default=json_handler)
-		company = frappe.db.get_single_value('Global Defaults', 'default_company')
-		frappe.db.set_value("Company", company, "default_bank_account", None)
-
-		self.assertRaises(frappe.ValidationError, add_bank_accounts, response=bank_accounts, bank=bank, company=company)
-
 	def test_new_transaction(self):
 		if not frappe.db.exists("Bank", "Citi"):
 			frappe.get_doc({
@@ -116,7 +80,8 @@ class TestPlaidSettings(unittest.TestCase):
 		if frappe.db.get_value("Company", company, "default_bank_account") is None:
 			frappe.db.set_value("Company", company, "default_bank_account", get_default_bank_cash_account(company, "Cash").get("account"))
 
-		add_bank_accounts(bank_accounts, bank, company)
+		if not frappe.db.exists("Account", "Citi-Plaid Checking - WP"):
+			add_bank_accounts(bank_accounts, bank, company)
 
 		transactions = {
 			'account_owner': None,
@@ -156,3 +121,39 @@ class TestPlaidSettings(unittest.TestCase):
 		new_bank_transaction(transactions)
 
 		self.assertTrue(len(frappe.get_all("Bank Transaction")) == 1)
+
+	def test_default_bank_account(self):
+		if not frappe.db.exists("Bank", "Citi"):
+			frappe.get_doc({
+				"doctype": "Bank",
+				"bank_name": "Citi"
+			}).insert()
+
+		bank_accounts = {
+			'account': {
+				'subtype': 'checking',
+				'mask': '0000',
+				'type': 'depository',
+				'id': '6GbM6RRQgdfy3lAqGz4JUnpmR948WZFg8DjQK',
+				'name': 'Plaid Checking'
+			},
+			'account_id': '6GbM6RRQgdfy3lAqGz4JUnpmR948WZFg8DjQK',
+			'link_session_id': 'db673d75-61aa-442a-864f-9b3f174f3725',
+			'accounts': [{
+				'type': 'depository',
+				'subtype': 'checking',
+				'mask': '0000',
+				'id': '6GbM6RRQgdfy3lAqGz4JUnpmR948WZFg8DjQK',
+				'name': 'Plaid Checking'
+			}],
+			'institution': {
+				'institution_id': 'ins_6',
+				'name': 'Citi'
+			}
+		}
+
+		bank = json.dumps(frappe.get_doc("Bank", "Citi").as_dict(), default=json_handler)
+		company = frappe.db.get_single_value('Global Defaults', 'default_company')
+		frappe.db.set_value("Company", company, "default_bank_account", None)
+
+		self.assertRaises(frappe.ValidationError, add_bank_accounts, response=bank_accounts, bank=bank, company=company)
