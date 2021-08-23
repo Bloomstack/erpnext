@@ -40,17 +40,14 @@ class TestCustomer(unittest.TestCase):
 			'contact_mobile': None,
 			'sales_team': [],
 			'contact_display': '_Test Contact for _Test Customer',
-			'contact_person': '_Test Contact for _Test Customer-_Test Customer',
-			'territory': u'_Test Territory',
+			'territory': '_Test Territory',
 			'contact_phone': '+91 0000000000',
 			'customer_name': '_Test Customer'
 		}
 
-		create_test_contact_and_address()
+		contact = create_test_contact_and_address()
 
-		frappe.db.set_value("Contact", "_Test Contact for _Test Customer-_Test Customer",
-			"is_primary_contact", 1)
-
+		frappe.db.set_value("Contact", contact.name, "is_primary_contact", 1)
 		details = get_party_details("_Test Customer")
 
 		for key, value in iteritems(to_check):

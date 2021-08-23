@@ -40,3 +40,4 @@ def create_test_contact_and_address():
 	contact.add_email("test_contact_customer@example.com", is_primary=True)
 	contact.add_phone("+91 0000000000", is_primary_phone=True)
 	contact.insert()
+	return contact
