@@ -15,6 +15,7 @@
   "company",
   "work_order",
   "purchase_order",
+  "sales_order_no",
   "delivery_note_no",
   "sales_invoice_no",
   "pick_list",
@@ -638,12 +639,18 @@
    "label": "Harvest",
    "options": "Harvest",
    "read_only": 1
+  },
+  {
+   "fieldname": "sales_order_no",
+   "fieldtype": "Link",
+   "label": "Sales Order No",
+   "options": "Sales Order"
   }
  ],
  "icon": "fa fa-file-text",
  "idx": 1,
  "is_submittable": 1,
- "modified": "2020-09-10 23:06:16.110675",
+ "modified": "2021-08-18 07:33:39.344008",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Stock Entry",

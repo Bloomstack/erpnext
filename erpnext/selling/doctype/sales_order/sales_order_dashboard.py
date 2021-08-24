@@ -40,5 +40,9 @@ def get_data():
 				'label': _('Payment'),
 				'items': ['Payment Entry', 'Payment Request', 'Journal Entry']
 			},
+			{
+				'label': _('Serial Numbers'),
+				'items': ['Serial No']
+			}
 		]
 	}

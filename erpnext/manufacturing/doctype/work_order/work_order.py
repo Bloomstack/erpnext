@@ -644,7 +644,7 @@ def make_work_order(bom_no, item, qty=0, project=None, finished_goods_qty=0, man
 
 	if not manufacturing_type:
 		manufacturing_type = "Discrete"
-	
+
 	item_details = get_item_details(item, project)
 	wo_doc = frappe.new_doc("Work Order")
 	wo_doc.production_item = item
@@ -680,7 +680,7 @@ def set_work_order_ops(name):
 	po.save()
 
 @frappe.whitelist()
-def make_stock_entry(work_order_id, purpose, qty=None):
+def make_stock_entry(work_order_id, purpose, qty=None, sales_order=None):
 	work_order = frappe.get_doc("Work Order", work_order_id)
 	if not frappe.db.get_value("Warehouse", work_order.wip_warehouse, "is_group") \
 			and not work_order.skip_transfer:
@@ -691,6 +691,7 @@ def make_stock_entry(work_order_id, purpose, qty=None):
 	stock_entry = frappe.new_doc("Stock Entry")
 	stock_entry.purpose = purpose
 	stock_entry.work_order = work_order_id
+	stock_entry.sales_order_no = sales_order
 	stock_entry.company = work_order.company
 	stock_entry.from_bom = 1
 	stock_entry.bom_no = work_order.bom_no
