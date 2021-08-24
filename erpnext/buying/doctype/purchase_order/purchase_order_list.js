@@ -44,7 +44,7 @@ frappe.listview_settings['Purchase Order'] = {
 					}
 				}
 
-				frappe.confirm(__(`This will create a Purchase Invoice for each Sales Order.<br><br>
+				frappe.confirm(__(`This will create a Purchase Invoice for each Purchase Order.<br><br>
 					Are you sure you want to create {0} Purchase Invoice(s)?`, [selected_docs.length]),
 				() => {
 					frappe.call({
