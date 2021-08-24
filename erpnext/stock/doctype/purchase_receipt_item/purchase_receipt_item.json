@@ -11,6 +11,7 @@
   "item_code",
   "package_tag",
   "supplier_part_no",
+  "custom_series",
   "column_break_2",
   "item_name",
   "batch_no",
@@ -901,11 +902,17 @@
    "fieldtype": "Long Text",
    "label": "Label Print Details",
    "read_only": 1
+  },
+  {
+   "fieldname": "custom_series",
+   "fieldtype": "Link",
+   "label": "Custom Series",
+   "options": "Custom Series"
   }
  ],
  "idx": 1,
  "istable": 1,
- "modified": "2021-03-15 08:01:26.374719",
+ "modified": "2021-08-24 00:11:20.636505",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Purchase Receipt Item",

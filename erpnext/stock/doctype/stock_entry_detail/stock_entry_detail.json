@@ -41,6 +41,7 @@
   "coa_batch_no",
   "serial_no",
   "col_break4",
+  "custom_series",
   "batch_no",
   "quality_inspection",
   "accounting",
@@ -534,11 +535,17 @@
    "label": "Product Recall Notice Item",
    "options": "Product Recall Notice Item",
    "read_only": 1
+  },
+  {
+   "fieldname": "custom_series",
+   "fieldtype": "Link",
+   "label": "Custom Series",
+   "options": "Custom Series"
   }
  ],
  "idx": 1,
  "istable": 1,
- "modified": "2021-06-14 21:38:57.459134",
+ "modified": "2021-08-24 02:37:14.174561",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Stock Entry Detail",
