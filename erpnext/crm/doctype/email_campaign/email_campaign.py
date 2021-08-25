@@ -70,25 +70,40 @@ def send_email_to_leads_or_contacts():
 				send_mail(entry, email_campaign)
 
 def send_mail(entry, email_campaign):
-	recipient = frappe.db.get_value(email_campaign.email_campaign_for, email_campaign.get("recipient"), 'email_id')
-
 	email_template = frappe.get_doc("Email Template", entry.get("email_template"))
 	sender = frappe.db.get_value("User", email_campaign.get("sender"), 'email')
 	context = {"doc": frappe.get_doc(email_campaign.email_campaign_for, email_campaign.recipient)}
-	# send mail and link communication to document
-	comm = make(
-		doctype = "Email Campaign",
-		name = email_campaign.name,
-		subject = frappe.render_template(email_template.get("subject"), context),
-		content = frappe.render_template(email_template.get("response"), context),
-		sender = sender,
-		recipients = recipient,
-		communication_medium = "Email",
-		sent_or_received = "Sent",
-		send_email = True,
-		email_template = email_template.name
-	)
-	return comm
+	if email_campaign.email_campaign_for == "Email Group":
+		recipients = frappe.get_all("Email Group Member", {"email_group": email_campaign.get("recipient")}, "email")
+		for recipient in recipients:
+			comm = make(
+				doctype = "Email Campaign",
+				name = email_campaign.name,
+				subject = frappe.render_template(email_template.get("subject"), context),
+				content = frappe.render_template(email_template.get("response"), context),
+				sender = sender,
+				recipients = recipient.email,
+				communication_medium = "Email",
+				sent_or_received = "Sent",
+				send_email = True,
+				email_template = email_template.name
+			)
+	else:
+		recipient = frappe.db.get_value(email_campaign.email_campaign_for, email_campaign.get("recipient"), 'email_id')
+		# send mail and link communication to document
+		comm = make(
+			doctype = "Email Campaign",
+			name = email_campaign.name,
+			subject = frappe.render_template(email_template.get("subject"), context),
+			content = frappe.render_template(email_template.get("response"), context),
+			sender = sender,
+			recipients = recipient,
+			communication_medium = "Email",
+			sent_or_received = "Sent",
+			send_email = True,
+			email_template = email_template.name
+		)
+		return comm
 
 #called from hooks on doc_event Email Unsubscribe
 def unsubscribe_recipient(unsubscribe, method):
