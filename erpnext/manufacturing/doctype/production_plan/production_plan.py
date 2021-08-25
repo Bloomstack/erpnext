@@ -488,8 +488,8 @@ def get_exploded_items(item_details, company, bom_no, include_non_stock_items, p
 			and bom.name=%s and item.is_stock_item in (1, {0})
 		group by bei.item_code, bei.stock_uom""".format(0 if include_non_stock_items else 1),
 		(planned_qty, company, bom_no), as_dict=1):
-			d['sales_order'] = sales_order
-			item_details.setdefault(d.get('item_code'), d)
+		d['sales_order'] = sales_order
+		item_details.setdefault(d.get('item_code'), d)
 	return item_details
 
 def get_exploded_items_with_subassembly(item_details, company, bom_no, include_non_stock_items, planned_qty=1, sales_order=None):
@@ -709,7 +709,7 @@ def get_items_for_material_requests(doc, ignore_existing_ordered_qty=None):
 					# fetch exploded items from BOM
 					item_details = get_exploded_items(item_details,
 						company, bom_no, include_non_stock_items, planned_qty=planned_qty, sales_order=data.get("sales_order"))
-				elif  data.get('include_exploded_items') and include_subcontracted_items and doc.get("include_sub_assembly_with_exploded_item"):
+				elif data.get('include_exploded_items') and include_subcontracted_items and doc.get("include_sub_assembly_with_exploded_item"):
 					# fetch exploded items with sub assembly item from BOM
 					item_details = get_exploded_items_with_subassembly(item_details,
 						company, bom_no, include_non_stock_items, planned_qty=planned_qty, sales_order=data.get("sales_order"))
