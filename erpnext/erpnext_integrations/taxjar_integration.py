@@ -299,21 +299,13 @@ def get_line_items(doc):
 	if not doc.items:
 		return
 
-	discout_percent = 0.0
-
-	if doc.discount_amount:
-		discout_percent = ((doc.discount_amount / doc.total) * 100)
-
 	line_items = []
 	for item in doc.items:
-		if discout_percent:
-			item.discount_amount = ((item.price_list_rate * discout_percent) / 100)
 		line_item = {
 			'id': item.name,
 			'description': item.item_name,
 			'quantity': item.qty,
-			'unit_price': item.price_list_rate,
-			'discount': round(item.discount_amount * item.qty)
+			'unit_price': item.rate,
 		}
 		line_items.append(line_item)
 
