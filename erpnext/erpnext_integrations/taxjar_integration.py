@@ -113,7 +113,7 @@ def get_tax_data(doc):
 		to_shipping_state = get_iso_3166_2_state_code(to_address)
 
 	line_items = get_line_items(doc)
-
+	#warning: we are comenting line_items for now. once discount approach stable will enable line_items.
 	tax_dict = {
 		'from_country': from_country_code,
 		'from_zip': from_address.pincode,
@@ -127,7 +127,7 @@ def get_tax_data(doc):
 		'to_state': to_shipping_state,
 		'shipping': shipping,
 		'amount': doc.net_total,
-		'line_items': line_items,
+		#'line_items': line_items,
 		'plugin': '[bloomstack]'
 	}
 
