@@ -469,7 +469,7 @@ def download_raw_materials(production_plan):
 
 	build_csv_response(item_list, doc.name)
 
-def get_exploded_items(item_details, company, bom_no, include_non_stock_items, planned_qty=1):
+def get_exploded_items(item_details, company, bom_no, include_non_stock_items, planned_qty=1, sales_order=None):
 	for d in frappe.db.sql("""select bei.item_code, item.default_bom as bom,
 			ifnull(sum(bei.stock_qty/ifnull(bom.quantity, 1)), 0)*%s as qty, item.item_name,
 			bei.description, bei.stock_uom, item.min_order_qty, bei.source_warehouse,
@@ -488,14 +488,16 @@ def get_exploded_items(item_details, company, bom_no, include_non_stock_items, p
 			and bom.name=%s and item.is_stock_item in (1, {0})
 		group by bei.item_code, bei.stock_uom""".format(0 if include_non_stock_items else 1),
 		(planned_qty, company, bom_no), as_dict=1):
+			d['sales_order'] = sales_order
 			item_details.setdefault(d.get('item_code'), d)
 	return item_details
 
-def get_exploded_items_with_subassembly(item_details, company, bom_no, include_non_stock_items, planned_qty=1):
+def get_exploded_items_with_subassembly(item_details, company, bom_no, include_non_stock_items, planned_qty=1, sales_order=None):
 	explosion_items = get_items_for_explode_and_subassembly("BOM Explosion Item", company, bom_no, include_non_stock_items, planned_qty)
 	bom_items = get_items_for_explode_and_subassembly("BOM Item", company, bom_no, include_non_stock_items, planned_qty)
 
 	for d in explosion_items + bom_items:
+		item_details['sales_order'] = sales_order
 		item_details.setdefault(d.get('item_code'), d)
 	return item_details
 
@@ -521,7 +523,7 @@ def get_items_for_explode_and_subassembly(item, company, bom_no, include_non_sto
 	return items
 
 def get_subitems(doc, data, item_details, bom_no, company, include_non_stock_items,
-	include_subcontracted_items, parent_qty, planned_qty=1):
+	include_subcontracted_items, parent_qty, planned_qty=1, sales_order=None):
 	items = frappe.db.sql("""
 		SELECT
 			bom_item.item_code, default_material_request_type, item.item_name,
@@ -562,6 +564,7 @@ def get_subitems(doc, data, item_details, bom_no, company, include_non_stock_ite
 				if d.qty > 0:
 					get_subitems(doc, data, item_details, d.default_bom, company,
 						include_non_stock_items, include_subcontracted_items, d.qty)
+		item_details['sales_order'] = sales_order
 	return item_details
 
 def get_material_request_items(row, sales_order,
@@ -602,7 +605,7 @@ def get_material_request_items(row, sales_order,
 			'projected_qty': bin_dict.get("projected_qty", 0),
 			'min_order_qty': row['min_order_qty'],
 			'material_request_type': row.get("default_material_request_type"),
-			'sales_order': sales_order,
+			'sales_order': row.get("sales_order"),
 			'description': row.get("description"),
 			'uom': row.get("purchase_uom") or row.get("stock_uom")
 		}
@@ -705,14 +708,14 @@ def get_items_for_material_requests(doc, ignore_existing_ordered_qty=None):
 				if data.get('include_exploded_items') and include_subcontracted_items and not doc.get("include_sub_assembly_with_exploded_item"):
 					# fetch exploded items from BOM
 					item_details = get_exploded_items(item_details,
-						company, bom_no, include_non_stock_items, planned_qty=planned_qty)
-				elif  data.get('include_exploded_items') and include_subcontracted_items and doc.get("include_sub_assembly_with_exploded_item"): 
+						company, bom_no, include_non_stock_items, planned_qty=planned_qty, sales_order=data.get("sales_order"))
+				elif  data.get('include_exploded_items') and include_subcontracted_items and doc.get("include_sub_assembly_with_exploded_item"):
 					# fetch exploded items with sub assembly item from BOM
 					item_details = get_exploded_items_with_subassembly(item_details,
-						company, bom_no, include_non_stock_items, planned_qty=planned_qty)
+						company, bom_no, include_non_stock_items, planned_qty=planned_qty, sales_order=data.get("sales_order"))
 				else:
 					item_details = get_subitems(doc, data, item_details, bom_no, company,
-						include_non_stock_items, include_subcontracted_items, 1, planned_qty=planned_qty)
+						include_non_stock_items, include_subcontracted_items, 1, planned_qty=planned_qty, sales_order=data.get("sales_order"))
 		elif data.get('item_code'):
 			item_master = frappe.get_doc('Item', data['item_code']).as_dict()
 			purchase_uom = item_master.purchase_uom or item_master.stock_uom
@@ -735,6 +738,7 @@ def get_items_for_material_requests(doc, ignore_existing_ordered_qty=None):
 					'description' : item_master.description,
 					'stock_uom' : item_master.stock_uom,
 					'conversion_factor' : conversion_factor,
+					'sales_order': data.get("sales_order")
 				}
 			)
 

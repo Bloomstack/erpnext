@@ -11,8 +11,10 @@ def get_data():
 		},
 		'internal_links': {
 			'Material Request': ['items', 'material_request'],
+			'Sales Order': ['items', 'sales_order'],
+			'Production Plan': ['items', 'production_plan'],
 			'Supplier Quotation': ['items', 'supplier_quotation'],
-			'Project': ['items', 'project'],
+			'Project': ['items', 'project']
 		},
 		'transactions': [
 			{
@@ -25,7 +27,7 @@ def get_data():
 			},
 			{
 				'label': _('Reference'),
-				'items': ['Material Request', 'Supplier Quotation', 'Project', 'Auto Repeat']
+				'items': ['Material Request', 'Sales Order', 'Production Plan', 'Supplier Quotation', 'Project', 'Auto Repeat']
 			},
 			{
 				'label': _('Sub-contracting'),
