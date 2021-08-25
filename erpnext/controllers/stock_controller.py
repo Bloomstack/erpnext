@@ -222,12 +222,12 @@ class StockController(AccountsController):
 			if d.get(warehouse_field) and not d.batch_no:
 				has_batch_no, create_new_batch = frappe.db.get_value('Item', d.item_code, ['has_batch_no', 'create_new_batch'])
 				if has_batch_no and create_new_batch:
-					if d.get("custom_series"):
+					if d.get("batch_naming_series"):
 						d.batch_no = frappe.get_doc(dict(
 							doctype='Batch',
 							item=d.item_code,
 							supplier=getattr(self, 'supplier', None),
-							custom_series=d.custom_series,
+							batch_naming_series=d.batch_naming_series,
 							reference_doctype=self.doctype,
 							reference_name=self.name)).insert().name
 					else:	

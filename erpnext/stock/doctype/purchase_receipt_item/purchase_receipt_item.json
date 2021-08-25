@@ -11,7 +11,7 @@
   "item_code",
   "package_tag",
   "supplier_part_no",
-  "custom_series",
+  "batch_naming_series",
   "column_break_2",
   "item_name",
   "batch_no",
@@ -904,15 +904,15 @@
    "read_only": 1
   },
   {
-   "fieldname": "custom_series",
+   "fieldname": "batch_naming_series",
    "fieldtype": "Link",
-   "label": "Custom Series",
+   "label": "Batch Naming Series",
    "options": "Custom Series"
   }
  ],
  "idx": 1,
  "istable": 1,
- "modified": "2021-08-24 00:11:20.636505",
+ "modified": "2021-08-25 08:50:10.636483",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Purchase Receipt Item",

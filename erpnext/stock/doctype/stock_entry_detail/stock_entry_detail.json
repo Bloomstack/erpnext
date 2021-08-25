@@ -41,7 +41,7 @@
   "coa_batch_no",
   "serial_no",
   "col_break4",
-  "custom_series",
+  "batch_naming_series",
   "batch_no",
   "quality_inspection",
   "accounting",
@@ -537,15 +537,15 @@
    "read_only": 1
   },
   {
-   "fieldname": "custom_series",
+   "fieldname": "batch_naming_series",
    "fieldtype": "Link",
-   "label": "Custom Series",
+   "label": "Batch Naming Series",
    "options": "Custom Series"
   }
  ],
  "idx": 1,
  "istable": 1,
- "modified": "2021-08-24 02:37:14.174561",
+ "modified": "2021-08-25 08:49:08.153336",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Stock Entry Detail",

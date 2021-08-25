@@ -93,8 +93,8 @@ class Batch(Document):
 				['create_new_batch', 'batch_number_series'])
 
 			if create_new_batch:
-				if self.custom_series:
-					self.batch_id = make_autoname(self.custom_series)
+				if self.batch_naming_series:
+					self.batch_id = make_autoname(self.batch_naming_series)
 				elif batch_number_series:
 					self.batch_id = make_autoname(batch_number_series)
 				elif batch_uses_naming_series():
