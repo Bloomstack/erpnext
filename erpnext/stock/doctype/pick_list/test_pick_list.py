@@ -6,6 +6,7 @@ from __future__ import unicode_literals
 import frappe
 import unittest
 test_dependencies = ['Item', 'Sales Invoice', 'Stock Entry', 'Batch']
+from erpnext.stock.doctype.stock_reconciliation.test_stock_reconciliation import create_stock_reconciliation
 
 from erpnext.stock.doctype.stock_reconciliation.stock_reconciliation \
 		import EmptyStockReconciliationItemsError
@@ -109,20 +110,7 @@ class TestPickList(unittest.TestCase):
 
 	def test_pick_list_shows_serial_no_for_serialized_item(self):
 
-		stock_reconciliation = frappe.get_doc({
-			'doctype': 'Stock Reconciliation',
-			'purpose': 'Stock Reconciliation',
-			'company': '_Test Company',
-			'items': [{
-				'item_code': '_Test Serialized Item',
-				'warehouse': '_Test Warehouse - _TC',
-				'valuation_rate': 100,
-				'qty': 5,
-				'serial_no': '123450\n123451\n123452\n123453\n123454'
-			}]
-		})
-
-		stock_reconciliation.submit()
+		create_stock_reconciliation(item_code="_Test Serialized Item", target="_Test Warehouse - _TC", qty=5, rate=100, serial_no='123450\n123451\n123452\n123453\n123454')
 
 		pick_list = frappe.get_doc({
 			'doctype': 'Pick List',
