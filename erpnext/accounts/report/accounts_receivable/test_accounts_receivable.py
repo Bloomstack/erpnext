@@ -76,21 +76,20 @@ def make_sales_invoice():
 
 def make_payment(docname):
 	pe = get_payment_entry("Sales Invoice", docname, bank_account="Cash - _TC2", party_amount=40)
-	pe.paid_from = "Debtors - _TC2"
 	pe.insert()
 	pe.submit()
 
 
 def make_credit_note(docname):
 	create_sales_invoice(company="_Test Company 2",
-			customer = '_Test Customer 2',
-			currency = 'EUR',
-			qty = -1,
-			warehouse = 'Finished Goods - _TC2',
-			debit_to = 'Debtors - _TC2',
-			income_account = 'Sales - _TC2',
-			expense_account = 'Cost of Goods Sold - _TC2',
-			cost_center = '_Test Company 2 - _TC2',
-			is_return = 1,
-			return_against = docname)
+		customer = '_Test Customer 2',
+		currency = 'EUR',
+		qty = -1,
+		warehouse = 'Finished Goods - _TC2',
+		debit_to = 'Debtors - _TC2',
+		income_account = 'Sales - _TC2',
+		expense_account = 'Cost of Goods Sold - _TC2',
+		cost_center = '_Test Company 2 - _TC2',
+		is_return = 1,
+		return_against = docname)
 

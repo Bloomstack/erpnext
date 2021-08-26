@@ -38,9 +38,9 @@ class TestSalarySlip(unittest.TestCase):
 		frappe.db.set_value("HR Settings", None, "include_holidays_in_total_working_days", 1)
 		make_employee("test_employee@salary.com")
 		frappe.db.set_value("Employee", frappe.get_value("Employee",
-			{"employee_name":"test_employee@salary.com"}, "name"), "relieving_date", None)
+			{"user_id":"test_employee@salary.com"}, "name"), "relieving_date", None)
 		frappe.db.set_value("Employee", frappe.get_value("Employee",
-			{"employee_name":"test_employee@salary.com"}, "name"), "status", "Active")
+			{"user_id":"test_employee@salary.com"}, "name"), "status", "Active")
 		ss = make_employee_salary_slip("test_employee@salary.com", "Monthly")
 
 		self.assertEqual(ss.total_working_days, no_of_days[0])
@@ -54,9 +54,9 @@ class TestSalarySlip(unittest.TestCase):
 		frappe.db.set_value("HR Settings", None, "include_holidays_in_total_working_days", 0)
 		make_employee("test_employee@salary.com")
 		frappe.db.set_value("Employee", frappe.get_value("Employee",
-			{"employee_name":"test_employee@salary.com"}, "name"), "relieving_date", None)
+			{"user_id":"test_employee@salary.com"}, "name"), "relieving_date", None)
 		frappe.db.set_value("Employee", frappe.get_value("Employee",
-			{"employee_name":"test_employee@salary.com"}, "name"), "status", "Active")
+			{"user_id":"test_employee@salary.com"}, "name"), "status", "Active")
 		ss = make_employee_salary_slip("test_employee@salary.com", "Monthly")
 
 		self.assertEqual(ss.total_working_days, no_of_days[0] - no_of_days[1])
@@ -87,11 +87,11 @@ class TestSalarySlip(unittest.TestCase):
 			relieving_date = getdate(nowdate())
 
 		frappe.db.set_value("Employee", frappe.get_value("Employee",
-			{"employee_name":"test_employee@salary.com"}, "name"), "date_of_joining", date_of_joining)
+			{"user_id":"test_employee@salary.com"}, "name"), "date_of_joining", date_of_joining)
 		frappe.db.set_value("Employee", frappe.get_value("Employee",
-			{"employee_name":"test_employee@salary.com"}, "name"), "relieving_date", None)
+			{"user_id":"test_employee@salary.com"}, "name"), "relieving_date", None)
 		frappe.db.set_value("Employee", frappe.get_value("Employee",
-			{"employee_name":"test_employee@salary.com"}, "name"), "status", "Active")
+			{"user_id":"test_employee@salary.com"}, "name"), "status", "Active")
 
 		ss = make_employee_salary_slip("test_employee@salary.com", "Monthly")
 
@@ -100,20 +100,18 @@ class TestSalarySlip(unittest.TestCase):
 
 		# set relieving date in the same month
 		frappe.db.set_value("Employee",frappe.get_value("Employee",
-			{"employee_name":"test_employee@salary.com"}, "name"), "date_of_joining", (add_days(nowdate(),-60)))
+			{"user_id":"test_employee@salary.com"}, "name"), "date_of_joining", (add_days(nowdate(),-60)))
 		frappe.db.set_value("Employee", frappe.get_value("Employee",
-			{"employee_name":"test_employee@salary.com"}, "name"), "relieving_date", relieving_date)
+			{"user_id":"test_employee@salary.com"}, "name"), "relieving_date", relieving_date)
 		frappe.db.set_value("Employee", frappe.get_value("Employee",
-			{"employee_name":"test_employee@salary.com"}, "name"), "status", "Left")
+			{"user_id":"test_employee@salary.com"}, "name"), "status", "Left")
 		ss.save()
-
 		self.assertEqual(ss.total_working_days, no_of_days[0])
 		self.assertEqual(ss.payment_days, getdate(relieving_date).day)
-
 		frappe.db.set_value("Employee", frappe.get_value("Employee",
-			{"employee_name":"test_employee@salary.com"}, "name"), "relieving_date", None)
+			{"user_id":"test_employee@salary.com"}, "name"), "relieving_date", None)
 		frappe.db.set_value("Employee", frappe.get_value("Employee",
-			{"employee_name":"test_employee@salary.com"}, "name"), "status", "Active")
+			{"user_id":"test_employee@salary.com"}, "name"), "status", "Active")
 
 	def test_employee_salary_slip_read_permission(self):
 		make_employee("test_employee@salary.com")
@@ -175,7 +173,7 @@ class TestSalarySlip(unittest.TestCase):
 		# as per assigned salary structure 40500 in monthly salary so 236000*5/100/12
 		frappe.db.sql("""delete from `tabPayroll Period`""")
 		frappe.db.sql("""delete from `tabSalary Component`""")
-	
+
 		payroll_period = create_payroll_period()
 
 		create_tax_slab(payroll_period, allow_tax_exemption=True)
@@ -558,6 +556,7 @@ def create_salary_slips_for_payroll_period(employee, salary_structure, payroll_p
 		if deduct_random and not random.randint(0, 2):
 			slip.deduct_tax_for_unsubmitted_tax_exemption_proof = 1
 			deducted_dates.append(posting_date)
+
 		slip.posting_date = posting_date
 		slip.start_date = get_first_day(posting_date)
 		slip.end_date = get_last_day(posting_date)
