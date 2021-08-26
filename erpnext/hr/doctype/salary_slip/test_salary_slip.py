@@ -543,12 +543,10 @@ def create_tax_slab(payroll_period, effective_date = None, allow_tax_exemption =
 def create_salary_slips_for_payroll_period(employee, salary_structure, payroll_period, deduct_random=True):
 	deducted_dates = []
 	i = 0
-	print("===========slip=======",deduct_random)
 	while i < 12:
 		slip = frappe.get_doc({"doctype": "Salary Slip", "employee": employee,
 				"salary_structure": salary_structure, "frequency": "Monthly"})
 		if i == 0:
-			# print("=========if=========",i,payroll_period.start_date,"========",add_days(payroll_period.start_date, 25))
 			posting_date = add_days(payroll_period.start_date, 25)
 		else:
 			posting_date = add_months(posting_date, 1)
@@ -558,7 +556,6 @@ def create_salary_slips_for_payroll_period(employee, salary_structure, payroll_p
 		if deduct_random and not random.randint(0, 2):
 			slip.deduct_tax_for_unsubmitted_tax_exemption_proof = 1
 			deducted_dates.append(posting_date)
-			print("=========deducted date1=========",deducted_dates)
 
 		slip.posting_date = posting_date
 		slip.start_date = get_first_day(posting_date)
@@ -566,7 +563,6 @@ def create_salary_slips_for_payroll_period(employee, salary_structure, payroll_p
 		doc = make_salary_slip(salary_structure, slip, employee)
 		doc.submit()
 		i += 1
-		print("=========deducted date=========",deducted_dates)
 	return deducted_dates
 
 def create_additional_salary(employee, payroll_period, amount):
