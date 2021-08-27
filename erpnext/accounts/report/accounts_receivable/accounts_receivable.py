@@ -90,7 +90,7 @@ class ReceivablePayableReport(object):
 		self.build_data()
 
 		if self.filters.get("group_by_partner"):
-			self.data = sorted(self.data, key=lambda i: i['sales_partner'])
+			self.data = sorted(self.data, key=lambda i: (i['sales_partner'] is None, i['sales_partner']))
 			self.sales_partner_summary_lines()
 
 
