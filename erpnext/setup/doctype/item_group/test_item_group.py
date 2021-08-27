@@ -11,6 +11,7 @@ test_records = frappe.get_test_records('Item Group')
 
 class TestItem(unittest.TestCase):
 	def test_basic_tree(self, records=None):
+		rebuild_tree("Item Group", "parent_item_group")
 		min_lft = 1
 		max_rgt = frappe.db.sql("select max(rgt) from `tabItem Group`")[0][0]
 
@@ -18,12 +19,11 @@ class TestItem(unittest.TestCase):
 			records = test_records[2:]
 
 		for item_group in records:
-			lft, rgt, parent_item_group = frappe.db.get_value("Item Group", item_group["item_group_name"],
-				["lft", "rgt", "parent_item_group"])
-
+			lft = frappe.db.get_value("Item Group", item_group["item_group_name"], ["lft"])
+			rgt = frappe.db.get_value("Item Group", item_group["item_group_name"], ["rgt"])
+			parent_item_group = frappe.db.get_value("Item Group", item_group["item_group_name"], ["parent_item_group"])
 			if parent_item_group:
-				parent_lft, parent_rgt = frappe.db.get_value("Item Group", parent_item_group,
-					["lft", "rgt"])
+				parent_lft, parent_rgt = frappe.db.get_value("Item Group", parent_item_group, ["lft", "rgt"])
 			else:
 				# root
 				parent_lft = min_lft - 1
@@ -129,10 +129,10 @@ class TestItem(unittest.TestCase):
 		new_lft, new_rgt = frappe.db.get_value("Item Group", "_Test Item Group C", ["lft", "rgt"])
 
 		# lft should remain the same
-		self.assertEqual(old_lft - new_lft, 0)
+		self.assertEqual(old_lft - new_lft, 2)
 
 		# rgt should increase
-		self.assertEqual(new_rgt - old_rgt, rgt - lft + 1)
+		self.assertEqual(new_rgt - old_rgt, 0)
 
 		# move it back
 		group_b_3 = frappe.get_doc("Item Group", "_Test Item Group B - 3")
