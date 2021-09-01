@@ -13,9 +13,9 @@
   "t_warehouse",
   "sec_break1",
   "customer",
-  "column_break_8",
+  "column_break",
   "supplier",
-  "section_break_9",
+  "section_break",
   "item_code",
   "item_group",
   "col_break2",
@@ -46,7 +46,6 @@
   "serial_no",
   "col_break4",
   "batch_no",
-  "batch_barcode",
   "quality_inspection",
   "accounting",
   "expense_account",
@@ -555,22 +554,17 @@
    "read_only": 1
   },
   {
-   "fieldname": "section_break_9",
+   "fieldname": "section_break",
    "fieldtype": "Section Break"
   },
   {
-   "fieldname": "column_break_8",
+   "fieldname": "column_break",
    "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "batch_barcode",
-   "fieldtype": "Barcode",
-   "label": "Batch Barcode"
   }
  ],
  "idx": 1,
  "istable": 1,
- "modified": "2021-08-31 08:51:33.580462",
+ "modified": "2021-09-01 07:24:21.555855",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Stock Entry Detail",
