@@ -1,5 +1,4 @@
 {
- "actions": [],
  "creation": "2013-03-05 09:11:06",
  "doctype": "DocType",
  "document_type": "Document",
@@ -24,6 +23,7 @@
   "customer",
   "column_break_2",
   "task",
+  "task_name",
   "section_break_6",
   "billable",
   "column_break_8",
@@ -228,12 +228,18 @@
    "label": "Customer",
    "options": "Customer",
    "read_only": 1
+  },
+  {
+   "fetch_from": "task.subject",
+   "fieldname": "task_name",
+   "fieldtype": "Read Only",
+   "label": "Task Name",
+   "options": "Task"
   }
  ],
  "idx": 1,
  "istable": 1,
- "links": [],
- "modified": "2021-05-05 12:57:05.316204",
+ "modified": "2021-09-02 17:02:49.949424",
  "modified_by": "Administrator",
  "module": "Projects",
  "name": "Timesheet Detail",
