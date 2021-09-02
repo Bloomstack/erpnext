@@ -8,6 +8,8 @@
   "mode_of_payment",
   "description",
   "due_date",
+  "is_billed",
+  "cb_schedule",
   "invoice_portion",
   "payment_amount",
   "paid_amount",
@@ -86,10 +88,20 @@
    "fieldname": "discount",
    "fieldtype": "Read Only",
    "label": "Discount"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_billed",
+   "fieldtype": "Check",
+   "label": "Billed"
+  },
+  {
+   "fieldname": "cb_schedule",
+   "fieldtype": "Column Break"
   }
  ],
  "istable": 1,
- "modified": "2021-01-14 18:40:50.164112",
+ "modified": "2021-09-02 17:38:43.809251",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Payment Schedule",
