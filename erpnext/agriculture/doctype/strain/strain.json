@@ -5,6 +5,8 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "company",
+  "section_break_1",
   "strain_name",
   "indica_percentage",
   "sativa_percentage",
@@ -177,9 +179,20 @@
   {
    "fieldname": "section_break_26",
    "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_1",
+   "fieldtype": "Section Break"
   }
  ],
- "modified": "2020-09-13 23:46:19.496562",
+ "modified": "2021-09-02 05:15:42.554549",
  "modified_by": "Administrator",
  "module": "Agriculture",
  "name": "Strain",
