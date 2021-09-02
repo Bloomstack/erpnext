@@ -12,6 +12,10 @@
   "col_break1",
   "t_warehouse",
   "sec_break1",
+  "customer",
+  "column_break",
+  "supplier",
+  "section_break",
   "item_code",
   "item_group",
   "col_break2",
@@ -534,11 +538,33 @@
    "label": "Product Recall Notice Item",
    "options": "Product Recall Notice Item",
    "read_only": 1
+  },
+  {
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "label": "Customer",
+   "options": "Customer",
+   "read_only": 1
+  },
+  {
+   "fieldname": "supplier",
+   "fieldtype": "Link",
+   "label": "Supplier",
+   "options": "Supplier",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break",
+   "fieldtype": "Column Break"
   }
  ],
  "idx": 1,
  "istable": 1,
- "modified": "2021-06-14 21:38:57.459134",
+ "modified": "2021-09-01 07:24:21.555855",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Stock Entry Detail",

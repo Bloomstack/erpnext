@@ -5,6 +5,8 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "company",
+  "section_break_1",
   "harvest_name",
   "harvest_type",
   "status",
@@ -97,10 +99,21 @@
    "fieldtype": "Data",
    "label": "Name",
    "unique": 1
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_1",
+   "fieldtype": "Section Break"
   }
  ],
  "is_submittable": 1,
- "modified": "2020-12-07 03:05:34.855524",
+ "modified": "2021-09-01 22:53:13.660220",
  "modified_by": "Administrator",
  "module": "Agriculture",
  "name": "Harvest",
