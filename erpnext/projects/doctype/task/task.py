@@ -69,10 +69,10 @@ class Task(NestedSet):
 				frappe.bold("Actual End Date")))
 
 	def validate_parent_project_dates(self):
-		if not self.project or frappe.flags.in_test:
+		if not self.default_project or frappe.flags.in_test:
 			return
 
-		expected_end_date = frappe.db.get_value("Project", self.project, "expected_end_date")
+		expected_end_date = frappe.db.get_value("Project", self.default_project, "expected_end_date")
 
 		if expected_end_date:
 			validate_project_dates(getdate(expected_end_date), self, "exp_start_date", "exp_end_date", "Expected")
@@ -110,7 +110,7 @@ class Task(NestedSet):
 		if len(self.projects) == 1:
 			# auto-set default project if only one is found
 			self.projects[0].is_default = 1
-			self.project = self.projects[0].project
+			self.default_project = self.projects[0].project
 			self.status = self.projects[0].status
 		elif len(self.projects) > 1:
 			default_project = [project for project in self.projects if project.is_default]
@@ -120,8 +120,11 @@ class Task(NestedSet):
 			elif len(default_project) > 1:
 				frappe.throw(_("There can be only one default project, found {0}.").format(len(default_project)))
 			else:
-				self.project = default_project[0].project
+				self.default_project = default_project[0].project
 				self.status = default_project[0].status
+		elif not len(self.projects):
+			# if no projects aviliable in projects make parent project empty
+			self.default_project = None
 
 	def update_completion_date(self):
 		for task_project in self.projects:
@@ -161,7 +164,7 @@ class Task(NestedSet):
 	
 	def update_total_expense_claim(self):
 		self.total_expense_claim = frappe.db.sql("""select sum(total_sanctioned_amount) from `tabExpense Claim`
-			where project = %s and task = %s and docstatus=1""",(self.project, self.name))[0][0]
+			where project = %s and task = %s and docstatus=1""",(self.default_project, self.name))[0][0]
 
 	def update_time_and_costing(self):
 		tl = frappe.db.sql("""select min(from_time) as start_date, max(to_time) as end_date,
@@ -177,7 +180,7 @@ class Task(NestedSet):
 		self.act_end_date= tl.end_date
 
 	def update_project(self):
-		if self.project and not self.flags.from_project:
+		if self.default_project and not self.flags.from_project:
 			for task_project in self.projects:
 				frappe.get_cached_doc("Project", task_project.project).update_project()
 
@@ -208,7 +211,7 @@ class Task(NestedSet):
 					and parent.name in (
 						select parent from `tabTask Depends On` as child
 						where child.task = %(task)s and child.project = %(project)s)
-			""", {'project': self.project, 'task':self.name }, as_dict=1):
+			""", {'project': self.default_project, 'task':self.name }, as_dict=1):
 				task = frappe.get_doc("Task", task_name.name)
 				if task.exp_start_date and task.exp_end_date and task.exp_start_date < getdate(end_date) and task.status == "Open":
 					task_duration = date_diff(task.exp_end_date, task.exp_start_date)
@@ -218,7 +221,7 @@ class Task(NestedSet):
 					task.save()
 
 	def has_webform_permission(self):
-		project_user = frappe.db.get_value("Project User", {"parent": self.project, "user":frappe.session.user} , "user")
+		project_user = frappe.db.get_value("Project User", {"parent": self.default_project, "user":frappe.session.user} , "user")
 		if project_user:
 			return True
 
