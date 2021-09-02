@@ -64,6 +64,12 @@
   "total_weight",
   "column_break_40",
   "weight_uom",
+  "cultivation_tax_details",
+  "flower_weight",
+  "leaf_weight",
+  "plant_weight",
+  "column_break_55",
+  "cultivation_weight_uom",
   "warehouse_and_reference",
   "warehouse",
   "delivered_by_supplier",
@@ -783,11 +789,41 @@
    "fieldtype": "Long Text",
    "label": "Label Print Details",
    "read_only": 1
+  },
+  {
+   "fieldname": "cultivation_tax_details",
+   "fieldtype": "Section Break",
+   "label": "Cultivation Tax Details"
+  },
+  {
+   "fieldname": "flower_weight",
+   "fieldtype": "Float",
+   "label": "Flower Weight"
+  },
+  {
+   "fieldname": "leaf_weight",
+   "fieldtype": "Float",
+   "label": "Leaf Weight"
+  },
+  {
+   "fieldname": "plant_weight",
+   "fieldtype": "Float",
+   "label": "Plant Weight"
+  },
+  {
+   "fieldname": "cultivation_weight_uom",
+   "fieldtype": "Link",
+   "label": "Cultivation Weight UOM",
+   "options": "UOM"
+  },
+  {
+   "fieldname": "column_break_55",
+   "fieldtype": "Column Break"
   }
  ],
  "idx": 1,
  "istable": 1,
- "modified": "2021-03-15 07:46:17.788951",
+ "modified": "2021-09-01 07:36:49.665050",
  "modified_by": "Administrator",
  "module": "Buying",
  "name": "Purchase Order Item",

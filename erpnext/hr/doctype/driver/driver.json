@@ -13,6 +13,7 @@
   "status",
   "transporter",
   "column_break_2",
+  "user_id",
   "employee",
   "cell_number",
   "address",
@@ -116,10 +117,17 @@
    "fieldtype": "Link",
    "label": "Address",
    "options": "Address"
+  },
+  {
+   "fieldname": "user_id",
+   "fieldtype": "Link",
+   "label": "User ID",
+   "options": "User",
+   "reqd": 1
   }
  ],
  "icon": "fa fa-user",
- "modified": "2021-01-14 00:01:40.499620",
+ "modified": "2021-08-31 05:27:53.027635",
  "modified_by": "Administrator",
  "module": "HR",
  "name": "Driver",
