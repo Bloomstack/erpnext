@@ -1059,6 +1059,7 @@
    "options": "Compliance Info"
   },
   {
+   "depends_on": "eval:doc.docstatus==0",
    "fieldname": "reverse_calculate",
    "fieldtype": "Button",
    "label": "Reverse Calculate"
@@ -1067,7 +1068,7 @@
  "icon": "fa fa-file-text",
  "idx": 105,
  "is_submittable": 1,
- "modified": "2021-09-02 04:36:46.728883",
+ "modified": "2021-09-05 23:38:06.527468",
  "modified_by": "Administrator",
  "module": "Buying",
  "name": "Purchase Order",
