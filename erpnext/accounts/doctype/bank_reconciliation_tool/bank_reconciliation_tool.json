@@ -65,7 +65,7 @@
    "depends_on": "eval: doc.bank_statement_to_date",
    "fieldname": "bank_statement_closing_balance",
    "fieldtype": "Currency",
-   "label": "Closing Balance",
+   "label": "Bank Statement Closing Balance",
    "options": "Currency"
   },
   {
@@ -103,7 +103,7 @@
  ],
  "hide_toolbar": 1,
  "issingle": 1,
- "modified": "2021-09-06 23:52:52.731123",
+ "modified": "2021-09-07 01:50:28.628454",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Bank Reconciliation Tool",
