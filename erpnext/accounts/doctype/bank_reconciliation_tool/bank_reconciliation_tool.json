@@ -17,7 +17,8 @@
   "reconciliation_tool_dt",
   "no_bank_transactions",
   "reconciled_entries_section",
-  "reconciled_tool_dt"
+  "reconciled_tool_dt",
+  "no_reconciled_bank_transactions"
  ],
  "fields": [
   {
@@ -93,11 +94,16 @@
   {
    "fieldname": "reconciled_tool_dt",
    "fieldtype": "HTML"
+  },
+  {
+   "fieldname": "no_reconciled_bank_transactions",
+   "fieldtype": "HTML",
+   "options": "<div class=\"text-muted text-center\">No Reconciled Bank Transactions Found</div>"
   }
  ],
  "hide_toolbar": 1,
  "issingle": 1,
- "modified": "2021-07-06 01:17:36.364210",
+ "modified": "2021-09-06 23:52:52.731123",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Bank Reconciliation Tool",

@@ -305,15 +305,15 @@ erpnext.accounts.bank_reconciliation.DataTableManagerReconciled = class DataTabl
 		];
 	}
 
-	format_data(transactions) {
-		this.transactions = [];
-		if (transactions[0]) {
-			this.currency = transactions[0]["currency"];
+	format_data(reconciled_transactions) {
+		this.reconciled_transactions = [];
+		if (reconciled_transactions[0]) {
+			this.currency = reconciled_transactions[0]["currency"];
 		}
 		this.transaction_dt_map = {};
 		let length;
-		transactions.forEach((row) => {
-			length = this.transactions.push(this.format_row(row));
+		reconciled_transactions.forEach((row) => {
+			length = this.reconciled_transactions.push(this.format_row(row));
 			this.transaction_dt_map[row["name"]] = length - 1;
 		});
 	}
@@ -334,7 +334,7 @@ erpnext.accounts.bank_reconciliation.DataTableManagerReconciled = class DataTabl
 	get_datatable() {
 		const datatable_options = {
 			columns: this.columns,
-			data: this.transactions,
+			data: this.reconciled_transactions,
 			dynamicRowHeight: true,
 			checkboxColumn: false,
 			inlineFilters: true
@@ -348,12 +348,12 @@ erpnext.accounts.bank_reconciliation.DataTableManagerReconciled = class DataTabl
 			"calc(100vh - 400px)"
 		);
 
-		if (this.transactions.length > 0) {
+		if (this.reconciled_transactions.length > 0) {
 			this.$reconciled_tool_dt.show();
-			this.$no_bank_transactions.hide();
+			this.$no_reconciled_bank_transactions.hide();
 		} else {
 			this.$reconciled_tool_dt.hide();
-			this.$no_bank_transactions.show();
+			this.$no_reconciled_bank_transactions.show();
 		}
 	}
 };
