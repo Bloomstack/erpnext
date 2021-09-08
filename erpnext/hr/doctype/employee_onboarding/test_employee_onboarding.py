@@ -74,4 +74,4 @@ def _set_up():
 
 	project = "Employee Onboarding : Test Researcher - test@researcher.com"
 	frappe.db.sql("delete from tabProject where name=%s", project)
-	frappe.db.sql("delete from tabTask where project=%s", default_project)
+	frappe.db.sql("delete from tabTask where project=%s", project)
