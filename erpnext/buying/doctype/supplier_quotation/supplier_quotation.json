@@ -1,5 +1,4 @@
 {
- "actions": [],
  "allow_import": 1,
  "autoname": "naming_series:",
  "creation": "2013-05-21 16:16:45",
@@ -16,6 +15,7 @@
   "transaction_date",
   "amended_from",
   "company",
+  "license",
   "address_section",
   "supplier_address",
   "contact_person",
@@ -791,13 +791,18 @@
    "options": "Opportunity",
    "print_hide": 1,
    "read_only": 1
+  },
+  {
+   "fieldname": "license",
+   "fieldtype": "Link",
+   "label": "License",
+   "options": "Compliance Info"
   }
  ],
  "icon": "fa fa-shopping-cart",
  "idx": 29,
  "is_submittable": 1,
- "links": [],
- "modified": "2019-12-30 19:17:28.208693",
+ "modified": "2021-09-06 22:17:20.035276",
  "modified_by": "Administrator",
  "module": "Buying",
  "name": "Supplier Quotation",

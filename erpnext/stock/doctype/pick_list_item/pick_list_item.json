@@ -30,7 +30,9 @@
   "sales_order",
   "sales_order_item",
   "material_request",
-  "material_request_item"
+  "material_request_item",
+  "cb_reference",
+  "so_customer"
  ],
  "fields": [
   {
@@ -200,10 +202,22 @@
    "label": "COA Batch",
    "options": "Batch",
    "read_only": 1
+  },
+  {
+   "fieldname": "cb_reference",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "sales_order.customer",
+   "fieldname": "so_customer",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "SO Customer",
+   "read_only": 1
   }
  ],
  "istable": 1,
- "modified": "2021-01-06 04:50:21.095201",
+ "modified": "2021-09-01 23:59:04.628247",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Pick List Item",

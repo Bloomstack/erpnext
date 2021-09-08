@@ -13,6 +13,7 @@
   "supplier_part_no",
   "column_break_2",
   "item_name",
+  "metrc_product_name",
   "batch_no",
   "section_break_4",
   "description",
@@ -75,6 +76,12 @@
   "total_weight",
   "column_break_41",
   "weight_uom",
+  "cultivation_tax_details",
+  "flower_weight",
+  "leaf_weight",
+  "plant_weight",
+  "column_break_64",
+  "cultivation_weight_uom",
   "warehouse_and_reference",
   "warehouse",
   "rejected_warehouse",
@@ -901,11 +908,47 @@
    "fieldtype": "Long Text",
    "label": "Label Print Details",
    "read_only": 1
+  },
+  {
+   "fieldname": "cultivation_tax_details",
+   "fieldtype": "Section Break",
+   "label": "Cultivation Tax Details"
+  },
+  {
+   "fieldname": "flower_weight",
+   "fieldtype": "Float",
+   "label": "Flower Weight"
+  },
+  {
+   "fieldname": "leaf_weight",
+   "fieldtype": "Float",
+   "label": "Leaf Weight"
+  },
+  {
+   "fieldname": "plant_weight",
+   "fieldtype": "Float",
+   "label": "Plant Weight"
+  },
+  {
+   "fieldname": "column_break_64",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "cultivation_weight_uom",
+   "fieldtype": "Link",
+   "label": "Cultivation Weight UOM",
+   "options": "UOM"
+  },
+  {
+   "fieldname": "metrc_product_name",
+   "fieldtype": "Data",
+   "label": "METRC Product Name",
+   "translatable": 1
   }
  ],
  "idx": 1,
  "istable": 1,
- "modified": "2021-03-15 08:01:26.374719",
+ "modified": "2021-09-06 08:08:19.803756",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Purchase Receipt Item",

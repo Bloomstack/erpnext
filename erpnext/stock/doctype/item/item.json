@@ -63,11 +63,22 @@
   "serial_no_series",
   "sb_compliance",
   "is_compliance_item",
+  "enable_metrc",
   "requires_lab_tests",
   "enable_cultivation_tax",
   "cb_compliance",
   "strain_type",
   "item_category",
+  "sb_metrc",
+  "company",
+  "metrc_item_name",
+  "metrc_id",
+  "metrc_item_category",
+  "metrc_unit_value",
+  "cb_metrc",
+  "metrc_uom",
+  "metrc_unit_uom",
+  "bloomtrace_id",
   "variants_section",
   "has_variants",
   "variant_based_on",
@@ -1127,6 +1138,72 @@
    "fieldname": "ivt_id",
    "fieldtype": "Data",
    "label": "Inventory ID"
+  },
+  {
+   "default": "0",
+   "fieldname": "enable_metrc",
+   "fieldtype": "Check",
+   "label": "Enable METRC"
+  },
+  {
+   "depends_on": "eval:doc.enable_metrc;",
+   "fieldname": "sb_metrc",
+   "fieldtype": "Section Break",
+   "label": "METRC"
+  },
+  {
+   "fieldname": "metrc_id",
+   "fieldtype": "Data",
+   "in_global_search": 1,
+   "in_standard_filter": 1,
+   "label": "METRC ID",
+   "read_only": 1
+  },
+  {
+   "fieldname": "metrc_item_category",
+   "fieldtype": "Link",
+   "label": "METRC Item Category",
+   "options": "Compliance Item Category"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company"
+  },
+  {
+   "fieldname": "metrc_item_name",
+   "fieldtype": "Data",
+   "label": "METRC Item Name",
+   "translatable": 1
+  },
+  {
+   "fieldname": "metrc_unit_value",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "METRC Unit Value"
+  },
+  {
+   "fieldname": "cb_metrc",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "metrc_uom",
+   "fieldtype": "Link",
+   "label": "METRC UOM",
+   "options": "Compliance UOM"
+  },
+  {
+   "fieldname": "metrc_unit_uom",
+   "fieldtype": "Data",
+   "label": "METRC Unit UOM",
+   "options": "Compliance UOM"
+  },
+  {
+   "fieldname": "bloomtrace_id",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Bloomtrace ID"
   }
  ],
  "has_web_view": 1,
@@ -1134,7 +1211,7 @@
  "idx": 2,
  "image_field": "image",
  "max_attachments": 1,
- "modified": "2021-06-27 22:16:19.496279",
+ "modified": "2021-09-02 03:44:14.753679",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Item",

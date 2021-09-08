@@ -8,6 +8,11 @@
  "engine": "InnoDB",
  "field_order": [
   "organization_lead",
+  "lead_dashboard",
+  "region",
+  "account_opened_date",
+  "lead_dashboard_cb",
+  "number_of_employees",
   "contact_by",
   "address_html",
   "contact_html",
@@ -16,6 +21,7 @@
   "naming_series",
   "lead_name",
   "company_name",
+  "type_of_business",
   "email_id",
   "col_break123",
   "lead_owner",
@@ -70,8 +76,8 @@
   {
    "fieldname": "lead_details",
    "fieldtype": "Section Break",
-   "options": "fa fa-user",
-   "label": "Lead"
+   "label": "Lead",
+   "options": "fa fa-user"
   },
   {
    "fieldname": "naming_series",
@@ -135,7 +141,7 @@
    "no_copy": 1,
    "oldfieldname": "status",
    "oldfieldtype": "Select",
-   "options": "Lead\nOpen\nReplied\nOpportunity\nQuotation\nLost Quotation\nInterested\nConverted\nNot Qualified\nInvestor\nDo Not Contact\nSpam",
+   "options": "Lead\nOpen\nReplied\nOpportunity\nQuotation\nLost Quotation\nInterested\nConverted\nNot Qualified\nInvestor\nDo Not Contact\nSpam\nChannel Partner\nReferral Partner\nSales Partner Prospect",
    "reqd": 1,
    "search_index": 1
   },
@@ -149,9 +155,9 @@
   {
    "fieldname": "gender",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Gender",
-   "options": "Gender",
-   "hidden": 1
+   "options": "Gender"
   },
   {
    "fieldname": "source",
@@ -434,12 +440,42 @@
    "fieldname": "contact_section",
    "fieldtype": "Section Break",
    "label": "Contact"
+  },
+  {
+   "fieldname": "lead_dashboard",
+   "fieldtype": "Section Break",
+   "label": "Lead Dashboard"
+  },
+  {
+   "fieldname": "number_of_employees",
+   "fieldtype": "Int",
+   "label": "Number of Employees"
+  },
+  {
+   "fieldname": "lead_dashboard_cb",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "region",
+   "fieldtype": "Link",
+   "label": "Region",
+   "options": "Territory"
+  },
+  {
+   "fieldname": "account_opened_date",
+   "fieldtype": "Date",
+   "label": "Account Opened Date"
+  },
+  {
+   "fieldname": "type_of_business",
+   "fieldtype": "Data",
+   "label": "Type of Business"
   }
  ],
  "icon": "fa fa-user",
  "idx": 5,
  "image_field": "image",
- "modified": "2021-01-14 11:33:47.171097",
+ "modified": "2021-09-02 06:29:34.087276",
  "modified_by": "Administrator",
  "module": "CRM",
  "name": "Lead",

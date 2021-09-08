@@ -13,6 +13,7 @@
   "item_name",
   "image",
   "bom_no",
+  "title",
   "manufacturing_type",
   "column_break1",
   "company",
@@ -506,13 +507,18 @@
    "fieldname": "skip_raw_material_validation",
    "fieldtype": "Check",
    "label": "Skip Raw Material Validation"
+  },
+  {
+   "fieldname": "title",
+   "fieldtype": "Data",
+   "label": "Title"
   }
  ],
  "icon": "fa fa-cogs",
  "idx": 1,
  "image_field": "image",
  "is_submittable": 1,
- "modified": "2021-02-16 04:30:47.312630",
+ "modified": "2021-09-02 05:13:56.796454",
  "modified_by": "Administrator",
  "module": "Manufacturing",
  "name": "Work Order",
