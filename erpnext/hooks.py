@@ -584,3 +584,7 @@ coupon_brackets_extend_meta = [
 coupon_brackets_extend_vars_meta = [
 	"erpnext.bloombrackets.coupon_commands.variables.load_variable_meta"
 ]
+
+after_migrate = [
+	'erpnext.crm.doctype.lead.lead.rearrange_standard_fields',
+]
