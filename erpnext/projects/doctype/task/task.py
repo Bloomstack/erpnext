@@ -211,7 +211,7 @@ class Task(NestedSet):
 					and parent.name in (
 						select parent from `tabTask Depends On` as child
 						where child.task = %(task)s and child.project = %(project)s)
-			""", {'project': self.default_project, 'task':self.name }, as_dict=1):
+			""", {'project': self.default_project, 'task':self.name}, as_dict=1):
 				task = frappe.get_doc("Task", task_name.name)
 				if task.exp_start_date and task.exp_end_date and task.exp_start_date < getdate(end_date) and task.status == "Open":
 					task_duration = date_diff(task.exp_end_date, task.exp_start_date)
