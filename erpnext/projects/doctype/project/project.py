@@ -37,7 +37,7 @@ class Project(Document):
 		'''
 		Copy tasks from template
 		'''
-		if self.project_template and not frappe.db.get_all('Task', dict(project = self.name), limit=1):
+		if self.project_template and not frappe.db.get_all('Task', dict(default_project = self.name), limit=1):
 
 			# has a template, and no loaded tasks, so lets create
 			if not self.expected_start_date:
@@ -54,7 +54,7 @@ class Project(Document):
 				task_doc = frappe.get_doc(dict(
 					doctype = 'Task',
 					subject = task.subject,
-					project = self.name,
+					default_project = self.name,
 					status = 'Open',
 					exp_start_date = add_days(self.expected_start_date, task.start),
 					exp_end_date = add_days(self.expected_start_date, task.start + task.duration),
@@ -382,7 +382,7 @@ def create_duplicate_project(prev_doc, project_name):
 	for task in task_list:
 		task = frappe.get_doc('Task', task)
 		new_task = frappe.copy_doc(task)
-		new_task.project = project.name
+		new_task.default_project = project.name
 		new_task.parent_task = None
 		new_task.depends_on = None
 		new_task.status = 'Open'

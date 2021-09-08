@@ -20,7 +20,7 @@ frappe.ui.form.on('Employee Separation', {
 				frappe.set_route("Form", "Project", frm.doc.project);
 			},__("View"));
 			frm.add_custom_button(__('Task'), function() {
-				frappe.set_route('List', 'Task', {project: frm.doc.project});
+				frappe.set_route('List', 'Task', {default_project: frm.doc.default_project});
 			},__("View"));
 		}
 	},

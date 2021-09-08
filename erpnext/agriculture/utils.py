@@ -16,5 +16,5 @@ def create_tasks(tasks, project_name, start_date):
 			"doctype": "Task",
 			"subject": task.get("task_name"),
 			"priority": task.get("priority"),
-			"project": project_name
+			"default_project": project_name
 		}).insert()

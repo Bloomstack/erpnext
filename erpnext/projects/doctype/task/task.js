@@ -5,7 +5,7 @@ frappe.provide("erpnext.projects");
 
 frappe.ui.form.on("Task", {
 	setup: function (frm) {
-		frm.set_query("project", function () {
+		frm.set_query("default_project", function () {
 			return {
 				query: "erpnext.projects.doctype.task.task.get_project"
 			}
@@ -33,7 +33,7 @@ frappe.ui.form.on("Task", {
 			let filters = {
 				name: ["!=", frm.doc.name]
 			};
-			if (frm.doc.project) filters["project"] = frm.doc.project;
+			if (frm.doc.default_project) filters["default_project"] = frm.doc.default_project;
 			return {
 				filters: filters
 			};
@@ -47,7 +47,7 @@ frappe.ui.form.on("Task", {
 			frm.set_df_property("status", "options", status_df.options, frm.docname, "projects");
 		});
 		if (frm.is_new()) {
-			frm.toggle_display("project", 0);
+			frm.toggle_display("default_project", 0);
 		}
 	},
 	is_group: function (frm) {
@@ -66,13 +66,13 @@ frappe.ui.form.on("Task", {
 	},
 
 	validate: function (frm) {
-		frm.doc.project && frappe.model.remove_from_locals("Project",
-			frm.doc.project);
+		frm.doc.default_project && frappe.model.remove_from_locals("Default_Project",
+			frm.doc.default_project);
 	},
 
-	project: (frm) => {
-		if (frm.doc.project && frm.doc.billable === 0) {
-			frappe.db.get_value("Project", { "name": frm.doc.project }, "billable", (r) => {
+	default_project: (frm) => {
+		if (frm.doc.default_project && frm.doc.billable === 0) {
+			frappe.db.get_value("Default_Project", { "name": frm.doc.default_project }, "billable", (r) => {
 				if (r && r.billable === 1) {
 					frm.set_value("billable", 1);
 				}
