@@ -3,6 +3,8 @@ from frappe.core.utils import find
 from frappe.utils.background_jobs import enqueue
 from frappe.utils.nestedset import get_root_of
 from frappe.frappeclient import FrappeClient, AuthError
+import json
+from python_metrc import METRC
 
 
 def get_default_license(party_type, party_name):
@@ -191,3 +193,46 @@ def make_integration_request(doctype, docname, endpoint):
 
 def create_integration_request(doc, method):
 	make_integration_request(doc.doctype, doc.name)
+
+def get_metrc():
+	settings = frappe.get_single("Compliance Settings")
+
+	if not settings.is_compliance_enabled:
+		return
+
+	if not all([settings.metrc_url, settings.metrc_vendor_key, settings.metrc_user_key, settings.metrc_vendor_key]):
+		frappe.throw("Please configure Compliance Settings")
+
+	return METRC(settings.metrc_url, settings.get_password("metrc_vendor_key"), settings.get_password("metrc_user_key"), settings.metrc_license_no)
+
+
+def log_request(endpoint, request_data, response, ref_dt=None, ref_dn=None):
+	request = frappe.new_doc("API Request Log")
+	request.update({
+		"endpoint": endpoint,
+		"request_body": json.dumps(request_data, indent=4, sort_keys=True),
+		"response_code": response.status_code,
+		"response_body": json.dumps(response.text, indent=4, sort_keys=True),
+		"reference_doctype": ref_dt,
+		"reference_document": ref_dn
+	})
+	request.insert()
+	frappe.db.commit()
+
+@frappe.whitelist()
+def create_purchase_receipt(transfer):
+	transfer = frappe.parse_json(transfer)
+
+	for item in transfer.get("items", []):
+		supplier_item = frappe.db.get_all("Item Supplier", filters={"supplier_part_no": item.get("product_name")}, fields=["parent"])
+		item.update({
+			"item_code": supplier_item[0].parent if supplier_item else None,
+			"metrc_product_name": item.get("product_name")
+		})
+
+	doc = frappe.get_doc({"doctype": "Purchase Receipt"})
+	doc.update(transfer)
+	doc.flags.ignore_validate=True
+	doc.flags.ignore_mandatory=True
+	doc.flags.ignore_links=True
+	doc.insert()
