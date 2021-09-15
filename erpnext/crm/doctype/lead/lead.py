@@ -392,14 +392,6 @@ def make_investor(source_name, target_doc=None):
 	}, target_doc, set_missing_values)
 	return target_doc
 
-def rearrange_standard_fields():
-	"""Rearrange standard field in lead doctype"""
-	count = 1
-	for df in frappe.get_meta("Lead").get("fields"):
-		if df.fieldname in ["territory", "address_html", "contact_html", "contact_by"]:
-			count= count + 1
-			frappe.db.sql("""UPDATE `tabDocField` SET idx={0} WHERE fieldname=%s and parent='Lead' """.format(count), df.fieldname, as_dict=True)
-
 @frappe.whitelist()
 def filter_territory(doctype, txt, searchfield, start, page_len, filters):
 	"""filter territory"""
