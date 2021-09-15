@@ -120,7 +120,8 @@
    "no_copy": 1,
    "oldfieldname": "status",
    "oldfieldtype": "Select",
-   "options": "Open\nWorking\nPending Review\nOverdue\nCompleted\nClosed"
+   "options": "Open\nWorking\nPending Review\nOverdue\nCompleted\nClosed",
+   "read_only": 1
   },
   {
    "fieldname": "priority",
@@ -168,7 +169,8 @@
    "fieldname": "projects",
    "fieldtype": "Table",
    "label": "Projects",
-   "options": "Task Project"
+   "options": "Task Project",
+   "reqd": 1
   },
   {
    "collapsible": 1,
@@ -389,7 +391,7 @@
  "idx": 1,
  "is_tree": 1,
  "max_attachments": 5,
- "modified": "2021-08-14 06:31:42.965246",
+ "modified": "2021-09-15 03:37:08.744623",
  "modified_by": "Administrator",
  "module": "Projects",
  "name": "Task",
