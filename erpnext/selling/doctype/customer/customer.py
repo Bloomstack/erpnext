@@ -59,6 +59,7 @@ class Customer(TransactionBase):
 		self.check_customer_group_change()
 		self.validate_default_bank_account()
 		self.validate_delivery_window_times()
+		self.update_lead_acc_open_date()
 
 		# set loyalty program tier
 		if frappe.db.exists('Customer', self.name):
@@ -87,6 +88,12 @@ class Customer(TransactionBase):
 		if self.delivery_start_time and self.delivery_end_time:
 			if self.delivery_start_time > self.delivery_end_time:
 				return frappe.throw(_('Delivery start window should be before closing window'))
+
+	def update_lead_acc_open_date(self):
+		"""update lead account opened date"""
+
+		if self.lead_name and self.opening_date:
+			frappe.db.set_value("Lead", self.lead_name, "account_opened_date", self.opening_date)
 
 	def on_update(self):
 		self.validate_name_with_customer_group()

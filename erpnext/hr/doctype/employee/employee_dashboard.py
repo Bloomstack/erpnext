@@ -28,7 +28,7 @@ def get_data():
 			},
 			{
 				'label': _('Benefit'),
-				'items': ['Employee Benefit Application', 'Employee Benefit Claim']
+				'items': ['Employee Benefit Application', 'Employee Benefit Claim', 'Employee Compensation']
 			},
 			{
 				'label': _('Evaluation'),
