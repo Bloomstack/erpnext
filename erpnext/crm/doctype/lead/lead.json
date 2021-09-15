@@ -8,16 +8,15 @@
  "engine": "InnoDB",
  "field_order": [
   "organization_lead",
-  "lead_dashboard",
+  "contact_by",
+  "address_html",
+  "contact_html",
+  "territory",
   "region",
   "account_opened_date",
   "lead_dashboard_cb",
   "number_of_employees",
-  "contact_by",
-  "address_html",
-  "contact_html",
   "lead_details",
-  "territory",
   "naming_series",
   "lead_name",
   "company_name",
@@ -442,11 +441,6 @@
    "label": "Contact"
   },
   {
-   "fieldname": "lead_dashboard",
-   "fieldtype": "Section Break",
-   "label": "Lead Dashboard"
-  },
-  {
    "fieldname": "number_of_employees",
    "fieldtype": "Int",
    "label": "Number of Employees"
@@ -475,7 +469,7 @@
  "icon": "fa fa-user",
  "idx": 5,
  "image_field": "image",
- "modified": "2021-09-02 06:29:34.087276",
+ "modified": "2021-09-15 02:58:05.988925",
  "modified_by": "Administrator",
  "module": "CRM",
  "name": "Lead",
