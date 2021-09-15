@@ -122,10 +122,6 @@ class Task(NestedSet):
 			else:
 				self.project = default_project[0].project
 				self.status = default_project[0].status
-		elif not len(self.projects):
-			# if no projects aviliable in projects make parent project empty
-			self.project = None
-			self.status = None
 
 	def update_completion_date(self):
 		for task_project in self.projects:
