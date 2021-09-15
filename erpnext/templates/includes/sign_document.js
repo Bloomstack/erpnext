@@ -43,7 +43,7 @@ $(document).ready(function () {
 
 		$(".user-signature").hide();
 		frappe.call({
-			method: "erpnext.utils.authorize_document",
+			method: "erpnext.setup.utils.authorize_document",
 			args: {
 				sign: sign,
 				signee: signee,
@@ -71,7 +71,7 @@ $(document).ready(function () {
 	$("#rejectDocument").on("click", function () {
 		$(".user-signature").hide();
 		frappe.call({
-			method: "erpnext.utils.reject_document",
+			method: "erpnext.setup.utils.reject_document",
 			args: {
 				docname: "{{ auth_req_docname }}"
 			},
