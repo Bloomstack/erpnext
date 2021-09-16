@@ -32,5 +32,15 @@ frappe.ui.form.on("Driver", {
 			.catch(err => {
 				console.log(err);
 			});
+	},
+
+	user_id: function(frm) {
+		if(frm.doc.user_id) {
+			frappe.db.get_value("Employee", {"user_id": frm.doc.user_id}, "name", (r) => {
+				if(r && r.name) {
+					frm.set_value("employee", r.name);
+				}
+			});
+		}
 	}
 });

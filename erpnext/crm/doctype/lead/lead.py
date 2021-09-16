@@ -11,6 +11,7 @@ from frappe.contacts.address_and_contact import load_address_and_contact
 from frappe.email.inbox import link_communication_to_document
 from frappe.model.mapper import get_mapped_doc
 from frappe.utils import cint, comma_and, cstr, getdate, has_gravatar, nowdate, validate_email_address
+from frappe.utils.nestedset import get_descendants_of
 
 sender_field = "email_id"
 
@@ -390,3 +391,18 @@ def make_investor(source_name, target_doc=None):
 		}
 	}, target_doc, set_missing_values)
 	return target_doc
+
+@frappe.whitelist()
+def filter_territory(doctype, txt, searchfield, start, page_len, filters):
+	"""filter territory"""
+
+	territory_list = get_descendants_of("Territory", filters.get("region"))
+	territory_list.append(filters.get("region"))
+
+	return frappe.get_all('Territory',
+		filters={
+			'parent_territory': ('in', territory_list),
+			'territory_name': ("like", "%{0}%".format(txt))
+		},
+		fields=["name"],
+		as_list=1)
