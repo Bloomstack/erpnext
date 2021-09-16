@@ -112,7 +112,7 @@
   },
   {
    "bold": 1,
-   "description": "the status of the default project will fetch from the projects table.",
+   "description": "The status of the default Project will fetch from the Projects table.",
    "fieldname": "status",
    "fieldtype": "Select",
    "in_list_view": 1,
