@@ -4,14 +4,36 @@
 
 import frappe
 import json
-from erpnext.compliance.utils import get_default_license
+from erpnext.compliance.utils import get_default_license, get_bloomtrace_client
 from frappe import _
 from frappe.model.document import Document
 from frappe.utils import get_link_to_form, getdate, nowdate, today, formatdate
 
 
 class ComplianceInfo(Document):
-	pass
+	def before_insert(self):
+		self.create_bloomtrace_license()
+
+	def create_bloomtrace_license(self):
+		frappe_client = get_bloomtrace_client()
+		if not frappe_client or self.synced_from_bloomtrace:
+			return
+
+		license_info = frappe_client.get_doc("License Info", self.license_number)
+
+		if not license_info:
+			frappe.msgprint(_("License Number not found in our database. Proceed with Caution."))
+		else:
+			self.status = license_info.get("status")
+			self.license_issuer = license_info.get('issued_by')
+			self.license_type = license_info.get('license_type')
+			self.license_category = license_info.get('license_category')
+			self.license_expiry_date = license_info.get('expiration_date')
+			self.license_for = license_info.get('license_for')
+			self.legal_name = license_info.get('legal_name')
+			self.county = license_info.get('county')
+			self.city = license_info.get('city')
+			make_bloomstack_site_license(frappe_client, self.as_dict(), self.license_number, 'Active')
 
 
 @frappe.whitelist()
@@ -121,3 +143,13 @@ def get_active_licenses(doctype, txt, searchfield, start, page_len, filters):
 		fields=["name", "legal_name", "license_number", "status", "license_issuer",
 			"license_for", "license_expiry_date", "license_type"],
 		as_list=True)
+
+def make_bloomstack_site_license(frappe_client, compliance_info, license_number, status='Pending Update'):
+	if not frappe.get_conf().developer_mode:
+		bloomstack_site_license = {
+			"doctype": "Bloomstack Site License",
+			"bloomstack_company": compliance_info.company,
+			"license_info": license_number,
+			"status": status
+		}
+		frappe_client.insert(bloomstack_site_license)
