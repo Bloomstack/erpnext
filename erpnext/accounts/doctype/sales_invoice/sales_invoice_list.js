@@ -32,9 +32,9 @@ frappe.listview_settings['Sales Invoice'] = {
 						frappe.throw(__("Cannot Email Draft or cancelled documents"));
 					}
 					if (doc.title !== title) {
-						frappe.throw(__("Select only one customer's sales invoice"))
+						frappe.throw(__("Select only one customer's sales invoice"));
 					}
-				};
+				}
 				frappe.call({
 					method: "erpnext.utils.get_contact",
 					args: { "doctype": doctype, "name": selected_docs[0].name, "contact_field": "customer" },
@@ -48,11 +48,11 @@ frappe.listview_settings['Sales Invoice'] = {
 									recipients: r.message ? r.message.email_id : null,
 									message: res.message,
 									doc: {}
-								})
+								});
 							}
-						})
+						});
 					}
-				})
+				});
 			}
 		}
 		doclist.page.add_actions_menu_item(__('Email'), action, true);
