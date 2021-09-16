@@ -5,13 +5,14 @@ from __future__ import unicode_literals
 import frappe, erpnext
 import frappe.defaults
 from frappe import msgprint, _
-from frappe.utils import cstr, flt, cint
+from frappe.utils import cstr, flt, cint, today
 from erpnext.stock.stock_ledger import update_entries_after
 from erpnext.controllers.stock_controller import StockController
 from erpnext.accounts.utils import get_company_default
 from erpnext.stock.doctype.serial_no.serial_no import get_serial_nos
 from erpnext.stock.utils import get_stock_balance, get_incoming_rate, get_available_serial_nos
 from erpnext.stock.doctype.batch.batch import get_batch_qty
+from erpnext.compliance.utils import make_integration_request, get_bloomtrace_client
 
 class OpeningEntryAccountError(frappe.ValidationError): pass
 class EmptyStockReconciliationItemsError(frappe.ValidationError): pass
@@ -41,6 +42,15 @@ class StockReconciliation(StockController):
 
 		from erpnext.stock.doctype.serial_no.serial_no import update_serial_nos_after_submit
 		update_serial_nos_after_submit(self, "items")
+		self.create_integration_request()
+
+
+	def create_integration_request(self):
+		for item in self.items:
+			if item.package_tag:
+				# UID Transaction Log is used to make changes in Package using adjust endpoint
+				make_integration_request("Stock Reconciliation", self.name, "Package")
+				break
 
 	def on_cancel(self):
 		self.delete_and_repost_sle()
@@ -533,3 +543,57 @@ def get_difference_account(purpose, company):
 			'company': company, 'account_type': 'Temporary'}, 'name')
 
 	return account
+
+def execute_bloomtrace_integration_request():
+	frappe_client = get_bloomtrace_client()
+	if not frappe_client:
+		return
+
+	pending_requests = frappe.get_all("Integration Request",
+		filters={"status": ["IN", ["Queued", "Failed"]], "reference_doctype": "Stock Reconciliation", "integration_request_service": "BloomTrace"},
+		order_by="creation ASC",
+		limit=50)
+
+	for request in pending_requests:
+		integration_request = frappe.get_doc("Integration Request", request.name)
+		stock_reconciliation = frappe.get_doc("Stock Reconciliation", integration_request.reference_docname)
+		bloomtrace_uid_transaction_log = frappe_client.get_doc("UID Transaction Log", integration_request.reference_docname)
+		try:
+			if not bloomtrace_uid_transaction_log:
+				insert_uid_transaction_log(stock_reconciliation, frappe_client)
+			else:
+				update_uid_transaction_log(stock_reconciliation, frappe_client)
+			integration_request.error = ""
+			integration_request.status = "Completed"
+			integration_request.save(ignore_permissions=True)
+		except Exception as e:
+			integration_request.error = cstr(frappe.get_traceback())
+			integration_request.status = "Failed"
+			integration_request.save(ignore_permissions=True)
+
+def insert_uid_transaction_log(stock_reconciliation, frappe_client):
+	bloomtrace_uid_transaction_log = make_uid_transaction_log(stock_reconciliation)
+	frappe_client.insert(bloomtrace_uid_transaction_log)
+
+def update_uid_transaction_log(stock_reconciliation, frappe_client):
+	bloomtrace_uid_transaction_log = make_uid_transaction_log(stock_reconciliation)
+	bloomtrace_uid_transaction_log.update({
+		"name": stock_reconciliation.name
+	})
+	frappe_client.update(bloomtrace_uid_transaction_log)
+
+def make_uid_transaction_log(stock_reconciliation):
+	site_url = frappe.utils.get_host_name()
+	bloomtrace_uid_transaction_log_dict = {
+		"doctype": "UID Transaction Log",
+		"client": site_url,
+		"transaction_type": "Reconciliation",
+		"transaction_date": today()
+	}
+	bloomtrace_uid_transaction_log_dict['items'] = [{
+		"uid": stock_reconciliation.items[0].package_tag,
+		"item": stock_reconciliation.items[0].item_code,
+		"qty": stock_reconciliation.items[0].qty
+	}]
+
+	return bloomtrace_uid_transaction_log_dict
