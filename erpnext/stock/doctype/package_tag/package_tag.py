@@ -6,6 +6,7 @@ import frappe
 from frappe import _
 from frappe.model.document import Document
 from frappe.model.mapper import get_mapped_doc
+from frappe.utils import cstr
 from erpnext.compliance.utils import make_integration_request, get_bloomtrace_client, get_host_name
 
 
