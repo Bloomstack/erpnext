@@ -111,6 +111,7 @@ class Task(NestedSet):
 			# auto-set default project if only one is found
 			self.projects[0].is_default = 1
 			self.project = self.projects[0].project
+			self.status = self.projects[0].status
 		elif len(self.projects) > 1:
 			default_project = [project for project in self.projects if project.is_default]
 			# prevent users from setting multiple default projects.
@@ -120,9 +121,7 @@ class Task(NestedSet):
 				frappe.throw(_("There can be only one default project, found {0}.").format(len(default_project)))
 			else:
 				self.project = default_project[0].project
-		elif not len(self.projects):
-			# if no projects aviliable in projects make parent project empty
-			self.project = None
+				self.status = default_project[0].status
 
 	def update_completion_date(self):
 		for task_project in self.projects:

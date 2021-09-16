@@ -475,7 +475,7 @@ class SellingController(StockController):
 		for item in self.items:
 			item_amount = flt(item.get("rate")) * flt(item.get("qty"))
 
-			if flt(item.get("discount_amount")) > item_amount and not self.is_return:
+			if flt(item.get("discount_amount")) > item_amount:
 				# Where possible keep percent discount and reapply based on actual item_amount
 				if item.get("discount_percentage"):
 					item.set("discount_amount", item_amount * (flt(item.get("discount_percentage") / 100)))
