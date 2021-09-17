@@ -732,4 +732,3 @@ erpnext.patches.v13_0.update_accounts_taxjar_setting #
 erpnext.patches.v13_0.rename_task_cancelled_status_to_closed
 erpnext.patches.v13_0.rename_project_field_to_default_project
 erpnext.patches.v13_0.add_default_project_into_project_details_child_table
-erpnext.patches.v13_0.rename_project_field_to_default_project
