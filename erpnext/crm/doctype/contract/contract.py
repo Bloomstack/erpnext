@@ -99,6 +99,7 @@ class Contract(Document):
 			self.contract_terms_display = render_template(self.contract_terms, {"doc": self.as_dict()})
 	
 	def create_project_against_contract(self):
+		print("--------------------------------------")
 		if self.project:
 			return
 
@@ -138,7 +139,11 @@ class Contract(Document):
 				"end_date": end_date,
 				"task_weight": task.weight,
 				"description": task.description,
-				"default_project": project_name
+				"projects": [
+				{
+					"project": project_name
+				}
+			]
 			})
 			project_task.insert(ignore_permissions=True)
 			project_dates.extend([start_date, end_date])

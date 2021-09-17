@@ -49,7 +49,6 @@ class EmployeeBoardingController(Document):
 
 			task = frappe.get_doc({
 					"doctype": "Task",
-					"default_project": self.project,
 					"subject": activity.activity_name + " : " + self.employee_name,
 					"description": activity.description,
 					"department": self.department,

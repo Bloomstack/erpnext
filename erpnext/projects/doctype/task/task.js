@@ -5,7 +5,7 @@ frappe.provide("erpnext.projects");
 
 frappe.ui.form.on("Task", {
 	setup: function (frm) {
-		frm.set_query("default_project", function () {
+		frm.set_query("project", "projects", function() {
 			return {
 				query: "erpnext.projects.doctype.task.task.get_project"
 			}
@@ -46,9 +46,6 @@ frappe.ui.form.on("Task", {
 			const status_df = frappe.meta.get_docfield("Task", "status", frm.docname);
 			frm.set_df_property("status", "options", status_df.options, frm.docname, "projects");
 		});
-		if (frm.is_new()) {
-			frm.toggle_display("default_project", 0);
-		}
 	},
 	is_group: function (frm) {
 		frappe.call({
@@ -66,8 +63,9 @@ frappe.ui.form.on("Task", {
 	},
 
 	validate: function (frm) {
-		frm.doc.default_project && frappe.model.remove_from_locals("Default_Project",
+		frm.doc.default_project && frappe.model.remove_from_locals("Default Project",
 			frm.doc.default_project);
+			
 	},
 
 	default_project: (frm) => {
