@@ -17,7 +17,6 @@ class TestTask(unittest.TestCase):
 		task1.append("depends_on", {
 			"task": task3.name
 		})
-		
 		self.assertRaises(CircularReferenceError, task1.save)
 
 		task1.set("depends_on", [])
