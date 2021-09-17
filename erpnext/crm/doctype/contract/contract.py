@@ -99,7 +99,6 @@ class Contract(Document):
 			self.contract_terms_display = render_template(self.contract_terms, {"doc": self.as_dict()})
 	
 	def create_project_against_contract(self):
-		print("--------------------------------------")
 		if self.project:
 			return
 
