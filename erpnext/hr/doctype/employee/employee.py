@@ -241,6 +241,14 @@ def get_timeline_data(doctype, name):
 			group by attendance_date''', name))
 
 @frappe.whitelist()
+def grant_leaves(employee, joining_date, leave_period, carry_forward):
+	from erpnext.hr.doctype.leave_period.leave_period import grant_leave_alloc_for_employees
+	employee_record = {employee: frappe.db.get_value("Employee", employee,"date_of_joining")}
+	leave_period_doc = frappe.get_doc("Leave Period", leave_period)
+
+	grant_leave_alloc_for_employees(employee_record, leave_period_doc, carry_forward)
+
+@frappe.whitelist()
 def get_retirement_date(date_of_birth=None):
 	ret = {}
 	if date_of_birth:
