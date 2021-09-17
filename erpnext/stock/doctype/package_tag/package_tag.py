@@ -7,7 +7,7 @@ from frappe import _
 from frappe.model.document import Document
 from frappe.model.mapper import get_mapped_doc
 from frappe.utils import cstr
-from erpnext.compliance.utils import make_integration_request, get_bloomtrace_client, get_host_name
+from erpnext.compliance.utils import make_integration_request, get_bloomtrace_client
 
 
 class PackageTag(Document):
@@ -164,7 +164,7 @@ def update_package_tag(package_tag, frappe_client):
 
 
 def make_package_tag(package_tag):
-	site_url = get_host_name()
+	site_url = frappe.utils.get_host_name()
 	item = frappe.db.get_value("Item", package_tag.item_code, "bloomtrace_id")
 	manufacturing_date = frappe.db.get_value("Batch", package_tag.batch_no, "manufacturing_date") if package_tag.batch_no else None
 	expiry_date = frappe.db.get_value("Batch", package_tag.batch_no, "expiry_date") if package_tag.batch_no else None
