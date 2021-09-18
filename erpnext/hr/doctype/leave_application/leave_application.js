@@ -133,7 +133,6 @@ frappe.ui.form.on("Leave Application", {
 
 	set_half_day_date(frm){
 		if (frm.doc.from_date == frm.doc.to_date && frm.doc.half_day) {
-			console.log("I am Here")
 			frm.set_value("half_day_date", frm.doc.from_date);
 		} else {
 			frm.set_value('half_day_date', '');

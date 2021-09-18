@@ -84,9 +84,8 @@ frappe.ui.form.on('Employee',{
 					indicator: 'blue',
 				});
 			}
-		})
+		});
 	},
-	
 	grant_leaves: function(frm, data) {
 		frappe.call({
 			method: "erpnext.hr.doctype.employee.employee.grant_leaves",
