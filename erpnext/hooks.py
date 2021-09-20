@@ -235,8 +235,8 @@ standard_queries = {
 doc_events = {
 	("Company", "Supplier", "Customer"): {
 		"validate": [
-			"erpnext.selling..doctype.customer.customer.validate_default_license",
-			"erpnext.selling..doctype.customer.customer.validate_expired_licenses"
+			"erpnext.selling.doctype.customer.customer.validate_default_license",
+			"erpnext.selling.doctype.customer.customer.validate_expired_licenses"
 		]
 	},
 	("Sales Order", "Delivery Note"): {
