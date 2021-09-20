@@ -5,7 +5,7 @@
 import frappe
 from frappe.model.document import Document
 from frappe.model.mapper import get_mapped_doc
-from frappe.utils import getdate, nowdate, today
+from frappe.utils import getdate, nowdate, today, cstr
 from erpnext.agriculture.doctype.plant_batch.plant_batch import validate_quantities
 from erpnext.compliance.utils import make_integration_request, get_bloomtrace_client
 
