@@ -240,8 +240,8 @@ doc_events = {
 		]
 	},
 	("Sales Order", "Delivery Note"): {
-		"validate": "bloomstack_core.hook_events.utils.validate_delivery_window",
-		"on_submit": "bloomstack_core.hook_events.utils.validate_delivery_window"
+		"validate": "erpnext.selling.doctype.sales_order.sales_order.validate_delivery_window",
+		"on_submit": "erpnext.selling.doctype.sales_order.sales_order.validate_delivery_window"
 	},
 	"Stock Entry": {
 		"on_submit": "erpnext.stock.doctype.material_request.material_request.update_completed_and_requested_qty",
