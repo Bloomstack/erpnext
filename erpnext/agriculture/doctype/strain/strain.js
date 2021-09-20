@@ -2,7 +2,7 @@
 // For license information, please see license.txt
 
 frappe.provide("erpnext.strain");
-
+$('head').append('<link rel="stylesheet" type="text/css" href="assets/erpnext/css/progressbar.css">');
 frappe.ui.form.on('Strain', {
 	setup: function (frm) {
 		frm.make_methods = {
@@ -20,10 +20,72 @@ frappe.ui.form.on('Strain', {
 			};
 		});
 		frm.fields_dict.materials_required.grid.set_column_disp('bom_no', false);
+		frm.trigger('show_progress_for_metrc')
 	},
 
 	onload_post_render: function(frm) {
 		frm.get_field("materials_required").grid.set_multiple_add("item_code", "qty");
+	},
+
+	show_progress_for_metrc: function(frm) {
+		let selected_status = frm.doc.metrc_status;
+		let completed_status = [];
+		let incomplete_status = [];
+		let status_widths = [
+			'Compliance Document',
+			'Reported to Bloomtrace',
+			'Status on Bloomtrace',
+			'Reported to METRC',
+			'Status on METRC',
+			'METRC ID Reported to Bloomstack'
+		];
+		let colorsclass = {
+			'Compliance Document': 'green',
+			'Reported to Bloomtrace': 'green',
+			'Successful on Bloomtrace': 'green',
+			'Failed on Bloomtrace': 'red',
+			'Reported to METRC': 'green',
+			'Successful on METRC': 'green',
+			'Failed on METRC': 'red',
+			'METRC ID Reported to Bloomstack':'green'
+		}
+		let bars = [];
+		let message = '';
+		if(!status_widths.includes(selected_status)) {
+			if(selected_status.includes('Bloomtrace')) {
+				let index = status_widths.indexOf("Status on Bloomtrace");
+				status_widths.splice(index, 1, selected_status);
+			}
+			else {
+				let index = status_widths.indexOf("Status on METRC");
+				status_widths.splice(index, 1, selected_status);
+			}
+		}
+		status_widths.forEach((status, i) => {
+				if(status == selected_status) {
+					completed_status = status_widths.slice(0, i+1)
+					jQuery.grep(status_widths, function(el) {
+						if (jQuery.inArray(el, completed_status) == -1) incomplete_status.push(el);
+					});
+					completed_status.forEach(completed => {
+						message = completed
+						bars.push({
+							'title': completed,
+							'width': '14%',
+							'progress_class': colorsclass[selected_status]
+						})
+					})
+					incomplete_status.forEach(incomplete => {
+						message = incomplete
+						bars.push({
+							'title': incomplete,
+							'width': '14%',
+							'progress_class':""
+						})
+					})
+				}
+		})
+		frm.dashboard.add_progress_chart(__('Status'), bars, message);
 	}
 });
 
