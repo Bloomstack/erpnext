@@ -19,9 +19,9 @@ class PackageTag(Document):
 		self.set_coa_batch_in_batch_no()
 
 	def on_update(self):
-		self.insert_bloomtrace_integration_request
+		self.create_integration_request()
 
-	def insert_bloomtrace_integration_request(self):
+	def create_integration_request(self):
 		make_integration_request(self.doctype, self.name, "Package Tag")
 
 	def validate_source_package_tag(self):
