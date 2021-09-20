@@ -1,0 +1,63 @@
+.progress-area .progress-chart {
+  text-align: center;
+}
+
+.progress_chart {
+  overflow: hidden;
+  counter-reset: step;
+  padding-left: 0;
+}
+
+.progress_chart li {
+  list-style-type: none;
+  color: #8d99a6;
+  font-size: 12px;
+  position: relative;
+  vertical-align: bottom;
+  display: inline-block;
+  height: 75px;
+}
+.progress_chart li:before {
+  content: counter(step);
+  counter-increment: step;
+  width: 30px;
+  line-height: 30px;
+  display: block;
+  text-align: center;
+  font-size: 15px;
+  border: 1px solid #8d99a6;
+  color: #8d99a6;
+  background-color: #fff;
+  border-radius: 20px;
+  margin: 0 auto 10px;
+  z-index: 3!important;
+}
+/* connectors*/
+.progress_chart li:after {
+  content: '';
+  width: 78%;
+  height: 2px;
+  background: #8d99a6;
+  position: absolute;
+  left: -39%;
+  top: 15px;
+}
+.progress_chart li:first-child:after {
+  /*connector not needed before the first step*/
+  content: none;
+}
+/*marking active/completed steps green*/
+/*The number of the step and the connector before it = green*/
+.progress_chart li.green:before, .progress_chart li.green:after {
+  background: #4d9f71;
+  border-color: #4d9f71;
+  color: #fff;
+  z-index: 1;
+}
+
+.progress_chart li.red:before, .progress_chart li.red:after {
+  background: red;
+  border-color: red;
+  color: #fff;
+  z-index: 1;
+}

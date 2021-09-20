@@ -8,6 +8,7 @@
   "strain_name",
   "indica_percentage",
   "sativa_percentage",
+  "metrc_status",
   "strain_id",
   "column_break_3",
   "target_warehouse",
@@ -177,9 +178,27 @@
   {
    "fieldname": "section_break_26",
    "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_1",
+   "fieldtype": "Section Break"
+  },
+  {
+   "default": "Compliance Document",
+   "fieldname": "metrc_status",
+   "fieldtype": "Select",
+   "label": "METRC Status",
+   "options": "Compliance Document\nReported to Bloomtrace\nSuccessful on Bloomtrace\nFailed on Bloomtrace\nReported to METRC\nSuccessful on METRC\nFailed on METRC\nMETRC ID Reported to Bloomstack"
   }
  ],
- "modified": "2020-09-13 23:46:19.496562",
+ "modified": "2021-09-20 01:46:24.965614",
  "modified_by": "Administrator",
  "module": "Agriculture",
  "name": "Strain",
