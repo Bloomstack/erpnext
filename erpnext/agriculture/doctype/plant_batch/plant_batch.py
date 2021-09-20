@@ -21,7 +21,7 @@ class PlantBatch(Document):
 		self.create_plant_batch_project()
 
 	def on_update(self):
-		self.create_integration_request
+		self.create_integration_request()
 
 	def create_integration_request(self):
 		make_integration_request(self.doctype, self.name, "Plant Batch")
