@@ -3,8 +3,72 @@
 # For license information, please see license.txt
 
 from __future__ import unicode_literals
-# import frappe
+import frappe
+from frappe.utils import cstr
+from erpnext.compliance.utils import make_integration_request, get_bloomtrace_client
 from frappe.model.document import Document
 
 class PlantAdditiveLog(Document):
-	pass
+	def on_update(self):
+		self.create_integration_request()
+
+	def create_integration_request(self):
+		make_integration_request(self.doctype, self.name, "Plant Additive Log")
+
+def execute_bloomtrace_integration_request():
+	frappe_client = get_bloomtrace_client()
+	if not frappe_client:
+		return
+
+	pending_requests = frappe.get_all("Integration Request",
+		filters={"status": ["IN", ["Queued", "Failed"]], "reference_doctype": "Plant Additive log", "integration_request_service": "BloomTrace"},
+		order_by="creation ASC",
+		limit=50)
+
+	for request in pending_requests:
+		integration_request = frappe.get_doc("Integration Request", request.name)
+		plant_additive_log = frappe.get_doc("Plant Additive Log", integration_request.reference_docname)
+		bloomtrace_plant_additive_log = frappe_client.get_doc("Plant Additive Log", integration_request.reference_docname)
+		try:
+			if not bloomtrace_plant_additive_log:
+				insert_plant_additive_log(plant_additive_log, frappe_client)
+			else:
+				update_plant_additive_log(plant_additive_log, frappe_client)
+			integration_request.error = ""
+			integration_request.status = "Completed"
+			integration_request.save(ignore_permissions=True)
+		except Exception as e:
+			integration_request.error = cstr(frappe.get_traceback())
+			integration_request.status = "Failed"
+			integration_request.save(ignore_permissions=True)
+
+def insert_plant_additive_log(plant_additive_log, frappe_client):
+	bloomtrace_plant_additive_log = make_plant_additive_log(plant_additive_log)
+	frappe_client.insert(bloomtrace_plant_additive_log)
+
+def update_plant_additive_log(plant_additive_log, frappe_client):
+	bloomtrace_plant_additive_log = make_plant_additive_log(plant_additive_log)
+	bloomtrace_plant_additive_log.update({
+		"name": plant_additive_log.name
+	})
+	frappe_client.update(bloomtrace_plant_additive_log)
+
+def make_plant_additive_log(plant_additive_log):
+	site_url = frappe.utils.get_host_name()
+	bloomtrace_plant_dict = {
+		"doctype": "Plant Additive Log",
+		"bloomstack_company": plant_additive_log.company,
+		"additive":plant_additive_log.additive,
+		"additive_type": plant_additive_log.additive_type,
+		"total_amount_applied": plant_additive_log.total_amount_used,
+		"application_device": plant_additive_log.application_device,
+		"product_supplier": plant_additive_log.supplier,
+		"total_amount_unit_of_measure": plant_additive_log.uom,
+		"item": plant_additive_log.item,
+		"location": plant_additive_log.location,
+		"strain": plant_additive_log.strain,
+		"plant_batch": plant_additive_log.plant_batch,
+		"plant": plant_additive_log.plant,
+		"actual_date": plant_additive_log.actual_date
+	}
+	return bloomtrace_plant_dict
