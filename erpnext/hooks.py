@@ -233,6 +233,16 @@ standard_queries = {
 }
 
 doc_events = {
+	("Company", "Supplier", "Customer"): {
+		"validate": [
+			"erpnext.selling..doctype.customer.customer.validate_default_license",
+			"erpnext.selling..doctype.customer.customer.validate_expired_licenses"
+		]
+	},
+	("Sales Order", "Delivery Note"): {
+		"validate": "bloomstack_core.hook_events.utils.validate_delivery_window",
+		"on_submit": "bloomstack_core.hook_events.utils.validate_delivery_window"
+	},
 	"Stock Entry": {
 		"on_submit": "erpnext.stock.doctype.material_request.material_request.update_completed_and_requested_qty",
 		"on_cancel": "erpnext.stock.doctype.material_request.material_request.update_completed_and_requested_qty"
