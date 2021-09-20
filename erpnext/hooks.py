@@ -235,13 +235,13 @@ standard_queries = {
 doc_events = {
 	("Company", "Supplier", "Customer"): {
 		"validate": [
-			"erpnext.selling.doctype.customer.customer.validate_default_license",
-			"erpnext.selling.doctype.customer.customer.validate_expired_licenses"
+			"erpnext.utils.validate_default_license",
+			"erpnext.utils.validate_expired_licenses"
 		]
 	},
 	("Sales Order", "Delivery Note"): {
-		"validate": "erpnext.selling.doctype.sales_order.sales_order.validate_delivery_window",
-		"on_submit": "erpnext.selling.doctype.sales_order.sales_order.validate_delivery_window"
+		"validate": "erpnext.utils.validate_delivery_window",
+		"on_submit": "erpnext.utils.validate_delivery_window"
 	},
 	"Stock Entry": {
 		"on_submit": "erpnext.stock.doctype.material_request.material_request.update_completed_and_requested_qty",
