@@ -7,7 +7,7 @@ import json
 import calendar
 import requests
 import frappe.utils
-from frappe.utils import cstr, flt, getdate, cint, nowdate, add_days, get_link_to_form, comma_and
+from frappe.utils import cstr, flt, getdate, cint, nowdate, add_days, get_link_to_form, comma_and, today
 from frappe import _
 from six import string_types
 from frappe.model.utils import get_fetch_values
@@ -25,6 +25,7 @@ from erpnext.setup.doctype.item_group.item_group import get_item_group_defaults
 from erpnext.manufacturing.doctype.production_plan.production_plan import get_items_for_material_requests
 from erpnext.accounts.doctype.sales_invoice.sales_invoice import validate_inter_company_party, update_linked_doc,\
 	unlink_inter_company_doc
+from erpnext.stock.doctype.batch.batch import get_batch_qty
 
 form_grid_templates = {
 	"items": "templates/form_grid/item_grid.html"
@@ -49,6 +50,7 @@ class SalesOrder(SellingController):
 		self.validate_warehouse()
 		self.validate_drop_ship()
 		self.validate_serial_no_based_delivery()
+		self.validate_batch_item()
 		validate_inter_company_party(self.doctype, self.customer, self.company, self.inter_company_order_reference)
 
 		if self.coupon_code:
@@ -63,6 +65,22 @@ class SalesOrder(SellingController):
 
 		if not self.billing_status: self.billing_status = 'Not Billed'
 		if not self.delivery_status: self.delivery_status = 'Not Delivered'
+
+	def on_update_after_submit(self):
+		self.check_overdue_status()
+
+	def check_overdue_status(self):
+		overdue_conditions = [
+			self.docstatus == 1,
+			self.status not in ["On Hold", "Closed", "Completed"],
+			self.skip_delivery_note == 0,
+			flt(self.per_delivered, 6) < 100,
+			getdate(self.delivery_date) < getdate(today()),
+		]
+
+		is_overdue = all(overdue_conditions)
+		if is_overdue != self.is_overdue:
+			self.db_set("is_overdue", is_overdue)
 
 	def validate_po(self):
 		# validate p.o date v/s delivery date
@@ -484,6 +502,24 @@ class SalesOrder(SellingController):
 				frappe.throw(_("Cannot ensure delivery by Serial No as \
 				Item {0} is added with and without Ensure Delivery by \
 				Serial No.").format(item.item_code))
+
+	def validate_batch_item(self):
+		for item in self.items:
+			qty = item.stock_qty or item.transfer_qty or item.qty or 0
+			has_batch_no = frappe.db.get_value('Item', item.item_code, 'has_batch_no')
+			warehouse = item.warehouse
+
+			if has_batch_no and warehouse and qty > 0:
+				if not item.batch_no:
+					return
+
+				batch_qty = get_batch_qty(batch_no=item.batch_no, warehouse=warehouse)
+				if flt(batch_qty, item.precision("qty")) < flt(qty, item.precision("qty")):
+					frappe.throw(_("""
+						Row #{0}: The batch {1} has only {2} qty. Either select a different
+						batch that has more than {3} qty available, or split the row to sell
+						from multiple batches.
+					""").format(item.idx, item.batch_no, batch_qty, qty))
 
 def get_list_context(context=None):
 	from erpnext.controllers.website_list_for_contact import get_list_context
@@ -1354,3 +1390,27 @@ def make_sales_order_from_batch(source_name, target_doc=None):
 	target_doc.run_method("set_missing_values")
 
 	return target_doc
+
+def create_sales_invoice_against_contract():
+	"""
+		Daily scheduler event to create Sales Invoice against
+		an active contract, based on the contract's payment terms
+	"""
+
+	sales_orders = frappe.get_all("Sales Order",
+		filters={"docstatus": 1, "contract": ["not like", ""], "per_billed": ["<", 100]})
+
+	for order in sales_orders:
+		sales_invoice = make_sales_invoice(order.name)
+		sales_invoice.save()
+
+def update_order_status():
+	"""
+		Daily scheduler to check if a Sales Order has become overdue
+	"""
+
+	orders = frappe.get_all("Sales Order", filters={"docstatus": 1})
+
+	for order in orders:
+		order_doc = frappe.get_doc("Sales Order", order)
+		order_doc.run_method("check_overdue_status")

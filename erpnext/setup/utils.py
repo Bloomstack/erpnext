@@ -141,6 +141,59 @@ def insert_record(records):
 				raise
 
 def welcome_email():
-	site_name = get_default_company() or "ERPNext"
+	site_name = get_default_company() or "Bloomstack"
 	title = _("Welcome to {0}").format(site_name)
 	return title
+
+@frappe.whitelist(allow_guest=True)
+def authorize_document(sign=None, signee=None, docname=None, party_business_type=None, designation=None):
+	if frappe.db.exists("Authorization Request", docname):
+		authorization_request = frappe.get_doc("Authorization Request", docname)
+		authorization_request.signature = sign
+		authorization_request.signee_name = signee
+		authorization_request.party_business_type = party_business_type
+		authorization_request.designation = designation
+		authorization_request.status = "Approved"
+		authorization_request.flags.ignore_permissions = True
+		authorization_request.save()
+
+		authorized_doc = frappe.get_doc(authorization_request.linked_doctype, authorization_request.linked_docname)
+		if hasattr(authorized_doc, "is_signed") and \
+			 hasattr(authorized_doc, "customer_signature") and \
+			 hasattr(authorized_doc, "signee") and \
+			 hasattr(authorized_doc, "party_business_type") and \
+			 hasattr(authorized_doc, "designation"):
+			if authorized_doc.is_signed == 0:
+				authorized_doc.is_signed = 1
+				authorized_doc.customer_signature = sign
+				authorized_doc.signee = signee
+				authorized_doc.party_business_type = party_business_type
+				authorized_doc.designation = designation
+				authorized_doc.signed_on = frappe.utils.now()
+
+		authorized_doc.flags.ignore_permissions = True
+		authorized_doc.submit()
+
+		email_authorized_doc(docname)
+
+def email_authorized_doc(authorization_request_name):
+	authorization_request = frappe.get_doc("Authorization Request", authorization_request_name)
+	authorized_doc = frappe.get_doc(authorization_request.linked_doctype, authorization_request.linked_docname)
+	recipients = [authorization_request.authorizer_email]
+	company = authorized_doc.company if hasattr(authorized_doc, 'company') else get_default_company()
+	subject = "Your signed {0} with {1}".format(authorized_doc.doctype, company)
+	message = frappe.render_template("templates/emails/authorization_request.html", {
+			"authorization_request": authorization_request,
+			"company": company,
+			"linked_doc": authorized_doc
+		})
+	print_format = "Bloomstack Contract" if authorized_doc.doctype == 'Contract' else "Standard"
+	attachments = [frappe.attach_print(authorized_doc.doctype, authorized_doc.name, print_format=print_format)]
+	frappe.sendmail(recipients=recipients, attachments=attachments, subject=subject, message=message)
+
+@frappe.whitelist(allow_guest=True)
+def reject_document(docname):
+	if frappe.db.exists("Authorization Request", docname):
+		authorization_request = frappe.get_doc("Authorization Request", docname)
+		authorization_request.status = "Rejected"
+		authorization_request.save()

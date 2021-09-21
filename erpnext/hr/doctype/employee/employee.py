@@ -47,6 +47,7 @@ class Employee(NestedSet):
 		self.validate_status()
 		self.validate_reports_to()
 		self.validate_preferred_email()
+		self.update_driver_employee()
 		if self.job_applicant:
 			self.validate_onboarding_process()
 
@@ -214,6 +215,15 @@ class Employee(NestedSet):
 	def validate_preferred_email(self):
 		if self.prefered_contact_email and not self.get(scrub(self.prefered_contact_email)):
 			frappe.msgprint(_("Please enter " + self.prefered_contact_email))
+
+	def update_driver_employee(self):
+		if self.user_id:
+			driver = frappe.db.get_value("Driver", {"user_id": self.user_id}, "name")
+		else:
+			driver = frappe.db.get_value("Driver", {"employee": self.name}, "name")
+
+		if driver:
+			frappe.db.set_value("Driver", driver, "employee", self.name if self.user_id else None)
 
 	def validate_onboarding_process(self):
 		employee_onboarding = frappe.get_all("Employee Onboarding",

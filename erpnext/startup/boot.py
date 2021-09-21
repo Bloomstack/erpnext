@@ -9,6 +9,7 @@ from frappe.utils import cint
 def boot_session(bootinfo):
 	"""boot session - send website info if guest"""
 
+	bootinfo.user.background_image = "/assets/erpnext/images/desk.png"
 	bootinfo.custom_css = frappe.db.get_value('Style Settings', None, 'custom_css') or ''
 	bootinfo.compliance_enabled = frappe.db.get_single_value("Compliance Settings", "is_compliance_enabled")
 

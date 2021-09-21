@@ -6,8 +6,8 @@ import frappe, erpnext
 from frappe import _
 import json
 from frappe.utils import flt, cstr, nowdate, nowtime
-
 from six import string_types
+from erpnext.stock.doctype.batch.batch import get_batch_qty
 
 class InvalidWarehouseCompany(frappe.ValidationError): pass
 
@@ -399,3 +399,28 @@ def get_items_for_quality_inspection(doc, items):
 			})
 
 	return data
+
+@frappe.whitelist()
+def move_expired_batches(source_name, target_doc=None):
+	batch_details = get_batch_qty(source_name)
+	target_warehouse = frappe.flags.args.get("warehouse")
+
+	item = frappe.db.get_value("Batch", source_name, "item")
+	uom = frappe.db.get_value("Item", item, "stock_uom")
+
+	stock_entry = frappe.new_doc("Stock Entry")
+	stock_entry.stock_entry_type = "Material Transfer"
+
+	for batch in batch_details:
+		if batch.get("qty") > 0:
+			stock_entry.append("items", {
+				"item_code": item,
+				"qty": batch.get("qty"),
+				"uom": uom,
+				"stock_uom": uom,
+				"batch_no": source_name,
+				"s_warehouse": batch.get("warehouse"),
+				"t_warehouse": target_warehouse
+			})
+
+	return stock_entry
