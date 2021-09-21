@@ -238,7 +238,10 @@ doc_events = {
 		"on_cancel": "erpnext.stock.doctype.material_request.material_request.update_completed_and_requested_qty"
 	},
 	"User": {
-		"after_insert": "frappe.contacts.doctype.contact.contact.update_contact",
+		"after_insert": [
+			"frappe.contacts.doctype.contact.contact.update_contact",
+			"erpnext.compliance.utils.update_bloomtrace_user"
+		],
 		"validate": "erpnext.hr.doctype.employee.employee.validate_employee_role",
 		"on_update": ["erpnext.hr.doctype.employee.employee.update_user_permissions",
 			"erpnext.portal.utils.set_default_role"]
@@ -284,10 +287,7 @@ doc_events = {
 	},
 	('Quotation', 'Sales Order', 'Sales Invoice'): {
 		'validate': ["erpnext.erpnext_integrations.taxjar_integration.set_sales_tax"]
-	},
-	"User": {
-		"after_insert": "erpnext.compliance.utils.update_bloomtrace_user"
-	},
+	}
 }
 
 # To maintain data integrity, we exempt payments from being auto-cancelled when related documents

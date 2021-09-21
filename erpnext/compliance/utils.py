@@ -2,7 +2,7 @@ import frappe
 from frappe.core.utils import find
 from frappe.utils.background_jobs import enqueue
 from frappe.utils.nestedset import get_root_of
-from frappe.utils import get_host_name
+from frappe.utils import get_host_name, cstr
 from frappe.frappeclient import FrappeClient, AuthError
 import json
 from python_metrc import METRC
