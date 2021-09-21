@@ -14,7 +14,7 @@ from frappe.desk.notifications import clear_doctype_notifications
 from frappe.model.mapper import get_mapped_doc
 from frappe.model.utils import get_fetch_values
 from frappe.utils import cint, flt, get_link_to_form
-from erpnext.compliance.utils import make_integration_request, get_bloomtrace_client, get_host_name
+from erpnext.compliance.utils import make_integration_request, get_bloomtrace_client
 
 form_grid_templates = {
 	"items": "templates/form_grid/item_grid.html"
@@ -829,7 +829,7 @@ def insert_transfer_template(delivery_note, frappe_client):
 				"wholesale_price": item.amount
 			})
 
-	site_url = get_host_name()
+	site_url = frappe.utils.get_host_name()
 	transfer_template = {
 		"doctype": "Transfer Template",
 		"bloomstack_company": delivery_note.company,

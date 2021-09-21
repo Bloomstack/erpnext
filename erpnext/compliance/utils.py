@@ -3,7 +3,6 @@ from frappe.core.utils import find
 from frappe.utils.background_jobs import enqueue
 from frappe.utils.nestedset import get_root_of
 from frappe.utils import get_host_name
-from erpnext.compliance.doctype.compliance_info.compliance_info import make_bloomstack_site_license
 from frappe.frappeclient import FrappeClient, AuthError
 import json
 from python_metrc import METRC
@@ -274,4 +273,5 @@ def make_bloomstack_site_licenses(frappe_client, site_url):
 	for site_license in compliance_info:
 		license_info = frappe_client.get_doc("License Info", site_license.name)
 		if license_info:
+			from erpnext.compliance.doctype.compliance_info.compliance_info import make_bloomstack_site_license
 			make_bloomstack_site_license(frappe_client, site_url, site_license.name)
