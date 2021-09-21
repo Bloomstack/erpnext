@@ -131,19 +131,6 @@ class DeliveryNote(SellingController):
 
 		if not self.installation_status: self.installation_status = 'Not Installed'
 
-	def link_invoice_against_delivery_note(self):
-		for item in self.items:
-			if item.against_sales_order and not item.against_sales_invoice:
-				sales_invoice_details = frappe.get_all("Sales Invoice Item",
-					filters={"docstatus": 1, "sales_order": item.against_sales_order},
-					fields=["distinct(parent)", "delivery_note"])
-
-				if sales_invoice_details and len(sales_invoice_details) == 1:
-					if sales_invoice_details[0].delivery_note:
-						continue
-					frappe.db.set_value("Delivery Note Item", item.name,
-						"against_sales_invoice", sales_invoice_details[0].parent)
-
 	def validate_with_previous_doc(self):
 		super(DeliveryNote, self).validate_with_previous_doc({
 			"Sales Order": {
@@ -263,10 +250,6 @@ class DeliveryNote(SellingController):
 		if not self.delivered: self.status = "To Deliver"
 		self.create_integration_request()
 
-	def create_integration_request(self):
-		make_integration_request(self.doctype, self.name, "Package")
-		make_integration_request(self.doctype, self.name, "Transfer")
-
 	def on_update_after_submit(self):
 		self.status = "Delivered" if self.delivered else "To Deliver"
 		if self.delivered and frappe.db.get_single_value("Accounts Settings", "auto_create_invoice_on_delivery_note") == "Delivered":
@@ -288,6 +271,23 @@ class DeliveryNote(SellingController):
 
 		self.cancel_packing_slips()
 		self.make_gl_entries_on_cancel()
+
+	def create_integration_request(self):
+		make_integration_request(self.doctype, self.name, "Package")
+		make_integration_request(self.doctype, self.name, "Transfer")
+
+	def link_invoice_against_delivery_note(self):
+		for item in self.items:
+			if item.against_sales_order and not item.against_sales_invoice:
+				sales_invoice_details = frappe.get_all("Sales Invoice Item",
+					filters={"docstatus": 1, "sales_order": item.against_sales_order},
+					fields=["distinct(parent)", "delivery_note"])
+
+				if sales_invoice_details and len(sales_invoice_details) == 1:
+					if sales_invoice_details[0].delivery_note:
+						continue
+					frappe.db.set_value("Delivery Note Item", item.name,
+						"against_sales_invoice", sales_invoice_details[0].parent)
 
 	def check_credit_limit(self):
 		from erpnext.selling.doctype.customer.customer import check_credit_limit
