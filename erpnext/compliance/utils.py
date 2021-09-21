@@ -2,7 +2,7 @@ import frappe
 from frappe.core.utils import find
 from frappe.utils.background_jobs import enqueue
 from frappe.utils.nestedset import get_root_of
-from frappe.utils import get_host_name
+from frappe.utils import get_host_name, cstr
 from frappe.frappeclient import FrappeClient, AuthError
 import json
 from python_metrc import METRC
@@ -275,3 +275,55 @@ def make_bloomstack_site_licenses(frappe_client, site_url):
 		if license_info:
 			from erpnext.compliance.doctype.compliance_info.compliance_info import make_bloomstack_site_license
 			make_bloomstack_site_license(frappe_client, site_url, site_license.name)
+
+def update_bloomtrace_user(user, method):
+	if frappe.get_conf().developer_mode or frappe.get_conf().disable_user_sync:
+		return
+
+	if user.user_type == "System User" and user.name not in ["Administrator", "Guest"]:
+		make_integration_request(user.doctype, user.name)
+
+def execute_bloomtrace_integration_request_for_user():
+	frappe_client = get_bloomtrace_client()
+	if not frappe_client:
+		return
+
+	site_url = get_host_name()
+	pending_requests = frappe.get_all("Integration Request",
+		filters={
+			"status": ["IN", ["Queued", "Failed"]],
+			"reference_doctype": "User",
+			"integration_request_service": "BloomTrace"
+		},
+		order_by="creation ASC",
+		limit=50)
+
+	for request in pending_requests:
+		integration_request = frappe.get_doc("Integration Request", request.name)
+		user = frappe.get_doc("User", integration_request.reference_docname)
+		try:
+			insert_bloomstack_site_user(user, site_url, frappe_client)
+
+			integration_request.error = ""
+			integration_request.status = "Completed"
+		except Exception as e:
+			integration_request.error = cstr(frappe.get_traceback())
+			integration_request.status = "Failed"
+
+		integration_request.save(ignore_permissions=True)
+
+
+def insert_bloomstack_site_user(user, site_url, frappe_client):
+	bloomstack_site_user = make_bloomstack_site_user(user, site_url)
+	return frappe_client.insert(bloomstack_site_user)
+
+def make_bloomstack_site_user(user, site_url):
+	bloomstack_site_user = {
+		"doctype": "Bloomstack Site User",
+		"enabled": user.enabled,
+		"first_name": user.first_name,
+		"last_name": user.last_name,
+		"email": user.email,
+		"bloomstack_site": site_url
+	}
+	return bloomstack_site_user
