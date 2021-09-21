@@ -334,7 +334,7 @@ class SalesInvoice(SellingController):
 		if not metrc:
 			return
 
-		payload = self.get_metrc_payload(self)
+		payload = self.get_metrc_payload()
 		if not payload:
 			return
 
