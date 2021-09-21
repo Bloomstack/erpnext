@@ -120,7 +120,7 @@ frappe.ui.form.on("Leave Application", {
 
 	from_date: function(frm) {
 		frm.trigger("make_dashboard");
-		frm.trigger("set_half_day_date")
+		frm.trigger("set_half_day_date");
 		frm.trigger("half_day_datepicker");
 		frm.trigger("calculate_total_days");
 	},
