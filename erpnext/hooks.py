@@ -233,12 +233,25 @@ standard_queries = {
 }
 
 doc_events = {
+	("Company", "Supplier", "Customer"): {
+		"validate": [
+			"erpnext.utils.validate_default_license",
+			"erpnext.utils.validate_expired_licenses"
+		]
+	},
+	("Sales Order", "Delivery Note"): {
+		"validate": "erpnext.utils.validate_delivery_window",
+		"on_submit": "erpnext.utils.validate_delivery_window"
+	},
 	"Stock Entry": {
 		"on_submit": "erpnext.stock.doctype.material_request.material_request.update_completed_and_requested_qty",
 		"on_cancel": "erpnext.stock.doctype.material_request.material_request.update_completed_and_requested_qty"
 	},
 	"User": {
-		"after_insert": "frappe.contacts.doctype.contact.contact.update_contact",
+		"after_insert": [
+			"frappe.contacts.doctype.contact.contact.update_contact",
+			"erpnext.compliance.utils.update_bloomtrace_user"
+		],
 		"validate": "erpnext.hr.doctype.employee.employee.validate_employee_role",
 		"on_update": ["erpnext.hr.doctype.employee.employee.update_user_permissions",
 			"erpnext.portal.utils.set_default_role"]
@@ -295,6 +308,7 @@ scheduler_events = {
 	"all": [
 		"erpnext.projects.doctype.project.project.project_status_update_reminder",
 		"erpnext.healthcare.doctype.patient_appointment.patient_appointment.set_appointment_reminder",
+		"erpnext.stock.doctype.delivery_note.delivery_note.execute_bloomtrace_integration_request",
 		"erpnext.agriculture.doctype.plant.plant.execute_bloomtrace_integration_request",
 		"erpnext.agriculture.doctype.plant_batch.plant_batch.execute_bloomtrace_integration_request",
 		"erpnext.agriculture.doctype.strain.strain.execute_bloomtrace_integration_request",
@@ -303,7 +317,9 @@ scheduler_events = {
 		"erpnext.healthcare.doctype.patient_appointment.patient_appointment.set_appointment_reminder",
 		"erpnext.stock.doctype.stock_reconciliation.stock_reconciliation.execute_bloomtrace_integration_request",
 		"erpnext.stock.doctype.stock_entry.stock_entry.execute_bloomtrace_integration_request",
-		"erpnext.agriculture.doctype.plant_additive_log.plant_additive_log.execute_bloomtrace_integration_request"
+		"erpnext.agriculture.doctype.plant_additive_log.plant_additive_log.execute_bloomtrace_integration_request",
+		"erpnext.compliance.utils.execute_bloomtrace_integration_request_for_user",
+		"erpnext.stock.doctype.item.item.execute_bloomtrace_integration_request"
 	],
 	"hourly": [
 		'erpnext.hr.doctype.daily_work_summary_group.daily_work_summary_group.trigger_emails',
