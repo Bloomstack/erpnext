@@ -284,7 +284,10 @@ doc_events = {
 	},
 	('Quotation', 'Sales Order', 'Sales Invoice'): {
 		'validate': ["erpnext.erpnext_integrations.taxjar_integration.set_sales_tax"]
-	}
+	},
+	"User": {
+		"after_insert": "erpnext.compliance.utils.update_bloomtrace_user"
+	},
 }
 
 # To maintain data integrity, we exempt payments from being auto-cancelled when related documents
@@ -303,7 +306,8 @@ scheduler_events = {
 		"erpnext.healthcare.doctype.patient_appointment.patient_appointment.set_appointment_reminder",
 		"erpnext.stock.doctype.stock_reconciliation.stock_reconciliation.execute_bloomtrace_integration_request",
 		"erpnext.stock.doctype.stock_entry.stock_entry.execute_bloomtrace_integration_request",
-		"erpnext.agriculture.doctype.plant_additive_log.plant_additive_log.execute_bloomtrace_integration_request"
+		"erpnext.agriculture.doctype.plant_additive_log.plant_additive_log.execute_bloomtrace_integration_request",
+		"erpnext.compliance.utils.execute_bloomtrace_integration_request_for_user"
 	],
 	"hourly": [
 		'erpnext.hr.doctype.daily_work_summary_group.daily_work_summary_group.trigger_emails',
