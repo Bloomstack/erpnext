@@ -147,6 +147,7 @@ class Item(WebsiteGenerator):
 		self.update_variants()
 		self.update_item_price()
 		self.update_variants_website_display()
+		self.create_integration_request()
 
 	def create_integration_request(self):
 		make_integration_request(self.doctype, self.name, "Item")
