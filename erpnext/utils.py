@@ -1,6 +1,7 @@
 import json
 import frappe
 from frappe.utils import get_url, date_diff, get_time, getdate, to_timedelta, today
+from frappe import _
 
 @frappe.whitelist()
 def get_contact(doctype, name, contact_field):
@@ -168,10 +169,10 @@ def get_users_with_role(role):
 	# returns users with the specified role
 	user_list = frappe.get_all("User", fields=["`tabUser`.name"],
 		filters = [
-			["Has Role", "role", "=", role],
-			["User", "name", "not in", ["Guest", "Administrator"]],
-			["User", "enabled", "=", 1]
-		],
+				["Has Role", "role", "=", role],
+				["User", "name", "not in", ["Guest", "Administrator"]],
+				["User", "enabled", "=", 1]
+			],
 		as_list=1
 	)
 
