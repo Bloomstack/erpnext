@@ -153,77 +153,8 @@ class SalesInvoice(SellingController):
 	def before_save(self):
 		set_account_for_mode_of_payment(self)
 
-	def before_update_after_submit(self):
-		self.set_invoice_status()
-
-	def set_invoice_status(self):
-		self.set_status()
-		self.set_indicator()
-
 	def before_submit(self):
 		self.create_metrc_sales_receipt()
-
-	def create_metrc_sales_receipt(self, method):
-		if self.is_return:
-			return
-
-		metrc = get_metrc()
-		if not metrc:
-			return
-
-		payload = self.get_metrc_payload(self)
-		if not payload:
-			return
-
-		response = metrc.sales.receipts.post(json=payload)
-
-		integration_request = frappe.new_doc("Integration Request")
-		integration_request.update({
-			"integration_type": "Remote",
-			"integration_request_service": "Metrc",
-			"reference_doctype": self.doctype,
-			"reference_docname": self.name
-		})
-
-		if not response.ok:
-			integration_request.status = "Failed"
-			integration_request.error = json.dumps(json.loads(response.text), indent=4, sort_keys=True)
-			integration_request.save(ignore_permissions=True)
-			frappe.db.commit()
-
-			if isinstance(response.json(), list):
-				for error in response.json():
-					frappe.throw(_(error.get("message")))
-			elif isinstance(response.json(), dict):
-				frappe.throw(_(response.json().get("Message")))
-		else:
-			integration_request.status = "Completed"
-			integration_request.save(ignore_permissions=True)
-
-	def get_metrc_payload(self):
-		settings = frappe.get_single("Compliance Settings")
-
-		if not settings.is_compliance_enabled:
-			return
-
-		transactions = []
-		for item in self.items:
-			if item.package_tag:
-				transactions.append({
-					"PackageLabel": item.package_tag,
-					"Quantity": item.qty,
-					"UnitOfMeasure": "Grams",
-					"TotalAmount": item.amount
-				})
-
-		if not transactions:
-			return
-
-		return [{
-			"SalesDateTime": now(),
-			"SalesCustomerType": "Consumer",
-			"Transactions": transactions
-		}]
 
 	def on_submit(self):
 		self.validate_pos_paid_amount()
@@ -286,6 +217,9 @@ class SalesInvoice(SellingController):
 
 		if "Healthcare" in active_domains:
 			manage_invoice_submit_cancel(self, "on_submit")
+
+	def before_update_after_submit(self):
+		self.set_invoice_status()
 
 	def validate_pos_return(self):
 
@@ -387,6 +321,72 @@ class SalesInvoice(SellingController):
 					'second_join_field': 'so_detail',
 					'extra_cond': """ and exists (select name from `tabSales Invoice` where name=`tabSales Invoice Item`.parent and update_stock=1 and is_return=1)"""
 				})
+
+	def set_invoice_status(self):
+		self.set_status()
+		self.set_indicator()
+
+	def create_metrc_sales_receipt(self):
+		if self.is_return:
+			return
+
+		metrc = get_metrc()
+		if not metrc:
+			return
+
+		payload = self.get_metrc_payload(self)
+		if not payload:
+			return
+
+		response = metrc.sales.receipts.post(json=payload)
+
+		integration_request = frappe.new_doc("Integration Request")
+		integration_request.update({
+			"integration_type": "Remote",
+			"integration_request_service": "Metrc",
+			"reference_doctype": self.doctype,
+			"reference_docname": self.name
+		})
+
+		if not response.ok:
+			integration_request.status = "Failed"
+			integration_request.error = json.dumps(json.loads(response.text), indent=4, sort_keys=True)
+			integration_request.save(ignore_permissions=True)
+			frappe.db.commit()
+
+			if isinstance(response.json(), list):
+				message = [d.get("message") for d in response.json()]
+				frappe.throw(_(message))
+			elif isinstance(response.json(), dict):
+				frappe.throw(_(response.json().get("Message")))
+		else:
+			integration_request.status = "Completed"
+			integration_request.save(ignore_permissions=True)
+
+	def get_metrc_payload(self):
+		settings = frappe.get_single("Compliance Settings")
+
+		if not settings.is_compliance_enabled:
+			return
+
+		transactions = []
+		for item in self.items:
+			if item.package_tag:
+				transactions.append({
+					"PackageLabel": item.package_tag,
+					"Quantity": item.qty,
+					"UnitOfMeasure": "Grams",
+					"TotalAmount": item.amount
+				})
+
+		if not transactions:
+			return
+
+		return [{
+			"SalesDateTime": now(),
+			"SalesCustomerType": "Consumer",
+			"Transactions": transactions
+		}]
 
 	def check_credit_limit(self):
 		from erpnext.selling.doctype.customer.customer import check_credit_limit
