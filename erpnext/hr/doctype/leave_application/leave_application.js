@@ -89,6 +89,7 @@ frappe.ui.form.on("Leave Application", {
 		frm.trigger("make_dashboard");
 		frm.trigger("get_leave_balance");
 		frm.trigger("set_leave_approver");
+		frm.trigger("calculate_total_days");
 	},
 
 	leave_approver: function(frm) {
@@ -99,6 +100,7 @@ frappe.ui.form.on("Leave Application", {
 
 	leave_type: function(frm) {
 		frm.trigger("get_leave_balance");
+		frm.trigger("calculate_total_days");
 	},
 
 	half_day: function(frm) {
@@ -118,21 +120,29 @@ frappe.ui.form.on("Leave Application", {
 
 	from_date: function(frm) {
 		frm.trigger("make_dashboard");
+		frm.trigger("set_half_day_date");
 		frm.trigger("half_day_datepicker");
 		frm.trigger("calculate_total_days");
 	},
-
 	to_date: function(frm) {
+		frm.trigger("set_half_day_date");
 		frm.trigger("half_day_datepicker");
 		frm.trigger("calculate_total_days");
 	},
 
-	half_day_date(frm) {
+	set_half_day_date(frm){
+		if (frm.doc.from_date == frm.doc.to_date && frm.doc.half_day) {
+			frm.set_value("half_day_date", frm.doc.from_date);
+		} else {
+			frm.set_value('half_day_date', '');
+		}
+	},
+
+	half_day_date: function(frm) {
 		frm.trigger("calculate_total_days");
 	},
 
 	half_day_datepicker: function(frm) {
-		frm.set_value('half_day_date', '');
 		var half_day_datepicker = frm.fields_dict.half_day_date.datepicker;
 		half_day_datepicker.update({
 			minDate: frappe.datetime.str_to_obj(frm.doc.from_date),

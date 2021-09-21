@@ -51,13 +51,16 @@
   "column_break_31",
   "grade",
   "branch",
+  "approvers_section",
+  "leave_approver",
+  "column_break_45",
+  "expense_approver",
   "attendance_and_leave_details",
   "leave_policy",
   "attendance_device_id",
   "column_break_44",
   "holiday_list",
   "default_shift",
-  "leave_approver",
   "salary_information",
   "salary_mode",
   "bank_name",
@@ -851,12 +854,28 @@
    "label": "Reports to Email",
    "options": "Email",
    "read_only": 1
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "approvers_section",
+   "fieldtype": "Section Break",
+   "label": "Approvers"
+  },
+  {
+   "fieldname": "expense_approver",
+   "fieldtype": "Link",
+   "label": "Expense Approver",
+   "options": "User"
+  },
+  {
+   "fieldname": "column_break_45",
+   "fieldtype": "Column Break"
   }
  ],
  "icon": "fa fa-user",
  "idx": 24,
  "image_field": "image",
- "modified": "2021-06-28 05:28:21.061707",
+ "modified": "2021-09-18 13:12:27.392619",
  "modified_by": "Administrator",
  "module": "HR",
  "name": "Employee",
