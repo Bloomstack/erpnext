@@ -1,4 +1,10 @@
-/* eslint-disable */
+frappe.pages['license-search'].on_page_load = function(wrapper) {
+	var page = frappe.ui.make_app_page({
+		parent: wrapper,
+		title: 'License Search',
+		single_column: true
+	});
+}/* eslint-disable */
 
 frappe.pages["license-search"].on_page_load = function(wrapper) {
 	let page = frappe.ui.make_app_page({
@@ -25,7 +31,7 @@ class LicenseSearch {
 
 	make() {
 		let me = this;
-		frappe.xcall("erpnext.erpnext_integrations.page.license_search.license_search.get_license_types").then((r) => {
+		frappe.xcall("erpnext.compliance.page.license_search.license_search.get_license_types").then((r) => {
 			me.license_types = r;
 
 			me.frm = new frappe.ui.FieldGroup({
@@ -45,7 +51,7 @@ class LicenseSearch {
 		let me = this;
 
 		me.show_totals(true);
-		frappe.xcall("erpnext.erpnext_integrations.page.license_search.license_search.get_all_licenses", {
+		frappe.xcall("erpnext.compliance.page.license_search.license_search.get_all_licenses", {
 			filters: me.frm.get_values(),
 			limit_start: me.limit_start,
 			limit_page_length: me.limit_page_length
@@ -273,7 +279,7 @@ class LicenseSearch {
 					message: __("Saving License {0}", [license.license_number]),
 					indicator: "blue"
 				});
-				frappe.xcall("erpnext.erpnext_integrations.page.license_search.license_search.add_license", {
+				frappe.xcall("erpnext.compliance.page.license_search.license_search.add_license", {
 					license: license,
 					company: values.company
 				}).then(r => {
@@ -283,7 +289,7 @@ class LicenseSearch {
 					});
 
 					frappe.model.open_mapped_doc({
-						method: "erpnext.erpnext_integrations.page.license_search.license_search.create_party_with_license",
+						method: "erpnext.compliance.page.license_search.license_search.create_party_with_license",
 						args: {
 							party: doctype,
 							license: {
