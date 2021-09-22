@@ -22,7 +22,7 @@ erpnext.setup.slides_settings = [
 				label: __('Domains'),
 				fieldtype: 'MultiCheck',
 				options: [
-					{ "label": __("Distribution"), "value": "Distribution" },
+					{ "label": __("Distributor"), "value": "Distribution" },
 					// { "label": __("Education"), "value": "Education" },
 					{ "label": __("Manufacturer"), "value": "Manufacturing" },
 					{ "label": __("Retailer"), "value": "Retail" },
