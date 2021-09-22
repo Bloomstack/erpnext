@@ -183,6 +183,12 @@
   border-color: rgba(255, 255, 255, 0.2);
 }
 
+.card-blockquote {
+  padding: 0;
+  margin-bottom: 0;
+  border-left: 0;
+}
+
 .card-inverse .card-header,
 .card-inverse .card-footer,
 .card-inverse .card-title,
@@ -199,12 +205,6 @@
 
 .card-inverse .card-link:focus, .card-inverse .card-link:hover {
   color: #fff;
-}
-
-.card-blockquote {
-  padding: 0;
-  margin-bottom: 0;
-  border-left: 0;
 }
 
 .card-img {
