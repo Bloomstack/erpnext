@@ -16,7 +16,6 @@ from frappe.model.mapper import get_mapped_doc
 from frappe.model.utils import get_fetch_values
 from frappe.utils import cint, flt, get_link_to_form
 from erpnext.compliance.utils import make_integration_request, get_bloomtrace_client
-from erpnext.stock.doctype.delivery_trip.delivery_trip import make_payment_entry
 
 form_grid_templates = {
 	"items": "templates/form_grid/item_grid.html"
@@ -946,6 +945,7 @@ def collect(amount, delivery_note, sales_invoice=None, returned_items=None):
 	if not sales_invoice:
 		frappe.throw(_("No invoice found to make payment against"))
 
+	from erpnext.stock.doctype.delivery_trip.delivery_trip import make_payment_entry
 	payment_id = make_payment_entry(amount, sales_invoice)
 
 	# generate a return delivery note, if applicable

@@ -6,8 +6,6 @@ import datetime
 import json
 
 import frappe
-from erpnext.accounts.doctype.payment_entry.payment_entry import get_payment_entry
-from erpnext.accounts.party import get_due_date
 from frappe import _
 from frappe.contacts.doctype.address.address import get_address_display
 from frappe.model.document import Document
@@ -15,6 +13,7 @@ from frappe.utils import cint, flt, get_datetime, get_link_to_form, nowdate, tod
 from frappe.utils.password import get_decrypted_password
 from requests.utils import quote
 from erpnext.compliance.utils import make_integration_request
+from erpnext.accounts.party import get_due_date
 
 
 class DeliveryTrip(Document):
@@ -659,6 +658,7 @@ def create_or_update_timesheet(trip, action, odometer_value=None):
 def make_payment_entry(payment_amount, sales_invoice):
 	payment_entry = frappe._dict()
 	if flt(payment_amount) > 0:
+		from erpnext.accounts.doctype.payment_entry.payment_entry import get_payment_entry
 		payment_entry = get_payment_entry("Sales Invoice", sales_invoice, party_amount=flt(payment_amount))
 		payment_entry.paid_amount = payment_amount
 		payment_entry.reference_date = today()
