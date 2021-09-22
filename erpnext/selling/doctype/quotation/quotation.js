@@ -3,7 +3,6 @@
 
 
 {% include 'erpnext/selling/sales_common.js' %}
-frappe.provide('erpnext.utils');
 
 frappe.ui.form.on('Quotation', {
 	setup: function(frm) {

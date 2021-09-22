@@ -1,31 +1,31 @@
-{% extends "templates/web.html" %}
+<!-- {% extends "templates/web.html" %}
 
 {% block script %}
 <script>
 $(document).ready(function() {
-    $("#login_btn").click(function() {
-        var me = this;
-        $(this).html("Logging In...").prop("disabled", true);
-        frappe.call({
-            "method": "login",
-            args: {
-                usr: "demo@erpnext.com",
-                pwd: "Demo1234567!!!",
-                lead_email: $("#lead-email").val(),
-            },
-            callback: function(r) {
-                $(me).prop("disabled", false);
-                if(r.exc) {
-                    alert("Error, please contact support@erpnext.com");
-                } else {
-                    console.log("Logged In");
-                    window.location.href = "desk";
-                }
-            }
-        })
-        return false;
-    })
-    .prop("disabled", false);
+	$("#login_btn").click(function() {
+		var me = this;
+		$(this).html("Logging In...").prop("disabled", true);
+		frappe.call({
+			"method": "login",
+			args: {
+				usr: "demo@erpnext.com",
+				pwd: "Demo1234567!!!",
+				lead_email: $("#lead-email").val(),
+			},
+			callback: function(r) {
+				$(me).prop("disabled", false);
+				if(r.exc) {
+					alert("Error, please contact support@erpnext.com");
+				} else {
+					console.log("Logged In");
+					window.location.href = "desk";
+				}
+			}
+		})
+		return false;
+	})
+	.prop("disabled", false);
 })
 
 </script>
@@ -40,13 +40,13 @@ $(document).ready(function() {
 		right: 0%;
 		width: 100%;
 	}
-    {% include "templates/styles/card_style.css" %}
-    header, footer {
-        display: none;
-    }
-    html, body {
-        background-color: #f5f7fa;
-    }
+	{% include "templates/styles/card_style.css" %}
+	header, footer {
+		display: none;
+	}
+	html, body {
+		background-color: #f5f7fa;
+	}
 </style>
 {% endblock %}
 
@@ -61,7 +61,7 @@ $(document).ready(function() {
 		<span class='indicator blue'>
 			{{ _("ERPNext Demo") }}</span>
 	</div>
-	<!-- <img src="/assets/erpnext/images/erp-icon.svg" style="max-width: 40px; max-height: 40px;"> -->
+	 <!-- <img src="/assets/erpnext/images/erp-icon.svg" style="max-width: 40px; max-height: 40px;"> ->
 	<p>Some functionality is disabled for the demo and the data will be cleared regularly.</p>
 	<div><button type="submit" id="login_btn" class="btn btn-primary btn-sm">Launch Demo</button></div>
 </div>
@@ -74,4 +74,8 @@ html, body {
 	background-color: #f5f7fa;
 }
 </style>
-{% endblock %}
+{% endblock %} -->
+
+<script>
+	window.location.href = "/login";
+</script>
