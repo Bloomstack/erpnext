@@ -74,6 +74,32 @@ def get_setup_stages(args=None):
 				]
 			},
 			{
+				'status': _('Configuring Bloomstack settings'),
+				'fail_msg': _('Failed to configure Bloomstack settings'),
+				'tasks': [
+					{
+						'fn': configure_system_settings,
+						'args': args,
+						'fail_msg': _("Failed to configure system settings")
+					},
+					{
+						'fn': configure_selling_settings,
+						'args': args,
+						'fail_msg': _("Failed to configure selling settings")
+					},
+					{
+						'fn': configure_stock_settings,
+						'args': args,
+						'fail_msg': _("Failed to configure stock settings")
+					},
+					{
+						'fn': disable_standard_reports,
+						'args': args,
+						'fail_msg': _("Failed to disable standard reports")
+					}
+				]
+			},
+			{
 				'status': _('Wrapping up'),
 				'fail_msg': _('Failed to login'),
 				'tasks': [
@@ -132,8 +158,35 @@ def setup_complete(args=None):
 	setup_post_company_fixtures(args)
 	setup_defaults(args)
 	stage_four(args)
+	set_active_domains(args)
+	configure_system_settings(args)
+	configure_selling_settings(args)
+	configure_stock_settings(args)
+	disable_standard_reports(args)
 	fin(args)
 
 def set_active_domains(args):
 	domain_settings = frappe.get_single('Domain Settings')
 	domain_settings.set_active_domains(args.get('domains'))
+
+def configure_system_settings(args):
+	system_settings = frappe.get_single("System Settings")
+	system_settings.float_precision = 2
+	system_settings.currency_precision = 2
+	system_settings.save()
+
+def configure_selling_settings(args):
+	selling_settings = frappe.get_single("Selling Settings")
+	selling_settings.territory = None
+	selling_settings.customer_group = None
+	selling_settings.save()
+
+def configure_stock_settings(args):
+	# Avoid auto-selecting batches for state compliance
+	stock_settings = frappe.get_single("Stock Settings")
+	stock_settings.automatically_set_batch_nos_based_on_fifo = False
+	stock_settings.save()
+
+def disable_standard_reports(args):
+	# Disable duplicate ERPNext address and contact report
+	frappe.db.set_value("Report", "Addresses And Contacts", "disabled", 1)
