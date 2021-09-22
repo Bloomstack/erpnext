@@ -16,7 +16,12 @@ app_logo_url = '/assets/erpnext/images/icon.png'
 develop_version = '12.x.x-develop'
 
 app_include_js = "assets/js/erpnext.min.js"
-app_include_css = "assets/css/erpnext.css"
+app_include_css = [
+	"assets/css/erpnext.css",
+	"assets/css/order_desk.css",
+	"assets/css/contract.css"
+]
+
 web_include_js = [
 	"assets/js/erpnext-web.min.js",
 	"assets/js/order_for.js"

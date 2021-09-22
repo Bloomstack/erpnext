@@ -3,7 +3,8 @@
 		"public/less/erpnext.less",
 		"public/less/hub.less",
 		"public/less/call_popup.less",
-		"public/scss/bloombrackets.scss"
+		"public/scss/bloombrackets.scss",
+		"public/css/reports.css"
 	],
 	"css/marketplace.css": [
 		"public/less/hub.less"
