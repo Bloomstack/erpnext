@@ -1,13 +1,13 @@
 /* global frappe, bloomstack */
 frappe.provide("erpnext.track_and_trace");
 
-{% include "erpnext/erpnext_integrations/page/track_and_trace/modules.js" %}
+{% include "erpnext/compliance/page/track_and_trace/modules.js" %}
 
 bloomstack.track_and_trace.modules = new bloomstack.track_and_trace.ModulesManager();
 
-{% include "erpnext/erpnext_integrations/page/track_and_trace/modules/index.js" %}
-{% include "erpnext/erpnext_integrations/page/track_and_trace/templates/track_and_trace_main.html" %}
-{% include "erpnext/erpnext_integrations/page/track_and_trace/templates/track_and_trace_pagination.html" %}
+{% include "erpnext/compliance/page/track_and_trace/modules/index.js" %}
+{% include "erpnext/compliance/page/track_and_trace/templates/track_and_trace_main.html" %}
+{% include "erpnext/compliance/page/track_and_trace/templates/track_and_trace_pagination.html" %}
 
 frappe.pages['track-and-trace'].on_page_load = function(wrapper) {
 	var page = frappe.ui.make_app_page({
@@ -230,7 +230,7 @@ bloomstack.track_and_trace.TraceAndTrack = class {
 
 		let _cancelable = bloomstack.cancelable(
 			frappe.call({
-				method: 'erpnext.erpnext_integrations.page.track_and_trace.track_and_trace.search',
+				method: 'erpnext.compliance.page.track_and_trace.track_and_trace.search',
 				freeze: false,
 				args: {
 					text,
