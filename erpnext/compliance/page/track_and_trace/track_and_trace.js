@@ -90,7 +90,7 @@ bloomstack.track_and_trace.TraceAndTrack = class {
 		this.page_size = 20;
 
 		const assets = [
-			'assets/bloomstack_core/css/track_and_trace.css'
+			'assets/erpnext/css/track_and_trace.css'
 		];
 
 		frappe.require(assets, () => {
