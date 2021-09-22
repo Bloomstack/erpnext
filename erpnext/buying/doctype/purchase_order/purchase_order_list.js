@@ -43,9 +43,9 @@ frappe.listview_settings['Purchase Order'] = {
 						frappe.throw(__("Cannot Email Draft or cancelled documents"));
 					}
 					if (doc.title !== title) {
-						frappe.throw(__("Select only one Supplier's purchase orders"))
+						frappe.throw(__("Select only one Supplier's purchase orders"));
 					}
-				};
+				}
 				frappe.call({
 					method: "erpnext.utils.get_contact",
 					args: { "doctype": doctype, "name": selected_docs[0].name, "contact_field": "supplier" },
@@ -65,7 +65,7 @@ frappe.listview_settings['Purchase Order'] = {
 					}
 				});
 			}
-		}
+		};
 
 		listview.page.add_actions_menu_item(__('Email'), action, true);
 	}
