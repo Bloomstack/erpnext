@@ -1,4 +1,4 @@
-/* global frappe, bloomstack */
+/* global bloomstack */
 frappe.provide("bloomstack.track_and_trace");
 
 bloomstack.get_doc = (cdt, cdn) => {
@@ -253,5 +253,5 @@ bloomstack.track_and_trace.ModulesManager = class {
 					children
 				}
 			});
-	};
-}
+	}
+};

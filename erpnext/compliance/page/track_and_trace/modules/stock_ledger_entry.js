@@ -1,3 +1,4 @@
+// global bloomstack
 bloomstack.track_and_trace.modules.add("Stock Ledger Entry", {
 	fields: [
 		{ field: "actual_qty", label: "Qty" },

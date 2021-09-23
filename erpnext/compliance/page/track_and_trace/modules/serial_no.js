@@ -1,3 +1,4 @@
+// global bloomstack
 bloomstack.track_and_trace.modules.add("Serial No", {
 	fields: [
 		{ field: "item_code", label: "Item Code"},
@@ -20,8 +21,8 @@ bloomstack.track_and_trace.modules.add("Serial No", {
 						search_dn: result.search_dn,
 						dt: serial.purchase_document_type,
 						dn: serial.purchase_document_no
-					})
-				};
+					});
+				}
 				result.children = result.children.concat(children);
 				return result;
 			});

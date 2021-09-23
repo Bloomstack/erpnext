@@ -1,4 +1,4 @@
-/* global frappe, bloomstack */
+/* global bloomstack */
 
 bloomstack.track_and_trace.modules.add("Stock Entry", {
 	fields: [
@@ -79,7 +79,7 @@ bloomstack.track_and_trace.modules.add("Stock Entry Detail", {
 		}
 
 		return bloomstack.get_value("Item", "image", { name: entry.item_code })
-		.then((result) => {
+			.then((result) => {
 				data.image_path = result.image;
 				return data;
 			});
