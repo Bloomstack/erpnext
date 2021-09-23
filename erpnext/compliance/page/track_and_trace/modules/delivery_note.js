@@ -1,4 +1,5 @@
-// global bloomstack
+/* global bloomstack */
+
 bloomstack.track_and_trace.modules.add("Delivery Note", {
 	fields: [
 		{ field: "posting_date", label: "Posting Date", fieldtype: "Date" },
@@ -32,7 +33,7 @@ bloomstack.track_and_trace.modules.add("Delivery Note Item", {
 				search_dt: data.search_dt,
 				search_dn: data.search_dn
 			});
-		};
+		}
 		if ( dni.serial_no ) {
 			data.children.push({
 				dt: "Serial No",
@@ -40,7 +41,7 @@ bloomstack.track_and_trace.modules.add("Delivery Note Item", {
 				search_dt: data.search_dt,
 				search_dn: data.search_dn
 			});
-		};
+		}
 		return data;
 	}
 });

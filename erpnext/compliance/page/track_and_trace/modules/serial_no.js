@@ -1,4 +1,5 @@
-// global bloomstack
+/* global bloomstack */
+
 bloomstack.track_and_trace.modules.add("Serial No", {
 	fields: [
 		{ field: "item_code", label: "Item Code"},

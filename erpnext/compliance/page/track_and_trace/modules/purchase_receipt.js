@@ -1,4 +1,5 @@
-// global bloomstack
+/* global bloomstack */
+
 bloomstack.track_and_trace.modules.add("Purchase Receipt", {
 	fields: [
 		{ field: "work_order", label: "Work Order" },

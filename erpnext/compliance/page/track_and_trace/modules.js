@@ -1,4 +1,5 @@
 /* global bloomstack */
+
 frappe.provide("bloomstack.track_and_trace");
 
 bloomstack.get_doc = (cdt, cdn) => {
@@ -44,7 +45,7 @@ bloomstack.track_and_trace.default_module = {
 				me.route(dt, dn);
 				return false;
 			});
-		};
+		}
 
 		$el.find('[data-route-dt]').click(function(e) {
 			let routeDT = $(this).attr('data-route-dt');
@@ -98,11 +99,11 @@ bloomstack.track_and_trace.ModulesManager = class {
 				}
 
 				return p.then(html => frappe.render_template("track_and_trace_module_generic", render_data));
-			}, Promise.resolve())
+			}, Promise.resolve());
 		}
 
 		return Promise.resolve(frappe.render_template("track_and_trace_module_generic", render_data));
-	};
+	}
 
 	after_render(dt, dn, $el) {
 		if ( this.modules.hasOwnProperty(dt) ) {
@@ -116,7 +117,7 @@ bloomstack.track_and_trace.ModulesManager = class {
 		}
 
 		return Promise.resolve();
-	};
+	}
 
 	query(dt, dn, data) {
 		if ( typeof data === undefined ) {
@@ -153,7 +154,7 @@ bloomstack.track_and_trace.ModulesManager = class {
 			this.dedupe_parents(r);
 			return r;
 		});
-	};
+	}
 
 	dedupe_parents(node) {
 		if ( node.children && node.children.length > 0 ) {
@@ -237,7 +238,7 @@ bloomstack.track_and_trace.ModulesManager = class {
 							fields: childFields,
 							data: item,
 							children: []
-						}
+						};
 					});
 				}
 				return {
@@ -251,7 +252,7 @@ bloomstack.track_and_trace.ModulesManager = class {
 					fields: (c?c.fields || []: []).slice(),
 					data,
 					children
-				}
+				};
 			});
 	}
 };
