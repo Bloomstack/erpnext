@@ -179,7 +179,7 @@
 }
 
 #track-and-trace .node.has-children.open > .item > .leaf > .branch::after {
-    background-image: url('/assets/bloomstack_core/images/tree-sprite.png');
+    background-image: url('/assets/erpnext/images/tree-sprite.png');
     background-repeat: repeat-y;
     content: '';
     flex: 1 1 auto;
@@ -192,7 +192,7 @@
 }
 
 #track-and-trace .node.open.has-children > .item > .children > .node > .node-padding > span {
-    background-image: url('/assets/bloomstack_core/images/tree-sprite.png');
+    background-image: url('/assets/erpnext/images/tree-sprite.png');
     background-repeat: repeat-y;
     display: block;
     width: 16px;
