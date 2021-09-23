@@ -61,19 +61,19 @@ bloomstack.cancelable = function(pr) {
 		}
 
 		pr.then((data) => {
-				_cancelable.data = data;
-				if ( _cancelable.was_canceled ) {
-					reject(_cancelable);
-				} else {
-					resolve(_cancelable);
-				}
-
-				return data;
-			}, (err) => {
-				_cancelable.err = err;
-				_cancelable.reason = 'error';
+			_cancelable.data = data;
+			if ( _cancelable.was_canceled ) {
 				reject(_cancelable);
-			});
+			} else {
+				resolve(_cancelable);
+			}
+
+			return data;
+		}, (err) => {
+			_cancelable.err = err;
+			_cancelable.reason = 'error';
+			reject(_cancelable);
+		});
 	});
 
 	return _cancelable;
@@ -117,8 +117,8 @@ bloomstack.track_and_trace.TraceAndTrack = class {
 		this.wrapper.empty().append(html);
 
 		this.wrapper.find('input.search-input:first')
-			.focus()
-			.on('keyup', function(e) {
+		.focus()
+		.on('keyup', function(e) {
 			me.search($(this).val());
 		});
 
@@ -142,7 +142,7 @@ bloomstack.track_and_trace.TraceAndTrack = class {
 		// makes sure that field toggle is predictable, even if one node
 		// has visible fields, next toggle click will close first.
 		this.wrapper.find('.collapse-fields button')
-			.data('hidden', this.wrapper.find('.node.hide-fields').length > 0);
+		.data('hidden', this.wrapper.find('.node.hide-fields').length > 0);
 
 		this.update_field_toggle_label();
 	}
@@ -160,59 +160,59 @@ bloomstack.track_and_trace.TraceAndTrack = class {
 		}
 
 		return bloomstack.track_and_trace.modules
-			.query(dt, dn, query_data)
-			.then((data) => {
-				// keeping microtemplate happy...
-				data.is_first = query_data.is_first !== undefined?query_data.is_first: false;
-				data.is_last = query_data.is_last !== undefined?query_data.is_last: false;
-				data.tree_depth = query_data.tree_depth || 0;
-				return data;
-			})
-			.then(ifNotCanceled((data) => bloomstack.track_and_trace.modules.format(data)))
-			.then(ifNotCanceled((data) => {
-				return Promise.resolve(bloomstack.track_and_trace.modules.render(dt, dn, data))
-					.then((html) => {
-						return {
-							html,
-							data
-						}
-					});
-			}))
-			.then(ifNotCanceled((result) => {
-				const { html, data } = result;
-				if ( html ) {
-					let $el = $(html);
-					$container.append($el);
-					$el.data('query_data', data);
-					$el.find('.node-handle').click(function() {
-						me.toggle_node($el);
-					});
+		.query(dt, dn, query_data)
+		.then((data) => {
+			// keeping microtemplate happy...
+			data.is_first = query_data.is_first !== undefined?query_data.is_first: false;
+			data.is_last = query_data.is_last !== undefined?query_data.is_last: false;
+			data.tree_depth = query_data.tree_depth || 0;
+			return data;
+		})
+		.then(ifNotCanceled((data) => bloomstack.track_and_trace.modules.format(data)))
+		.then(ifNotCanceled((data) => {
+			return Promise.resolve(bloomstack.track_and_trace.modules.render(dt, dn, data))
+			.then((html) => {
+				return {
+					html,
+					data
+				}
+			});
+		}))
+		.then(ifNotCanceled((result) => {
+			const { html, data } = result;
+			if ( html ) {
+				let $el = $(html);
+				$container.append($el);
+				$el.data('query_data', data);
+				$el.find('.node-handle').click(function() {
+					me.toggle_node($el);
+				});
 
-					// default field toggle to current global field toggle setting
-					if ( this.wrapper.find('.collapse-fields button').data('hidden') ) {
-						$el.addClass('hide-fields')
-					} else {
-						$el.removeClass('hide-fields')
+				// default field toggle to current global field toggle setting
+				if ( this.wrapper.find('.collapse-fields button').data('hidden') ) {
+					$el.addClass('hide-fields')
+				} else {
+					$el.removeClass('hide-fields')
+				}
+
+				$el.find('.leaf:first > .content .actions .field-collapse').click(function(e) {
+					$el.toggleClass('hide-fields');
+					if ( e.ctrlKey ) {
+						if ( $el.hasClass('hide-fields') ) {
+							$el.find('.node').addClass('hide-fields');
+						} else {
+							$el.find('.node').removeClass('hide-fields');
+						}
 					}
 
-					$el.find('.leaf:first > .content .actions .field-collapse').click(function(e) {
-						$el.toggleClass('hide-fields');
-						if ( e.ctrlKey ) {
-							if ( $el.hasClass('hide-fields') ) {
-								$el.find('.node').addClass('hide-fields');
-							} else {
-								$el.find('.node').removeClass('hide-fields');
-							}
-						}
-
-						me.update_field_toggle();
-						e.stopPropagation();
-						return false;
-					});
-					bloomstack.track_and_trace.modules.after_render(dt, dn, $el)
-					return $el;
-				}
-			}));
+					me.update_field_toggle();
+					e.stopPropagation();
+					return false;
+				});
+				bloomstack.track_and_trace.modules.after_render(dt, dn, $el)
+				return $el;
+			}
+		}));
 	}
 
 	_run_search(text, current_page) {
@@ -238,99 +238,99 @@ bloomstack.track_and_trace.TraceAndTrack = class {
 					limit: this.page_size
 				}
 			})
-		);
+			);
 
-		_cancelable.promise.then((c) => {
-			let data = c.data.message;
+			_cancelable.promise.then((c) => {
+				let data = c.data.message;
 
-			this.wrapper.find('.results').empty();
-			if ( data.length > 0 ) {
-				this.current_page = current_page;
-				this.total_pages = Math.ceil(data[0][2] / this.page_size);
-				if ( this.current_page >= this.total_pages ) {
-					this.current_page = total_pages - 1;
+				this.wrapper.find('.results').empty();
+				if ( data.length > 0 ) {
+					this.current_page = current_page;
+					this.total_pages = Math.ceil(data[0][2] / this.page_size);
+					if ( this.current_page >= this.total_pages ) {
+						this.current_page = total_pages - 1;
+					}
+
+					this.render_pager({
+						current_page: this.current_page,
+						total_pages: this.total_pages,
+						search: text
+					});
 				}
 
-				this.render_pager({
-					current_page: this.current_page,
-					total_pages: this.total_pages,
-					search: text
-				});
-			}
+				let p = Promise.resolve();
+				data.forEach((row) => {
+					const dt = row[0];
+					const dn = row[1];
 
-			let p = Promise.resolve();
-			data.forEach((row) => {
-				const dt = row[0];
-				const dn = row[1];
-
-				p = p.then(() =>
+					p = p.then(() =>
 					this._render_node(this.wrapper.find('.results'), dt, dn, {
 						parents: {},
 						search_dt: dt,
 						search_dn: dn
 					}, _cancelable)
-				);
+					);
+				});
 			});
-		});
 
-		return _cancelable;
-	}
-
-	render_pager(paginator_data) {
-		let me = this;
-		let $paginator = this.wrapper.find('.paginator-top').empty();
-		let $paginator_controls = $(frappe.render_template("track_and_trace_pagination", paginator_data));
-		$paginator.append($paginator_controls);
-
-		$paginator_controls.find('.first').click(function() {
-			me._pagination_go_to_page(paginator_data.search, 0);
-		})
-
-		$paginator_controls.find('.prev').click(function() {
-			me._pagination_go_to_page(paginator_data.search, paginator_data.current_page - 1);
-		})
-
-		$paginator_controls.find('.last').click(function() {
-			me._pagination_go_to_page(paginator_data.search, paginator_data.total_pages - 1);
-		})
-
-		$paginator_controls.find('.next').click(function() {
-			me._pagination_go_to_page(paginator_data.search, paginator_data.current_page + 1);
-		})
-
-		$paginator_controls.find('.current-page').change(function(e) {
-			let page = parseInt($(this).val() || 1) - 1;
-			me._pagination_go_to_page(paginator_data.search, page);
-		});
-	}
-
-	_pagination_go_to_page(text, page) {
-		if ( this.search_query ) {
-			this.search_query.cancel();
+			return _cancelable;
 		}
 
-		this.search_query = this._run_search(text, page);
-	}
+		render_pager(paginator_data) {
+			let me = this;
+			let $paginator = this.wrapper.find('.paginator-top').empty();
+			let $paginator_controls = $(frappe.render_template("track_and_trace_pagination", paginator_data));
+			$paginator.append($paginator_controls);
 
-	toggle_node($el) {
-		let data = $el.data('query_data');
-		let $container = $el.find('.children:first');
-		if ( $el.hasClass('children-loaded') ) {
-			if ( $el.hasClass('open') ) {
-				$container.slideUp(200);
-				$el.removeClass('open');
+			$paginator_controls.find('.first').click(function() {
+				me._pagination_go_to_page(paginator_data.search, 0);
+			})
+
+			$paginator_controls.find('.prev').click(function() {
+				me._pagination_go_to_page(paginator_data.search, paginator_data.current_page - 1);
+			})
+
+			$paginator_controls.find('.last').click(function() {
+				me._pagination_go_to_page(paginator_data.search, paginator_data.total_pages - 1);
+			})
+
+			$paginator_controls.find('.next').click(function() {
+				me._pagination_go_to_page(paginator_data.search, paginator_data.current_page + 1);
+			})
+
+			$paginator_controls.find('.current-page').change(function(e) {
+				let page = parseInt($(this).val() || 1) - 1;
+				me._pagination_go_to_page(paginator_data.search, page);
+			});
+		}
+
+		_pagination_go_to_page(text, page) {
+			if ( this.search_query ) {
+				this.search_query.cancel();
+			}
+
+			this.search_query = this._run_search(text, page);
+		}
+
+		toggle_node($el) {
+			let data = $el.data('query_data');
+			let $container = $el.find('.children:first');
+			if ( $el.hasClass('children-loaded') ) {
+				if ( $el.hasClass('open') ) {
+					$container.slideUp(200);
+					$el.removeClass('open');
+				} else {
+					$container.slideDown(200);
+					$el.addClass('open');
+				}
 			} else {
 				$container.slideDown(200);
-				$el.addClass('open');
-			}
-		} else {
-			$container.slideDown(200);
-			$el.addClass('children-loaded')
-			$el.addClass('open')
-			$el.addClass('loading')
+				$el.addClass('children-loaded')
+				$el.addClass('open')
+				$el.addClass('loading')
 
-			if ( data.children.length > 0 ) {
-				data.children.reduce((p, ch, index, allChildren) => {
+				if ( data.children.length > 0 ) {
+					data.children.reduce((p, ch, index, allChildren) => {
 						ch.is_first = index === 0;
 						ch.is_last = index === allChildren.length - 1;
 						ch.tree_depth = (data.tree_depth || 0) + 1;
@@ -339,20 +339,20 @@ bloomstack.track_and_trace.TraceAndTrack = class {
 					.then(()=> {
 						$el.removeClass('loading');
 					});
+				}
 			}
 		}
-	}
 
-	search(text) {
-		if ( this.search_delay ) {
-			this.search_delay.cancel();
-			this.search_delay = null;
-		}
+		search(text) {
+			if ( this.search_delay ) {
+				this.search_delay.cancel();
+				this.search_delay = null;
+			}
 
-		if ( text ) {
+			if ( text ) {
 
-			this.search_delay = bloomstack.cancelable(bloomstack.delay(500));
-			this.search_delay
+				this.search_delay = bloomstack.cancelable(bloomstack.delay(500));
+				this.search_delay
 				.promise.then((c) => {
 					this.search_query = this._run_search(text, 0);
 				})
@@ -367,10 +367,10 @@ bloomstack.track_and_trace.TraceAndTrack = class {
 					}
 				});
 
+			}
+		}
+
+		beforeunload() {
+
 		}
 	}
-
-	beforeunload() {
-
-	}
-}
