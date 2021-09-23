@@ -1,4 +1,4 @@
-// global bloomstack
+/* global bloomstack */
 bloomstack.track_and_trace.modules.add("Batch", {
 	fields: [
 		{ field: "item", label: "Item" },
