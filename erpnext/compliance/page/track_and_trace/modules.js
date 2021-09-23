@@ -11,7 +11,7 @@ bloomstack.get_doc = (cdt, cdn) => {
 	})).then(r => {
 		return r.message;
 	});
-}
+};
 
 bloomstack.get_value = (doctype, fieldname, filters, parent) => {
 	return Promise.resolve(frappe.call({
@@ -25,7 +25,7 @@ bloomstack.get_value = (doctype, fieldname, filters, parent) => {
 	})).then(r => {
 		return r.message;
 	});
-}
+};
 
 bloomstack.track_and_trace.default_module = {
 	has_route: true,
@@ -37,14 +37,14 @@ bloomstack.track_and_trace.default_module = {
 	after_render(dt, dn, $el) {
 		let me = this;
 		if ( this.has_route ) {
-			let $link = $('<li class="doctype-link btn btn-default fa fa-arrow-right" title="Go to Doctype"></li>')
+			let $link = $('<li class="doctype-link btn btn-default fa fa-arrow-right" title="Go to Doctype"></li>');
 			$el.find('.title').append($link);
 			$link.click(function(e) {
 				e.preventDefault();
 				me.route(dt, dn);
 				return false;
 			});
-		}
+		};
 
 		$el.find('[data-route-dt]').click(function(e) {
 			let routeDT = $(this).attr('data-route-dt');
@@ -54,9 +54,9 @@ bloomstack.track_and_trace.default_module = {
 				me.route(routeDT, routeDN);
 				return false;
 			}
-		})
-	}
-}
+		});
+	},
+};
 
 bloomstack.track_and_trace.ModulesManager = class {
 	constructor() {
@@ -102,7 +102,7 @@ bloomstack.track_and_trace.ModulesManager = class {
 		}
 
 		return Promise.resolve(frappe.render_template("track_and_trace_module_generic", render_data));
-	}
+	};
 
 	after_render(dt, dn, $el) {
 		if ( this.modules.hasOwnProperty(dt) ) {
@@ -112,11 +112,11 @@ bloomstack.track_and_trace.ModulesManager = class {
 				}
 
 				return p;
-			}, Promise.resolve($el))
+			}, Promise.resolve($el));
 		}
 
 		return Promise.resolve();
-	}
+	};
 
 	query(dt, dn, data) {
 		if ( typeof data === undefined ) {
@@ -153,7 +153,7 @@ bloomstack.track_and_trace.ModulesManager = class {
 			this.dedupe_parents(r);
 			return r;
 		});
-	}
+	};
 
 	dedupe_parents(node) {
 		if ( node.children && node.children.length > 0 ) {
@@ -167,7 +167,7 @@ bloomstack.track_and_trace.ModulesManager = class {
 					new_list.push(child);
 				}
 
-				return new_list
+				return new_list;
 			}, []);
 		}
 	}
@@ -184,74 +184,74 @@ bloomstack.track_and_trace.ModulesManager = class {
 
 				return p;
 			}, Promise.resolve(data))
+				.then((r) => {
+					this.dedupe_parents(r);
+					return r;
+				});
+		}
+
+		return Promise.resolve(data)
 			.then((r) => {
 				this.dedupe_parents(r);
 				return r;
 			});
-		}
-
-		return Promise.resolve(data)
-		.then((r) => {
-			this.dedupe_parents(r);
-			return r;
-		})
 	}
 
 	default_query(dt, dn, query_data, c) {
 		return bloomstack.get_doc(dt, dn)
-		.then((data) => {
-			let children = [];
-			if ( data.items ) {
+			.then((data) => {
+				let children = [];
+				if ( data.items ) {
 
-				children = data.items.map((item) => {
-					let childFields = [];
-					let childIcon = c?c.icon || "fa fa-question": "fa fa-question";
-					if ( this.modules.hasOwnProperty(item.doctype) ) {
-						childFields = this.modules[item.doctype].reduce((p, c) => {
-							if ( c.hasOwnProperty("icon") ) {
-								childIcon = c.icon;
-							}
+					children = data.items.map((item) => {
+						let childFields = [];
+						let childIcon = c?c.icon || "fa fa-question": "fa fa-question";
+						if ( this.modules.hasOwnProperty(item.doctype) ) {
+							childFields = this.modules[item.doctype].reduce((p, c) => {
+								if ( c.hasOwnProperty("icon") ) {
+									childIcon = c.icon;
+								}
 
-							if ( c.hasOwnProperty("fields") ) {
-								for(let field of c.fields) {
-									let existingIdx = p.findIndex((f) => f.field === field.field);
-									if ( existingIdx > -1 ) {
-										p.splice(existingIdx, 1, field);
-									} else {
-										p.push(field);
+								if ( c.hasOwnProperty("fields") ) {
+									for(let field of c.fields) {
+										let existingIdx = p.findIndex((f) => f.field === field.field);
+										if ( existingIdx > -1 ) {
+											p.splice(existingIdx, 1, field);
+										} else {
+											p.push(field);
+										}
 									}
 								}
-							}
-							return p;
-						}, []);
-					}
-					return {
-						search_dt: query_data.search_dt,
-						search_dn: query_data.search_dn,
-						query: false,
-						dt: item.doctype,
-						dn: item.name,
-						image_path: null,
-						icon: childIcon,
-						title: `${item.doctype}: ${item.name}`,
-						fields: childFields,
-						data: item,
-						children: []
-					}
-				});
-			}
-			return {
-				search_dt: query_data.search_dt,
-				search_dn: query_data.search_dn,
-				dt,
-				dn,
-				image_path: null,
-				icon: c?c.icon || "fa fa-question": "fa fa-question",
-				title: `${data.doctype}: ${data.name}`,
-				fields: (c?c.fields || []: []).slice(),
-				data,
-				children
-			}
-		});
-	}
+								return p;
+							}, []);
+						}
+						return {
+							search_dt: query_data.search_dt,
+							search_dn: query_data.search_dn,
+							query: false,
+							dt: item.doctype,
+							dn: item.name,
+							image_path: null,
+							icon: childIcon,
+							title: `${item.doctype}: ${item.name}`,
+							fields: childFields,
+							data: item,
+							children: []
+						}
+					});
+				}
+				return {
+					search_dt: query_data.search_dt,
+					search_dn: query_data.search_dn,
+					dt,
+					dn,
+					image_path: null,
+					icon: c?c.icon || "fa fa-question": "fa fa-question",
+					title: `${data.doctype}: ${data.name}`,
+					fields: (c?c.fields || []: []).slice(),
+					data,
+					children
+				}
+			});
+	};
 }

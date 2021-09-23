@@ -49,7 +49,7 @@ bloomstack.track_and_trace.modules.add("Stock Entry Detail", {
 						search_dn: data.search_dn,
 						dt: "Serial No",
 						dn: serial.trim()
-					})
+					});
 				}
 			}
 		}
@@ -63,7 +63,7 @@ bloomstack.track_and_trace.modules.add("Stock Entry Detail", {
 				search_dn: data.search_dn,
 				dt: "Batch",
 				dn: data.data.batch_no
-			})
+			});
 		}
 
 		// remove source warehouse from fields if not present
@@ -80,8 +80,8 @@ bloomstack.track_and_trace.modules.add("Stock Entry Detail", {
 
 		return bloomstack.get_value("Item", "image", { name: entry.item_code })
 		.then((result) => {
-			data.image_path = result.image;
-			return data;
-		})
+				data.image_path = result.image;
+				return data;
+			});
 	}
 });

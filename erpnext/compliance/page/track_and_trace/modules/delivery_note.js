@@ -1,5 +1,3 @@
-/* global frappe, bloomstack */
-
 bloomstack.track_and_trace.modules.add("Delivery Note", {
 	fields: [
 		{ field: "posting_date", label: "Posting Date", fieldtype: "Date" },
@@ -9,9 +7,7 @@ bloomstack.track_and_trace.modules.add("Delivery Note", {
 		{ field: "grand_total", label: "Grand Total", fieldtype: "Currency" },
 		{ field: "status", label: "Status" }
 	],
-
 	icon: "fa fa-truck"
-
 });
 
 bloomstack.track_and_trace.modules.add("Delivery Note Item", {
@@ -23,16 +19,11 @@ bloomstack.track_and_trace.modules.add("Delivery Note Item", {
 		{ field: "batch_no", label: "Batch No"},
 		{ field: "serial_no", label: "Serial No"}
 	],
-
 	icon: "fa fa-list",
-
 	has_route: false,
-
 	format(data) {
 		let dni = data.data;
-
 		data.title = `Delivery Node Item: ${dni.item_code}`;
-
 		if ( dni.batch_no ) {
 			data.children.push({
 				dt: "Batch",
@@ -41,7 +32,6 @@ bloomstack.track_and_trace.modules.add("Delivery Note Item", {
 				search_dn: data.search_dn
 			})
 		}
-
 		if ( dni.serial_no ) {
 			data.children.push({
 				dt: "Serial No",
@@ -50,8 +40,6 @@ bloomstack.track_and_trace.modules.add("Delivery Note Item", {
 				search_dn: data.search_dn
 			})
 		}
-
 		return data;
 	}
-
 });

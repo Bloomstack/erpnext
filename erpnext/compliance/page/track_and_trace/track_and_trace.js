@@ -1,4 +1,3 @@
-/* global frappe, bloomstack */
 frappe.provide("erpnext.track_and_trace");
 
 {% include "erpnext/compliance/page/track_and_trace/modules.js" %}
