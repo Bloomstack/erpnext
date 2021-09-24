@@ -7,7 +7,8 @@ def get_data():
 		'non_standard_fieldnames': {
 			'Quotation': 'party_name',
 			'Opportunity': 'party_name',
-			'Investor': 'party_name'
+			'Investor': 'party_name',
+			'Quoting Sheet': 'party_name'
 		},
 		'dynamic_links': {
 			'party_name': ['Lead', 'quotation_to']
