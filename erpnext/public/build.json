@@ -6,7 +6,7 @@
 		"public/scss/bloombrackets.scss",
 		"public/css/reports.css",
 		"public/css/",
-		"assets/css/order_desk.css",
+		"public/css/order_desk.css",
 		"public/css/contract.css"
 	],
 	"css/marketplace.css": [
