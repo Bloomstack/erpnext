@@ -1,6 +1,6 @@
-<!-- {% extends "templates/web.html" %}
+{# {% extends "templates/web.html" %} #}
 
-{% block script %}
+{# {% block script %}
 <script>
 $(document).ready(function() {
 	$("#login_btn").click(function() {
@@ -61,7 +61,7 @@ $(document).ready(function() {
 		<span class='indicator blue'>
 			{{ _("ERPNext Demo") }}</span>
 	</div>
-	 <!-- <img src="/assets/erpnext/images/erp-icon.svg" style="max-width: 40px; max-height: 40px;"> ->
+	<img src="/assets/erpnext/images/erp-icon.svg" style="max-width: 40px; max-height: 40px;">
 	<p>Some functionality is disabled for the demo and the data will be cleared regularly.</p>
 	<div><button type="submit" id="login_btn" class="btn btn-primary btn-sm">Launch Demo</button></div>
 </div>
@@ -74,7 +74,8 @@ html, body {
 	background-color: #f5f7fa;
 }
 </style>
-{% endblock %} -->
+{% endblock %}
+#}
 
 <script>
 	window.location.href = "/login";
