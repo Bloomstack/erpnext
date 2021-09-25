@@ -4,7 +4,9 @@
 		"public/less/hub.less",
 		"public/less/call_popup.less",
 		"public/scss/bloombrackets.scss",
-		"public/css/reports.css"
+		"public/css/reports.css",
+		"public/css/order_desk.css",
+		"public/css/contract.css"
 	],
 	"css/marketplace.css": [
 		"public/less/hub.less"
