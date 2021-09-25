@@ -108,7 +108,7 @@ frappe.ui.form.on("Lead", {
 		frm.set_query("territory", () => {
 			if (frm.doc.region) {
 				return {
-					query: "erpnext.crm.doctype.lead.filter_territory",
+					query: "erpnext.crm.doctype.lead.lead.filter_territory",
 					filters: {
 						region: frm.doc.region
 					}
