@@ -29,16 +29,12 @@ frappe.ui.form.on('TaxJar Settings', {
 				doc: frm.doc,
 				method: 'validate_api_key',
 				callback: (r) => {
-					if(r && r.message){
-						frappe.show_alert({
-							indicator: 'green',
-							message: __('TaxJar api key is Valid')
-						})
+					if(r && !r.message.error) {
+						frm.set_value("is_verified", true);
+						frappe.msgprint(__(`The API Key has been successfully Verified`));
 					} else {
-						frappe.show_alert({
-							indicator: 'red',
-							message: __('TaxJar api key is Invalid')
-						})
+						frm.set_value("is_verified", false);
+						frappe.msgprint(__(`The API Key is Invalid. ${r.message.error}`));
 					}
 				},
 			});
