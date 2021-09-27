@@ -4,8 +4,6 @@
 frappe.ui.form.on('Employee Onboarding', {
 	setup: function(frm) {
 		frm.add_fetch("employee_onboarding_template", "company", "company");
-		frm.add_fetch("employee_onboarding_template", "department", "department");
-		frm.add_fetch("employee_onboarding_template", "designation", "designation");
 		frm.add_fetch("employee_onboarding_template", "employee_grade", "employee_grade");
 
 		frm.set_query('job_offer', function () {
@@ -40,21 +38,6 @@ frappe.ui.form.on('Employee Onboarding', {
 			}, __('Create'));
 			frm.page.set_inner_btn_group_as_primary(__('Create'));
 		}
-		if (frm.doc.docstatus === 1 && frm.doc.project) {
-			frappe.call({
-				method: "erpnext.hr.utils.get_boarding_status",
-				args: {
-					"project": frm.doc.project
-				},
-				callback: function(r) {
-					if (r.message) {
-						frm.set_value('boarding_status', r.message);
-					}
-					refresh_field("boarding_status");
-				}
-			});
-		}
-
 	},
 
 	employee_onboarding_template: function(frm) {

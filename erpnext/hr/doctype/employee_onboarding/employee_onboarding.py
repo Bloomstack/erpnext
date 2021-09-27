@@ -13,6 +13,7 @@ class IncompleteTaskError(frappe.ValidationError): pass
 class EmployeeOnboarding(EmployeeBoardingController):
 	def validate(self):
 		super(EmployeeOnboarding, self).validate()
+		self.set_employee()
 
 	def validate_employee_creation(self):
 		if self.docstatus != 1:
@@ -25,6 +26,17 @@ class EmployeeOnboarding(EmployeeBoardingController):
 					task_status = frappe.db.get_value("Task", activity.task, "status")
 					if task_status not in ["Completed", "Cancelled"]:
 						frappe.throw(_("All the mandatory Task for employee creation hasn't been done yet."), IncompleteTaskError)
+
+	def set_employee(self):
+		#use case: if Employee is created directly from job applicant and then Employee Onboarding
+		employee = frappe.db.exists("Employee", {"job_applicant": self.job_applicant})
+
+		if employee:
+			employee_data = frappe.db.get_value("Employee", employee, ["employee_name", "date_of_joining"],  as_dict=1)
+
+			self.employee = employee
+			self.employee_name = employee_data.employee_name
+			self.date_of_joining = employee_data.date_of_joining
 
 	def on_submit(self):
 		super(EmployeeOnboarding, self).on_submit()
