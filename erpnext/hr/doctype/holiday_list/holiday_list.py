@@ -145,7 +145,7 @@ def send_holiday_notification():
 		holidays = frappe.get_all('Holiday', filters={
 			"parent": holiday_list.name,
 			"holiday_date": ["BETWEEN", [today_date, end_date]]
-			}, fields=["holiday_date", "is_weekly_off", "description"])
+		}, fields=["holiday_date", "is_weekly_off", "description"])
 
 		if holidays:
 			_holiday = ""

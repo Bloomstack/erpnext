@@ -7,7 +7,6 @@ import frappe
 from frappe import _
 from erpnext.hr.utils import EmployeeBoardingController
 from frappe.model.mapper import get_mapped_doc
-from erpnext.hr.utils import get_boarding_status
 
 class IncompleteTaskError(frappe.ValidationError): pass
 
@@ -36,7 +35,7 @@ class EmployeeOnboarding(EmployeeBoardingController):
 			employee_data = frappe.db.get_value("Employee", employee, ["employee_name", "date_of_joining"],  as_dict=1)
 
 			self.employee = employee
-			self.employee_name =  employee_data.employee_name
+			self.employee_name = employee_data.employee_name
 			self.date_of_joining = employee_data.date_of_joining
 
 	def on_submit(self):
