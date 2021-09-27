@@ -14,7 +14,6 @@ def execute(filters=None):
 
 	columns = get_columns()
 	data = get_data(filters)
-
 	return columns, data
 
 def get_columns():
@@ -79,9 +78,16 @@ def get_data(filters):
 	data = []
 
 	for leave_type in leave_types:
-		data.append({
-			'leave_type': leave_type
-		})
+		if len(active_employees) > 1:
+			data.append({
+				'leave_type': leave_type
+			})
+		else:
+			row = frappe._dict({
+				'leave_type': leave_type
+			})
+
+		
 		for employee in active_employees:
 
 			leave_approvers = department_approver_map.get(employee.department_name, []).append(employee.leave_approver)
@@ -99,6 +105,7 @@ def get_data(filters):
 				row.leaves_taken = flt(leave_details[2])
 				row.expired_leaves = flt(leave_details[3])
 				row.closing_balance = flt(leave_details[4])
+				row.indent = 1
 
 				data.append(row)
 
