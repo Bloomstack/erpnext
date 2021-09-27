@@ -16,9 +16,7 @@
   "configuration",
   "tax_account_head",
   "configuration_cb",
-  "shipping_account_head",
-  "section_break_12",
-  "company_account"
+  "shipping_account_head"
  ],
  "fields": [
   {
@@ -91,16 +89,6 @@
    "reqd": 1
   },
   {
-   "fieldname": "section_break_12",
-   "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "company_account",
-   "fieldtype": "Table",
-   "label": "Company",
-   "options": "TaxJar Company"
-  },
-  {
    "default": "0",
    "fieldname": "enabled",
    "fieldtype": "Check",
@@ -108,7 +96,7 @@
   }
  ],
  "issingle": 1,
- "modified": "2021-07-26 07:35:19.655979",
+ "modified": "2021-09-26 23:43:52.334535",
  "modified_by": "Administrator",
  "module": "ERPNext Integrations",
  "name": "TaxJar Settings",

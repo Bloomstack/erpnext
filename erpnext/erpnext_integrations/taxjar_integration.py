@@ -8,7 +8,8 @@ from erpnext import get_default_company
 from frappe import _
 from frappe.contacts.doctype.address.address import get_company_address
 
-
+TAX_ACCOUNT_HEAD = frappe.db.get_single_value("TaxJar Settings", "tax_account_head")
+SHIP_ACCOUNT_HEAD = frappe.db.get_single_value("TaxJar Settings", "shipping_account_head")
 TAXJAR_CREATE_TRANSACTIONS = frappe.db.get_single_value("TaxJar Settings", "taxjar_create_transactions")
 TAXJAR_CALCULATE_TAX = frappe.db.get_single_value("TaxJar Settings", "taxjar_calculate_tax")
 TAXJAR_ENABLED = frappe.db.get_single_value("TaxJar Settings", "enabled")
@@ -48,9 +49,6 @@ def create_transaction(doc, method):
 
 	if not client:
 		return
-
-	account_heads = get_account_heads(doc.company)
-	TAX_ACCOUNT_HEAD = account_heads['TAX_ACCOUNT_HEAD']
 
 	sales_tax = sum([tax.tax_amount for tax in doc.taxes if tax.account_head == TAX_ACCOUNT_HEAD])
 
@@ -104,9 +102,6 @@ def get_tax_data(doc):
 	if to_country_code not in SUPPORTED_COUNTRY_CODES:
 		return
 
-	account_heads = get_account_heads(doc.company)
-	SHIP_ACCOUNT_HEAD = account_heads['SHIP_ACCOUNT_HEAD']
-
 	shipping = sum([tax.tax_amount for tax in doc.taxes if tax.account_head == SHIP_ACCOUNT_HEAD])
 
 	if to_shipping_state is not None:
@@ -149,9 +144,6 @@ def set_sales_tax(doc, method):
 	else:
 		sales_tax_exempted = hasattr(doc, "exempt_from_sales_tax") and doc.exempt_from_sales_tax \
 			or frappe.db.has_column("Customer", "exempt_from_sales_tax") and frappe.db.get_value("Customer", doc.customer, "exempt_from_sales_tax")
-
-	account_heads = get_account_heads(doc.company)
-	TAX_ACCOUNT_HEAD = account_heads['TAX_ACCOUNT_HEAD']
 
 	if not TAX_ACCOUNT_HEAD:
 		frappe.throw(_("Please add accounts in taxjar setting for company " + doc.company))
@@ -318,16 +310,3 @@ def get_line_items(doc):
 		line_items.append(line_item)
 
 	return line_items
-
-
-def get_account_heads(current_company):
-	company_account_heads = frappe.get_all("TaxJar Company", filters={"company_name": current_company}, fields=["tax_account_head","shipping_account_head"])
-	account_heads = dict()
-	if not company_account_heads:
-		account_heads['TAX_ACCOUNT_HEAD'] = None
-		account_heads['SHIP_ACCOUNT_HEAD'] = None
-	else:
-		account_heads['TAX_ACCOUNT_HEAD'] = company_account_heads[0]['tax_account_head']
-		account_heads['SHIP_ACCOUNT_HEAD'] = company_account_heads[0]['shipping_account_head']
-
-	return account_heads
