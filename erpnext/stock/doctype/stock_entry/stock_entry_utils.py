@@ -120,7 +120,7 @@ def make_stock_entry(**args):
 		"basic_rate": args.rate or args.basic_rate,
 		"conversion_factor": 1.0,
 		"serial_no": args.serial_no,
-		"batch_naming_series": args.batch_naming_series,
+		"batch_naming_series": args.get("batch_naming_series"),
 		'batch_no': args.batch_no,
 		'cost_center': args.cost_center,
 		'expense_account': args.expense_account

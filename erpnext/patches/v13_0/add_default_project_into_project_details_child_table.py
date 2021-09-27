@@ -4,6 +4,7 @@ import frappe
 def execute():
 	frappe.reload_doc('projects', 'doctype', 'task_project')
 	frappe.reload_doc('projects', 'doctype', 'task')
+	frappe.reload_doc('projects', 'doctype', 'project')
 
 	tasks = frappe.db.get_all("Task", fields=["name", "project", "status"])
 	for task in tasks:
