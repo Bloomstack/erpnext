@@ -14,8 +14,8 @@ def execute():
 		new_taxjar_settings.is_sandbox = taxjar_settings.is_sandbox
 		new_taxjar_settings.taxjar_calculate_tax = taxjar_settings.taxjar_calculate_tax
 		new_taxjar_settings.taxjar_create_transactions = taxjar_settings.taxjar_create_transactions
-		new_taxjar_settings.api_key = taxjar_settings.api_key
-		new_taxjar_settings.sandbox_api_key = taxjar_settings.sandbox_api_key
+		new_taxjar_settings.api_key = taxjar_settings.get_password("api_key")
+		new_taxjar_settings.sandbox_api_key = taxjar_settings.get_password("sandbox_api_key")
 		new_taxjar_settings.tax_account_head = taxjar_settings.tax_account_head
 		new_taxjar_settings.shipping_account_head = taxjar_settings.shipping_account_head
 		new_taxjar_settings.save()
