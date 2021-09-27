@@ -1,5 +1,6 @@
 {
- "creation": "2017-06-15 08:21:24.624315",
+ "autoname": "field:company",
+ "creation": "2021-09-27 03:54:56.132580",
  "doctype": "DocType",
  "document_type": "Setup",
  "editable_grid": 1,
@@ -9,6 +10,8 @@
   "is_sandbox",
   "taxjar_calculate_tax",
   "taxjar_create_transactions",
+  "column_break_5",
+  "company",
   "credentials",
   "api_key",
   "cb_keys",
@@ -20,23 +23,10 @@
  ],
  "fields": [
   {
-   "depends_on": "enabled",
-   "fieldname": "credentials",
-   "fieldtype": "Section Break",
-   "label": "Credentials"
-  },
-  {
-   "fieldname": "api_key",
-   "fieldtype": "Password",
-   "in_list_view": 1,
-   "label": "Live API Token",
-   "reqd": 1
-  },
-  {
-   "depends_on": "enabled",
-   "fieldname": "configuration",
-   "fieldtype": "Section Break",
-   "label": "Configuration"
+   "default": "0",
+   "fieldname": "enabled",
+   "fieldtype": "Check",
+   "label": "Enabled"
   },
   {
    "default": "0",
@@ -46,13 +36,11 @@
    "label": "Sandbox Mode"
   },
   {
-   "fieldname": "sandbox_api_key",
-   "fieldtype": "Password",
-   "label": "Sandbox API Token"
-  },
-  {
-   "fieldname": "configuration_cb",
-   "fieldtype": "Column Break"
+   "default": "0",
+   "depends_on": "enabled",
+   "fieldname": "taxjar_calculate_tax",
+   "fieldtype": "Check",
+   "label": "Enable Tax Calculation"
   },
   {
    "default": "0",
@@ -62,15 +50,31 @@
    "label": "Create TaxJar Transaction"
   },
   {
-   "default": "0",
    "depends_on": "enabled",
-   "fieldname": "taxjar_calculate_tax",
-   "fieldtype": "Check",
-   "label": "Enable Tax Calculation"
+   "fieldname": "credentials",
+   "fieldtype": "Section Break",
+   "label": "Credentials"
+  },
+  {
+   "fieldname": "api_key",
+   "fieldtype": "Password",
+   "label": "Live API Token",
+   "reqd": 1
   },
   {
    "fieldname": "cb_keys",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "sandbox_api_key",
+   "fieldtype": "Password",
+   "label": "Sandbox API Token"
+  },
+  {
+   "depends_on": "enabled",
+   "fieldname": "configuration",
+   "fieldtype": "Section Break",
+   "label": "Configuration"
   },
   {
    "fieldname": "tax_account_head",
@@ -81,6 +85,10 @@
    "reqd": 1
   },
   {
+   "fieldname": "configuration_cb",
+   "fieldtype": "Column Break"
+  },
+  {
    "fieldname": "shipping_account_head",
    "fieldtype": "Link",
    "in_list_view": 1,
@@ -89,14 +97,20 @@
    "reqd": 1
   },
   {
-   "default": "0",
-   "fieldname": "enabled",
-   "fieldtype": "Check",
-   "label": "Enabled"
+   "depends_on": "enabled",
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "column_break_5",
+   "fieldtype": "Column Break"
   }
  ],
- "issingle": 1,
- "modified": "2021-09-26 23:43:52.334535",
+ "modified": "2021-09-27 04:03:39.008367",
  "modified_by": "Administrator",
  "module": "ERPNext Integrations",
  "name": "TaxJar Settings",
@@ -113,7 +127,6 @@
    "write": 1
   }
  ],
- "quick_entry": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
  "track_changes": 1

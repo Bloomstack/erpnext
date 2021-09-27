@@ -8,22 +8,19 @@ from erpnext import get_default_company
 from frappe import _
 from frappe.contacts.doctype.address.address import get_company_address
 
-TAX_ACCOUNT_HEAD = frappe.db.get_single_value("TaxJar Settings", "tax_account_head")
-SHIP_ACCOUNT_HEAD = frappe.db.get_single_value("TaxJar Settings", "shipping_account_head")
-TAXJAR_CREATE_TRANSACTIONS = frappe.db.get_single_value("TaxJar Settings", "taxjar_create_transactions")
-TAXJAR_CALCULATE_TAX = frappe.db.get_single_value("TaxJar Settings", "taxjar_calculate_tax")
-TAXJAR_ENABLED = frappe.db.get_single_value("TaxJar Settings", "enabled")
 SUPPORTED_COUNTRY_CODES = ["AT", "AU", "BE", "BG", "CA", "CY", "CZ", "DE", "DK", "EE", "ES", "FI",
 	"FR", "GB", "GR", "HR", "HU", "IE", "IT", "LT", "LU", "LV", "MT", "NL", "PL", "PT", "RO",
 	"SE", "SI", "SK", "US"]
 
 class AddressError(frappe.ValidationError): pass
 
-def get_client():
+def get_client(doc):
+	TAXJAR_ENABLED = frappe.db.get_value("TaxJar Settings", doc.company, "enabled")
+
 	if not TAXJAR_ENABLED:
 		return
 
-	taxjar_settings = frappe.get_single("TaxJar Settings")
+	taxjar_settings = frappe.get_doc("TaxJar Settings", doc.company)
 
 	if not taxjar_settings.is_sandbox:
 		api_key = taxjar_settings.get_password("api_key")
@@ -42,10 +39,13 @@ def get_client():
 def create_transaction(doc, method):
 	"""Create an order transaction in TaxJar"""
 
+	TAXJAR_CREATE_TRANSACTIONS = frappe.db.get_value("TaxJar Settings", doc.company, "taxjar_create_transactions")
+	TAX_ACCOUNT_HEAD = frappe.db.get_value("TaxJar Settings", doc.company, "tax_account_head")
+
 	if not TAXJAR_CREATE_TRANSACTIONS:
 		return
 
-	client = get_client()
+	client = get_client(doc)
 
 	if not client:
 		return
@@ -77,10 +77,11 @@ def create_transaction(doc, method):
 def delete_transaction(doc, method):
 	"""Delete an existing TaxJar order transaction"""
 
+	TAXJAR_CREATE_TRANSACTIONS = frappe.db.get_value("TaxJar Settings", doc.company, "taxjar_create_transactions")
 	if not TAXJAR_CREATE_TRANSACTIONS:
 		return
 
-	client = get_client()
+	client = get_client(doc)
 
 	if not client:
 		return
@@ -89,6 +90,7 @@ def delete_transaction(doc, method):
 
 
 def get_tax_data(doc):
+	SHIP_ACCOUNT_HEAD = frappe.db.get_value("TaxJar Settings", doc.company, "shipping_account_head")
 	from_address = get_company_address_details(doc)
 	from_shipping_state = from_address.get("state")
 	from_country_code = frappe.db.get_value("Country", from_address.country, "code")
@@ -123,13 +125,15 @@ def get_tax_data(doc):
 		'shipping': shipping,
 		'amount': doc.net_total,
 		#'line_items': line_items,
-		'plugin': '[bloomstack]'
+		'plugin': 'bloomstack'
 	}
 
 	return tax_dict
 
 
 def set_sales_tax(doc, method):
+	TAX_ACCOUNT_HEAD = frappe.db.get_value("TaxJar Settings", doc.company, "tax_account_head")
+	TAXJAR_CALCULATE_TAX = frappe.db.get_value("TaxJar Settings", doc.company, "taxjar_calculate_tax")
 	if not TAXJAR_CALCULATE_TAX:
 		return
 
@@ -173,7 +177,7 @@ def set_sales_tax(doc, method):
 		'street': tax_dict.get("from_street")
 	}]
 
-	tax_data = validate_tax_request(tax_dict)
+	tax_data = validate_tax_request(doc, tax_dict)
 
 	if tax_data is not None:
 		if not tax_data.amount_to_collect:
@@ -200,10 +204,10 @@ def set_sales_tax(doc, method):
 			doc.run_method("calculate_taxes_and_totals")
 
 
-def validate_tax_request(tax_dict):
+def validate_tax_request(doc, tax_dict):
 	"""Return the sales tax that should be collected for a given order."""
 
-	client = get_client()
+	client = get_client(doc)
 
 	if not client:
 		return
