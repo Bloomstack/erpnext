@@ -10,7 +10,7 @@ app_color = "#e74c3c"
 app_email = "info@erpnext.com"
 app_license = "GNU General Public License (v3)"
 source_link = "https://github.com/frappe/erpnext"
-app_logo_url = '/assets/erpnext/images/erp-icon.svg'
+app_logo_url = '/assets/erpnext/images/icon.png'
 
 
 develop_version = '12.x.x-develop'
@@ -88,8 +88,8 @@ website_generators = ["Item Group", "Item", "BOM", "Sales Partner",
 	"Job Opening", "Student Admission"]
 
 website_context = {
-	"favicon": 	"/assets/erpnext/images/favicon.png",
-	"splash_image": "/assets/erpnext/images/erp-icon.svg"
+	"favicon": "/assets/erpnext/images/favicon.ico",
+	"splash_image": "/assets/erpnext/images/splash.png"
 }
 
 website_route_rules = [
@@ -233,12 +233,25 @@ standard_queries = {
 }
 
 doc_events = {
+	("Company", "Supplier", "Customer"): {
+		"validate": [
+			"erpnext.utils.validate_default_license",
+			"erpnext.utils.validate_expired_licenses"
+		]
+	},
+	("Sales Order", "Delivery Note"): {
+		"validate": "erpnext.utils.validate_delivery_window",
+		"on_submit": "erpnext.utils.validate_delivery_window"
+	},
 	"Stock Entry": {
 		"on_submit": "erpnext.stock.doctype.material_request.material_request.update_completed_and_requested_qty",
 		"on_cancel": "erpnext.stock.doctype.material_request.material_request.update_completed_and_requested_qty"
 	},
 	"User": {
-		"after_insert": "frappe.contacts.doctype.contact.contact.update_contact",
+		"after_insert": [
+			"frappe.contacts.doctype.contact.contact.update_contact",
+			"erpnext.compliance.utils.update_bloomtrace_user"
+		],
 		"validate": "erpnext.hr.doctype.employee.employee.validate_employee_role",
 		"on_update": ["erpnext.hr.doctype.employee.employee.update_user_permissions",
 			"erpnext.portal.utils.set_default_role"]
@@ -294,7 +307,19 @@ auto_cancel_exempt_doctypes = ["Payment Entry"]
 scheduler_events = {
 	"all": [
 		"erpnext.projects.doctype.project.project.project_status_update_reminder",
-		"erpnext.healthcare.doctype.patient_appointment.patient_appointment.set_appointment_reminder"
+		"erpnext.healthcare.doctype.patient_appointment.patient_appointment.set_appointment_reminder",
+		"erpnext.stock.doctype.delivery_note.delivery_note.execute_bloomtrace_integration_request",
+		"erpnext.agriculture.doctype.plant.plant.execute_bloomtrace_integration_request",
+		"erpnext.agriculture.doctype.plant_batch.plant_batch.execute_bloomtrace_integration_request",
+		"erpnext.agriculture.doctype.strain.strain.execute_bloomtrace_integration_request",
+		"erpnext.agriculture.doctype.harvest.harvest.execute_bloomtrace_integration_request",
+		"erpnext.stock.doctype.package_tag.package_tag.execute_bloomtrace_integration_request",
+		"erpnext.healthcare.doctype.patient_appointment.patient_appointment.set_appointment_reminder",
+		"erpnext.stock.doctype.stock_reconciliation.stock_reconciliation.execute_bloomtrace_integration_request",
+		"erpnext.stock.doctype.stock_entry.stock_entry.execute_bloomtrace_integration_request",
+		"erpnext.agriculture.doctype.plant_additive_log.plant_additive_log.execute_bloomtrace_integration_request",
+		"erpnext.compliance.utils.execute_bloomtrace_integration_request_for_user",
+		"erpnext.stock.doctype.item.item.execute_bloomtrace_integration_request"
 	],
 	"hourly": [
 		'erpnext.hr.doctype.daily_work_summary_group.daily_work_summary_group.trigger_emails',
@@ -329,14 +354,16 @@ scheduler_events = {
 		"erpnext.crm.doctype.email_campaign.email_campaign.send_email_to_leads_or_contacts",
 		"erpnext.crm.doctype.email_campaign.email_campaign.set_email_campaign_status",
 		"erpnext.selling.doctype.quotation.quotation.set_expired_status",
-		"erpnext.stock.doctype.stock_entry.stock_entry.raw_material_update_on_bom"
+		"erpnext.stock.doctype.stock_entry.stock_entry.raw_material_update_on_bom",
+		"erpnext.selling.doctype.sales_order.sales_order.create_sales_invoice_against_contract"
 	],
 	"daily_long": [
 		"erpnext.setup.doctype.email_digest.email_digest.send",
 		"erpnext.manufacturing.doctype.bom_update_tool.bom_update_tool.update_latest_price_in_all_boms",
 		"erpnext.hr.doctype.leave_ledger_entry.leave_ledger_entry.process_expired_allocation",
 		"erpnext.hr.utils.generate_leave_encashment",
-		"erpnext.erpnext_integrations.doctype.asana.asana.daily_asana_email_notification"
+		"erpnext.erpnext_integrations.doctype.asana.asana.daily_asana_email_notification",
+		"erpnext.selling.doctype.sales_order.sales_order.update_order_status"
 	],
 	"monthly": [
 		"erpnext.selling.doctype.customer.customer.set_total_monthly_sales_to_zero"

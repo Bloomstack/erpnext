@@ -14,6 +14,7 @@
   "customer",
   "customer_name",
   "order_type",
+  "no_charge_order",
   "skip_delivery_note",
   "advance_received",
   "column_break1",
@@ -25,6 +26,7 @@
   "po_no",
   "po_date",
   "tax_id",
+  "license",
   "contact_info",
   "customer_address",
   "address_display",
@@ -112,6 +114,7 @@
   "tc_name",
   "terms",
   "more_info",
+  "contract",
   "inter_company_order_reference",
   "project",
   "party_account_currency",
@@ -146,7 +149,8 @@
   "column_break_108",
   "auto_repeat",
   "update_auto_repeat_reference",
-  "is_completed"
+  "is_completed",
+  "is_overdue"
  ],
  "fields": [
   {
@@ -1264,12 +1268,40 @@
    "fieldtype": "Link",
    "label": "Fulfillment Partner",
    "options": "Fulfillment Partner"
+  },
+  {
+   "default": "0",
+   "fieldname": "no_charge_order",
+   "fieldtype": "Check",
+   "label": "No Charge"
+  },
+  {
+   "fieldname": "license",
+   "fieldtype": "Link",
+   "label": "License",
+   "options": "Compliance Info"
+  },
+  {
+   "fieldname": "contract",
+   "fieldtype": "Link",
+   "label": "Contract",
+   "options": "Contract",
+   "read_only": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "default": "0",
+   "fieldname": "is_overdue",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "in_standard_filter": 1,
+   "label": "Is Overdue"
   }
  ],
  "icon": "fa fa-file-text",
  "idx": 105,
  "is_submittable": 1,
- "modified": "2021-03-19 04:08:31.995032",
+ "modified": "2021-09-02 04:45:23.353238",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Sales Order",

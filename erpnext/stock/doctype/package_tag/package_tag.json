@@ -7,6 +7,8 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "company",
+  "section_break_1",
   "package_tag",
   "is_used",
   "lost_or_destroyed",
@@ -18,7 +20,12 @@
   "batch_no",
   "coa_batch_no",
   "package_tag_qty",
-  "source_package_tag"
+  "source_package_tag",
+  "sb_metrc",
+  "metrc_product_name",
+  "metrc_stock_qty",
+  "cb_metrc",
+  "metrc_stock_uom"
  ],
  "fields": [
   {
@@ -100,14 +107,53 @@
   },
   {
    "default": "0",
-
    "fieldname": "lost_or_destroyed",
    "fieldtype": "Check",
    "label": "Lost / Destroyed",
    "read_only": 1
+  },
+  {
+   "fieldname": "sb_metrc",
+   "fieldtype": "Section Break",
+   "label": "METRC Details"
+  },
+  {
+   "fieldname": "metrc_product_name",
+   "fieldtype": "Data",
+   "label": "METRC Product Name",
+   "read_only": 1,
+   "translatable": 1
+  },
+  {
+   "fieldname": "metrc_stock_qty",
+   "fieldtype": "Float",
+   "label": "METRC Stock Qty",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cb_metrc",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "metrc_stock_uom",
+   "fieldtype": "Link",
+   "label": "METRC Stock UOM",
+   "options": "Compliance UOM",
+   "read_only": 1
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_1",
+   "fieldtype": "Section Break"
   }
  ],
- "modified": "2021-06-29 21:33:43.094312",
+ "modified": "2021-09-02 08:11:06.292113",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Package Tag",

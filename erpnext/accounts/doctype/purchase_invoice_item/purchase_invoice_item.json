@@ -67,6 +67,12 @@
   "total_weight",
   "column_break_38",
   "weight_uom",
+  "cultivation_tax_details_section",
+  "flower_weight",
+  "leaf_weight",
+  "plant_weight",
+  "column_break_59",
+  "cultivation_weight_uom",
   "warehouse_section",
   "warehouse",
   "rejected_warehouse",
@@ -109,7 +115,7 @@
  "fields": [
   {
    "bold": 1,
-   "columns": 3,
+   "columns": 2,
    "fieldname": "item_code",
    "fieldtype": "Link",
    "in_list_view": 1,
@@ -148,6 +154,7 @@
    "label": "Description",
    "oldfieldname": "description",
    "oldfieldtype": "Text",
+   "print_hide": 1,
    "print_width": "300px",
    "width": "300px"
   },
@@ -268,7 +275,7 @@
   },
   {
    "bold": 1,
-   "columns": 3,
+   "columns": 2,
    "fieldname": "rate",
    "fieldtype": "Currency",
    "in_list_view": 1,
@@ -461,8 +468,10 @@
    "label": "Accounting"
   },
   {
+   "columns": 2,
    "fieldname": "expense_account",
    "fieldtype": "Link",
+   "in_list_view": 1,
    "label": "Expense Head",
    "oldfieldname": "expense_head",
    "oldfieldtype": "Link",
@@ -827,11 +836,41 @@
    "fieldtype": "Long Text",
    "label": "Label Print Details",
    "read_only": 1
+  },
+  {
+   "fieldname": "cultivation_tax_details_section",
+   "fieldtype": "Section Break",
+   "label": "Cultivation Tax Details"
+  },
+  {
+   "fieldname": "flower_weight",
+   "fieldtype": "Float",
+   "label": "Flower Weight"
+  },
+  {
+   "fieldname": "leaf_weight",
+   "fieldtype": "Float",
+   "label": "Leaf Weight"
+  },
+  {
+   "fieldname": "plant_weight",
+   "fieldtype": "Float",
+   "label": "Plant Weight"
+  },
+  {
+   "fieldname": "column_break_59",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "cultivation_weight_uom",
+   "fieldtype": "Link",
+   "label": "Cultivation Weight UOM",
+   "options": "UOM"
   }
  ],
  "idx": 1,
  "istable": 1,
- "modified": "2021-03-15 08:18:07.349463",
+ "modified": "2021-09-02 03:45:31.571103",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Purchase Invoice Item",

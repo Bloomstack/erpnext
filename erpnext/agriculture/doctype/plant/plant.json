@@ -5,6 +5,8 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "company",
+  "section_break_1",
   "title",
   "plant_tag",
   "strain",
@@ -172,9 +174,20 @@
    "label": "Plant Batch",
    "options": "Plant Batch",
    "reqd": 1
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "ignore_user_permissions": 1,
+   "label": "Company",
+   "options": "Company"
+  },
+  {
+   "fieldname": "section_break_1",
+   "fieldtype": "Section Break"
   }
  ],
- "modified": "2020-10-22 03:17:36.293743",
+ "modified": "2021-09-06 06:57:55.430310",
  "modified_by": "Administrator",
  "module": "Agriculture",
  "name": "Plant",

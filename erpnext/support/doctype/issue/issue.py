@@ -425,3 +425,11 @@ def get_time_in_timedelta(time):
 	"""
 	import datetime
 	return datetime.timedelta(hours=time.hour, minutes=time.minute, seconds=time.second)
+
+@frappe.whitelist(allow_guest=True)
+def issue_status_list():
+	"""
+	Returns an array of statuses available on the Issues doctype.
+	"""
+	meta = frappe.get_meta("Issue")
+	return meta.get_options("status").split("\n")

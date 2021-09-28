@@ -38,11 +38,13 @@
   "job_applicant",
   "scheduled_confirmation_date",
   "final_confirmation_date",
+  "id_verification",
   "job_offer",
   "col_break_22",
   "contract_end_date",
   "notice_number_of_days",
   "date_of_retirement",
+  "background_check",
   "job_profile",
   "department",
   "designation",
@@ -51,6 +53,7 @@
   "column_break_31",
   "grade",
   "branch",
+  "kra",
   "attendance_and_leave_details",
   "leave_policy",
   "attendance_device_id",
@@ -93,6 +96,7 @@
   "date_of_issue",
   "valid_upto",
   "place_of_issue",
+  "social_security_number",
   "column_break6",
   "marital_status",
   "blood_group",
@@ -851,12 +855,34 @@
    "label": "Reports to Email",
    "options": "Email",
    "read_only": 1
+  },
+  {
+   "fieldname": "social_security_number",
+   "fieldtype": "Data",
+   "label": "Social Security Number"
+  },
+  {
+   "fieldname": "kra",
+   "fieldtype": "Text",
+   "label": "Key Responsibility Area (KRA)"
+  },
+  {
+   "fieldname": "id_verification",
+   "fieldtype": "Select",
+   "label": "ID Verification",
+   "options": "\nYes\nNo\nIn Process"
+  },
+  {
+   "fieldname": "background_check",
+   "fieldtype": "Select",
+   "label": "Background Check",
+   "options": "\nYes\nNo\nIn Process"
   }
  ],
  "icon": "fa fa-user",
  "idx": 24,
  "image_field": "image",
- "modified": "2021-06-28 05:28:21.061707",
+ "modified": "2021-09-01 12:46:34.708802",
  "modified_by": "Administrator",
  "module": "HR",
  "name": "Employee",

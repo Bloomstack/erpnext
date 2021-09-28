@@ -17,6 +17,7 @@
   "customer_type",
   "default_bank_account",
   "lead_name",
+  "opening_date",
   "image",
   "so_required",
   "dn_required",
@@ -38,6 +39,8 @@
   "default_price_list",
   "column_break_14",
   "language",
+  "licenses_sb",
+  "licenses",
   "address_contacts",
   "address_html",
   "website",
@@ -566,12 +569,29 @@
    "fieldname": "sync_with_leaflink",
    "fieldtype": "Button",
    "label": "Sync With LeafLink"
+  },
+  {
+   "default": "Today",
+   "fieldname": "opening_date",
+   "fieldtype": "Date",
+   "label": "Opening Date"
+  },
+  {
+   "fieldname": "licenses_sb",
+   "fieldtype": "Section Break",
+   "label": "Licenses"
+  },
+  {
+   "fieldname": "licenses",
+   "fieldtype": "Table",
+   "label": "Licenses",
+   "options": "Compliance License Detail"
   }
  ],
  "icon": "fa fa-user",
  "idx": 363,
  "image_field": "image",
- "modified": "2021-05-06 01:26:28.491654",
+ "modified": "2021-08-31 07:47:58.584759",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Customer",

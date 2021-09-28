@@ -4,6 +4,9 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "delivery_defaults",
+  "packing_warehouse",
+  "default_activity_type",
   "sb_dispatch",
   "dispatch_template",
   "dispatch_attachment",
@@ -13,6 +16,7 @@
   "stop_delay",
   "delivery_window",
   "delivery_start_time",
+  "send_delivery_window_warning",
   "column_break_9",
   "delivery_end_time"
  ],
@@ -77,10 +81,34 @@
    "fieldtype": "Link",
    "label": "Default Fulfilment Partner",
    "options": "Fulfillment Partner"
+  },
+  {
+   "fieldname": "packing_warehouse",
+   "fieldtype": "Link",
+   "label": "Packing Warehouse",
+   "options": "Warehouse"
+  },
+  {
+   "fieldname": "default_activity_type",
+   "fieldtype": "Link",
+   "label": "Default Activity Type",
+   "options": "Activity Type"
+  },
+  {
+   "default": "0",
+   "description": "If an order is set to be delivered outside the global or customer's delivery window, then send out an email to the Fulfillment and Accounts Managers\n",
+   "fieldname": "send_delivery_window_warning",
+   "fieldtype": "Check",
+   "label": "Send Warnings for Deliveries Outside the Window"
+  },
+  {
+   "fieldname": "delivery_defaults",
+   "fieldtype": "Section Break",
+   "label": "Delivery Defaults"
   }
  ],
  "issingle": 1,
- "modified": "2021-04-20 08:58:55.716956",
+ "modified": "2021-09-01 07:28:19.463582",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Delivery Settings",

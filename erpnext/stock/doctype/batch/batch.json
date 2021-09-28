@@ -13,6 +13,7 @@
   "batch_id",
   "item",
   "item_name",
+  "item_group",
   "image",
   "parent_batch",
   "manufacturing_date",
@@ -225,6 +226,14 @@
    "read_only": 1
   },
   {
+   "fetch_from": "item.item_group",
+   "fieldname": "item_group",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Item Group",
+   "read_only": 1
+  },
+  {
    "fieldname": "coa_batch",
    "fieldtype": "Data",
    "label": "COA Batch"
@@ -241,7 +250,7 @@
  "idx": 1,
  "image_field": "image",
  "max_attachments": 5,
- "modified": "2021-05-03 00:52:50.809083",
+ "modified": "2021-08-31 04:58:21.298929",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Batch",
