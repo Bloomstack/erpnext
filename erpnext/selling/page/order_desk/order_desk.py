@@ -9,7 +9,7 @@ from frappe.utils.nestedset import get_root_of
 
 
 @frappe.whitelist()
-def get_items(start, page_length, price_list, item_group, search_value=""	):
+def get_items(start, page_length, price_list, item_group, search_value=""):
 	data = dict()
 
 	if not frappe.db.exists('Item Group', item_group):
