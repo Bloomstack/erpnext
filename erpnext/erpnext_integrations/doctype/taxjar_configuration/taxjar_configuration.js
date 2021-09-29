@@ -3,6 +3,12 @@
 
 frappe.ui.form.on('TaxJar Configuration', {
 	refresh: (frm) => {
+		frm.add_custom_button(__('Update Nexus List'), function() {
+			frm.call({
+				doc: frm.doc,
+				method: 'update_nexus_list'
+			});
+		});
 		frm.add_custom_button("Sign Up For Taxjar", function() {
 			window.open('https://app.taxjar.com/api_sign_up');
 		});

@@ -168,14 +168,10 @@ def set_sales_tax(doc, method):
 		setattr(doc, "taxes", [tax for tax in doc.taxes if tax.account_head != TAX_ACCOUNT_HEAD])
 		return
 
-	tax_dict['nexus_address'] = [{
-		'id': get_company_address_details(doc).name,
-		'country': tax_dict.get("from_country"),
-		'zip': tax_dict.get("from_zip"),
-		'state': tax_dict.get("from_state"),
-		'city': tax_dict.get("from_city"),
-		'street': tax_dict.get("from_street")
-	}]
+	# check if delivering within a nexus, if not, No need to call calculate sales tax api.
+	has_nexus = check_for_nexus(doc, tax_dict)
+	if not has_nexus:
+		return
 
 	tax_data = validate_tax_request(doc, tax_dict)
 
@@ -203,6 +199,15 @@ def set_sales_tax(doc, method):
 
 			doc.run_method("calculate_taxes_and_totals")
 
+def check_for_nexus(doc, tax_dict):
+	TAX_ACCOUNT_HEAD = frappe.db.get_value("TaxJar Configuration", doc.company, "tax_account_head")
+	# check if to_state within region if not do not calculate sales tax.
+	if not frappe.db.get_value('TaxJar Nexus', {'region_code': tax_dict["to_state"]}):
+		for tax in doc.taxes:
+			if tax.account_head == TAX_ACCOUNT_HEAD:
+				doc.taxes.remove(tax)
+		return False
+	return True
 
 def validate_tax_request(doc, tax_dict):
 	"""Return the sales tax that should be collected for a given order."""

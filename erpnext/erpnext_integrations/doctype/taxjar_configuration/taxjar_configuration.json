@@ -20,7 +20,9 @@
   "configuration",
   "tax_account_head",
   "configuration_cb",
-  "shipping_account_head"
+  "shipping_account_head",
+  "nexus_list_section",
+  "nexus"
  ],
  "fields": [
   {
@@ -117,9 +119,20 @@
    "fieldtype": "Check",
    "label": "Is Verified",
    "read_only": 1
+  },
+  {
+   "fieldname": "nexus_list_section",
+   "fieldtype": "Section Break",
+   "label": "Nexus List"
+  },
+  {
+   "fieldname": "nexus",
+   "fieldtype": "Table",
+   "label": "Nexus ",
+   "options": "TaxJar Nexus"
   }
  ],
- "modified": "2021-09-28 02:48:41.191045",
+ "modified": "2021-09-29 02:04:13.118934",
  "modified_by": "Administrator",
  "module": "ERPNext Integrations",
  "name": "TaxJar Configuration",
