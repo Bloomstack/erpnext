@@ -3,7 +3,8 @@
 
 from __future__ import unicode_literals
 import frappe
-from frappe.utils import cint, cstr
+from frappe.utils import cint
+from frappe.utils import cstr
 from frappe import throw, _
 from frappe.utils.nestedset import NestedSet, get_ancestors_of, get_descendants_of
 
