@@ -24,5 +24,5 @@ def execute():
 			new_taxjar_settings.save()
 
 		# once data added to taxjar configuration delete taxjar settings from database too.
-		frappe.delete_doc("DocType", "TaxJar Settings")
+		frappe.delete_doc_if_exists("DocType", "TaxJar Settings")
 	frappe.delete_doc_if_exists("DocType", "Taxjar Company")
