@@ -140,7 +140,8 @@ class Contract(Document):
 				"description": task.description,
 				"projects": [
 				{
-					"project": project_name
+					"project": project_name,
+					"is_default": 1
 				}
 			]
 			})
