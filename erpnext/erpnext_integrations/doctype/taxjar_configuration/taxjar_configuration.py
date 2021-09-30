@@ -27,3 +27,4 @@ class TaxJarConfiguration(Document):
 		self.set('nexus', [])
 		self.set('nexus', new_nexus_list)
 		self.save()
+		return len(new_nexus_list)

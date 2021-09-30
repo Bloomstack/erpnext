@@ -173,7 +173,7 @@ def set_sales_tax(doc, method):
 	if not has_nexus:
 		return
 
-	tax_data = validate_tax_request(doc, tax_dict)
+	tax_data = get_sales_tax(doc, tax_dict)
 
 	if tax_data is not None:
 		if not tax_data.amount_to_collect:
@@ -209,7 +209,7 @@ def check_for_nexus(doc, tax_dict):
 		return False
 	return True
 
-def validate_tax_request(doc, tax_dict):
+def get_sales_tax(doc, tax_dict):
 	"""Return the sales tax that should be collected for a given order."""
 
 	client = get_client(doc)

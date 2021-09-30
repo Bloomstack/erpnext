@@ -6,7 +6,16 @@ frappe.ui.form.on('TaxJar Configuration', {
 		frm.add_custom_button(__('Update Nexus List'), function() {
 			frm.call({
 				doc: frm.doc,
-				method: 'update_nexus_list'
+				method: 'update_nexus_list',
+				callback: (r) => {
+					console.log(r.message)
+					if (r.message) {
+						frappe.show_alert({
+							indicator: 'green',
+							message: __('Nexus List Updated')
+						})
+					}
+				}
 			});
 		});
 		frm.add_custom_button("Sign Up For Taxjar", function() {
