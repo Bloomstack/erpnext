@@ -67,6 +67,7 @@ def create_transaction(doc, method):
 
 	try:
 		if doc.is_return:
+			tax_dict['transaction_reference_id'] = doc.return_against
 			client.create_refund(tax_dict)
 		else:
 			client.create_order(tax_dict)
