@@ -8,12 +8,11 @@ frappe.ui.form.on('TaxJar Configuration', {
 				doc: frm.doc,
 				method: 'update_nexus_list',
 				callback: (r) => {
-					console.log(r.message)
 					if (r.message) {
 						frappe.show_alert({
 							indicator: 'green',
 							message: __('Nexus List Updated')
-						})
+						});
 					}
 				}
 			});
