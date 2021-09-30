@@ -66,7 +66,10 @@ def create_transaction(doc, method):
 	tax_dict['amount'] = doc.net_total + tax_dict['shipping']
 
 	try:
-		client.create_order(tax_dict)
+		if doc.is_return:
+			client.create_refund(tax_dict)
+		else:
+			client.create_order(tax_dict)
 	except taxjar.exceptions.TaxJarResponseError as err:
 		error_msg = """There seems to be an error in Address<br><br>{0}""".format(sanitize_error_response(err))
 		frappe.throw(_(error_msg), AddressError, _("Address Error"))
