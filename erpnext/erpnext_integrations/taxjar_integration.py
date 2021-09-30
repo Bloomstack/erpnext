@@ -168,16 +168,12 @@ def set_sales_tax(doc, method):
 		setattr(doc, "taxes", [tax for tax in doc.taxes if tax.account_head != TAX_ACCOUNT_HEAD])
 		return
 
-	tax_dict['nexus_address'] = [{
-		'id': get_company_address_details(doc).name,
-		'country': tax_dict.get("from_country"),
-		'zip': tax_dict.get("from_zip"),
-		'state': tax_dict.get("from_state"),
-		'city': tax_dict.get("from_city"),
-		'street': tax_dict.get("from_street")
-	}]
+	# check if delivering within a nexus, if not, No need to call calculate sales tax api.
+	has_nexus = check_for_nexus(doc, tax_dict)
+	if not has_nexus:
+		return
 
-	tax_data = validate_tax_request(doc, tax_dict)
+	tax_data = get_sales_tax(doc, tax_dict)
 
 	if tax_data is not None:
 		if not tax_data.amount_to_collect:
@@ -203,8 +199,56 @@ def set_sales_tax(doc, method):
 
 			doc.run_method("calculate_taxes_and_totals")
 
+def check_for_nexus(doc, tax_dict):
+	"""
+		IN the US we validate Nexus with State. for eg. if your shipping address state and Nexus state match then calculate Sales Tax.
+		For Non-US countries like Australia if it is a different state still calculate Sales Tax Ref.https://developers.taxjar.com/demo/
+		So apart from the US no other country has a state-based sales tax.
 
-def validate_tax_request(doc, tax_dict):
+		Parameters:
+			doc (dict): The doctype object from Quotation, Sales Order and Sales Invoice
+			tax_dict(dict): The tax_dict contains tax data.
+
+		Returns:
+			Bool (True/False): based on output it will return flag
+	"""
+
+	#check if seller and buyer within same country otherwise dont calculate taxes
+	if tax_dict["to_country"] == tax_dict["from_country"]:
+		# if seller and buyer within US country then based on nexus region calculate tax
+		if tax_dict["to_country"] == "US":
+			# check if to_state within nexus region if not do not calculate sales tax.
+			if not frappe.db.get_value('TaxJar Nexus', {'region_code': tax_dict["to_state"]}):
+				return remove_existing_sales_tax(doc)
+			return True
+
+		# for Non-US country check if to_country within nexus country if not, do not calculate sales tax
+		elif not frappe.db.get_value('TaxJar Nexus', {'country_code': tax_dict["to_country"]}):
+			return remove_existing_sales_tax(doc)
+		return True
+	else:
+		return remove_existing_sales_tax(doc)
+
+def remove_existing_sales_tax(doc):
+	"""
+		Return False Boolean If buyer is not within nexus and if seller and buyer in different country. 
+		it will delete taxes if any
+
+		Parameters:
+			doc (dict): The doctype object
+
+		Returns:
+			(bool): It always return False Boolean Value
+	"""
+
+	TAX_ACCOUNT_HEAD = frappe.db.get_value("TaxJar Configuration", doc.company, "tax_account_head")
+
+	for tax in doc.taxes:
+		if tax.account_head == TAX_ACCOUNT_HEAD:
+			doc.taxes.remove(tax)
+	return False
+
+def get_sales_tax(doc, tax_dict):
 	"""Return the sales tax that should be collected for a given order."""
 
 	client = get_client(doc)
