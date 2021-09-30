@@ -213,8 +213,6 @@ def check_for_nexus(doc, tax_dict):
 			Bool (True/False): based on output it will return flag
 	"""
 
-	TAX_ACCOUNT_HEAD = frappe.db.get_value("TaxJar Configuration", doc.company, "tax_account_head")
-
 	#check if seller and buyer within same country otherwise dont calculate taxes
 	if tax_dict["to_country"] == tax_dict["from_country"]:
 		# if seller and buyer within US country then based on nexus region calculate tax
