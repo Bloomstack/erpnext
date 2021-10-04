@@ -31,6 +31,18 @@ frappe.ui.form.on('Strain', {
 		let selected_status = frm.doc.metrc_status;
 		let completed_status = [];
 		let incomplete_status = [];
+		let successful_status = [
+			'Compliance Document',
+			'Reported to Bloomtrace',
+			'Successful on Bloomtrace',
+			'Reported to METRC',
+			'Successful on METRC'
+		]
+		let unsuccessful_status = [
+			'Failed on Bloomtrace',
+			'Failed on METRC',
+			'METRC ID Reported to Bloomstack'
+		]
 		let status_widths = [
 			'Compliance Document',
 			'Reported to Bloomtrace',
@@ -49,6 +61,7 @@ frappe.ui.form.on('Strain', {
 			'Failed on METRC': 'red',
 			'METRC ID Reported to Bloomstack':'green'
 		}
+
 		let bars = [];
 		let message = '';
 		if(!status_widths.includes(selected_status)) {
@@ -86,6 +99,14 @@ frappe.ui.form.on('Strain', {
 				}
 		})
 		frm.dashboard.add_progress_chart(__('Status'), bars, message);
+		if(!frm.is_new() && successful_status.includes(selected_status) && !frm.frozen) {
+			frm.frozen = true;
+			frappe.dom.freeze();
+		}
+		if(!frm.is_new() && unsuccessful_status.includes(selected_status)) {
+			frm.frozen = false;
+			frappe.dom.unfreeze();
+		}
 	}
 });
 
