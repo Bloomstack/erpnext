@@ -16,6 +16,8 @@ class EmailCampaign(Document):
 		if self.email_campaign_for == "Lead":
 			self.validate_lead()
 		self.validate_email_campaign_already_exists()
+
+	def after_save(self):
 		self.update_status()
 
 	def set_date(self):
@@ -52,11 +54,11 @@ class EmailCampaign(Document):
 		end_date = getdate(self.end_date)
 		today_date = getdate(today())
 		if start_date > today_date:
-			self.status = "Scheduled"
+			frappe.db.set_value("Email Campaign", self.name, "status", "Scheduled", update_modified=False)
 		elif end_date >= today_date:
-			self.status = "In Progress"
+			frappe.db.set_value("Email Campaign", self.name, "status", "In Progress", update_modified=False)
 		elif end_date < today_date:
-			self.status = "Completed"
+			frappe.db.set_value("Email Campaign", self.name, "status", "Completed", update_modified=False)
 
 #called through hooks to send campaign mails to leads
 def send_email_to_leads_or_contacts():
@@ -103,10 +105,4 @@ def set_email_campaign_status():
 	email_campaigns = frappe.get_all("Email Campaign", filters = { 'status': ('!=', 'Unsubscribed')})
 	for entry in email_campaigns:
 		email_campaign = frappe.get_doc("Email Campaign", entry.name)
-		today_date = getdate(today())
-		if email_campaign.start_date > today_date:
-			frappe.db.set_value("Email Campaign", entry.name, "status", "Scheduled", update_modified=False)
-		elif email_campaign.end_date >= today_date:
-			frappe.db.set_value("Email Campaign", entry.name, "status", "In Progress", update_modified=False)
-		elif email_campaign.end_date < today_date:
-			frappe.db.set_value("Email Campaign", entry.name, "status", "Completed", update_modified=False)
+		email_campaign.update_status()
