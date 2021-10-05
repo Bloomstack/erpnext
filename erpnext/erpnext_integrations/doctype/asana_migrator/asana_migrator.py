@@ -9,7 +9,6 @@ from frappe import _
 import random
 from frappe.utils import comma_and, cint
 from frappe.desk.form.utils import add_comment
-from pprint import pprint
 from frappe.utils.background_jobs import enqueue
 from frappe.model.document import Document
 
