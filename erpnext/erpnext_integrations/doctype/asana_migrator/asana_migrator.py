@@ -6,10 +6,8 @@ from __future__ import unicode_literals
 import frappe
 import json
 from frappe import _
-import random
-from frappe.utils import comma_and, cint
+from frappe.utils import comma_and
 from frappe.desk.form.utils import add_comment
-from frappe.utils.background_jobs import enqueue
 from frappe.model.document import Document
 
 class AsanaMigrator(Document):
@@ -63,7 +61,7 @@ class AsanaMigrator(Document):
 		self.db_set("status", "Completed")
 
 	def get_task_details(self, global_id, client):
-			return frappe._dict(client.tasks.get_task(global_id))
+		return frappe._dict(client.tasks.get_task(global_id))
 
 	def get_row_data(self, task_details):
 		assigned_user = []
@@ -140,7 +138,7 @@ def _add_comments(task, comments_to_import, global_id, assignee, reference):
 			comment_text += "<br><br>"
 	if assignee:
 		task_detail_text = _("This Task was assigned to {0}").format(assignee)
-	task_detail_text +=  "<br>" + "Reference: " 
+	task_detail_text += "<br>" + "Reference: " 
 	task_detail_text += "<a href="+(reference)+">" + (reference)+ "</a>"
 	for comment in [comment_text, task_detail_text]:
 		try:

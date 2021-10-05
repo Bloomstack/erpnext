@@ -5,7 +5,6 @@
 from __future__ import unicode_literals
 import frappe
 import asana
-from datetime import datetime
 from frappe.model.document import Document
 from frappe import _
 from frappe.utils.password import get_decrypted_password
@@ -21,7 +20,7 @@ class AsanaSettings(Document):
 		try:
 			client = asana.Client.access_token(get_decrypted_password("Asana Settings", "Asana Settings", "personal_access_token"))
 			return client
-		except Exception as e:
+		except:
 			frappe.throw(_("Error while connecting to Asana Client."))
 
 	def get_workspaces(self):

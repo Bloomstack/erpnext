@@ -23,7 +23,7 @@ frappe.ui.form.on('Asana Migrator', {
 			frm.enable_save();
 			return;
 		}
-		let statues = ["Pending", "Failed"]
+		let statues = ["Pending", "Failed"];
 		frm.disable_save();
 		if (!frm.is_new() && !frm.doc.row_data) {
 			frm.page.set_primary_action('Get Tasks', () => frm.events.get_tasks(frm));
@@ -93,7 +93,7 @@ frappe.ui.form.on('Asana Migrator', {
 				frm.set_value("workspace", options[0]);
 
 				// saving Options as Worksapces option is Dynamic.
-				frm.doc.workspace_options = JSON.stringify(options)
+				frm.doc.workspace_options = JSON.stringify(options);
 			}
 		});
 	},
@@ -107,7 +107,7 @@ frappe.ui.form.on('Asana Migrator', {
 				global_id: global_id
 			}
 		}).then(r => {
-			let options = []
+			let options = [];
 			if (r.message) {
 				for (let idx in r.message) {
 					options.push(r.message[idx].name + ' - ' + r.message[idx].gid);
@@ -118,7 +118,7 @@ frappe.ui.form.on('Asana Migrator', {
 				// saving Options as Projects option is Dynamic.
 				frm.doc.project_options = JSON.stringify(options);
 			}
-		})
+		});
 	},
 
 	get_tasks: function (frm) {
@@ -130,7 +130,7 @@ frappe.ui.form.on('Asana Migrator', {
 					frm.refresh();
 					frm.dirty();
 					frm.save();
-					frm.events.set_primary_action(frm);
+					frm.events.update_primary_action(frm);
 				}
 			});
 		}
@@ -162,7 +162,7 @@ frappe.ui.form.on('Asana Migrator', {
 						tasks_to_import,
 						comments_to_import
 					},
-					callback: function (r) {
+					callback: function () {
 						frm.refresh();
 					}
 				});
@@ -192,7 +192,7 @@ frappe.ui.form.on('Asana Migrator', {
 	},
 
 	make_datatable: function (frm) {
-		let editable = true
+		let editable = true;
 		if (frm.doc.status == "Completed") {
 			editable = false;
 		}
@@ -236,7 +236,7 @@ frappe.ui.form.on('Asana Migrator', {
 				frm.datatable.options.data[rowIndex][key] = newValue;
 				frm.datatable.refresh();
 
-				//update docs accordingly
+				// update docs accordingly
 				frm.doc.row_data = JSON.stringify(frm.datatable.options.data);
 				frm.dirty();
 				frm.page.set_primary_action('Save', () => frm.save());
@@ -246,7 +246,7 @@ frappe.ui.form.on('Asana Migrator', {
 			getValue() {
 				return control.input.value;
 			}
-		}
+		};
 	},
 
 	get_columns: (editable) => {
@@ -292,6 +292,6 @@ frappe.ui.form.on('Asana Migrator', {
 				editable: false,
 				id: "completed_on"
 			}
-		]
+		];
 	}
 });

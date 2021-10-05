@@ -6,5 +6,5 @@ from __future__ import unicode_literals
 # import frappe
 import unittest
 
-class TestAsanaSettings Settings(unittest.TestCase):
+class TestAsanaSettings(unittest.TestCase):
 	pass
