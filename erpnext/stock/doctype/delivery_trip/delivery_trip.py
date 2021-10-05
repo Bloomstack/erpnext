@@ -150,6 +150,9 @@ class DeliveryTrip(Document):
 		if not self.driver_address:
 			return
 
+		if not frappe.db.get_single_value("Google Settings", "api_key"):
+			return
+
 		if self.delivery_stops:
 			route_list = self.form_route_list(optimize=False)
 
