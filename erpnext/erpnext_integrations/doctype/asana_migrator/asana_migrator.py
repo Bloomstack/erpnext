@@ -53,16 +53,13 @@ class AsanaMigrator(Document):
 		self.save()
 	
 	def import_tasks(self, tasks_to_import, comments_to_import):
-
 		self.db_set("status","In Progress")		
-
 		if len(tasks_to_import) > 10:
 			frappe.enqueue(create_tasks, timeout=600,
 				tasks_to_import=tasks_to_import, comments_to_import=comments_to_import,
 					project=self.selected_project, skip_completed_tasks=self.skip_completed_tasks)
 		else:
 			create_tasks(tasks_to_import, comments_to_import, self.selected_project, self.skip_completed_tasks)
-
 		self.db_set("status", "Completed")
 
 	def get_task_details(self, global_id, client):
