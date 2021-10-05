@@ -90,9 +90,9 @@ class TestStockReconciliation(unittest.TestCase):
 	def test_get_items(self):
 		from erpnext.stock.doctype.stock_entry.test_stock_entry import make_stock_entry
 
-		create_warehouse("_Test Warehouse Group 1", {"is_group": 1})
+		create_warehouse("_Test Warehouse Group", {"is_group": 0})
 		create_warehouse("_Test Warehouse Ledger 1",
-			{"is_group": 0, "parent_warehouse": "_Test Warehouse Group 1 - _TC"})
+			{"is_group": 0, "parent_warehouse": "_Test Warehouse Group - _TC"})
 
 		create_item("_Test Stock Reco Item", is_stock_item=1, valuation_rate=100,
 			warehouse="_Test Warehouse Ledger 1 - _TC", create_new_batch=1, has_batch_no=1)
@@ -100,7 +100,7 @@ class TestStockReconciliation(unittest.TestCase):
 		make_stock_entry(posting_date="2012-12-15", posting_time="02:00", item_code="_Test Stock Reco Item",
 			target="_Test Warehouse Ledger 1 - _TC", qty=100, basic_rate=100, batch_naming_series="BATCH-#####", purpose="Material Receipt")
 
-		items = get_items("_Test Warehouse Group 1 - _TC", nowdate(), nowtime(), "_Test Company")
+		items = get_items("_Test Warehouse Group - _TC", nowdate(), nowtime(), "_Test Company")
 
 		self.assertEqual(["_Test Stock Reco Item", "_Test Warehouse Ledger 1 - _TC", 100],
 			[items[0]["item_code"], items[0]["warehouse"], items[0]["qty"]])

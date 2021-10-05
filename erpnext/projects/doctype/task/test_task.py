@@ -47,14 +47,14 @@ class TestTask(unittest.TestCase):
 		task1.save()
 
 		self.assertEqual(frappe.db.get_value("Task", task2.name, "exp_start_date"),
-			getdate(add_days(nowdate(), 21)))
+			getdate(add_days(nowdate(), 11)))
 		self.assertEqual(frappe.db.get_value("Task", task2.name, "exp_end_date"),
-			getdate(add_days(nowdate(), 25)))
+			getdate(add_days(nowdate(), 15)))
 
 		self.assertEqual(frappe.db.get_value("Task", task3.name, "exp_start_date"),
-			getdate(add_days(nowdate(), 26)))
+			getdate(add_days(nowdate(), 11)))
 		self.assertEqual(frappe.db.get_value("Task", task3.name, "exp_end_date"),
-			getdate(add_days(nowdate(), 30)))
+			getdate(add_days(nowdate(), 15)))
 
 	def test_complete_task_without_assignment_closing(self):
 		if not frappe.db.exists("Task", "Test Close Assignment 1"):
