@@ -6,7 +6,9 @@ import taxjar
 import frappe
 from erpnext import get_default_company
 from frappe import _
+import json
 from frappe.contacts.doctype.address.address import get_company_address
+from frappe.integrations.utils import create_request_log
 
 SUPPORTED_COUNTRY_CODES = ["AT", "AU", "BE", "BG", "CA", "CY", "CZ", "DE", "DK", "EE", "ES", "FI",
 	"FR", "GB", "GR", "HR", "HU", "IE", "IT", "LT", "LU", "LV", "MT", "NL", "PL", "PT", "RO",
@@ -66,21 +68,30 @@ def create_transaction(doc, method):
 	tax_dict['amount'] = doc.net_total + tax_dict['shipping']
 
 	try:
+		doc.integration_request = create_request_log(tax_dict, 'Host', 'TaxJar')
+		doc.integration_request.endpoint = "create_transaction"
 		if doc.is_return:
 			tax_dict['transaction_reference_id'] = doc.return_against
-			client.create_refund(tax_dict)
+			refund_order = client.create_refund(tax_dict)
 		else:
-			client.create_order(tax_dict)
+			order = client.create_order(tax_dict)
 	except taxjar.exceptions.TaxJarResponseError as err:
+		doc.integration_request.error = str(err)
+		doc.integration_request.update_status(tax_dict, "Failed")
 		error_msg = """There seems to be an error in Address<br><br>{0}""".format(sanitize_error_response(err))
 		frappe.throw(_(error_msg), AddressError, _("Address Error"))
 	except Exception as ex:
 		print(traceback.format_exc(ex))
-
+	else:
+		if doc.is_return:
+			doc.integration_request.output = str(refund_order)
+		else:
+			doc.integration_request.output = str(order)
+		doc.integration_request.update_status(tax_dict, "Completed")
 
 def delete_transaction(doc, method):
 	"""Delete an existing TaxJar order transaction"""
-
+	
 	TAXJAR_CREATE_TRANSACTIONS = frappe.db.get_value("TaxJar Configuration", doc.company, "taxjar_create_transactions")
 	if not TAXJAR_CREATE_TRANSACTIONS:
 		return
@@ -90,7 +101,18 @@ def delete_transaction(doc, method):
 	if not client:
 		return
 
-	client.delete_order(doc.name)
+	try:
+		doc.integration_request = create_request_log({'reference_doctype':doc.doctype, 'reference_docname':doc.name}, 'Host', 'TaxJar')
+		doc.integration_request.endpoint = "delete_transaction"
+		deleted_order = client.delete_order(doc.name)
+	except taxjar.exceptions.TaxJarResponseError as err:
+		doc.integration_request.error = str(error)
+		doc.integration_request.update_status(tax_dict, "Failed")
+	else:
+		doc.integration_request.output = str(deleted_order)
+		doc.integration_request.update_status(tax_dict, "Completed")
+
+
 
 
 def get_tax_data(doc):
@@ -129,7 +151,9 @@ def get_tax_data(doc):
 		'shipping': shipping,
 		'amount': doc.net_total,
 		#'line_items': line_items,
-		'plugin': 'bloomstack'
+		'plugin': 'bloomstack',
+		'reference_doctype': doc.doctype,
+		'reference_docname': doc.name
 	}
 
 	return tax_dict
