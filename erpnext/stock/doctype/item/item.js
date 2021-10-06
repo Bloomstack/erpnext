@@ -29,39 +29,6 @@ frappe.ui.form.on("Item", {
 		if (frm.doc.is_fixed_asset) {
 			frm.trigger("set_asset_naming_series");
 		}
-
-		frm.set_query("metrc_item_category", () => {
-			if (frm.doc.metrc_uom) {
-				return {
-					query: "erpnext.stock.doctype.item.item.metrc_item_category_query",
-					filters: {
-						metrc_uom: frm.doc.metrc_uom
-					}
-				};
-			}
-		});
-
-		frm.set_query("metrc_uom", () => {
-			if (frm.doc.metrc_item_category) {
-				return {
-					query: "erpnext.stock.doctype.item.item.metrc_uom_query",
-					filters: {
-						metrc_item_category: frm.doc.metrc_item_category
-					}
-				};
-			}
-		});
-
-		frm.set_query("metrc_unit_uom", () => {
-			if (frm.doc.metrc_item_category) {
-				return {
-					query: "erpnext.stock.doctype.item.item.metrc_unit_uom_query",
-					filters: {
-						metrc_item_category: frm.doc.metrc_item_category
-					}
-				};
-			}
-		});
 	},
 
 	refresh: function(frm) {
