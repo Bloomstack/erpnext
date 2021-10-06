@@ -124,6 +124,13 @@ frappe.ui.form.on("Sales Order Item", {
 					}
 				}
 			});
+
+			//  it will reserve qty for delivery based on serial number.
+			frappe.db.get_value("Item", {"name": row.item_code}, "has_serial_no", (r) => {
+				if (r.has_serial_no) {
+					frappe.model.set_value(cdt, cdn, "ensure_delivery_based_on_produced_serial_no", true);
+				}
+			});
 		}
 	},
 	delivery_date: function(frm, cdt, cdn) {
