@@ -4,7 +4,6 @@
 
 from __future__ import unicode_literals
 import frappe
-import json
 from frappe.model.document import Document
 from erpnext.erpnext_integrations.taxjar_integration import get_client
 import taxjar
