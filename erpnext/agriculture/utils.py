@@ -12,9 +12,13 @@ def create_project(project_name, start_date, period):
 
 def create_tasks(tasks, project_name, start_date):
 	for task in tasks:
-		frappe.get_doc({
+		task = frappe.get_doc({
 			"doctype": "Task",
 			"subject": task.get("task_name"),
 			"priority": task.get("priority"),
+		})
+		task.append("projects", {
+			"is_default": 1,
 			"project": project_name
-		}).insert()
+		})
+		task.insert(ignore_permissions=True)
