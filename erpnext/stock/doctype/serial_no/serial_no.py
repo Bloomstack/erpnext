@@ -431,7 +431,6 @@ def update_args_for_serial_no(serial_no_doc, serial_no, args, is_new=False):
 		"via_stock_ledger": args.get("via_stock_ledger") or True,
 		"supplier": args.get("supplier"),
 		"location": args.get("location"),
-		"sales_order": frappe.db.get_value(args.get("voucher_type"), args.get("voucher_no"), "sales_order_no"),
 		"warehouse": (args.get("warehouse")
 			if args.get("actual_qty", 0) > 0 else None)
 	})
