@@ -71,6 +71,7 @@
   "warehouse",
   "rejected_warehouse",
   "quality_inspection",
+  "batch_naming_series",
   "batch_no",
   "package_tag",
   "col_br_wh",
@@ -827,11 +828,17 @@
    "fieldtype": "Long Text",
    "label": "Label Print Details",
    "read_only": 1
+  },
+  {
+   "fieldname": "batch_naming_series",
+   "fieldtype": "Link",
+   "label": "Batch Naming Series",
+   "options": "Custom Series"
   }
  ],
  "idx": 1,
  "istable": 1,
- "modified": "2021-03-15 08:18:07.349463",
+ "modified": "2021-10-07 08:35:32.383620",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Purchase Invoice Item",
