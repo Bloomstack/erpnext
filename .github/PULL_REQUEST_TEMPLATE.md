@@ -1,25 +1,3 @@
-<!--
-
-Some key notes before you open a PR:
-
- 1. Select which branch should this PR be merged in?
- 2. PR name follows [convention](http://karma-runner.github.io/4.0/dev/git-commit-msg.html)
- 3. All tests pass locally, UI and Unit tests
- 4. All business logic and validations must be on the server-side
- 5. Update necessary Documentation
- 6. Put `closes #XXXX` in your comment to auto-close the issue that your PR fixes
-
-
-Also, if you're new here
-
-- Documentation Guidelines => https://github.com/frappe/erpnext/wiki/Updating-Documentation
-
-- Contribution Guide => https://github.com/frappe/erpnext/blob/develop/.github/CONTRIBUTING.md
-
-- Pull Request Checklist => https://github.com/frappe/erpnext/wiki/Pull-Request-Checklist
-
--->
-
 **Note:**
 > Please write PR description for functional users too 🙏🙏🙏. Select your template accordingly.
 
