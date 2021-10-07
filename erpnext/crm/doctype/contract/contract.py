@@ -49,15 +49,9 @@ class Contract(Document):
 	def before_submit(self):
 		self.set_contract_company()
 
-	def on_submit(self):
-		self.create_event_against_contract()
-
 	def before_update_after_submit(self):
 		self.update_contract_status()
 		self.update_fulfilment_status()
-	
-	def on_cancel(self):
-		self.cancel_event_against_contract()
 
 	def validate_dates(self):
 		if self.end_date and self.end_date < self.start_date:
@@ -176,34 +170,6 @@ class Contract(Document):
 		self.signed_by_company = frappe.session.user
 		if self.company:
 			self.letter_head = frappe.db.get_value("Company", self.company, "default_letter_head")
-
-	def create_event_against_contract(self):
-		if not self.end_date:
-			return
-
-		employee_id = frappe.db.get_value('Employee', {'user_id': self.signed_by_company}, 'name')
-		event = frappe.new_doc('Event')
-		event.subject = self.name
-		event.ends_on = self.end_date
-		event.description = self.contract_terms
-		event.all_day = 1
-		event.append("event_participants", {
-			"reference_doctype": self.party_type,
-			"reference_docname": self.party_name
-		})
-
-		if employee_id:
-			event.append("event_participants", {
-				"reference_doctype": 'Employee',
-				"reference_docname": employee_id
-			})
-
-		event.save()
-	
-	def cancel_event_against_contract(self):
-		event_name = frappe.db.exists('Event', {'subject': self.name})
-		if event_name:
-			frappe.delete_doc('Event', event_name)
 
 def get_status(start_date, end_date):
 	"""
