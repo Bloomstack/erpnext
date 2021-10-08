@@ -8,7 +8,7 @@ import unittest
 
 class TestShiftType(unittest.TestCase):
 	def test_make_shift_type(self):
-		pass
+		create_shift_type()
 
 
 def create_shift_type():
