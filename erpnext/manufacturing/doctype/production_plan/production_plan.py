@@ -672,7 +672,7 @@ def get_bin_details(row, company, for_warehouse=None, all_warehouse=False):
 		ifnull(sum(actual_qty),0) as actual_qty, warehouse from `tabBin`
 		where item_code = %(item_code)s {conditions}
 		group by item_code, warehouse
-	""".format(conditions=conditions), { "item_code": row['item_code'] if row else None }, as_dict=1)
+	""".format(conditions=conditions), {"item_code": row['item_code'] if row else None}, as_dict=1)
 
 @frappe.whitelist()
 def get_items_for_material_requests(doc, ignore_existing_ordered_qty=None):
