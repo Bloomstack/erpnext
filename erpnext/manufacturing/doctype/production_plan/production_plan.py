@@ -658,7 +658,9 @@ def get_bin_details(row, company, for_warehouse=None, all_warehouse=False):
 
 	conditions = " and warehouse in (select name from `tabWarehouse` where company = {0})".format(company)
 	if not all_warehouse:
-		warehouse = for_warehouse or row.get('source_warehouse') or row.get('default_warehouse')
+		warehouse = for_warehouse
+		if not warehouse and row:
+			warehouse = row.get('source_warehouse') or row.get('default_warehouse')
 
 	if warehouse:
 		lft, rgt = frappe.db.get_value("Warehouse", warehouse, ["lft", "rgt"])
@@ -670,7 +672,7 @@ def get_bin_details(row, company, for_warehouse=None, all_warehouse=False):
 		ifnull(sum(actual_qty),0) as actual_qty, warehouse from `tabBin`
 		where item_code = %(item_code)s {conditions}
 		group by item_code, warehouse
-	""".format(conditions=conditions), { "item_code": row['item_code'] }, as_dict=1)
+	""".format(conditions=conditions), { "item_code": row['item_code'] if row else None }, as_dict=1)
 
 @frappe.whitelist()
 def get_items_for_material_requests(doc, ignore_existing_ordered_qty=None):
@@ -758,7 +760,7 @@ def get_items_for_material_requests(doc, ignore_existing_ordered_qty=None):
 			bin_dict = get_bin_details(details, doc.company, warehouse)
 			bin_dict = bin_dict[0] if bin_dict else {}
 
-			if details.qty > 0:
+			if details and details.qty > 0:
 				items = get_material_request_items(details, sales_order, company,
 					ignore_existing_ordered_qty, warehouse, bin_dict)
 				if items:
