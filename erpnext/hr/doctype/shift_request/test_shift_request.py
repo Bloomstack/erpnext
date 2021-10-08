@@ -5,6 +5,7 @@ from __future__ import unicode_literals
 
 import frappe
 import unittest
+from erpnext.hr.doctype.shift_type.test_shift_type import create_shift_type
 from frappe.utils import nowdate
 
 class TestShiftRequest(unittest.TestCase):
@@ -13,9 +14,10 @@ class TestShiftRequest(unittest.TestCase):
 			frappe.db.sql("delete from `tab{doctype}`".format(doctype=doctype))
 
 	def test_make_shift_request(self):
+		shift = create_shift_type()
 		shift_request = frappe.get_doc({
 			"doctype": "Shift Request",
-			"shift_type": "Day Shift",
+			"shift_type": shift,
 			"company": "_Test Company",
 			"employee": "_T-Employee-00001",
 			"employee_name": "_Test Employee",
