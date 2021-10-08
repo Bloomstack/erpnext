@@ -8,7 +8,8 @@ import unittest
 
 class TestShiftType(unittest.TestCase):
 	def test_make_shift_type(self):
-		create_shift_type()
+		shift = create_shift_type()
+		self.assertEqual(shift, "Day Shift")
 
 
 def create_shift_type():
