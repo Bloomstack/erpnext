@@ -23,6 +23,7 @@ def create_tasks(tasks, project_name, start_date):
 		})
 		task_doc.append("projects", {
 			"is_default": 1,
-			"project": project_name
+			"project": project_name,
+			"status": "Open"
 		})
 		task_doc.insert(ignore_permissions=True)
