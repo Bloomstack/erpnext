@@ -37,7 +37,7 @@ frappe.ui.form.on("Contract", {
 				"filters": {
 					"name": ["in", ["Customer", "Supplier", "Employee"]],
 				}
-			}
+			};
 		});
 
 		if (frm.doc.docstatus === 1 && !frm.doc.customer_signature) {
