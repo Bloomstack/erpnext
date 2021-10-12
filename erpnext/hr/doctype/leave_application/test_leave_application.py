@@ -1,6 +1,7 @@
 # Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
 # License: GNU General Public License v3. See license.txt
 from __future__ import unicode_literals
+from re import DEBUG
 
 import frappe
 import unittest
@@ -197,21 +198,14 @@ class TestLeaveApplication(unittest.TestCase):
 		application.half_day_date = "2013-01-05"
 		application.insert()
 
+
 	def test_optional_leave(self):
 		leave_period = get_leave_period()
 		today = nowdate()
 		from datetime import date
+		frappe.db.sql("""DELETE from `tabHoliday List` where name = 'Test Holiday List for Optional Holiday'""")
 		holiday_list = 'Test Holiday List for Optional Holiday'
-		if not frappe.db.exists('Holiday List', holiday_list):
-			frappe.get_doc(dict(
-				doctype = 'Holiday List',
-				holiday_list_name = holiday_list,
-				from_date = add_months(today, -6),
-				to_date = add_months(today, 6),
-				holidays = [
-					dict(holiday_date = today, description = 'Test')
-				]
-			)).insert()
+		optional_holiday = get_optional_holiday_list(holiday_list, today)
 		employee = get_employee()
 
 		frappe.db.set_value('Leave Period', leave_period.name, 'optional_holiday_list', holiday_list)
@@ -323,6 +317,9 @@ class TestLeaveApplication(unittest.TestCase):
 		)).insert()
 
 		allocate_leaves(employee, leave_period, leave_type_1.name, 10)
+		frappe.db.sql("""DELETE FROM
+    	tabAttendance WHERE
+    	attendance_date BETWEEN %(from_date)s AND %(to_date)s """, {'from_date': date, 'to_date': add_days(date, 4)})
 
 		leave_application = frappe.get_doc(dict(
 		doctype = 'Leave Application',
@@ -373,8 +370,10 @@ class TestLeaveApplication(unittest.TestCase):
 		leave_type = create_leave_type(
 			leave_type_name="_Test_CF_leave_expiry",
 			is_carry_forward=1,
+			max_leaves_allowed = 0,
 			expire_carry_forwarded_leaves_after_days=90)
 		leave_type.submit()
+		frappe.db.set_value('Leave Type','_Test_CF_leave_expiry', 'max_leaves_allowed', 0)
 
 		create_carry_forwarded_allocation(employee, leave_type)
 
@@ -406,7 +405,7 @@ class TestLeaveApplication(unittest.TestCase):
 		while(i<14):
 			allocate_earned_leaves()
 			i += 1
-		self.assertEqual(get_leave_balance_on(employee.name, leave_type, nowdate()), 6)
+		self.assertEqual(get_leave_balance_on(employee.name, leave_type, nowdate()),6)
 
 		# validate earned leaves creation without maximum leaves
 		frappe.db.set_value('Leave Type', leave_type, 'max_leaves_allowed', 0)
@@ -484,9 +483,9 @@ class TestLeaveApplication(unittest.TestCase):
 			create_salary_component("Leave Encashment")
 		leave_type = create_leave_type(
 			leave_type_name="_Test_CF_leave_expiry",
-			is_carry_forward=1,
 			expire_carry_forwarded_leaves_after_days=90)
 		leave_type.submit()
+		frappe.db.set_value('Leave Type','_Test_CF_leave_expiry', 'max_leaves_allowed', 0)
 
 		create_carry_forwarded_allocation(employee, leave_type)
 
@@ -519,6 +518,7 @@ class TestLeaveApplication(unittest.TestCase):
 			is_carry_forward=1,
 			expire_carry_forwarded_leaves_after_days=90)
 		leave_type.submit()
+		frappe.db.set_value('Leave Type','_Test_CF_leave_expiry', 'max_leaves_allowed', 0)
 
 		create_carry_forwarded_allocation(employee, leave_type)
 
@@ -541,6 +541,7 @@ def create_carry_forwarded_allocation(employee, leave_type):
 			employee_name=employee.employee_name,
 			from_date=add_days(nowdate(), -84),
 			to_date=add_days(nowdate(), 100),
+			max_leaves_allowed = 0,
 			carry_forward=1)
 		leave_allocation.submit()
 
@@ -603,3 +604,14 @@ def allocate_leaves(employee, leave_period, leave_type, new_leaves_allocated, el
 	}).insert()
 
 	allocate_leave.submit()
+
+def get_optional_holiday_list(holiday_list, today):
+	return frappe.get_doc(dict(
+		doctype = 'Holiday List',
+		holiday_list_name = holiday_list,
+		from_date = add_months(today, -6),
+		to_date = add_months(today, 6),
+		holidays = [
+			dict(holiday_date = today, description = 'Test')
+			]
+		)).insert()
