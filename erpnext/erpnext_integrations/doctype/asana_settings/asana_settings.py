@@ -10,18 +10,20 @@ from frappe import _
 from frappe.utils.password import get_decrypted_password
 
 class AsanaSettings(Document):
-	def validate(self):
+	def after_save(self):
 		self.authorize()
 
 	def authorize(self):
 		"""Authenticate the token and return asana_settings client"""
-		if self.enable and not self.personal_access_token:
-			frappe.throw(_("Personal Access Token is mandatory if Asana Integration is enabled."))
-		try:
-			client = asana.Client.access_token(get_decrypted_password("Asana Settings", "Asana Settings", "personal_access_token"))
-			return client
-		except:
-			frappe.throw(_("Error while connecting to Asana Client."))
+		if self.enable:
+			if not self.personal_access_token:
+				frappe.throw(_("Personal Access Token is mandatory if Asana Integration is enabled."))
+
+			try:
+				client = asana.Client.access_token(get_decrypted_password("Asana Settings", "Asana Settings", "personal_access_token"))
+				return client
+			except:
+				frappe.throw(_("Error while connecting to Asana Client."))
 
 	def get_workspaces(self):
 		client = self.authorize()
