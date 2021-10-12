@@ -1,7 +1,6 @@
 # Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
 # License: GNU General Public License v3. See license.txt
 from __future__ import unicode_literals
-from re import DEBUG
 
 import frappe
 import unittest
@@ -613,5 +612,5 @@ def get_optional_holiday_list(holiday_list, today):
 		to_date = add_months(today, 6),
 		holidays = [
 			dict(holiday_date = today, description = 'Test')
-			]
-		)).insert()
+		]
+	)).insert()
