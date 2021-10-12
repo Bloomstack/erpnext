@@ -90,7 +90,10 @@ def delete_transaction(doc, method):
 	if not client:
 		return
 
-	client.delete_order(doc.name)
+	if doc.is_return:
+		client.delete_refund(doc.name)
+	else:
+		client.delete_order(doc.name)
 
 
 def get_tax_data(doc):
