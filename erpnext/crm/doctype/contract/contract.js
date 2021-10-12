@@ -32,6 +32,14 @@ frappe.ui.form.on("Contract", {
 			}
 		});
 
+		frm.set_query("party_type", function() {
+			return{
+				"filters": {
+					"name": ["in", ["Customer", "Supplier", "Employee"]],
+				}
+			}
+		});
+
 		if (frm.doc.docstatus === 1 && !frm.doc.customer_signature) {
 			frm.add_custom_button(__("Authorize"), () => {
 				frappe.prompt([

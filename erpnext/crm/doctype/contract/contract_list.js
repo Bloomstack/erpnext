@@ -9,4 +9,13 @@ frappe.listview_settings['Contract'] = {
             return [__(doc.status), "darkgrey", "status,=," + doc.status];
         }
     },
+    onload: function (listview) {
+		listview.page.fields_dict.party_type.get_query = function() {
+			return {
+				"filters": {
+					"name": ["in", ["Customer", "Supplier", "Employee"]],
+				}
+			};
+		};
+	}
 };
