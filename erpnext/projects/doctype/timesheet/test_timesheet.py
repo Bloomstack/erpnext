@@ -23,6 +23,8 @@ class TestTimesheet(unittest.TestCase):
 		if not frappe.db.exists("Salary Component", "Timesheet Component"):
 			frappe.get_doc({"doctype": "Salary Component", "salary_component": "Timesheet Component"}).insert()
 
+	def tearDown(self):
+		frappe.db.set_value('Employee', employee.name, "date_of_joining", "2010-01-01")
 
 	def test_timesheet_billing_amount(self):
 		make_salary_structure_for_timesheet("_T-Employee-00001")
