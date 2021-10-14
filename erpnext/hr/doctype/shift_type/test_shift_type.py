@@ -14,7 +14,7 @@ class TestShiftType(unittest.TestCase):
 def create_shift_type():
 	shift = frappe.db.exists("Shift Type", "Day Shift")
 	if shift:
-			return shift
+		return shift
 
 	shift_type = frappe.get_doc({
 		"doctype": "Shift Type",
