@@ -4,6 +4,7 @@
 frappe.ui.form.on('Asana Migrator', {
 
 	refresh: function (frm) {
+		frm.get_field("tasks_view").$wrapper.empty();
 		frm.events.set_data_field_property(frm);
 		frm.events.crete_task_view(frm);
 		frm.events.update_primary_action(frm);
@@ -39,7 +40,7 @@ frappe.ui.form.on('Asana Migrator', {
 	setup_progress: function (frm) {
 		frappe.realtime.on('fetching_task', (data) => {
 			if (data.progress < 100) {
-				frm.dashboard.show_progress('Get Task', data.progress, 'Fetching Tasks and comments.');
+				frm.dashboard.show_progress('Get Task', data.progress, data.label);
 			} else {
 				cur_frm.dashboard.hide_progress();
 				cur_frm.refresh();
@@ -198,6 +199,12 @@ frappe.ui.form.on('Asana Migrator', {
 		}
 		let columns = frm.events.get_columns(editable);
 		let row = JSON.parse(frm.doc.row_data);
+		frm.get_field("tasks_view").$wrapper.append(`<div>
+			<span class="indicator whitespace-nowrap blue">
+				<span>Sub-Tasks will be imported Automatically</span>
+			</span>
+		</div>
+		<hr>`);
 		frm.get_field("tasks_view").$wrapper.append('<div id="datatable"></div>');
 		frm.datatable = new DataTable('#datatable', {
 			columns: columns,
@@ -261,12 +268,6 @@ frappe.ui.form.on('Asana Migrator', {
 			{
 				content: 'Global Id',
 				id: 'global_id',
-				editable: false,
-				resizable: true,
-			},
-			{
-				content: 'Parent Task Id',
-				id: 'parent_id',
 				editable: false,
 				resizable: true,
 			},
