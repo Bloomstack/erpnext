@@ -5,7 +5,6 @@
 from __future__ import unicode_literals
 import frappe
 import json
-from pprint import pprint
 from frappe import _
 from frappe.utils import comma_and
 from frappe.desk.form.utils import add_comment
@@ -25,8 +24,9 @@ class AsanaMigrator(Document):
 	def get_tasks(self):
 		if self.selected_project and self.selected_workspace:
 			data = []
+			project_gid = ''
 			client = authorize()
-			project_global_id = self.selected_project.split(" - ")[1]
+			project_global_id = get_project_gid(self.project_options, self.selected_project)
 
 			frappe.publish_realtime('fetching_task', dict(
 				progress = 2, heading="Getting tasks", label = 'Fetching Tasks and comments.'))
@@ -53,8 +53,9 @@ class AsanaMigrator(Document):
 		self.save()
 	
 	def import_tasks(self, tasks_to_import, comments_to_import):
-		from pprint import pprint
 		self.db_set("status","In Progress")
+
+		project_gid = get_project_gid(self.project_options, self.selected_project)
 
 		child_tasks = []
 		frappe.publish_realtime('fetching_task', dict(
@@ -62,14 +63,11 @@ class AsanaMigrator(Document):
 			label = "Looking for Sub-Tasks and Comments"))
 		count = 1
 		for task in tasks_to_import:
-			print(task["name"])
 			child_data, child_comment = self.get_child_task(task["global_id"])
 			child_tasks += child_data
 
 			while(child_data):
-				print("------------->>")
 				data, comments = self._get_child_task(child_data)
-				print(data, comments)
 				child_tasks += data
 				child_comment += comments
 				child_data = data
@@ -84,22 +82,17 @@ class AsanaMigrator(Document):
 		self.save()
 
 		tasks_to_import += child_tasks
-		# frappe.enqueue(create_tasks, timeout=600,
-		# 	tasks_to_import=tasks_to_import, comments_to_import=comments_to_import,
-		# 		project=self.selected_project, skip_completed_tasks=self.skip_completed_tasks)
-
-		create_tasks(tasks_to_import=tasks_to_import, comments_to_import=comments_to_import,
-		 	project=self.selected_project, skip_completed_tasks=self.skip_completed_tasks)
+		frappe.enqueue(create_tasks, timeout=600,
+			tasks_to_import=tasks_to_import, comments_to_import=comments_to_import,
+			project_gid=project_gid, skip_completed_tasks=self.skip_completed_tasks)
 
 		self.db_set("status","Completed")
 
 	def _get_child_task(self, childs):
 		datas = []
 		comments = []
-		print("_get_child_task")
 		for child in childs:
 			d, c = self.get_child_task(child["global_id"])
-			print(d, c)
 			datas += d
 			comments += c
 
@@ -118,10 +111,6 @@ class AsanaMigrator(Document):
 				comment = self.get_comments(task['gid'], client)
 				if len(comment):
 					child_comment += comment
-
-		print("get_child_task")
-
-		print(child_data, child_comment)
 
 		return child_data, child_comment
 
@@ -163,12 +152,14 @@ class AsanaMigrator(Document):
 		return comments
 
 
-def create_tasks(tasks_to_import, comments_to_import, project, skip_completed_tasks):
-	#Sorted for creating parent tasks first.
-	# task_dict = sorted(tasks_to_import, key = lambda i: i['parent_id'], reverse = False)
-	project = create_project(project)
+def get_project_gid(project_options, selected_project):
+	for details in json.loads(project_options):
+		if details['name'] == selected_project:
+			return details["gid"]
 
-	pprint(tasks_to_import)
+
+def create_tasks(tasks_to_import, comments_to_import, project_gid, skip_completed_tasks):
+	project = create_project(project_gid)
 
 	for data in tasks_to_import:
 		data = frappe._dict(data)
@@ -218,8 +209,7 @@ def _add_comments(task, comments_to_import, global_id, assignee, reference):
 		except Exception as e:
 			frappe.log_error(e)
 
-def create_project(asana_project):
-	project_global_id = asana_project.split(" - ")[1]
+def create_project(project_global_id):
 
 	client = authorize()
 	project_details = client.projects.get_project(project_global_id)

@@ -72,7 +72,14 @@ frappe.ui.form.on('Asana Migrator', {
 	},
 
 	workspace: function (frm) {
-		let global_id = frm.doc.workspace.split(" - ")[1];
+		let workspaces = JSON.parse(frm.doc.workspace_options);
+		let global_id;
+		for (let idx in workspaces){
+			let data = workspaces[idx]
+			if (data.name == frm.doc.workspace){
+				global_id = data.gid
+			} 
+		}
 		frm.events.get_projects(frm, global_id);
 
 		// saving Options as Workspace value as options are Dynamic.
@@ -88,13 +95,12 @@ frappe.ui.form.on('Asana Migrator', {
 			let options = [];
 			if (r.message) {
 				for (let idx in r.message) {
-					options.push(r.message[idx].name + ' - ' + r.message[idx].gid);
+					options.push(r.message[idx].name)
 				}
 				frm.set_df_property("workspace", "options", options);
 				frm.set_value("workspace", options[0]);
-
 				// saving Options as Worksapces option is Dynamic.
-				frm.doc.workspace_options = JSON.stringify(options);
+				frm.doc.workspace_options = JSON.stringify(r.message);
 			}
 		});
 	},
@@ -111,13 +117,13 @@ frappe.ui.form.on('Asana Migrator', {
 			let options = [];
 			if (r.message) {
 				for (let idx in r.message) {
-					options.push(r.message[idx].name + ' - ' + r.message[idx].gid);
+					options.push(r.message[idx].name);
 				}
 				frm.set_df_property("project", "options", options);
 				frm.set_value("project", options[0]);
 
 				// saving Options as Projects option is Dynamic.
-				frm.doc.project_options = JSON.stringify(options);
+				frm.doc.project_options = JSON.stringify(r.message);
 			}
 		});
 	},
