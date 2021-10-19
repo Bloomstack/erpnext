@@ -22,7 +22,7 @@ class AsanaSettings(Document):
 			try:
 				client = asana.Client.access_token(get_decrypted_password("Asana Settings", "Asana Settings", "personal_access_token"))
 				return client
-			except:
+			except Exception:
 				frappe.throw(_("Error while connecting to Asana Client."))
 
 	def get_workspaces(self):

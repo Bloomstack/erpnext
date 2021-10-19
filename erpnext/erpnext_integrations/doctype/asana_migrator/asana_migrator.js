@@ -75,10 +75,10 @@ frappe.ui.form.on('Asana Migrator', {
 		let workspaces = JSON.parse(frm.doc.workspace_options);
 		let global_id;
 		for (let idx in workspaces){
-			let data = workspaces[idx]
+			let data = workspaces[idx];
 			if (data.name == frm.doc.workspace){
-				global_id = data.gid
-			} 
+				global_id = data.gid;
+			}
 		}
 		frm.events.get_projects(frm, global_id);
 
@@ -95,7 +95,7 @@ frappe.ui.form.on('Asana Migrator', {
 			let options = [];
 			if (r.message) {
 				for (let idx in r.message) {
-					options.push(r.message[idx].name)
+					options.push(r.message[idx].name);
 				}
 				frm.set_df_property("workspace", "options", options);
 				frm.set_value("workspace", options[0]);

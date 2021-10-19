@@ -24,7 +24,6 @@ class AsanaMigrator(Document):
 	def get_tasks(self):
 		if self.selected_project and self.selected_workspace:
 			data = []
-			project_gid = ''
 			client = authorize()
 			project_global_id = get_project_gid(self.project_options, self.selected_project)
 
