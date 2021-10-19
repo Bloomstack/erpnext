@@ -204,7 +204,7 @@ class TestLeaveApplication(unittest.TestCase):
 		from datetime import date
 		frappe.db.sql("""DELETE from `tabHoliday List` where name = 'Test Holiday List for Optional Holiday'""")
 		holiday_list = 'Test Holiday List for Optional Holiday'
-		optional_holiday = get_optional_holiday_list(holiday_list, today)
+		get_optional_holiday_list(holiday_list, today)
 		employee = get_employee()
 
 		frappe.db.set_value('Leave Period', leave_period.name, 'optional_holiday_list', holiday_list)
