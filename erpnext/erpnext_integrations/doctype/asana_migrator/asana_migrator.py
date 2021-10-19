@@ -87,7 +87,7 @@ class AsanaMigrator(Document):
 		tasks_to_import += child_tasks
 
 		create_tasks(tasks_to_import=tasks_to_import, comments_to_import=comments_to_import,
-		 	project_gid=project_gid, skip_completed_tasks=self.skip_completed_tasks)
+			project_gid=project_gid, skip_completed_tasks=self.skip_completed_tasks)
 
 		frappe.publish_realtime('fetching_task', dict(
 			progress = 100, heading="Creating Task and Sub-Task",
@@ -210,23 +210,32 @@ def create_tasks(tasks_to_import, comments_to_import, project_gid, skip_complete
 		
 		
 def _add_comments(task, comments_to_import, global_id, assignee, reference):
-	comment_text = ''
 	task_detail_text = ''
 	task_comments = comments_to_import.get(global_id)
 	if task_comments:
 		for comment in task_comments:
-			comment_text += " " + "<b>" +comment["created_by"]["name"]+ ": </b>"
-			comment_text += comment["text"]
-			comment_text += "<br><br>"
+			commented_by = comment["created_by"]["name"]
+			comment_text = comment["text"]
+			comment_email = commented_by
+
+			employee = frappe.db.exists("Employee", {"employee_name": commented_by})
+
+			if employee:
+				user = frappe.db.get_value("Employee", employee, "user_id")
+				comment_email = user
+
+			try:
+				add_comment("Task", task, comment_text, comment_email, commented_by)
+			except Exception as e:
+				frappe.log_error(e)
 	if assignee:
-		task_detail_text = _("This Task was assigned to {0}").format(assignee)
-	task_detail_text += "<br>" + "Reference: " 
-	task_detail_text += "<a href="+(reference)+">" + (reference)+ "</a>"
-	for comment in [comment_text, task_detail_text]:
-		try:
-			add_comment("Task", task, comment, frappe.session.user, frappe.session.user_fullname)
-		except Exception as e:
-			frappe.log_error(e)
+		task_detail_text = _("This Task was assigned to {0}").format(assignee) + "<br>"
+
+	task_detail_text += "Reference: " + "<a href="+(reference)+">" + (reference)+ "</a>"
+	try:
+		add_comment("Task", task, task_detail_text, frappe.session.user, frappe.session.user_fullname)
+	except Exception as e:
+		frappe.log_error(e)
 
 def create_project(project_global_id):
 
