@@ -81,7 +81,7 @@ class AsanaMigrator(Document):
 		self.save()
 
 		tasks_to_import += child_tasks
-		frappe.enqueue(create_tasks, timeout=600,
+		frappe.enqueue(create_tasks, timeout=3600, queue='long',
 			tasks_to_import=tasks_to_import, comments_to_import=comments_to_import,
 			project_gid=project_gid, skip_completed_tasks=self.skip_completed_tasks)
 
