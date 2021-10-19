@@ -317,8 +317,8 @@ class TestLeaveApplication(unittest.TestCase):
 
 		allocate_leaves(employee, leave_period, leave_type_1.name, 10)
 		frappe.db.sql("""DELETE FROM
-    	tabAttendance WHERE
-    	attendance_date BETWEEN %(from_date)s AND %(to_date)s """, {'from_date': date, 'to_date': add_days(date, 4)})
+			tabAttendance WHERE
+			attendance_date BETWEEN %(from_date)s AND %(to_date)s """, {'from_date': date, 'to_date': add_days(date, 4)})
 
 		leave_application = frappe.get_doc(dict(
 		doctype = 'Leave Application',
