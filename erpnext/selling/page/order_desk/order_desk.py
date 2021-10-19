@@ -2,7 +2,6 @@
 # License: GNU General Public License v3. See license.txt
 
 from __future__ import unicode_literals
-import json
 import frappe
 from frappe.utils import nowdate
 from frappe.utils.nestedset import get_root_of

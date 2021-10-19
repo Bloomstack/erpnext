@@ -464,7 +464,7 @@ erpnext.pos.OrderDesk = class OrderDesk {
 					this.frm.doc.docstatus = r.doc.docstatus;
 					frappe.show_alert({
 						indicator: 'green',
-						message: __(`Sales Order ${r.doc.name} created succesfully`)
+						message: __(`Sales Order ${r.doc.name} created successfully`)
 					});
 
 					this.toggle_editing();
