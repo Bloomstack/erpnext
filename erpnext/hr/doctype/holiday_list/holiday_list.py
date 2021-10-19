@@ -159,33 +159,34 @@ def send_holiday_notification():
 						</tr>
 					""".format(formatdate(holiday.holiday_date), frappe.utils.get_weekday(holiday.holiday_date), holiday.description)
 
-			holiday_table = """
-				<table>
-					<thead>
-						<tr>
-							<th>Date</th>
-							<th>Day</th>
-							<th>Description</th>
-						</tr>
-					</thead>
-					<tbody>
-						{0}
-					</tbody>
-				</table>
-			""".format(_holiday)
+			if _holiday:
+				holiday_table = """
+					<table>
+						<thead>
+							<tr>
+								<th>Date</th>
+								<th>Day</th>
+								<th>Description</th>
+							</tr>
+						</thead>
+						<tbody>
+							{0}
+						</tbody>
+					</table>
+				""".format(_holiday)
 
-			recipients = [d.email for d in frappe.get_all("Email Group Member",filters={
-				"email_group": holiday_list.send_reminders_to}, fields=["email"])]
+				recipients = [d.email for d in frappe.get_all("Email Group Member",filters={
+					"email_group": holiday_list.send_reminders_to}, fields=["email"])]
 
-			message = ''
-			if holiday_list.notification_message:
-				message = holiday_list.notification_message + '<br>' + holiday_table
-			else:
-				message = holiday_table
+				message = ''
+				if holiday_list.notification_message:
+					message = holiday_list.notification_message + '<br>' + holiday_table
+				else:
+					message = holiday_table
 
-			if len(recipients):
-				frappe.sendmail(
-					recipients=recipients,
-					subject="Holiday Notification",
-					message=message
-				)
+				if len(recipients):
+					frappe.sendmail(
+						recipients=recipients,
+						subject="Holiday Notification",
+						message=message
+					)
