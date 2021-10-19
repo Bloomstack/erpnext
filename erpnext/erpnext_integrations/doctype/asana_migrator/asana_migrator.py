@@ -50,8 +50,12 @@ class AsanaMigrator(Document):
 		self.row_data = json.dumps(data)
 		self.tasks_comment = json.dumps(task_comments)
 		self.save()
-	
+
 	def import_tasks(self, tasks_to_import, comments_to_import):
+		frappe.enqueue_doc(self.doctype, self.name, "_import_tasks", queue="long",
+			timeout=3600, tasks_to_import=tasks_to_import, comments_to_import = comments_to_import)
+	
+	def _import_tasks(self, tasks_to_import, comments_to_import):
 		self.db_set("status","In Progress")
 
 		project_gid = get_project_gid(self.project_options, self.selected_project)
@@ -81,10 +85,14 @@ class AsanaMigrator(Document):
 		self.save()
 
 		tasks_to_import += child_tasks
-		frappe.enqueue(create_tasks, timeout=3600, queue='long',
-			tasks_to_import=tasks_to_import, comments_to_import=comments_to_import,
-			project_gid=project_gid, skip_completed_tasks=self.skip_completed_tasks)
 
+		create_tasks(tasks_to_import=tasks_to_import, comments_to_import=comments_to_import,
+		 	project_gid=project_gid, skip_completed_tasks=self.skip_completed_tasks)
+
+		frappe.publish_realtime('fetching_task', dict(
+			progress = 100, heading="Creating Task and Sub-Task",
+			label = "Creating Task and Sub-Task"))
+		
 		self.db_set("status","Completed")
 
 	def _get_child_task(self, childs):
@@ -160,6 +168,11 @@ def get_project_gid(project_options, selected_project):
 def create_tasks(tasks_to_import, comments_to_import, project_gid, skip_completed_tasks):
 	project = create_project(project_gid)
 
+	count = 1
+	frappe.publish_realtime('fetching_task', dict(
+		progress = 2, heading="Creating Task and Sub-Task",
+		label = "Creating Task and Sub-Task"))
+
 	for data in tasks_to_import:
 		data = frappe._dict(data)
 		if frappe.db.exists("Task", {"subject": data.name}): 
@@ -188,6 +201,13 @@ def create_tasks(tasks_to_import, comments_to_import, project_gid, skip_complete
 			frappe.log_error(e)
 
 		_add_comments(task.name, comments_to_import, data.global_id, data.assignee, data.reference)
+
+		count += 1
+		frappe.publish_realtime('fetching_task', dict(
+			progress = count*100/len(tasks_to_import), heading="Creating Task and Sub-Task",
+			label = "Creating Task and Sub-Task"))
+
+		
 		
 def _add_comments(task, comments_to_import, global_id, assignee, reference):
 	comment_text = ''
