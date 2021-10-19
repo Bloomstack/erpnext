@@ -20,7 +20,7 @@ frappe.ui.form.on('Strain', {
 			};
 		});
 		frm.fields_dict.materials_required.grid.set_column_disp('bom_no', false);
-		frm.trigger('show_progress_for_metrc')
+		frm.trigger('show_progress_for_metrc');
 	},
 
 	onload_post_render: function(frm) {
@@ -37,12 +37,12 @@ frappe.ui.form.on('Strain', {
 			'Successful on Bloomtrace',
 			'Reported to METRC',
 			'Successful on METRC'
-		]
+		];
 		let unsuccessful_status = [
 			'Failed on Bloomtrace',
 			'Failed on METRC',
 			'METRC ID Reported to Bloomstack'
-		]
+		];
 		let status_widths = [
 			'Compliance Document',
 			'Reported to Bloomtrace',
@@ -60,7 +60,7 @@ frappe.ui.form.on('Strain', {
 			'Successful on METRC': 'green',
 			'Failed on METRC': 'red',
 			'METRC ID Reported to Bloomstack':'green'
-		}
+		};
 
 		let bars = [];
 		let message = '';
@@ -75,29 +75,29 @@ frappe.ui.form.on('Strain', {
 			}
 		}
 		status_widths.forEach((status, i) => {
-				if(status == selected_status) {
-					completed_status = status_widths.slice(0, i+1)
-					jQuery.grep(status_widths, function(el) {
-						if (jQuery.inArray(el, completed_status) == -1) incomplete_status.push(el);
+			if(status == selected_status) {
+				completed_status = status_widths.slice(0, i+1);
+				jQuery.grep(status_widths, function(el) {
+					if (jQuery.inArray(el, completed_status) == -1) incomplete_status.push(el);
+				});
+				completed_status.forEach(completed => {
+					message = completed;
+					bars.push({
+						'title': completed,
+						'width': '14%',
+						'progress_class': colorsclass[selected_status]
 					});
-					completed_status.forEach(completed => {
-						message = completed
-						bars.push({
-							'title': completed,
-							'width': '14%',
-							'progress_class': colorsclass[selected_status]
-						})
-					})
-					incomplete_status.forEach(incomplete => {
-						message = incomplete
-						bars.push({
-							'title': incomplete,
-							'width': '14%',
-							'progress_class':""
-						})
-					})
-				}
-		})
+				});
+				incomplete_status.forEach(incomplete => {
+					message = incomplete;
+					bars.push({
+						'title': incomplete,
+						'width': '14%',
+						'progress_class':""
+					});
+				});
+			}
+		});
 		frm.dashboard.add_progress_chart(__('Status'), bars, message);
 		if(!frm.is_new() && successful_status.includes(selected_status) && !frm.frozen) {
 			frm.frozen = true;
