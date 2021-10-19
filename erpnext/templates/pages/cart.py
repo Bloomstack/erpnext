@@ -15,14 +15,14 @@ def get_context(context):
 		boot = frappe.sessions.get()
 	except Exception as e:
 		boot = frappe._dict(status='failed', error = str(e))
-		print(frappe.get_traceback())
+		frappe.log_error(frappe.get_traceback(), "Error while building session boot object")
 
 	# Disable document creation from frontend for quick forms, etc...
 	boot.user.can_create = []
 
 	boot_json = frappe.as_json(boot)
 	# remove script tags from boot
-	boot_json = re.sub("\<script\>[^<]*\</script\>", "", boot_json)
+	boot_json = re.sub(r"\<script\>[^<]*\</script\>", "", boot_json)
 
 	context.update({
 		"boot": boot if context.get("for_mobile") else boot_json
