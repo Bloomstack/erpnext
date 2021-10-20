@@ -9,11 +9,7 @@
   "section_break_2",
   "personal_access_token",
   "column_break_4",
-  "number_of_stale_days",
-  "section_break_4",
-  "workspaces",
-  "projects",
-  "sections"
+  "number_of_stale_days"
  ],
  "fields": [
   {
@@ -44,36 +40,13 @@
    "fieldname": "number_of_stale_days",
    "fieldtype": "Int",
    "label": "Number of Stale Days"
-  },
-  {
-   "depends_on": "eval: doc.enable == 1",
-   "fieldname": "section_break_4",
-   "fieldtype": "Section Break"
-  },
-  {
-   "description": "List of Workspaces on Asana as comma separated values. e.g: workspace-1, workspace-2",
-   "fieldname": "workspaces",
-   "fieldtype": "Text",
-   "label": "Workspaces"
-  },
-  {
-   "description": "List of Projects on Asana in different workspaces as comma separated values. e.g: project-1, project-2",
-   "fieldname": "projects",
-   "fieldtype": "Text",
-   "label": "Projects"
-  },
-  {
-   "description": "List of Sections on Asana in different projects as comma separated values. e.g: section-1, section-2",
-   "fieldname": "sections",
-   "fieldtype": "Text",
-   "label": "Sections"
   }
  ],
  "issingle": 1,
- "modified": "2021-03-23 04:23:18.566744",
+ "modified": "2021-09-27 15:26:53.582800",
  "modified_by": "Administrator",
  "module": "ERPNext Integrations",
- "name": "Asana",
+ "name": "Asana Settings",
  "owner": "Administrator",
  "permissions": [
   {
