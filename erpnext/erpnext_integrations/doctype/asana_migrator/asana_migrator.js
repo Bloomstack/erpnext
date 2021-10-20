@@ -90,7 +90,7 @@ frappe.ui.form.on('Asana Migrator', {
 		frappe.call({
 			method: "erpnext.erpnext_integrations.doctype.asana_migrator.asana_migrator.get_workspaces",
 			freeze: true,
-			freeze_message: __("Getting Workspaces..."),
+			freeze_message: __("Fetching Workspaces from Asana..."),
 		}).then(r => {
 			let options = [];
 			if (r.message) {
@@ -109,7 +109,7 @@ frappe.ui.form.on('Asana Migrator', {
 		frappe.call({
 			method: "erpnext.erpnext_integrations.doctype.asana_migrator.asana_migrator.get_projects",
 			freeze: true,
-			freeze_message: __("Getting Projects..."),
+			freeze_message: __("Fetching Projects from Asana..."),
 			args: {
 				global_id: global_id
 			}
@@ -174,7 +174,7 @@ frappe.ui.form.on('Asana Migrator', {
 					}
 				});
 			} else {
-				frappe.msgprint(__("Please select Tasks from Datatable to import"));
+				frappe.msgprint(__("Please select Tasks from Table to import"));
 			}
 
 
@@ -207,7 +207,7 @@ frappe.ui.form.on('Asana Migrator', {
 		let row = JSON.parse(frm.doc.row_data);
 		frm.get_field("tasks_view").$wrapper.append(`<div>
 			<span class="indicator whitespace-nowrap blue">
-				<span>Sub-Tasks will be imported Automatically</span>
+				<span>Select Tasks from the table below that you wish to import. Sub-Tasks will be imported Automatically</span>
 			</span>
 		</div>
 		<hr>`);
@@ -229,7 +229,6 @@ frappe.ui.form.on('Asana Migrator', {
 					render_input: true,
 					only_input: true,
 				});
-
 				return cur_frm.events.bind_events(cur_frm, control, colIndex, rowIndex);
 			},
 		});
