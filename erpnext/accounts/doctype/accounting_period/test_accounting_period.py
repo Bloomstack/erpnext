@@ -10,6 +10,8 @@ from erpnext.accounts.general_ledger import ClosedAccountingPeriod
 from erpnext.accounts.doctype.accounting_period.accounting_period import OverlapError
 from erpnext.accounts.doctype.sales_invoice.test_sales_invoice import create_sales_invoice
 
+test_dependencies = ['Item']
+
 class TestAccountingPeriod(unittest.TestCase):
     def test_overlap(self):
         ap1 = create_accounting_period(start_date = "2018-04-01",
