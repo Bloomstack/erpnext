@@ -15,7 +15,7 @@ sudo npm install -g yarn
 
 pip install frappe-bench
 
-git clone https://github.com/frappe/frappe --branch "${GITHUB_BASE_REF:-${GITHUB_REF##*/}}" --depth 1
+git clone https://github.com/Bloomstack/frappe --branch "${GITHUB_BASE_REF:-${GITHUB_REF##*/}}" --depth 1
 bench init --skip-assets --frappe-path ~/frappe --python "$(which python)" frappe-bench
 
 mkdir ~/frappe-bench/sites/test_site
