@@ -47,7 +47,7 @@ class TestPickList(unittest.TestCase):
 		pick_list.set_item_locations()
 
 		self.assertEqual(pick_list.locations[0].item_code, '_Test Item Home Desktop 100')
-		self.assertEqual(pick_list.locations[0].warehouse, '_Test Warehouse - _TC')
+		self.assertEqual(pick_list.locations[0].warehouse, '_Test Warehouse 1 - _TC')
 		self.assertEqual(pick_list.locations[0].qty, 5)
 
 	def test_pick_list_splits_row_according_to_warhouse_availability(self):
