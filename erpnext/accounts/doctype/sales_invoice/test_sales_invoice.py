@@ -1614,7 +1614,7 @@ class TestSalesInvoice(unittest.TestCase):
 		accounts_settings.allow_cost_center_in_entry_of_bs_account = 1
 		accounts_settings.save()
 		cost_center = "_Test Cost Center - _TC"
-		si =  create_sales_invoice(item_code="_Test Item Home Desktop 100", debit_to="Debtors - _TC")
+		si = create_sales_invoice(item_code="_Test Item Home Desktop 100", debit_to="Debtors - _TC")
 
 		expected_values = {
 			"Debtors - _TC": {
