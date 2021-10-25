@@ -65,14 +65,15 @@ class TestBOM(unittest.TestCase):
 		rm_rate = rm_rate[0][0] if rm_rate else 0
 
 		# Reset item valuation rate
-		reset_item_valuation_rate(item_code='_Test Item 2', qty=200, rate=rm_rate + 10)
+		reset_item_valuation_rate(item_code='_Test Item 2', qty=20000, rate=rm_rate + 10)
 
 		# update cost of all BOMs based on latest valuation rate
 		update_cost()
 
 		# check if new valuation rate updated in all BOMs
 		for d in frappe.db.sql("""select rate from `tabBOM Item`
-			where item_code='_Test Item 2' and docstatus=1 and parenttype='BOM'""", as_dict=1):
+			where parent='BOM-_Test Item Home Desktop Manufactured-001'
+			and item_code='_Test Item 2' and docstatus=1 and parenttype='BOM'""", as_dict=1):
 				self.assertEqual(d.rate, rm_rate + 10)
 
 	def test_bom_cost(self):

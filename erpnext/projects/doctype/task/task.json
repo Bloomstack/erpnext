@@ -7,7 +7,7 @@
  "engine": "InnoDB",
  "field_order": [
   "subject",
-  "project",
+  "default_project",
   "team",
   "assign_to",
   "issue",
@@ -368,7 +368,7 @@
   },
   {
    "bold": 1,
-   "fieldname": "project",
+   "fieldname": "default_project",
    "fieldtype": "Link",
    "in_global_search": 1,
    "in_list_view": 1,

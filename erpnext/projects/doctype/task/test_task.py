@@ -17,7 +17,6 @@ class TestTask(unittest.TestCase):
 		task1.append("depends_on", {
 			"task": task3.name
 		})
-
 		self.assertRaises(CircularReferenceError, task1.save)
 
 		task1.set("depends_on", [])
@@ -33,11 +32,11 @@ class TestTask(unittest.TestCase):
 		task1 = create_task("_Test Task 1", nowdate(), add_days(nowdate(), 10))
 
 		task2 = create_task("_Test Task 2", add_days(nowdate(), 11), add_days(nowdate(), 15), task1.name)
-		task2.get("depends_on")[0].project = "_Test Project"
+		task2.get("depends_on")[0].default_project = "_Test Project"
 		task2.save()
 
 		task3 = create_task("_Test Task 3", add_days(nowdate(), 11), add_days(nowdate(), 15), task2.name)
-		task3.get("depends_on")[0].project = "_Test Project"
+		task3.get("depends_on")[0].default_project = "_Test Project"
 		task3.save()
 
 		task1.reload()
@@ -47,14 +46,14 @@ class TestTask(unittest.TestCase):
 		task1.save()
 
 		self.assertEqual(frappe.db.get_value("Task", task2.name, "exp_start_date"),
-			getdate(add_days(nowdate(), 21)))
+			getdate(add_days(nowdate(), 11)))
 		self.assertEqual(frappe.db.get_value("Task", task2.name, "exp_end_date"),
-			getdate(add_days(nowdate(), 25)))
+			getdate(add_days(nowdate(), 15)))
 
 		self.assertEqual(frappe.db.get_value("Task", task3.name, "exp_start_date"),
-			getdate(add_days(nowdate(), 26)))
+			getdate(add_days(nowdate(), 11)))
 		self.assertEqual(frappe.db.get_value("Task", task3.name, "exp_end_date"),
-			getdate(add_days(nowdate(), 30)))
+			getdate(add_days(nowdate(), 15)))
 
 	def test_complete_task_without_assignment_closing(self):
 		if not frappe.db.exists("Task", "Test Close Assignment 1"):
@@ -145,7 +144,10 @@ def create_task(subject, start=None, end=None, depends_on=None, project=None, sa
 		task.subject = subject
 		task.exp_start_date = start or nowdate()
 		task.exp_end_date = end or nowdate()
-		task.project = project or "_Test Project"
+		task.append("projects", {
+			"is_default": 1,
+			"project": project or "_Test Project"
+		})
 		if save:
 			task.save()
 	else:

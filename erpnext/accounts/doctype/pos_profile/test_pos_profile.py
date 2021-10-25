@@ -21,8 +21,8 @@ class TestPOSProfile(unittest.TestCase):
 			items = get_items_list(doc, doc.company)
 			customers = get_customers_list(doc)
 			
-			products_count = frappe.db.sql(""" select count(name) from tabItem where item_group = '_Test Item Group'""", as_list=1)
-			customers_count = frappe.db.sql(""" select count(name) from tabCustomer where customer_group = '_Test Customer Group'""")
+			products_count = frappe.db.sql(""" select count(name) from tabItem where item_group = '_Test Item Group' and disabled = 0 and has_variants = 0 and is_sales_item = 1""", as_list=1)
+			customers_count = frappe.db.sql(""" select count(name) from tabCustomer where customer_group = '_Test Customer Group' and disabled = 0""")
 
 			self.assertEqual(len(items), products_count[0][0])
 			self.assertEqual(len(customers), customers_count[0][0])

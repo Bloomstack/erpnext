@@ -18,6 +18,9 @@ class TestLeaveApplication(unittest.TestCase):
 	def setUp(self):
 		for dt in ["Leave Application", "Leave Allocation", "Salary Slip", "Leave Ledger Entry"]:
 			frappe.db.sql("DELETE FROM `tab%s`" % dt) #nosec
+		if not frappe.db.exists("Salary Component","Leave Encashment"):
+			from erpnext.hr.doctype.salary_component.test_salary_component import create_salary_component
+			create_salary_component("Leave Encashment")
 
 	@classmethod
 	def setUpClass(cls):
