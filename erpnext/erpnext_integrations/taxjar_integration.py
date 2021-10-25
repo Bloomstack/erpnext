@@ -357,6 +357,7 @@ def get_doc_discount(doc):
 def get_line_item_dict(item, distributed_discount):
 	return dict( 
 		id = item.get('idx'),
+		description = item.get("item_name"),
 		quantity = item.get('qty'),
 		unit_price = item.get("price_list_rate"),
 		discount = (item.get("qty") * (item.get("price_list_rate") * item.get("discount_percentage"))/100) + distributed_discount
