@@ -117,9 +117,6 @@ def get_tax_data(doc):
 		to_shipping_state = get_iso_3166_2_state_code(to_address)
 	distributed_discount = get_doc_discount(doc)
 	line_items = [get_line_item_dict(item, distributed_discount) for item in doc.items]
-	# line_items = get_line_items(doc.items)
-	print("----------------------", line_items)
-	#warning: we are comenting line_items for now. once discount approach stable will enable line_items.
 	tax_dict = {
 		'from_country': from_country_code,
 		'from_zip': from_address.pincode,
@@ -344,6 +341,9 @@ def sanitize_error_response(response):
 	return response
 
 def get_doc_discount(doc):
+	""""
+		It will take doc discount which is applied on Net Total/ Grand Total. It will distribute discount to line item based on qty
+	"""
 	discount = 0
 	qty = 0
 	for item in doc.items:
@@ -361,29 +361,4 @@ def get_line_item_dict(item, distributed_discount):
 		quantity = item.get('qty'),
 		unit_price = item.get("price_list_rate"),
 		discount = (item.get("qty") * (item.get("price_list_rate") * item.get("discount_percentage"))/100) + distributed_discount
-		# unit_price = item.get('rate')
 	)
-
-# def get_line_items(doc):
-# 	if not doc:
-# 		return
-
-# 	# discout_percent = 0.0
-
-# 	# if doc.discount_amount:
-# 	# 	discout_percent = ((doc.discount_amount / doc.total) * 100)
-
-# 	line_items = []
-# 	for item in doc:
-# 		# if discout_percent:
-# 		# 	item.discount_amount = ((item.price_list_rate * discout_percent) / 100)
-# 		line_item = {
-# 			'id': item.name,
-# 			'description': item.item_name,
-# 			'quantity': item.qty,
-# 			'unit_price': item.price_list_rate,
-# 			'discount': round(item.discount_amount * item.qty)
-# 		}
-# 		line_items.append(line_item)
-
-# 	return line_items
