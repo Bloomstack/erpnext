@@ -874,6 +874,7 @@
   },
   {
    "default": "0",
+   "depends_on": "user_id",
    "fieldname": "restrict_user_to_company",
    "fieldtype": "Check",
    "label": "Restrict User to Company"
@@ -882,7 +883,7 @@
  "icon": "fa fa-user",
  "idx": 24,
  "image_field": "image",
- "modified": "2021-10-13 00:55:11.394759",
+ "modified": "2021-10-20 05:37:53.359191",
  "modified_by": "Administrator",
  "module": "HR",
  "name": "Employee",
