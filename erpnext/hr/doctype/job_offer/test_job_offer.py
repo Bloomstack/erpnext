@@ -13,11 +13,12 @@ from erpnext.hr.doctype.staffing_plan.test_staffing_plan import make_company
 
 class TestJobOffer(unittest.TestCase):
 	def test_job_offer_creation_against_vacancies(self):
-		create_staffing_plan(name="Test 2", 
-		from_date = nowdate(),
-		to_date = add_days(nowdate(), 10),
-		staffing_details=[{
-			"designation": "Researcher",
+		create_staffing_plan(
+			name="Test 2", 
+			from_date = nowdate(),
+			to_date = add_days(nowdate(), 10),
+			staffing_details=[{
+				"designation": "Researcher",
 			"vacancies": 0,
 			"estimated_cost_per_position": 5000
 		}])
