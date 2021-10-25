@@ -17,7 +17,8 @@ develop_version = '12.x.x-develop'
 
 app_include_js = "assets/js/erpnext.min.js"
 app_include_css = [
-	"assets/css/erpnext.css"
+	"assets/css/erpnext.css",
+	"assets/erpnext/css/order_desk.css"
 ]
 
 web_include_js = [
