@@ -1584,7 +1584,7 @@ class TestSalesInvoice(unittest.TestCase):
 		cost_center = "_Test Cost Center for BS Account - _TC"
 		create_cost_center(cost_center_name="_Test Cost Center for BS Account", company="_Test Company")
 
-		si =  create_sales_invoice_against_cost_center(item_code="_Test Item Home Desktop 100", cost_center=cost_center, debit_to="Debtors - _TC")
+		si = create_sales_invoice_against_cost_center(item_code="_Test Item Home Desktop 100", cost_center=cost_center, debit_to="Debtors - _TC")
 		self.assertEqual(si.cost_center, cost_center)
 
 		expected_values = {
