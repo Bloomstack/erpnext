@@ -98,7 +98,7 @@ class TestStockReconciliation(unittest.TestCase):
 			warehouse="_Test Warehouse Ledger 1 - _TC", create_new_batch=1, has_batch_no=1)
 
 		make_stock_entry(posting_date="2012-12-15", posting_time="02:00", item_code="_Test Stock Reco Item",
-			target="_Test Warehouse Ledger 1 - _TC", qty=100, basic_rate=100, batch_naming_series="BATCH-#####", purpose="Material Receipt")
+			target="_Test Warehouse Ledger 1 - _TC", qty=100, basic_rate=100, batch_naming_series="BATCH-.#####", purpose="Material Receipt")
 
 		items = get_items("_Test Warehouse Group - _TC", nowdate(), nowtime(), "_Test Company")
 

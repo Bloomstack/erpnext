@@ -57,7 +57,8 @@ class EmployeeBoardingController(Document):
 				})
 			task.append("projects", {
 						"is_default": 1,
-						"project": self.project
+						"project": self.project,
+						"status": "Open"
 			})
 			task.insert(ignore_permissions=True)
 			activity.db_set("task", task.name)

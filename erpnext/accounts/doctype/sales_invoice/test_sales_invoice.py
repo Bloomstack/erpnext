@@ -197,7 +197,7 @@ class TestSalesInvoice(unittest.TestCase):
 		self.assertEqual(si.grand_total, 32.55)
 
 	def test_sales_invoice_with_discount_and_inclusive_tax(self):
-		si = create_sales_invoice(qty=100, rate=50, do_not_save=True)
+		si = create_sales_invoice(item_code="_Test Item Home Desktop 100", qty=100, rate=50, do_not_save=True)
 		si.append("taxes", {
 			"charge_type": "On Net Total",
 			"account_head": "_Test Account Service Tax - _TC",
@@ -1034,14 +1034,14 @@ class TestSalesInvoice(unittest.TestCase):
 		self.assertEqual(si.get("items")[0].serial_no, dn.get("items")[0].serial_no)
 
 	def test_return_sales_invoice(self):
-		make_stock_entry(item_code="_Test Item", target="Stores - TCP1", qty=50, basic_rate=100)
+		make_stock_entry(item_code="_Test Item Home Desktop 100", target="Stores - TCP1", qty=50, basic_rate=100)
 
-		actual_qty_0 = get_qty_after_transaction(item_code = "_Test Item", warehouse = "Stores - TCP1")
+		actual_qty_0 = get_qty_after_transaction(item_code = "_Test Item Home Desktop 100", warehouse = "Stores - TCP1")
 
-		si = create_sales_invoice(qty = 5, rate=500, update_stock=1, company= "_Test Company with perpetual inventory", debit_to="Debtors - TCP1", item_code= "_Test Item", warehouse="Stores - TCP1", income_account = "Sales - TCP1", expense_account = "Cost of Goods Sold - TCP1", cost_center = "Main - TCP1")
+		si = create_sales_invoice(qty = 5, rate=500, update_stock=1, company= "_Test Company with perpetual inventory", debit_to="Debtors - TCP1", item_code= "_Test Item Home Desktop 100", warehouse="Stores - TCP1", income_account = "Sales - TCP1", expense_account = "Cost of Goods Sold - TCP1", cost_center = "Main - TCP1")
 
 
-		actual_qty_1 = get_qty_after_transaction(item_code = "_Test Item", warehouse = "Stores - TCP1")
+		actual_qty_1 = get_qty_after_transaction(item_code = "_Test Item Home Desktop 100", warehouse = "Stores - TCP1")
 
 		frappe.db.commit()
 
@@ -1052,9 +1052,9 @@ class TestSalesInvoice(unittest.TestCase):
 			"voucher_no": si.name}, "stock_value_difference") / 5
 
 		# return entry
-		si1 = create_sales_invoice(is_return=1, return_against=si.name, qty=-2, rate=500, update_stock=1, company= "_Test Company with perpetual inventory", debit_to="Debtors - TCP1", item_code= "_Test Item", warehouse="Stores - TCP1", income_account = "Sales - TCP1", expense_account = "Cost of Goods Sold - TCP1", cost_center = "Main - TCP1")
+		si1 = create_sales_invoice(is_return=1, return_against=si.name, qty=-2, rate=500, update_stock=1, company= "_Test Company with perpetual inventory", debit_to="Debtors - TCP1", item_code= "_Test Item Home Desktop 100", warehouse="Stores - TCP1", income_account = "Sales - TCP1", expense_account = "Cost of Goods Sold - TCP1", cost_center = "Main - TCP1")
 
-		actual_qty_2 = get_qty_after_transaction(item_code = "_Test Item", warehouse = "Stores - TCP1")
+		actual_qty_2 = get_qty_after_transaction(item_code = "_Test Item Home Desktop 100", warehouse = "Stores - TCP1")
 		self.assertEqual(actual_qty_1 + 2, actual_qty_2)
 
 		incoming_rate, stock_value_difference = frappe.db.get_value("Stock Ledger Entry",
@@ -1208,7 +1208,7 @@ class TestSalesInvoice(unittest.TestCase):
 		self.assertRaises(InvalidAccountCurrency, si5.submit)
 
 	def test_create_so_with_margin(self):
-		si = create_sales_invoice(item_code="_Test Item", qty=1, do_not_submit=True)
+		si = create_sales_invoice(item_code="_Test Item Home Desktop 100", qty=1, do_not_submit=True)
 		price_list_rate = 100
 		si.items[0].price_list_rate = price_list_rate
 		si.items[0].margin_type = 'Percentage'
@@ -1460,10 +1460,10 @@ class TestSalesInvoice(unittest.TestCase):
 			self.assertEqual(expected_values[gle.account][2], gle.credit)
 
 	def test_rounding_adjustment_2(self):
-		si = create_sales_invoice(rate=400, do_not_save=True)
+		si = create_sales_invoice(item_code="_Test Item Home Desktop 100", rate=400, do_not_save=True)
 		for rate in [400, 600, 100]:
 			si.append("items", {
-				"item_code": "_Test Item",
+				"item_code": "_Test Item Home Desktop 100",
 				"gst_hsn_code": "999800",
 				"warehouse": "_Test Warehouse - _TC",
 				"qty": 1,
@@ -1584,7 +1584,7 @@ class TestSalesInvoice(unittest.TestCase):
 		cost_center = "_Test Cost Center for BS Account - _TC"
 		create_cost_center(cost_center_name="_Test Cost Center for BS Account", company="_Test Company")
 
-		si =  create_sales_invoice_against_cost_center(cost_center=cost_center, debit_to="Debtors - _TC")
+		si = create_sales_invoice_against_cost_center(item_code="_Test Item Home Desktop 100", cost_center=cost_center, debit_to="Debtors - _TC")
 		self.assertEqual(si.cost_center, cost_center)
 
 		expected_values = {
@@ -1614,7 +1614,7 @@ class TestSalesInvoice(unittest.TestCase):
 		accounts_settings.allow_cost_center_in_entry_of_bs_account = 1
 		accounts_settings.save()
 		cost_center = "_Test Cost Center - _TC"
-		si =  create_sales_invoice(debit_to="Debtors - _TC")
+		si = create_sales_invoice(item_code="_Test Item Home Desktop 100", debit_to="Debtors - _TC")
 
 		expected_values = {
 			"Debtors - _TC": {
