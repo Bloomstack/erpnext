@@ -1,0 +1,63 @@
+{
+ "creation": "2021-10-24 09:53:54.429702",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "agenda",
+  "column_break_2",
+  "presenter",
+  "section_break_4",
+  "description",
+  "section_break_6",
+  "conclusion"
+ ],
+ "fields": [
+  {
+   "fieldname": "agenda",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Agenda"
+  },
+  {
+   "fieldname": "column_break_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "presenter",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Presenter",
+   "options": "User"
+  },
+  {
+   "fieldname": "section_break_4",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Text Editor Alt",
+   "label": "Description"
+  },
+  {
+   "fieldname": "section_break_6",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "conclusion",
+   "fieldtype": "Text Editor Alt",
+   "label": "conclusion"
+  }
+ ],
+ "istable": 1,
+ "modified": "2021-10-24 10:34:17.526267",
+ "modified_by": "Administrator",
+ "module": "Projects",
+ "name": "Minutes",
+ "owner": "Administrator",
+ "permissions": [],
+ "quick_entry": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

@@ -1,0 +1,51 @@
+{
+ "creation": "2021-10-24 09:46:46.887127",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "user",
+  "full_name",
+  "status",
+  "attendance"
+ ],
+ "fields": [
+  {
+   "fieldname": "user",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "User",
+   "options": "User"
+  },
+  {
+   "fieldname": "full_name",
+   "fieldtype": "Data",
+   "label": "Full Name"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Status",
+   "options": "To Invite\nInvitation Sent\nInvitation Accepted\nInvitation Rejected"
+  },
+  {
+   "default": "0",
+   "fieldname": "attendance",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Attendance"
+  }
+ ],
+ "istable": 1,
+ "modified": "2021-10-24 10:29:30.519247",
+ "modified_by": "Administrator",
+ "module": "Projects",
+ "name": "Meeting Attendees",
+ "owner": "Administrator",
+ "permissions": [],
+ "quick_entry": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}
