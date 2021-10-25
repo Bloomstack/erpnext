@@ -76,7 +76,7 @@ class TestProductConfigurator(unittest.TestCase):
 				}],
 				"attributes": [
 					{
-						"attribute": "Test Size",
+						"attribute": "Size",
 						"attribute_value": "Medium"
 					}
 				],
