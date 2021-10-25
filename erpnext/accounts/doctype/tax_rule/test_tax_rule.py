@@ -42,7 +42,7 @@ class TestTaxRule(unittest.TestCase):
 			sales_tax_template = "_Test Sales Taxes and Charges Template - _TC", priority = 1, from_date = "2015-01-01", to_date = "2015-01-05", save=1)
 
 		tax_rule2 = make_tax_rule(customer= "_Test Customer",
-			sales_tax_template = "_Test Sales Taxes and Charges Template - _TC", priority = 1, from_date = "2015-01-03", to_date = "2015-01-09", save=1)
+			sales_tax_template = "_Test Sales Taxes and Charges Template - _TC", priority = 1, from_date = "2015-01-03", to_date = "2015-01-09")
 
 		self.assertRaises(ConflictingTaxRule, tax_rule2.save)
 
