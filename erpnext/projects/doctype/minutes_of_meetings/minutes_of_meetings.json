@@ -1,0 +1,163 @@
+{
+ "autoname": "Meeting-.MM.-.YYYY.-.#####",
+ "creation": "2021-10-24 10:17:11.779472",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "title",
+  "from_time",
+  "meeting_url",
+  "column_break_4",
+  "status",
+  "to_time",
+  "location",
+  "section_break_8",
+  "meeting_organizer",
+  "facilitator",
+  "timekeeper",
+  "column_break_12",
+  "type_of_meeting",
+  "note_taker",
+  "project",
+  "section_break_16",
+  "meeting_attendees",
+  "section_break_18",
+  "minutes",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "title",
+   "fieldtype": "Data",
+   "label": "Title"
+  },
+  {
+   "fieldname": "from_time",
+   "fieldtype": "Datetime",
+   "label": "From Time"
+  },
+  {
+   "fieldname": "meeting_url",
+   "fieldtype": "Data",
+   "label": "Meeting URL"
+  },
+  {
+   "fieldname": "column_break_4",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Planned\nInvitation Sent\nIn progress\nCompleted\nCancelled"
+  },
+  {
+   "fieldname": "to_time",
+   "fieldtype": "Datetime",
+   "label": "To Time"
+  },
+  {
+   "fieldname": "location",
+   "fieldtype": "Data",
+   "label": "Location"
+  },
+  {
+   "fieldname": "section_break_8",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "meeting_organizer",
+   "fieldtype": "Link",
+   "label": "Meeting Organizer",
+   "options": "User"
+  },
+  {
+   "fieldname": "facilitator",
+   "fieldtype": "Link",
+   "label": "Facilitator",
+   "options": "User"
+  },
+  {
+   "fieldname": "timekeeper",
+   "fieldtype": "Link",
+   "label": "TimeKeeper",
+   "options": "User"
+  },
+  {
+   "fieldname": "column_break_12",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "type_of_meeting",
+   "fieldtype": "Data",
+   "label": "Type of Meeting"
+  },
+  {
+   "fieldname": "note_taker",
+   "fieldtype": "Link",
+   "label": "Note Taker",
+   "options": "User"
+  },
+  {
+   "fieldname": "project",
+   "fieldtype": "Link",
+   "label": "Project",
+   "options": "Project"
+  },
+  {
+   "fieldname": "section_break_16",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "meeting_attendees",
+   "fieldtype": "Table",
+   "label": "Meeting Attendees",
+   "options": "Meeting Attendees"
+  },
+  {
+   "fieldname": "section_break_18",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "minutes",
+   "fieldtype": "Table",
+   "label": "Minutes",
+   "options": "Minutes"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Minutes of Meetings",
+   "print_hide": 1,
+   "read_only": 1
+  }
+ ],
+ "is_submittable": 1,
+ "modified": "2021-10-24 10:17:11.779472",
+ "modified_by": "Administrator",
+ "module": "Projects",
+ "name": "Minutes of Meetings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "title_field": "title",
+ "track_changes": 1,
+ "track_seen": 1
+}
