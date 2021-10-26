@@ -21,7 +21,13 @@ def execute():
 				"description": description if description!=subject else None,
 				"expected_start_date": m.milestone_date,
 				"status": "Open" if m.status=="Pending" else "Closed",
-				"project": m.parent,
+				"default_project": m.parent,
+				"projects": [
+					{	
+						"is_default": 1,
+						"project": m.parent
+					}
+				]
 			})
 			task.flags.ignore_mandatory = True
 			task.insert(ignore_permissions=True)

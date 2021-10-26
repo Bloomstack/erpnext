@@ -96,7 +96,7 @@ class TestAccountingDimension(unittest.TestCase):
 		})
 
 		si.save()
-		self.assertRaises(frappe.ValidationError, si.submit)
+		self.assertRaises(frappe.ValidationError, si.submit())
 
 	def tearDown(self):
 		disable_dimension()

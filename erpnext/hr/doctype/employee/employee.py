@@ -80,27 +80,27 @@ class Employee(NestedSet):
 		self.reset_employee_emails_cache()
 
 	def update_user_permissions(self):
-		if not self.create_user_permission: return
 		if not has_permission('User Permission', ptype='write', raise_exception=False): return
 
-		employee_user_permission_exists = frappe.db.exists('User Permission', {
-			'allow': 'Employee',
-			'for_value': self.name,
-			'user': self.user_id
-		})
+		if self.create_user_permission:
+			employee_user_permission_exists = frappe.db.exists('User Permission', {
+				'allow': 'Employee',
+				'for_value': self.name,
+				'user': self.user_id
+			})
 
-		if employee_user_permission_exists: return
+			if not employee_user_permission_exists:
+				add_user_permission("Employee", self.name, self.user_id)
 
-		employee_user_permission_exists = frappe.db.exists('User Permission', {
-			'allow': 'Employee',
-			'for_value': self.name,
-			'user': self.user_id
-		})
+		if self.restrict_user_to_company:
+			employee_user_permission_exists_for_company = frappe.db.exists('User Permission', {
+				'allow': 'Company',
+				'for_value': self.name,
+				'user': self.user_id
+			})
 
-		if employee_user_permission_exists: return
-
-		add_user_permission("Employee", self.name, self.user_id)
-		set_user_permission_if_allowed("Company", self.company, self.user_id)
+			if not employee_user_permission_exists_for_company:
+				set_user_permission_if_allowed("Company", self.company, self.user_id)
 
 	def update_user(self):
 		# add employee role if missing
@@ -239,6 +239,14 @@ def get_timeline_data(doctype, name):
 			and attendance_date > date_sub(curdate(), interval 1 year)
 			and status in ('Present', 'Half Day')
 			group by attendance_date''', name))
+
+@frappe.whitelist()
+def grant_leaves(employee, joining_date, leave_period, carry_forward):
+	from erpnext.hr.doctype.leave_period.leave_period import grant_leave_alloc_for_employees
+	employee_record = {employee: frappe.db.get_value("Employee", employee,"date_of_joining")}
+	leave_period_doc = frappe.get_doc("Leave Period", leave_period)
+
+	grant_leave_alloc_for_employees(employee_record, leave_period_doc, carry_forward)
 
 @frappe.whitelist()
 def get_retirement_date(date_of_birth=None):

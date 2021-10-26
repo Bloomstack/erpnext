@@ -15,7 +15,7 @@
 {% endblock %}
 
 {% block style %}
-<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css" integrity="sha512-aOG0c6nPNzGk+5zjwyJaoRUgCdOrfSDhmMID2u4+OIslr0GjpLKo7Xm0Ao3xmpM4T8AmIouRkqwj1nrdVsLKEQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 {% endblock %}
 {% block page_content %}
 
@@ -127,12 +127,14 @@
 <script type="text/javascript" src="/assets/js/control.min.js"></script>
 <script type="text/javascript" src="/assets/js/dialog.min.js"></script>
 <script type="text/javascript" src="/assets/js/bootstrap-4-web.min.js"></script>
-<script src="//code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js" integrity="sha512-uto9mlQzrs59VwILcLiRYeLKPPbS/bT71da/OEBYEwcdNUk8jYIy+D176RYoop1Da+f9mvkYrmj5MCLZWEtQuA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
 	$(function () {
+		frappe.boot = Object.assign(frappe.boot || {}, {{ boot }});
+
 		$("#date-picker").datepicker({
 			dateFormat: "mm-dd-yy"
 		})
-	})
+	});
 </script>
 {% endblock %}

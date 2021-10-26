@@ -37,7 +37,7 @@ class ExpenseClaim(AccountsController):
 		self.calculate_taxes()
 		self.set_status()
 		if self.task and not self.project:
-			self.project = frappe.db.get_value("Task", self.task, "project")
+			self.project = frappe.db.get_value("Task", self.task, "default_project")
 
 	def set_status(self):
 		self.status = {
