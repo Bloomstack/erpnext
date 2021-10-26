@@ -19,9 +19,10 @@ class TestJobOffer(unittest.TestCase):
 			to_date = add_days(nowdate(), 10),
 			staffing_details=[{
 				"designation": "Researcher",
-			"vacancies": 0,
-			"estimated_cost_per_position": 5000
-		}])
+				"vacancies": 0,
+				"estimated_cost_per_position": 5000
+			}]
+		)
 		frappe.db.set_value("HR Settings", None, "check_vacancies", 1)
 		job_applicant = create_job_applicant(email_id="test_job_offer@example.com")
 		job_offer = create_job_offer(job_applicant=job_applicant.name, designation="Researcher")
