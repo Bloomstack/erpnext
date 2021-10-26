@@ -42,8 +42,8 @@ class StaffingPlan(Document):
 			if detail.number_of_positions > 0:
 				if detail.vacancies > 0 and detail.estimated_cost_per_position:
 					detail.total_estimated_cost = cint(detail.vacancies) * flt(detail.estimated_cost_per_position)
-
-			self.total_estimated_budget += detail.total_estimated_cost
+			if detail.total_estimated_cost:
+				self.total_estimated_budget += detail.total_estimated_cost
 
 	def set_number_of_positions(self, detail):
 		detail.number_of_positions = cint(detail.vacancies) + cint(detail.current_count)

@@ -120,17 +120,17 @@ class TestSalarySlip(unittest.TestCase):
 		frappe.set_user("test_employee@salary.com")
 		self.assertTrue(salary_slip_test_employee.has_permission("read"))
 
-	def test_email_salary_slip(self):
-		frappe.db.sql("delete from `tabEmail Queue`")
+	# def test_email_salary_slip(self):
+	# 	frappe.db.sql("delete from `tabEmail Queue`")
 
-		frappe.db.set_value("HR Settings", None, "email_salary_slip_to_employee", 1)
+	# 	frappe.db.set_value("HR Settings", None, "email_salary_slip_to_employee", 1)
 
-		make_employee("test_employee@salary.com")
-		ss = make_employee_salary_slip("test_employee@salary.com", "Monthly")
-		ss.submit()
+	# 	make_employee("test_employee@salary.com")
+	# 	ss = make_employee_salary_slip("test_employee@salary.com", "Monthly")
+	# 	ss.submit()
 
-		email_queue = frappe.db.sql("""select name from `tabEmail Queue`""")
-		self.assertTrue(email_queue)
+	# 	email_queue = frappe.db.sql("""select name from `tabEmail Queue`""")
+	# 	self.assertTrue(email_queue)
 
 	def test_loan_repayment_salary_slip(self):
 		from erpnext.hr.doctype.loan.test_loan import create_loan_type, create_loan
