@@ -17,9 +17,24 @@ frappe.ui.form.on('TaxJar Configuration', {
 				}
 			});
 		});
+		frm.add_custom_button(__('Sync Product Tax Code'), function() {
+			frm.call({
+				doc: frm.doc,
+				method: 'sync_product_tax_code',
+				callback: (r) => {
+					if (r.message) {
+						frappe.show_alert({
+							indicator: 'green',
+							message: __('Categories List Updated')
+						});
+					}
+				}
+			});
+		});
 		frm.add_custom_button("Sign Up For Taxjar", function() {
 			window.open('https://app.taxjar.com/api_sign_up');
 		});
+		frm.events.setup_progress(frm);
 	},
 	onload: (frm) => {
 		frm.set_query('tax_account_head', (doc) => {
@@ -37,6 +52,18 @@ frappe.ui.form.on('TaxJar Configuration', {
 					"company": doc.company
 				}
 			};
+		});
+	},
+	setup_progress: function (frm) {
+		frappe.realtime.on('creating_product_tax_code', (data) => {
+			if (data.progress) {
+				frm.dashboard.show_progress('Create Product Tax Code', data.progress / data.total * 100, data.label);
+				console.log(data.progress, data.total)
+				if (data.progress === data.total) {
+					frm.dashboard.hide_progress('Create Product Tax Code');
+					frm.refresh();
+				}
+			}
 		});
 	},
 	validate: (frm) => {

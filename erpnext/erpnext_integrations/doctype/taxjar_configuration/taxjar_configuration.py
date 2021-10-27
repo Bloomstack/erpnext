@@ -28,3 +28,29 @@ class TaxJarConfiguration(Document):
 		self.set('nexus', new_nexus_list)
 		self.save()
 		return len(new_nexus_list)
+
+	def sync_product_tax_code(self):
+		client = get_client(self)
+		try:
+			categories = client.categories()
+		except taxjar.exceptions.TaxJarResponseError as error:
+			return {"error": error}
+		else:
+			categories_list = [frappe._dict(category) for category in categories]
+			frappe.enqueue('erpnext.erpnext_integrations.doctype.taxjar_configuration.taxjar_configuration.create_product_tax_code', categories_list=categories_list, now=True if len(categories_list) < 200 else False)
+
+def create_product_tax_code(categories_list):
+	count = 1
+	for d in categories_list:
+		frappe.publish_realtime('creating_product_tax_code', dict(
+					progress = count, heading="Getting tasks", label = 'Fetching Product Tax Categories...', total=len(categories_list)))
+		tax_category = frappe.new_doc('Product Tax Categories')
+		tax_category.description = d.get("description")
+		tax_category.product_tax_code = d.get("product_tax_code")
+		tax_category.category_name = d.get("name")
+		try:
+			tax_category.db_insert()
+		except frappe.DuplicateEntryError:
+			pass
+		count += 1
+	frappe.db.commit()
