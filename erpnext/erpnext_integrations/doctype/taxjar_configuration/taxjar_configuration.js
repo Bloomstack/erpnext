@@ -58,7 +58,6 @@ frappe.ui.form.on('TaxJar Configuration', {
 		frappe.realtime.on('creating_product_tax_code', (data) => {
 			if (data.progress) {
 				frm.dashboard.show_progress('Create Product Tax Code', data.progress / data.total * 100, data.label);
-				console.log(data.progress, data.total)
 				if (data.progress === data.total) {
 					frm.dashboard.hide_progress('Create Product Tax Code');
 					frm.refresh();

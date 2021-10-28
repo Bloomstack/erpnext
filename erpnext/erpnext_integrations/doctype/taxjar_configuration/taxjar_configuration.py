@@ -40,17 +40,29 @@ class TaxJarConfiguration(Document):
 			frappe.enqueue('erpnext.erpnext_integrations.doctype.taxjar_configuration.taxjar_configuration.create_product_tax_code', categories_list=categories_list, now=True if len(categories_list) < 200 else False)
 
 def create_product_tax_code(categories_list):
+	"""
+		Try to sync and update existing product tax categories and insert new if any
+	"""
 	count = 1
 	for d in categories_list:
 		frappe.publish_realtime('creating_product_tax_code', dict(
 					progress = count, heading="Getting tasks", label = 'Fetching Product Tax Categories...', total=len(categories_list)))
-		tax_category = frappe.new_doc('Product Tax Categories')
-		tax_category.description = d.get("description")
-		tax_category.product_tax_code = d.get("product_tax_code")
-		tax_category.category_name = d.get("name")
-		try:
-			tax_category.db_insert()
-		except frappe.DuplicateEntryError:
-			pass
+
+		if not frappe.db.exists("Product Tax Categories", d.get("product_tax_code")):
+			tax_category = frappe.get_doc({
+				"doctype": "Product Tax Categories",
+				"category_name": d.get("name"),
+				"product_tax_code": d.get("product_tax_code"),
+				"description": d.get("description")
+			})
+			tax_category.insert(ignore_permissions=True)
+		else:
+			tax_category = frappe.get_doc('Product Tax Categories', d.get("product_tax_code"))
+			tax_category.description = d.get("description")
+			tax_category.category_name = d.get("name")
+
+			try:
+				tax_category.save(ignore_permissions=True)
+			except frappe.DuplicateEntryError:
+				pass
 		count += 1
-	frappe.db.commit()
