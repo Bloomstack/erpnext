@@ -26,6 +26,10 @@ class Strain(Document):
 		# maintaining the order for same-day tasks
 		self.cultivation_task.sort(key=lambda task: task.start_day)
 
+	def before_save(self):
+		if self.indica_percentage + self.sativa_percentage != 100:
+			frappe.throw("Indica & Sativa should be 100%")
+
 
 @frappe.whitelist()
 def get_item_details(item_code):

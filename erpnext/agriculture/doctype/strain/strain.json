@@ -21,7 +21,6 @@
   "plant_spacing_uom",
   "section_break_4",
   "type",
-  "category",
   "column_break_14",
   "planting_uom",
   "yield_uom",
@@ -63,11 +62,6 @@
    "fieldtype": "Select",
    "label": "Type",
    "options": "Annual\nPerennial\nBiennial"
-  },
-  {
-   "fieldname": "category",
-   "fieldtype": "Data",
-   "label": "Category"
   },
   {
    "fieldname": "target_warehouse",
@@ -179,7 +173,7 @@
    "fieldtype": "Section Break"
   }
  ],
- "modified": "2020-09-13 23:46:19.496562",
+ "modified": "2021-10-29 00:46:47.820705",
  "modified_by": "Administrator",
  "module": "Agriculture",
  "name": "Strain",
