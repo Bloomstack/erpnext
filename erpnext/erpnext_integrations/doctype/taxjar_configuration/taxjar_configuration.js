@@ -17,23 +17,18 @@ frappe.ui.form.on('TaxJar Configuration', {
 				}
 			});
 		});
+
 		frm.add_custom_button(__('Sync Product Tax Code'), function() {
 			frm.call({
 				doc: frm.doc,
 				method: 'sync_product_tax_code',
-				callback: (r) => {
-					if (r.message) {
-						frappe.show_alert({
-							indicator: 'green',
-							message: __('Categories List Updated')
-						});
-					}
-				}
 			});
 		});
+
 		frm.add_custom_button("Sign Up For Taxjar", function() {
 			window.open('https://app.taxjar.com/api_sign_up');
 		});
+
 		frm.events.setup_progress(frm);
 	},
 	onload: (frm) => {
