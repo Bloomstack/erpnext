@@ -7,8 +7,33 @@ import frappe
 from frappe.model.document import Document
 from erpnext.erpnext_integrations.taxjar_integration import get_client
 import taxjar
+from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
+from frappe.permissions import add_permission, update_permission_property
 
 class TaxJarConfiguration(Document):
+	def on_update(self):
+		enabled = frappe.get_all("TaxJar Configuration", filters={"enabled": True})
+
+		fields_already_exist = frappe.db.exists('Custom Field', {'dt': ('in', ['Item', 'Quotation Item', 'Sales Order Item', 'Sales Invoice Item']), 'fieldname':'product_tax_code'})
+		if enabled:
+			if not fields_already_exist:
+				self.sync_product_tax_code()
+				make_custom_fields()
+				add_permissions()
+
+			elif fields_already_exist:
+				toggle_tax_category_fields(hidden='0')
+
+		elif fields_already_exist:
+			toggle_tax_category_fields(hidden='1')
+
+	def validate(self):
+		self.calculate_taxes_validation_for_create_transactions()
+
+	def calculate_taxes_validation_for_create_transactions(self):
+		if not self.taxjar_calculate_tax and (self.taxjar_create_transactions or self.is_sandbox):
+			frappe.throw(frappe._('Before enabling <b>Create Transaction</b> or <b>Sandbox Mode</b>, you need to check the <b>Enable Tax Calculation</b> box'))
+
 	def validate_api_key(self):
 		client = get_client(self)
 		try:
@@ -39,6 +64,11 @@ class TaxJarConfiguration(Document):
 			categories_list = [frappe._dict(category) for category in categories]
 			frappe.enqueue('erpnext.erpnext_integrations.doctype.taxjar_configuration.taxjar_configuration.create_product_tax_code', categories_list=categories_list, now=True if len(categories_list) < 200 else False)
 
+def toggle_tax_category_fields(hidden):
+	doc_list = ['Item', 'Quotation Item', 'Sales Order Item', 'Sales Invoice Item']
+	for doctype in doc_list:
+		frappe.set_value('Custom Field', {'dt':doctype, 'fieldname':'product_tax_code'}, 'hidden', hidden)
+
 def create_product_tax_code(categories_list):
 	"""
 		Try to sync and update existing product tax categories and insert new if any
@@ -66,3 +96,32 @@ def create_product_tax_code(categories_list):
 			except frappe.DuplicateEntryError:
 				pass
 		count += 1
+
+def make_custom_fields(update=True):
+	custom_fields = {
+		'Quotation Item': [
+			dict(fieldname='product_tax_code', fieldtype='Link', insert_after='description', options='Product Tax Categories',
+				label='Product Tax Code', fetch_from='item_code.product_tax_category'),
+		],
+		'Sales Order Item': [
+			dict(fieldname='product_tax_code', fieldtype='Link', insert_after='description', options='Product Tax Categories',
+				label='Product Tax Code', fetch_from='item_code.product_tax_category'),
+		],
+		'Sales Invoice Item': [
+			dict(fieldname='product_tax_code', fieldtype='Link', insert_after='description', options='Product Tax Categories',
+				label='Product Tax Code', fetch_from='item_code.product_tax_category'),
+		],
+		'Item': [
+			dict(fieldname='product_tax_code', fieldtype='Link', insert_after='item_group', options='Product Tax Categories',
+				label='Product Tax Code')
+		]
+	}
+
+	create_custom_fields(custom_fields, update=update)
+
+def add_permissions():
+	doctype = "Product Tax Categories"
+	for role in ('Accounts Manager', 'Accounts User', 'System Manager','Item Manager', 'Stock Manager'):
+		add_permission(doctype, role, 0)
+		update_permission_property(doctype, role, 0, 'write', 1)
+		update_permission_property(doctype, role, 0, 'create', 1)

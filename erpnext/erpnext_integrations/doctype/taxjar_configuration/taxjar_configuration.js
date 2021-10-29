@@ -65,7 +65,7 @@ frappe.ui.form.on('TaxJar Configuration', {
 			}
 		});
 	},
-	validate: (frm) => {
+	after_save: (frm) => {
 		if (frm.doc.enabled) {
 			frm.call({
 				doc: frm.doc,

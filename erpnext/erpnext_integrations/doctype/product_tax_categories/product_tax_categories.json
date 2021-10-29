@@ -14,9 +14,10 @@
  "fields": [
   {
    "fieldname": "category_name",
-   "fieldtype": "Small Text",
+   "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Category Name"
+   "label": "Category Name",
+   "length": 255
   },
   {
    "fieldname": "column_break_2",
@@ -27,6 +28,7 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Product Tax Code",
+   "reqd": 1,
    "unique": 1
   },
   {
@@ -39,7 +41,7 @@
    "label": "Description"
   }
  ],
- "modified": "2021-10-27 03:46:57.884328",
+ "modified": "2021-10-28 05:05:19.911181",
  "modified_by": "Administrator",
  "module": "ERPNext Integrations",
  "name": "Product Tax Categories",
