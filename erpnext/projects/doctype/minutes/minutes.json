@@ -10,7 +10,11 @@
   "section_break_4",
   "description",
   "section_break_6",
-  "conclusion"
+  "conclusion",
+  "section_break_8",
+  "project",
+  "column_break_10",
+  "task"
  ],
  "fields": [
   {
@@ -47,10 +51,30 @@
    "fieldname": "conclusion",
    "fieldtype": "Text Editor Alt",
    "label": "conclusion"
+  },
+  {
+   "fieldname": "section_break_8",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "project",
+   "fieldtype": "Link",
+   "label": "Project",
+   "options": "Project"
+  },
+  {
+   "fieldname": "column_break_10",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "task",
+   "fieldtype": "Link",
+   "label": "Task",
+   "options": "Task"
   }
  ],
  "istable": 1,
- "modified": "2021-10-24 10:34:17.526267",
+ "modified": "2021-11-01 10:32:34.442021",
  "modified_by": "Administrator",
  "module": "Projects",
  "name": "Minutes",
