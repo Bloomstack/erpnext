@@ -6,6 +6,7 @@
  "field_order": [
   "user",
   "full_name",
+  "role",
   "status",
   "attendance"
  ],
@@ -35,10 +36,17 @@
    "fieldtype": "Check",
    "in_list_view": 1,
    "label": "Attendance"
+  },
+  {
+   "fieldname": "role",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Role",
+   "options": "Meeting Organizer\nFacilitator\nTimeKeeper\nNote Taker\nAttendees"
   }
  ],
  "istable": 1,
- "modified": "2021-10-24 10:29:30.519247",
+ "modified": "2021-11-01 10:30:31.014606",
  "modified_by": "Administrator",
  "module": "Projects",
  "name": "Meeting Attendees",

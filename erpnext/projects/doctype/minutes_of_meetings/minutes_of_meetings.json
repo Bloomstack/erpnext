@@ -13,12 +13,8 @@
   "to_time",
   "location",
   "section_break_8",
-  "meeting_organizer",
-  "facilitator",
-  "timekeeper",
   "column_break_12",
   "type_of_meeting",
-  "note_taker",
   "project",
   "section_break_16",
   "meeting_attendees",
@@ -67,24 +63,6 @@
    "fieldtype": "Section Break"
   },
   {
-   "fieldname": "meeting_organizer",
-   "fieldtype": "Link",
-   "label": "Meeting Organizer",
-   "options": "User"
-  },
-  {
-   "fieldname": "facilitator",
-   "fieldtype": "Link",
-   "label": "Facilitator",
-   "options": "User"
-  },
-  {
-   "fieldname": "timekeeper",
-   "fieldtype": "Link",
-   "label": "TimeKeeper",
-   "options": "User"
-  },
-  {
    "fieldname": "column_break_12",
    "fieldtype": "Column Break"
   },
@@ -92,12 +70,6 @@
    "fieldname": "type_of_meeting",
    "fieldtype": "Data",
    "label": "Type of Meeting"
-  },
-  {
-   "fieldname": "note_taker",
-   "fieldtype": "Link",
-   "label": "Note Taker",
-   "options": "User"
   },
   {
    "fieldname": "project",
@@ -135,8 +107,7 @@
    "read_only": 1
   }
  ],
- "is_submittable": 1,
- "modified": "2021-10-24 10:17:11.779472",
+ "modified": "2021-11-01 10:34:21.542245",
  "modified_by": "Administrator",
  "module": "Projects",
  "name": "Minutes of Meetings",
