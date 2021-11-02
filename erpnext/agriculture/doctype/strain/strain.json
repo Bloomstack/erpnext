@@ -5,8 +5,6 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "company",
-  "section_break_1",
   "strain_name",
   "indica_percentage",
   "sativa_percentage",
@@ -23,7 +21,6 @@
   "plant_spacing_uom",
   "section_break_4",
   "type",
-  "category",
   "column_break_14",
   "planting_uom",
   "yield_uom",
@@ -33,7 +30,8 @@
   "section_break_29",
   "produced_items",
   "section_break_26",
-  "byproducts"
+  "byproducts",
+  "company"
  ],
  "fields": [
   {
@@ -65,11 +63,6 @@
    "fieldtype": "Select",
    "label": "Type",
    "options": "Annual\nPerennial\nBiennial"
-  },
-  {
-   "fieldname": "category",
-   "fieldtype": "Data",
-   "label": "Category"
   },
   {
    "fieldname": "target_warehouse",
@@ -186,13 +179,9 @@
    "label": "Company",
    "options": "Company",
    "reqd": 1
-  },
-  {
-   "fieldname": "section_break_1",
-   "fieldtype": "Section Break"
   }
  ],
- "modified": "2021-09-02 05:15:42.554549",
+ "modified": "2021-11-02 01:14:05.255803",
  "modified_by": "Administrator",
  "module": "Agriculture",
  "name": "Strain",
