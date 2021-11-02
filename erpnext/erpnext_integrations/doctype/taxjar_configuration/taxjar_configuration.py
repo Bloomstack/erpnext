@@ -5,8 +5,9 @@
 from __future__ import unicode_literals
 import frappe
 from frappe.model.document import Document
-from erpnext.erpnext_integrations.taxjar_integration import get_client
+from erpnext.erpnext_integrations.taxjar_integration import get_client, make_integration_request, update_integration_request
 import taxjar
+import json
 from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
 from frappe.permissions import add_permission, update_permission_property
 
@@ -36,32 +37,55 @@ class TaxJarConfiguration(Document):
 
 	def validate_api_key(self):
 		client = get_client(self)
+
+		if not client:
+			return
+
+		integration_request = make_integration_request(self.doctype, self.name, service="TaxJar", endpoint="validate_api_key")
 		try:
 			categories = client.categories()
 		except taxjar.exceptions.TaxJarResponseError as error:
+			update_integration_request(integration_request, status="Failed", error=error)
 			return {"error": error}
 		else:
+			update_integration_request(integration_request, status="Completed", response=[frappe._dict(category) for category in categories])
 			return categories
 
 	def update_nexus_list(self):
 		client = get_client(self)
-		nexus = client.nexus_regions()
 
-		new_nexus_list = [frappe._dict(address) for address in nexus]
+		if not client:
+			return
 
-		self.set('nexus', [])
-		self.set('nexus', new_nexus_list)
-		self.save()
-		return len(new_nexus_list)
+		integration_request = make_integration_request(self.doctype, self.name, service="TaxJar", endpoint="update_nexus_list")
+		try:
+			nexus = client.nexus_regions()
+		except taxjar.exceptions.TaxJarResponseError as error:
+			update_integration_request(integration_request, status="Failed", error=error)
+		else:
+			new_nexus_list = [frappe._dict(address) for address in nexus]
+
+			self.set('nexus', [])
+			self.set('nexus', new_nexus_list)
+			self.save()
+			update_integration_request(integration_request, status="Completed", response=new_nexus_list)
+			return len(new_nexus_list)
 
 	def sync_product_tax_code(self):
 		client = get_client(self)
+
+		if not client:
+			return
+
+		integration_request = make_integration_request(self.doctype, self.name, service="TaxJar", endpoint="sync_product_tax_code")
 		try:
 			categories = client.categories()
 		except taxjar.exceptions.TaxJarResponseError as error:
+			update_integration_request(integration_request, status="Failed", error=error)
 			return {"error": error}
 		else:
 			categories_list = [frappe._dict(category) for category in categories]
+			update_integration_request(integration_request, status="Completed", response=categories_list)
 			frappe.enqueue('erpnext.erpnext_integrations.doctype.taxjar_configuration.taxjar_configuration.create_product_tax_code', categories_list=categories_list, now=True if len(categories_list) < 200 else False)
 
 def toggle_tax_category_fields(hidden):
