@@ -17,9 +17,19 @@ frappe.ui.form.on('TaxJar Configuration', {
 				}
 			});
 		});
+
+		frm.add_custom_button(__('Sync Product Tax Code'), function() {
+			frm.call({
+				doc: frm.doc,
+				method: 'sync_product_tax_code',
+			});
+		});
+
 		frm.add_custom_button("Sign Up For Taxjar", function() {
 			window.open('https://app.taxjar.com/api_sign_up');
 		});
+
+		frm.events.setup_progress(frm);
 	},
 	onload: (frm) => {
 		frm.set_query('tax_account_head', (doc) => {
@@ -39,7 +49,18 @@ frappe.ui.form.on('TaxJar Configuration', {
 			};
 		});
 	},
-	validate: (frm) => {
+	setup_progress: function (frm) {
+		frappe.realtime.on('creating_product_tax_code', (data) => {
+			if (data.progress) {
+				frm.dashboard.show_progress('Create Product Tax Code', data.progress / data.total * 100, data.label);
+				if (data.progress === data.total) {
+					frm.dashboard.hide_progress('Create Product Tax Code');
+					frm.refresh();
+				}
+			}
+		});
+	},
+	after_save: (frm) => {
 		if (frm.doc.enabled) {
 			frm.call({
 				doc: frm.doc,
