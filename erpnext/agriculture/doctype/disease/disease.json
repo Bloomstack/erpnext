@@ -40,7 +40,8 @@
   {
    "fieldname": "treatment_period",
    "fieldtype": "Int",
-   "label": "Treatment Period"
+   "label": "Treatment Period",
+   "read_only": 1
   },
   {
    "fieldname": "description",
@@ -52,7 +53,7 @@
    "fieldtype": "Column Break"
   }
  ],
- "modified": "2020-07-18 11:16:55.499087",
+ "modified": "2021-11-02 01:26:35.559845",
  "modified_by": "Administrator",
  "module": "Agriculture",
  "name": "Disease",
