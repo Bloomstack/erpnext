@@ -1,0 +1,130 @@
+{
+ "autoname": "format: ASANA-{MM}-{YYYY}-{#####}",
+ "beta": 1,
+ "creation": "2021-09-27 16:05:57.685139",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "workspace",
+  "workspace_options",
+  "selected_workspace",
+  "selected_project",
+  "project_options",
+  "project",
+  "column_break_3",
+  "status",
+  "skip_completed_tasks",
+  "section_break_5",
+  "tasks_view",
+  "row_data",
+  "tasks_comment"
+ ],
+ "fields": [
+  {
+   "default": "0",
+   "depends_on": "workspace",
+   "fieldname": "skip_completed_tasks",
+   "fieldtype": "Check",
+   "label": "Skip Completed Tasks"
+  },
+  {
+   "fieldname": "column_break_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "project",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Project",
+   "no_copy": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "tasks_view",
+   "fieldtype": "HTML",
+   "label": "Tasks View"
+  },
+  {
+   "description": "Format: Project Name - Global ID ",
+   "fieldname": "workspace",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Workspace",
+   "no_copy": 1,
+   "reqd": 1
+  },
+  {
+   "depends_on": "row_data",
+   "fieldname": "section_break_5",
+   "fieldtype": "Section Break",
+   "label": "Tasks"
+  },
+  {
+   "fieldname": "workspace_options",
+   "fieldtype": "Text",
+   "hidden": 1,
+   "label": "Workspace Options"
+  },
+  {
+   "fieldname": "project_options",
+   "fieldtype": "Text",
+   "hidden": 1,
+   "label": "Project Options"
+  },
+  {
+   "fieldname": "selected_workspace",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Selected Workspace"
+  },
+  {
+   "fieldname": "selected_project",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Selected Project"
+  },
+  {
+   "fieldname": "row_data",
+   "fieldtype": "Code",
+   "hidden": 1,
+   "label": "Row Data"
+  },
+  {
+   "fieldname": "tasks_comment",
+   "fieldtype": "Code",
+   "hidden": 1,
+   "label": "Tasks Comment"
+  },
+  {
+   "default": "Pending",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Pending\nIn Progress\nCompleted\nFailed",
+   "read_only": 1,
+   "reqd": 1
+  }
+ ],
+ "modified": "2021-10-04 15:34:00.029302",
+ "modified_by": "Administrator",
+ "module": "ERPNext Integrations",
+ "name": "Asana Migrator",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}
