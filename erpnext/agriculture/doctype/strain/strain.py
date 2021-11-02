@@ -35,7 +35,7 @@ class Strain(Document):
 
 	def before_save(self):
 		if self.indica_percentage + self.sativa_percentage != 100:
-			frappe.throw(" Indica & Sativa should be 100 %")
+			frappe.throw("The total of Indica & Sativa Percentage should be 100")
 
 
 @frappe.whitelist()
