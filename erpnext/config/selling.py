@@ -71,6 +71,11 @@ def get_data():
 					"doctype": "Sales Person",
 					"dependencies": ["Sales Person"],
 				},
+				{
+					"type": "doctype",
+					"name": "Brand",
+				},
+
 			]
 		},
 		{
@@ -326,6 +331,12 @@ def get_data():
 					"name": "Unmet Customer Sales Targets",
 					"doctype": "Customer"
 				},
+				{
+					"type": "report",
+					"is_query_report": True,
+					"name": "Sales Person Target Variance Based On Item Group",
+					"doctype": "Sales Order"
+				}
 			]
 		},
 
