@@ -42,7 +42,7 @@ class TaxJarConfiguration(Document):
 		if not client:
 			return
 
-		integration_request = make_integration_request(self.doctype, self.name, service="TaxJar", endpoint="validate_api_key")
+		integration_request = make_integration_request(self.doctype, self.name, service="TaxJar", endpoint="client.categories")
 		try:
 			categories = client.categories()
 		except taxjar.exceptions.TaxJarResponseError as error:
@@ -58,7 +58,7 @@ class TaxJarConfiguration(Document):
 		if not client:
 			return
 
-		integration_request = make_integration_request(self.doctype, self.name, service="TaxJar", endpoint="update_nexus_list")
+		integration_request = make_integration_request(self.doctype, self.name, service="TaxJar", endpoint="client.nexus_regions")
 		try:
 			nexus = client.nexus_regions()
 		except taxjar.exceptions.TaxJarResponseError as error:
@@ -78,7 +78,7 @@ class TaxJarConfiguration(Document):
 		if not client:
 			return
 
-		integration_request = make_integration_request(self.doctype, self.name, service="TaxJar", endpoint="sync_product_tax_code")
+		integration_request = make_integration_request(self.doctype, self.name, service="TaxJar", endpoint="client.categories")
 		try:
 			categories = client.categories()
 		except taxjar.exceptions.TaxJarResponseError as error:

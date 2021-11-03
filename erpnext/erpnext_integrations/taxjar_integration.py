@@ -66,12 +66,14 @@ def create_transaction(doc, method):
 	tax_dict['sales_tax'] = sales_tax
 	tax_dict['amount'] = doc.net_total + tax_dict['shipping']
 
-	integration_request = make_integration_request(doc.doctype, doc.name, service="TaxJar", endpoint="erpnext.erpnext_integrations.taxjar_integration.create_transaction")
+	integration_request = make_integration_request(doc.doctype, doc.name, service="TaxJar")
 	try:
 		if doc.is_return:
+			update_integration_request(integration_request, endpoint="client.create_refund")
 			tax_dict['transaction_reference_id'] = doc.return_against
 			response = client.create_refund(tax_dict)
 		else:
+			update_integration_request(integration_request, endpoint="client.create_order")
 			response = client.create_order(tax_dict)
 	except taxjar.exceptions.TaxJarResponseError as err:
 		update_integration_request(integration_request, status="Failed", error=str(err))
@@ -95,11 +97,13 @@ def delete_transaction(doc, method):
 	if not client:
 		return
 
-	integration_request = make_integration_request(doc.doctype, doc.name, service="TaxJar", endpoint="erpnext.erpnext_integrations.taxjar_integration.delete_transaction")
+	integration_request = make_integration_request(doc.doctype, doc.name, service="TaxJar")
 	try:
 		if doc.is_return:
+			update_integration_request(integration_request, endpoint="client.delete_refund")
 			response = client.delete_refund(doc.name)
 		else:
+			update_integration_request(integration_request, endpoint="client.delete_order")
 			response = client.delete_order(doc.name)
 	except taxjar.exceptions.TaxJarResponseError as err:
 		update_integration_request(integration_request, status="Failed", error=str(err))
@@ -273,7 +277,7 @@ def get_sales_tax(doc, tax_dict):
 	if not client:
 		return
 
-	integration_request = make_integration_request(doc.doctype, doc.name, service="TaxJar", endpoint="erpnext.erpnext_integrations.taxjar_integration.get_sales_tax")
+	integration_request = make_integration_request(doc.doctype, doc.name, service="TaxJar", endpoint="client.tax_for_order")
 	try:
 		tax_data = client.tax_for_order(tax_dict)
 	except taxjar.exceptions.TaxJarResponseError as err:
