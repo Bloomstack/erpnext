@@ -9,7 +9,13 @@ frappe.ui.form.on('Strain', {
 			'Plant Batch': () => frappe.model.open_mapped_doc({
 				method: "erpnext.agriculture.doctype.strain.strain.make_plant_batch",
 				frm: frm
+			}),
+			'Harvest': () => {
+				frappe.model.open_mapped_doc({
+				method: "erpnext.agriculture.doctype.strain.strain.make_default_uom",
+				frm: frm
 			})
+		}
 		}
 	},
 

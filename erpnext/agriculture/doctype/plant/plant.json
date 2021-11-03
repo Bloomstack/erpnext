@@ -13,6 +13,7 @@
   "plant_batch",
   "column_break_3",
   "growth_phase",
+  "completely_harvested",
   "strain_id",
   "plant_id",
   "section_break_3",
@@ -185,9 +186,15 @@
   {
    "fieldname": "section_break_1",
    "fieldtype": "Section Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "completely_harvested",
+   "fieldtype": "Check",
+   "label": "Completely Harvested"
   }
  ],
- "modified": "2021-09-06 06:57:55.430310",
+ "modified": "2021-11-03 04:26:50.738775",
  "modified_by": "Administrator",
  "module": "Agriculture",
  "name": "Plant",
