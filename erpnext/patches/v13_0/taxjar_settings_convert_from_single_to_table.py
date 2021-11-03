@@ -5,6 +5,7 @@ def execute():
 	# Why converting taxjar settings into table. Because taxjar does not support multi company
 	# for multi company taxjar contains multiple taxjar account with api keys.
 	frappe.reload_doc("ERPNext Integrations", "doctype", "TaxJar Configuration", force=1)
+	frappe.reload_doc("ERPNext Integrations", "doctype", "TaxJar Nexus", force=1)
 	if frappe.db.exists("TaxJar Settings"):
 		# Since taxjar settings doctype deleted. for existing site we can fetch data from database.
 		taxjar_settings = frappe.db.get_singles_dict("TaxJar Settings")

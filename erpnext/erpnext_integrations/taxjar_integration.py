@@ -2,11 +2,12 @@ import traceback
 
 import pycountry
 import taxjar
-
+import json
 import frappe
 from erpnext import get_default_company
 from frappe import _
 from frappe.contacts.doctype.address.address import get_company_address
+from frappe.integrations.utils import make_integration_request, update_integration_request
 
 SUPPORTED_COUNTRY_CODES = ["AT", "AU", "BE", "BG", "CA", "CY", "CZ", "DE", "DK", "EE", "ES", "FI",
 	"FR", "GB", "GR", "HR", "HU", "IE", "IT", "LT", "LU", "LV", "MT", "NL", "PL", "PT", "RO",
@@ -65,17 +66,23 @@ def create_transaction(doc, method):
 	tax_dict['sales_tax'] = sales_tax
 	tax_dict['amount'] = doc.net_total + tax_dict['shipping']
 
+	integration_request = make_integration_request(doc.doctype, doc.name, service="TaxJar")
 	try:
 		if doc.is_return:
+			update_integration_request(integration_request, endpoint="client.create_refund")
 			tax_dict['transaction_reference_id'] = doc.return_against
-			client.create_refund(tax_dict)
+			response = client.create_refund(tax_dict)
 		else:
-			client.create_order(tax_dict)
+			update_integration_request(integration_request, endpoint="client.create_order")
+			response = client.create_order(tax_dict)
 	except taxjar.exceptions.TaxJarResponseError as err:
+		update_integration_request(integration_request, status="Failed", error=str(err))
 		error_msg = """There seems to be an error in Address<br><br>{0}""".format(sanitize_error_response(err))
 		frappe.throw(_(error_msg), AddressError, _("Address Error"))
 	except Exception as ex:
 		print(traceback.format_exc(ex))
+	else:
+		update_integration_request(integration_request, status="Completed", response=json.dumps(response.to_json()))
 
 
 def delete_transaction(doc, method):
@@ -90,11 +97,18 @@ def delete_transaction(doc, method):
 	if not client:
 		return
 
-	if doc.is_return:
-		client.delete_refund(doc.name)
+	integration_request = make_integration_request(doc.doctype, doc.name, service="TaxJar")
+	try:
+		if doc.is_return:
+			update_integration_request(integration_request, endpoint="client.delete_refund")
+			response = client.delete_refund(doc.name)
+		else:
+			update_integration_request(integration_request, endpoint="client.delete_order")
+			response = client.delete_order(doc.name)
+	except taxjar.exceptions.TaxJarResponseError as err:
+		update_integration_request(integration_request, status="Failed", error=str(err))
 	else:
-		client.delete_order(doc.name)
-
+		update_integration_request(integration_request, status="Completed", response=json.dumps(response.to_json()))
 
 def get_tax_data(doc):
 	SHIP_ACCOUNT_HEAD = frappe.db.get_value("TaxJar Configuration", doc.company, "shipping_account_head")
@@ -263,12 +277,15 @@ def get_sales_tax(doc, tax_dict):
 	if not client:
 		return
 
+	integration_request = make_integration_request(doc.doctype, doc.name, service="TaxJar", endpoint="client.tax_for_order")
 	try:
 		tax_data = client.tax_for_order(tax_dict)
 	except taxjar.exceptions.TaxJarResponseError as err:
+		update_integration_request(integration_request, status="Failed", error=str(err))
 		error_msg = """There seems to be an error in Address<br><br>{0}""".format(sanitize_error_response(err))
 		frappe.throw(_(error_msg), AddressError, _("Address Error"))
 	else:
+		update_integration_request(integration_request, status="Completed", response=json.dumps(tax_data.to_json()))
 		return tax_data
 
 
@@ -365,3 +382,4 @@ def get_line_items(doc):
 		line_items.append(line_item)
 
 	return line_items
+
