@@ -41,7 +41,7 @@
    "label": "Description"
   }
  ],
- "modified": "2021-10-28 05:05:19.911181",
+ "modified": "2021-11-02 04:56:50.445915",
  "modified_by": "Administrator",
  "module": "ERPNext Integrations",
  "name": "Product Tax Categories",
@@ -61,6 +61,7 @@
   }
  ],
  "quick_entry": 1,
+ "show_title_field_in_link": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
  "title_field": "category_name",
