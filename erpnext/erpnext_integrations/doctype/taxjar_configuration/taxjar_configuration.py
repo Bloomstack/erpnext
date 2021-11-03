@@ -5,7 +5,7 @@
 from __future__ import unicode_literals
 import frappe
 from frappe.model.document import Document
-from erpnext.erpnext_integrations.taxjar_integration import get_client, make_integration_request, update_integration_request
+from erpnext.erpnext_integrations.taxjar_integration import get_client
 import taxjar
 import json
 from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
