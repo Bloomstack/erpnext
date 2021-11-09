@@ -23,6 +23,11 @@ class Harvest(Document):
 	def create_integration_request(self):
 		make_integration_request(self.doctype, self.name, "Harvest")
 
+	def validate(self):
+		plant = frappe.get_doc("Plant", self.get('plants')[0].plant)
+		if plant.completely_harvested:
+			frappe.throw("Previous harvest is marked as completely harvested")
+			
 @frappe.whitelist()
 def create_stock_entry(harvest):
 	harvest = frappe.get_doc("Harvest", harvest)
