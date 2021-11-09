@@ -25,7 +25,7 @@ def execute(filters=None):
 		filters.periodicity, filters.accumulated_in_group_company, filters.company)
 
 	companies_column, companies = get_companies(filters)
-	columns = get_columns(companies_column)
+	columns = get_columns(companies_column, period_list)
 
 	if filters.get('report') == "Balance Sheet":
 		data, message, chart = get_balance_sheet_data(fiscal_year, companies, columns, filters)
@@ -167,7 +167,7 @@ def get_account_type_based_data(account_type, companies, fiscal_year, filters):
 	data["total"] = total
 	return data
 
-def get_columns(companies):
+def get_columns(companies, period_list):
 	columns = [{
 		"fieldname": "account",
 		"label": _("Account"),
@@ -185,13 +185,15 @@ def get_columns(companies):
 	})
 
 	for company in companies:
-		columns.append({
-			"fieldname": company,
-			"label": company,
-			"fieldtype": "Currency",
-			"options": "currency",
-			"width": 150
-		})
+		for period in period_list:
+
+			columns.append({
+				"fieldname": company+"("+period.key+")",
+				"label": company+"("+period.label+")",
+				"fieldtype": "Currency",
+				"options": "currency",
+				"width": 150
+			})
 
 	return columns
 
@@ -231,15 +233,23 @@ def calculate_values(accounts_by_name, gl_entries_by_account, companies, period_
 			d = accounts_by_name.get(key)
 			if d:
 				for company in companies:
-					# check if posting date is within the period
-					if (cost_center_wise):
-						if (entry.cost_center == company or (filters.get('accumulated_in_group_company'))
-							and entry.cost_center in companies.get(company)):
-							d[company] = d.get(company, 0.0) + flt(entry.debit) - flt(entry.credit)
-					else:
-						if (entry.company == company or (filters.get('accumulated_in_group_company'))
-							and entry.company in companies.get(company)):
-							d[company] = d.get(company, 0.0) + flt(entry.debit) - flt(entry.credit)
+					for period in period_list:
+						# check if posting date is within the period
+						if entry.posting_date <= period.to_date:
+							# if (entry.company == company and entry.company in companies.get(company)):
+
+								#period.key updates the account value for the given period (Week/Month/Year)
+								d[company+"("+period.key+")"] = d.get(company+"("+period.key+")", 0.0) + flt(entry.debit) - flt(entry.credit)
+
+						# # check if posting date is within the period
+						# if (cost_center_wise):
+						# 	if (entry.cost_center == company or (filters.get('accumulated_in_group_company'))
+						# 		and entry.cost_center in companies.get(company)):
+						# 		d[company] = d.get(company, 0.0) + flt(entry.debit) - flt(entry.credit)
+						# else:
+						# 	if (entry.company == company or (filters.get('accumulated_in_group_company'))
+						# 		and entry.company in companies.get(company)):
+						# 		d[company] = d.get(company, 0.0) + flt(entry.debit) - flt(entry.credit)
 
 				if getdate(entry.posting_date) < getdate(period_list[0]["year_start_date"]):
 					d["opening_balance"] = d.get("opening_balance", 0.0) + flt(entry.debit) - flt(entry.credit)
@@ -315,16 +325,17 @@ def prepare_data(accounts, period_list, balance_must_be, companies, company_curr
 			"opening_balance": d.get("opening_balance", 0.0) * (1 if balance_must_be == "Debit" else -1)
 		})
 		for company in companies:
-			if d.get(company) and balance_must_be == "Credit":
-				# change sign based on Debit or Credit, since calculation is done using (debit - credit)
-				d[company] *= -1
+			for period in period_list:
+				if d.get(company+"("+period.key+")") and balance_must_be == "Credit":
+					# change sign based on Debit or Credit, since calculation is done using (debit - credit)
+					d[company+"("+period.key+")"] *= -1
 
-			row[company] = flt(d.get(company, 0.0), 3)
+				row[company+"("+period.key+")"] = flt(d.get(company+"("+period.key+")", 0.0), 3)
 
-			if abs(row[company]) >= 0.005:
-				# ignore zero values
-				has_value = True
-				total += flt(row[company])
+				if abs(row[company+"("+period.key+")"]) >= 0.005:
+					# ignore zero values
+					has_value = True
+					total += flt(row[company+"("+period.key+")"])
 
 		row["has_value"] = has_value
 		row["total"] = total
