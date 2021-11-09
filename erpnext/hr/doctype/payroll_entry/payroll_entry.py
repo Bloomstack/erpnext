@@ -57,7 +57,8 @@ class PayrollEntry(Document):
 				{"company": self.company, "salary_slip_based_on_timesheet":self.salary_slip_based_on_timesheet})
 		if sal_struct:
 			cond += "and t2.salary_structure IN %(sal_struct)s "
-			cond += "and %(from_date)s >= t2.from_date"
+			cond += "and %(from_date)s >= t2.from_date "
+			cond += "OR t1.relieving_date BETWEEN %(start_date)s AND %(end_date)s"
 			emp_list = frappe.db.sql("""
 				select
 					distinct t1.name as employee, t1.employee_name, t1.department, t1.designation
@@ -68,7 +69,7 @@ class PayrollEntry(Document):
 					and t2.docstatus = 1
 					and t1.status = "Active"
 			%s order by t2.from_date desc
-			""" % cond, {"sal_struct": tuple(sal_struct), "from_date": self.end_date}, as_dict=True)
+			""" % cond, {"sal_struct": tuple(sal_struct), "from_date": self.end_date, "start_date": self.start_date, "end_date": self.end_date}, as_dict=True)
 			return emp_list
 
 	def fill_employee_details(self):
