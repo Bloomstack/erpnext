@@ -12,12 +12,26 @@ class Harvest(Document):
 	def on_submit(self):
 		self.create_integration_request()
 
+		if self.harvest_type == "Full Harvest":
+			for plant in self.plants:
+				frappe.db.set_value("Plant", plant.plant, "completely_harvested", True)
+
+	def on_cancel(self):
+		if self.harvest_type == "Full Harvest":
+			for plant in self.plants:
+				frappe.db.set_value("Plant", plant.plant, "completely_harvested", False)
+
 	def on_update_after_submit(self):
 		self.create_integration_request()
 
 	def create_integration_request(self):
 		make_integration_request(self.doctype, self.name, "Harvest")
 
+	def validate(self):
+		for plant in self.plants:
+			if frappe.db.get_value("Plant", plant.plant,"completely_harvested"):
+				frappe.msgprint(_("Plant {0} with Plant Tag {1} in row {2} is already marked as completely harvested").format(plant.plant,plant.plant_tag,plant.idx))
+			
 @frappe.whitelist()
 def create_stock_entry(harvest):
 	harvest = frappe.get_doc("Harvest", harvest)

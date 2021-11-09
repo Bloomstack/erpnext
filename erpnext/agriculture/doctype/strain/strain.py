@@ -103,3 +103,15 @@ def make_strain(strain):
 		"sativa_percentage": strain.sativa_percentage
 	}
 	return bloomtrace_strain_dict
+
+@frappe.whitelist()
+def make_default_uom(source_name, target_doc=None):
+	target_doc = get_mapped_doc("Strain", source_name,
+		{"Strain": {
+			"doctype": "Harvest",
+			"field_map": {
+				"yield_uom": "harvest_uom"
+			}
+		}}, target_doc)
+
+	return target_doc
