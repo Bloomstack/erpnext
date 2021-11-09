@@ -66,6 +66,7 @@ class PayrollEntry(Document):
 				where
 					t1.name = t2.employee
 					and t2.docstatus = 1
+					and t1.status = "Active"
 			%s order by t2.from_date desc
 			""" % cond, {"sal_struct": tuple(sal_struct), "from_date": self.end_date}, as_dict=True)
 			return emp_list
