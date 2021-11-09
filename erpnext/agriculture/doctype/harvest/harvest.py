@@ -12,18 +12,14 @@ class Harvest(Document):
 	def on_submit(self):
 		self.create_integration_request()
 
-		plants = self.get('plants')
-		for p in plants:
-			plant = frappe.get_doc("Plant",p.plant)
+		for row in self.plants:
 			if self.harvest_type == "Full Harvest":
-				frappe.db.set_value("Plant", plant.name, "completely_harvested", True)
+				frappe.db.set_value("Plant", row.plant, "completely_harvested", True)
 
 	def on_cancel(self):
-		plants = self.get('plants')
-		for p in plants:
-			plant = frappe.get_doc("Plant",p.plant)
+		for row in self.plants:
 			if self.harvest_type == "Full Harvest":
-				frappe.db.set_value("Plant", plant.name, "completely_harvested", False)
+				frappe.db.set_value("Plant", row.plant, "completely_harvested", False)
 
 	def on_update_after_submit(self):
 		self.create_integration_request()
