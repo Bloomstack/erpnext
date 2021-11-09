@@ -56,7 +56,12 @@ def make_harvest(source_name, target_doc=None):
 			}
 		}}, target_doc, update_plant)
 
-	return target_doc
+	completely_harvested = frappe.get_all("Harvest", {'plant':source_name, "is_finished":1}, "*")
+
+	if not completely_harvested:
+		return target_doc
+	else:
+		frappe.throw("Previous harvest is marked as completely harvested")
 
 def execute_bloomtrace_integration_request():
 	frappe_client = get_bloomtrace_client()
