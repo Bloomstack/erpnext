@@ -15,7 +15,6 @@
   "drying_warehouse",
   "total_harvest_weight",
   "harvest_uom",
-  "is_finished",
   "amended_from",
   "sb_plants",
   "plants"
@@ -80,13 +79,6 @@
    "reqd": 1
   },
   {
-   "default": "0",
-   "depends_on": "eval:doc.docstatus == 1\neval:doc.harvest_type !=\"Manicure\"",
-   "fieldname": "is_finished",
-   "fieldtype": "Check",
-   "label": "Completely Harvested"
-  },
-  {
    "fieldname": "status",
    "fieldtype": "Select",
    "label": "Status",
@@ -112,7 +104,7 @@
   }
  ],
  "is_submittable": 1,
- "modified": "2021-11-03 06:14:26.742537",
+ "modified": "2021-11-09 01:26:03.258448",
  "modified_by": "Administrator",
  "module": "Agriculture",
  "name": "Harvest",
