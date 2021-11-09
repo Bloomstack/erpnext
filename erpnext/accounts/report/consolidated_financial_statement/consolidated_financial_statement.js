@@ -13,19 +13,31 @@ frappe.query_reports["Consolidated Financial Statement"] = {
 			"reqd": 1
 		},
 		{
-			"fieldname":"from_fiscal_year",
-			"label": __("Start Year"),
-			"fieldtype": "Link",
-			"options": "Fiscal Year",
-			"default": frappe.defaults.get_user_default("fiscal_year"),
+			"fieldname": "from_date",
+			"label": __("From Date"),
+			"fieldtype": "Date",
+			"default": frappe.defaults.get_user_default("year_start_date"),
 			"reqd": 1
 		},
 		{
-			"fieldname":"to_fiscal_year",
-			"label": __("End Year"),
-			"fieldtype": "Link",
-			"options": "Fiscal Year",
-			"default": frappe.defaults.get_user_default("fiscal_year"),
+			"fieldname": "to_date",
+			"label": __("To Date"),
+			"fieldtype": "Date",
+			"default": frappe.defaults.get_user_default("year_end_date"),
+			"reqd": 1
+		},
+		{
+			"fieldname": "periodicity",
+			"label": __("Periodicity"),
+			"fieldtype": "Select",
+			"options": [
+				{ "value": "Custom", "label": __("Custom Date Range") },
+				{ "value": "Monthly", "label": __("Monthly") },
+				{ "value": "Quarterly", "label": __("Quarterly") },
+				{ "value": "Half-Yearly", "label": __("Half-Yearly") },
+				{ "value": "Yearly", "label": __("Yearly") }
+			],
+			"default": "Yearly",
 			"reqd": 1
 		},
 		{
@@ -39,7 +51,7 @@ frappe.query_reports["Consolidated Financial Statement"] = {
 			"label": __("Report"),
 			"fieldtype": "Select",
 			"options": ["Profit and Loss Statement", "Balance Sheet", "Cash Flow"],
-			"default": "Balance Sheet",
+			"default": "Profit and Loss Statement",
 			"reqd": 1
 		},
 		{
