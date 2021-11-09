@@ -30,7 +30,7 @@ class Harvest(Document):
 	def validate(self):
 		for plant in self.plants:
 			if frappe.db.get_value("Plant", plant.plant,"completely_harvested"):
-				frappe.throw("Selected Plant is marked as completely harvested")
+				frappe.msgprint(_("Plant {0} with Plant Tag {1} in row {2} is already marked as completely harvested").format(plant.plant,plant.plant_tag,plant.idx))
 			
 @frappe.whitelist()
 def create_stock_entry(harvest):
