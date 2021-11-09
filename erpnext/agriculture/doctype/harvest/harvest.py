@@ -13,9 +13,9 @@ class Harvest(Document):
 		self.create_integration_request()
 
 	def on_update(self):
-		plant = frappe.get_doc("Plant",self.get('plants')[0].plant)
+		plant = frappe.get_doc("Plant", self.get('plants')[0].plant)
 		if self.harvest_type == "Full Harvest":
-			frappe.db.set_value("Plant",plant.name,"completely_harvested",True)
+			frappe.db.set_value("Plant", plant.name, "completely_harvested", True)
 
 	def on_update_after_submit(self):
 		self.create_integration_request()
