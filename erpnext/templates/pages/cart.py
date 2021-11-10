@@ -29,3 +29,6 @@ def get_context(context):
 	})
 
 	context.update(get_cart_quotation())
+
+	if not hasattr(context, "doc"):
+		context["doc"] = { "items": [] }
