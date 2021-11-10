@@ -151,10 +151,10 @@ def set_sales_tax(doc, method):
 			or frappe.db.has_column("Customer", "exempt_from_sales_tax") and frappe.db.get_value("Customer", doc.customer, "exempt_from_sales_tax")
 
 	account_heads = get_account_heads(doc.company)
-	# TAX_ACCOUNT_HEAD = account_heads['TAX_ACCOUNT_HEAD']
+	TAX_ACCOUNT_HEAD = account_heads['TAX_ACCOUNT_HEAD']
 
-	# if not TAX_ACCOUNT_HEAD:
-	# 	frappe.throw(_("Please add accounts in taxjar setting for company " + doc.company))
+	if not TAX_ACCOUNT_HEAD:
+		frappe.throw(_("Please add accounts in taxjar setting for company " + doc.company))
 
 	if sales_tax_exempted:
 		for tax in doc.taxes:
