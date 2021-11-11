@@ -1,5 +1,4 @@
 {
- "autoname": "field:title",
  "creation": "2020-07-18 06:47:59.662640",
  "doctype": "DocType",
  "editable_grid": 1,
@@ -7,7 +6,6 @@
  "field_order": [
   "company",
   "section_break_1",
-  "title",
   "plant_tag",
   "strain",
   "plant_batch",
@@ -34,13 +32,6 @@
   "destroyed_count"
  ],
  "fields": [
-  {
-   "fieldname": "title",
-   "fieldtype": "Data",
-   "label": "UID",
-   "read_only": 1,
-   "unique": 1
-  },
   {
    "fieldname": "strain",
    "fieldtype": "Link",
@@ -194,7 +185,7 @@
    "label": "Completely Harvested"
   }
  ],
- "modified": "2021-11-03 04:26:50.738775",
+ "modified": "2021-11-11 03:38:03.899720",
  "modified_by": "Administrator",
  "module": "Agriculture",
  "name": "Plant",

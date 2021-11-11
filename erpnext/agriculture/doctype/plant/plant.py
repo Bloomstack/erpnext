@@ -11,9 +11,9 @@ from erpnext.compliance.utils import make_integration_request, get_bloomtrace_cl
 
 
 class Plant(Document):
-	def before_insert(self):
-		if not self.title:
-			self.title = self.strain + " - " + self.plant_tag
+	def autoname(self):
+		if not self.name:
+			self.name = self.strain + " - " + self.plant_tag
 
 	def on_update(self):
 		self.create_integration_request()
