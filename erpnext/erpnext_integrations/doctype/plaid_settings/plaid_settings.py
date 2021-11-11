@@ -211,6 +211,12 @@ def new_bank_transaction(transaction):
 
 	bank_account = frappe.db.get_value("Bank Account", dict(integration_id=transaction["account_id"]))
 
+	# https://plaid.com/docs/api/products/#transactions-get-response-amount
+	# Positive values when money moves out of the account(debit); 
+	# negative values when money moves in(credit). 
+	# For example, debit card purchases are positive; 
+	# credit card payments, direct deposits, and refunds are negative.
+
 	if float(transaction["amount"]) >= 0:
 		debit = float(transaction["amount"])
 		credit = 0
@@ -234,8 +240,8 @@ def new_bank_transaction(transaction):
 				"date": getdate(transaction["date"]),
 				"status": status,
 				"bank_account": bank_account,
-				"deposit": debit,
-				"withdrawal": credit,
+				"deposit": credit,
+				"withdrawal": debit,
 				"currency": transaction["iso_currency_code"],
 				"transaction_id": transaction["transaction_id"],
 				"reference_number": transaction["payment_meta"]["reference_number"],
