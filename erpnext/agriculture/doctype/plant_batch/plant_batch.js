@@ -48,16 +48,19 @@ frappe.ui.form.on('Plant Batch', {
 	},
 
 	destroy_plant_batch: (frm) => {
+		let max = frm.doc.untracked_count;
 		frappe.prompt([{
 			fieldname: 'destroy_count',
 			label: __('Destroy Count'),
 			fieldtype: 'Int',
+			description: __('Max: {0}', [max]),
+			default: max,
 			reqd: 1,
 		},
 		{
 			fieldname: 'reason',
 			label: __('Reason'),
-			fieldtype: 'Data',
+			fieldtype: 'Text',
 			reqd: 1,
 		}],
 		(data) => {

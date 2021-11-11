@@ -211,14 +211,12 @@
   {
    "fieldname": "tracked_count",
    "fieldtype": "Int",
-   "label": "Tracked Count",
-   "read_only": 1
+   "label": "Tracked Count"
   },
   {
    "fieldname": "packaged_count",
    "fieldtype": "Int",
-   "label": "Packaged Count",
-   "read_only": 1
+   "label": "Packaged Count"
   },
   {
    "fieldname": "column_break_37",
@@ -227,14 +225,12 @@
   {
    "fieldname": "harvested_count",
    "fieldtype": "Int",
-   "label": "Harvested Count",
-   "read_only": 1
+   "label": "Harvested Count"
   },
   {
    "fieldname": "destroyed_count",
    "fieldtype": "Int",
-   "label": "Destroyed Count",
-   "read_only": 1
+   "label": "Destroyed Count"
   },
   {
    "description": "The minimum distance between each plant for optimum growth",
@@ -273,7 +269,7 @@
    "fieldtype": "Section Break"
   }
  ],
- "modified": "2021-09-06 06:02:47.204337",
+ "modified": "2021-11-11 03:55:23.948283",
  "modified_by": "Administrator",
  "module": "Agriculture",
  "name": "Plant Batch",
