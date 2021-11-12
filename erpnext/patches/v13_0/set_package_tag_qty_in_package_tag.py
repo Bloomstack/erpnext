@@ -1,7 +1,7 @@
 import frappe
 
 def execute():
-	frappe.reload_doc('compliance', 'doctype', 'package_tag', force=True)
+	frappe.reload_doc('stock', 'doctype', frappe.scrub('Package Tag'), force=True)
 	package_tags = frappe.get_all("Package Tag")
 
 	for package_tag in package_tags:

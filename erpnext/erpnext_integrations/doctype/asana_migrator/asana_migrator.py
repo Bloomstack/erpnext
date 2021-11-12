@@ -65,18 +65,17 @@ class AsanaMigrator(Document):
 			progress = 2, heading="Getting  Sub-tasks",
 			label = "Looking for Sub-Tasks and Comments"))
 		count = 1
+
 		for task in tasks_to_import:
 			child_data, child_comment = self.get_child_task(task["global_id"])
 			child_tasks += child_data
+			comments_to_import.update(child_comment)
 
 			while(child_data):
 				data, comments = self._get_child_task(child_data)
 				child_tasks += data
-				child_comment += comments
+				comments_to_import.update(comments)
 				child_data = data
-
-			if len(child_comment) and str(task["global_id"]) not in comments_to_import:
-				comments_to_import[str(task["global_id"])] = child_comment
 			
 			count += 1
 			frappe.publish_realtime('fetching_task', dict(
@@ -88,27 +87,23 @@ class AsanaMigrator(Document):
 
 		create_tasks(tasks_to_import=tasks_to_import, comments_to_import=comments_to_import,
 			project_gid=project_gid, skip_completed_tasks=self.skip_completed_tasks)
-
-		frappe.publish_realtime('fetching_task', dict(
-			progress = 100, heading="Creating Task and Sub-Task",
-			label = "Creating Task and Sub-Task"))
 		
 		self.db_set("status","Completed")
 
 	def _get_child_task(self, childs):
 		datas = []
-		comments = []
+		comments = {}
 		for child in childs:
 			d, c = self.get_child_task(child["global_id"])
 			datas += d
-			comments += c
+			comments.update(c)
 
 		return datas, comments
 
 
 	def get_child_task(self, gid):
 		child_data = []
-		child_comment = []
+		child_comment = {}
 		client = authorize()
 		child_tasks = client.tasks.get_subtasks_for_task(gid)
 		if child_tasks:
@@ -116,8 +111,8 @@ class AsanaMigrator(Document):
 				details = self.get_task_details(task['gid'], client)
 				child_data.append(self.get_row_data(details))
 				comment = self.get_comments(task['gid'], client)
-				if len(comment):
-					child_comment += comment
+				if comment:
+					child_comment[task['gid']] = comment
 
 		return child_data, child_comment
 
@@ -158,12 +153,10 @@ class AsanaMigrator(Document):
 
 		return comments
 
-
 def get_project_gid(project_options, selected_project):
 	for details in json.loads(project_options):
 		if details['name'] == selected_project:
 			return details["gid"]
-
 
 def create_tasks(tasks_to_import, comments_to_import, project_gid, skip_completed_tasks):
 	project = create_project(project_gid)
@@ -207,8 +200,11 @@ def create_tasks(tasks_to_import, comments_to_import, project_gid, skip_complete
 			progress = count*100/len(tasks_to_import), heading="Creating Task and Sub-Task",
 			label = "Creating Task and Sub-Task"))
 
-		
-		
+
+	frappe.publish_realtime('fetching_task', dict(
+		progress = 101, heading="Creating Task and Sub-Task",
+		label = "Creating Task and Sub-Task"))
+	
 def _add_comments(task, comments_to_import, global_id, assignee, reference):
 	task_detail_text = ''
 	task_comments = comments_to_import.get(global_id)
@@ -219,7 +215,6 @@ def _add_comments(task, comments_to_import, global_id, assignee, reference):
 			comment_email = commented_by
 
 			employee = frappe.db.exists("Employee", {"employee_name": commented_by})
-
 			if employee:
 				user = frappe.db.get_value("Employee", employee, "user_id")
 				comment_email = user

@@ -40,9 +40,10 @@ class TestEmployeeOnboarding(unittest.TestCase):
 		# complete the task
 		project = frappe.get_doc('Project', onboarding.project)
 		for task in frappe.get_all('Task', dict(project=project.name)):
-			task_project = frappe.get_doc('Task Project', {'parent': task.name})
-			task_project.status = 'Completed'
-			task_project.save()
+			task_doc = frappe.get_doc('Task', task.name)
+			for project in task_doc.get("projects"):
+				project.status = "Completed"
+			task_doc.save()
 
 		# make employee
 		onboarding.reload()

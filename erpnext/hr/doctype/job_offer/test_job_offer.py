@@ -13,11 +13,16 @@ from erpnext.hr.doctype.staffing_plan.test_staffing_plan import make_company
 
 class TestJobOffer(unittest.TestCase):
 	def test_job_offer_creation_against_vacancies(self):
-		create_staffing_plan(staffing_details=[{
-			"designation": "Designer",
-			"vacancies": 0,
-			"estimated_cost_per_position": 5000
-		}])
+		create_staffing_plan(
+			name="Test 2", 
+			from_date = nowdate(),
+			to_date = add_days(nowdate(), 10),
+			staffing_details=[{
+				"designation": "Researcher",
+				"vacancies": 0,
+				"estimated_cost_per_position": 5000
+			}]
+		)
 		frappe.db.set_value("HR Settings", None, "check_vacancies", 1)
 		job_applicant = create_job_applicant(email_id="test_job_offer@example.com")
 		job_offer = create_job_offer(job_applicant=job_applicant.name, designation="Researcher")
