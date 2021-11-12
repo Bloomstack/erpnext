@@ -108,7 +108,7 @@ def update_bank_transaction(bank_transaction_name, reference_number, party_type=
 
 
 @frappe.whitelist()
-def create_journal_entry_bts( bank_transaction_name, reference_number=None, reference_date=None, posting_date=None, entry_type=None,
+def create_journal_entry_bts(bank_transaction_name, reference_number=None, reference_date=None, posting_date=None, entry_type=None,
 	second_account=None, mode_of_payment=None, party_type=None, party=None, allow_edit=None):
 	# Create a new journal entry based on the bank transaction
 	bank_transaction = frappe.db.get_values(
@@ -120,17 +120,13 @@ def create_journal_entry_bts( bank_transaction_name, reference_number=None, refe
 	account_type = frappe.db.get_value("Account", second_account, "account_type")
 	if account_type in ["Receivable", "Payable"]:
 		if not (party_type and party):
-			frappe.throw(_("Party Type and Party is required for Receivable / Payable account {0}").format( second_account))
+			frappe.throw(_("Party Type and Party is required for Receivable / Payable account {0}").format(second_account))
 	accounts = []
 	# Multi Currency?
 	accounts.append({
 			"account": second_account,
-			"credit_in_account_currency": bank_transaction.deposit
-				if  bank_transaction.deposit > 0
-				else 0,
-			"debit_in_account_currency":bank_transaction.withdrawal
-				if  bank_transaction.withdrawal > 0
-				else 0,
+			"credit_in_account_currency": bank_transaction.deposit if bank_transaction.deposit > 0 else 0,
+			"debit_in_account_currency":bank_transaction.withdrawal if bank_transaction.withdrawal > 0 else 0,
 			"party_type":party_type,
 			"party":party,
 		})
@@ -138,12 +134,8 @@ def create_journal_entry_bts( bank_transaction_name, reference_number=None, refe
 	accounts.append({
 			"account": company_account,
 			"bank_account": bank_transaction.bank_account,
-			"credit_in_account_currency": bank_transaction.withdrawal
-				if  bank_transaction.withdrawal > 0
-				else 0,
-			"debit_in_account_currency":bank_transaction.deposit
-				if  bank_transaction.deposit > 0
-				else 0,
+			"credit_in_account_currency": bank_transaction.withdrawal if bank_transaction.withdrawal > 0 else 0,
+			"debit_in_account_currency":bank_transaction.deposit if bank_transaction.deposit > 0 else 0,
 		})
 
 	company = frappe.get_value("Account", company_account, "company")
@@ -180,7 +172,7 @@ def create_journal_entry_bts( bank_transaction_name, reference_number=None, refe
 	return reconcile_vouchers(bank_transaction.name, vouchers)
 
 @frappe.whitelist()
-def create_payment_entry_bts( bank_transaction_name, reference_number=None, reference_date=None, party_type=None, party=None, posting_date=None,
+def create_payment_entry_bts(bank_transaction_name, reference_number=None, reference_date=None, party_type=None, party=None, posting_date=None,
 	mode_of_payment=None, project=None, cost_center=None, allow_edit=None):
 	# Create a new payment entry based on the bank transaction
 	bank_transaction = frappe.db.get_values(
@@ -210,11 +202,11 @@ def create_payment_entry_bts( bank_transaction_name, reference_number=None, refe
 	payment_entry.update(payment_entry_dict)
 
 	if mode_of_payment:
-		payment_entry.mode_of_payment =  mode_of_payment
+		payment_entry.mode_of_payment = mode_of_payment
 	if project:
-		payment_entry.project =  project
+		payment_entry.project = project
 	if cost_center:
-		payment_entry.cost_center =  cost_center
+		payment_entry.cost_center = cost_center
 	if payment_type == "Receive":
 		payment_entry.paid_to = company_account
 	else:
@@ -316,7 +308,7 @@ def get_queries(bank_account, company, transaction, document_types):
 		queries.extend([je_amount_matching])
 
 	if transaction.deposit > 0 and "sales_invoice" in document_types:
-		si_amount_matching =  get_si_matching_query(amount_condition)
+		si_amount_matching = get_si_matching_query(amount_condition)
 		queries.extend([si_amount_matching])
 
 	if transaction.withdrawal > 0:
@@ -336,7 +328,7 @@ def get_pe_matching_query(amount_condition, account_from_to, transaction):
 		currency_field = "paid_to_account_currency as currency"
 	else:
 		currency_field = "paid_from_account_currency as currency"
-	return  f"""
+	return f"""
 	SELECT
 		(CASE WHEN reference_no=%(reference_no)s THEN 1 ELSE 0 END
 		+ CASE WHEN (party_type = %(party_type)s AND party = %(party)s ) THEN 1 ELSE 0  END

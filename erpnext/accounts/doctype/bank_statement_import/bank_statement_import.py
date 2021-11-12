@@ -121,7 +121,7 @@ def update_mapping_db(bank, template_options):
 		d.delete()
 
 	for d in json.loads(template_options)["column_to_field_map"].items():
-		bank.append("bank_transaction_mapping", {"bank_transaction_field":  d[1] ,"file_field": d[0]} )
+		bank.append("bank_transaction_mapping", {"bank_transaction_field":  d[1] ,"file_field": d[0]})
 
 	bank.save()
 
