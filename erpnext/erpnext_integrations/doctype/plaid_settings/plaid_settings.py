@@ -177,6 +177,7 @@ def sync_transactions(bank, bank_account):
 				len(result), bank_account, start_date, end_date))
 
 			frappe.db.set_value("Bank Account", bank_account, "last_integration_date", last_transaction_date)
+		return result
 	except Exception:
 		frappe.log_error(frappe.get_traceback(), _("Plaid transactions sync error"))
 
@@ -188,7 +189,6 @@ def get_transactions(bank, bank_account=None, start_date=None, end_date=None):
 		related_bank = frappe.db.get_values("Bank Account", bank_account, ["bank", "integration_id"], as_dict=True)
 		access_token = frappe.db.get_value("Bank", related_bank[0].bank, "plaid_access_token")
 		account_id = related_bank[0].integration_id
-
 	else:
 		access_token = frappe.db.get_value("Bank", bank, "plaid_access_token")
 		account_id = None
@@ -210,6 +210,12 @@ def new_bank_transaction(transaction):
 	result = []
 
 	bank_account = frappe.db.get_value("Bank Account", dict(integration_id=transaction["account_id"]))
+
+	# https://plaid.com/docs/api/products/#transactions-get-response-amount
+	# Positive values when money moves out of the account(debit); 
+	# negative values when money moves in(credit). 
+	# For example, debit card purchases are positive; 
+	# credit card payments, direct deposits, and refunds are negative.
 
 	if float(transaction["amount"]) >= 0:
 		debit = float(transaction["amount"])
@@ -234,8 +240,8 @@ def new_bank_transaction(transaction):
 				"date": getdate(transaction["date"]),
 				"status": status,
 				"bank_account": bank_account,
-				"debit": debit,
-				"credit": credit,
+				"deposit": credit,
+				"withdrawal": debit,
 				"currency": transaction["iso_currency_code"],
 				"transaction_id": transaction["transaction_id"],
 				"reference_number": transaction["payment_meta"]["reference_number"],
@@ -257,16 +263,22 @@ def new_bank_transaction(transaction):
 
 def automatic_synchronization():
 	settings = frappe.get_doc("Plaid Settings", "Plaid Settings")
-
 	if settings.enabled == 1 and settings.automatic_sync == 1:
-		plaid_accounts = frappe.get_all("Bank Account", filters={"integration_id": ["!=", ""]}, fields=["name", "bank"])
+		enqueue_synchronization()
 
-		for plaid_account in plaid_accounts:
-			frappe.enqueue(
-				"erpnext.erpnext_integrations.doctype.plaid_settings.plaid_settings.sync_transactions",
-				bank=plaid_account.bank,
-				bank_account=plaid_account.name
-			)
+
+@frappe.whitelist()
+def enqueue_synchronization():
+	plaid_accounts = frappe.get_all("Bank Account",
+		filters={"integration_id": ["!=", ""]},
+		fields=["name", "bank"])
+
+	for plaid_account in plaid_accounts:
+		frappe.enqueue(
+			"erpnext.erpnext_integrations.doctype.plaid_settings.plaid_settings.sync_transactions",
+			bank=plaid_account.bank,
+			bank_account=plaid_account.name
+		)
 
 @frappe.whitelist()
 def get_link_token_for_update(access_token):

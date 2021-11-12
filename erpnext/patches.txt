@@ -730,6 +730,7 @@ execute:frappe.delete_doc_if_exists("Report", "Item-Wise Sales Register")
 execute:frappe.delete_doc_if_exists("Report", "Sales Analytics")
 erpnext.patches.v13_0.update_accounts_taxjar_setting #
 erpnext.patches.v13_0.rename_task_cancelled_status_to_closed
+erpnext.patches.v13_0.delete_old_bank_reconciliation_doctypes
 erpnext.patches.v13_0.taxjar_settings_convert_from_single_to_table
 execute:frappe.reload_doc("erpnext_integrations", "doctype", "Product Tax Category")
 erpnext.patches.v13_0.custom_fields_for_taxjar_integration

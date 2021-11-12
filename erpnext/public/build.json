@@ -66,5 +66,10 @@
 	],
 	"js/order_for.js": [
 		"public/js/order_for.js"
+	],
+	"js/bank-reconciliation-tool.min.js": [
+		"public/js/bank_reconciliation_tool/data_table_manager.js",
+		"public/js/bank_reconciliation_tool/number_card.js",
+		"public/js/bank_reconciliation_tool/dialog_manager.js"
 	]
 }
