@@ -75,7 +75,7 @@ class TestJournalEntry(unittest.TestCase):
 		elif test_voucher.doctype in ["Sales Order", "Purchase Order"]:
 			# if test_voucher is a Sales Order/Purchase Order, test error on cancellation of test_voucher
 			submitted_voucher = frappe.get_doc(test_voucher.doctype, test_voucher.name)
-			self.assertRaises(frappe.LinkExistsError, submitted_voucher.cancel)
+			self.assertRaises(frappe.LinkExistsError, submitted_voucher.cancel())
 
 	def test_jv_against_stock_account(self):
 		from erpnext.stock.doctype.purchase_receipt.test_purchase_receipt import set_perpetual_inventory

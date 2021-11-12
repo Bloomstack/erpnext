@@ -207,7 +207,7 @@ class TestInvoiceDiscounting(unittest.TestCase):
 
 	def test_make_payment_before_loan_period(self):
 		#it has problem
-		inv = create_sales_invoice(rate=700)
+		inv = create_sales_invoice(item_code="_Test Item Home Desktop 100",rate=700)
 		inv_disc = create_invoice_discounting([inv.name],
 				accounts_receivable_credit=self.ar_credit,
 				accounts_receivable_discounted=self.ar_discounted,
@@ -238,7 +238,7 @@ class TestInvoiceDiscounting(unittest.TestCase):
 
 	def test_make_payment_before_after_period(self):
 		#it has problem
-		inv = create_sales_invoice(rate=700)
+		inv = create_sales_invoice(item_code="_Test Item Home Desktop 100",rate=700)
 		inv_disc = create_invoice_discounting([inv.name],
 				accounts_receivable_credit=self.ar_credit,
 				accounts_receivable_discounted=self.ar_discounted,
