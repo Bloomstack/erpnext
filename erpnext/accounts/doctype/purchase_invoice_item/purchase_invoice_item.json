@@ -77,6 +77,7 @@
   "warehouse",
   "rejected_warehouse",
   "quality_inspection",
+  "batch_naming_series",
   "batch_no",
   "package_tag",
   "col_br_wh",
@@ -838,6 +839,12 @@
    "read_only": 1
   },
   {
+   "fieldname": "batch_naming_series",
+   "fieldtype": "Link",
+   "label": "Batch Naming Series",
+   "options": "Custom Series"
+  },
+  {
    "fieldname": "cultivation_tax_details_section",
    "fieldtype": "Section Break",
    "label": "Cultivation Tax Details"
@@ -870,7 +877,7 @@
  ],
  "idx": 1,
  "istable": 1,
- "modified": "2021-09-02 03:45:31.571103",
+ "modified": "2021-11-13 08:35:32.383620",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Purchase Invoice Item",

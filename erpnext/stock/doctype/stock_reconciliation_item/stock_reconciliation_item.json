@@ -16,6 +16,7 @@
   "serial_no_and_batch_section",
   "serial_no",
   "column_break_11",
+  "batch_naming_series",
   "batch_no",
   "package_tag",
   "adjustment_reason",
@@ -179,10 +180,16 @@
    "fieldname": "adjustment_reason",
    "fieldtype": "Data",
    "label": "Adjustment Reason"
+  },
+  {
+   "fieldname": "batch_naming_series",
+   "fieldtype": "Link",
+   "label": "Batch Naming Series",
+   "options": "Custom Series"
   }
  ],
  "istable": 1,
- "modified": "2020-10-28 23:24:08.914714",
+ "modified": "2021-10-07 08:49:30.394047",
  "modified_by": "Administrator",
  "module": "Stock",
  "name": "Stock Reconciliation Item",

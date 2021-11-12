@@ -481,6 +481,8 @@ class SalesOrder(SellingController):
 		reserved_items = []
 		normal_items = []
 		for item in self.items:
+			if frappe.get_cached_value("Item", item.item_code, "has_serial_no") and not item.ensure_delivery_based_on_produced_serial_no:
+				frappe.db.set_value("Sales Order Item", item.name, "ensure_delivery_based_on_produced_serial_no", 1)	
 			if item.ensure_delivery_based_on_produced_serial_no:
 				if item.item_code in normal_items:
 					frappe.throw(_("Cannot ensure delivery by Serial No as \

@@ -51,7 +51,6 @@
   "discount_received_account",
   "exchange_gain_loss_account",
   "unrealized_exchange_gain_loss_account",
-  "default_excise_tax_account",
   "default_sales_tax_account",
   "default_shipping_account",
   "default_cultivation_tax_account_plant",

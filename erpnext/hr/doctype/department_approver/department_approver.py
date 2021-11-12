@@ -19,7 +19,7 @@ def get_approvers(doctype, txt, searchfield, start, page_len, filters):
 	approvers = []
 	department_details = {}
 	department_list = []
-	employee = frappe.get_value("Employee", filters.get("employee"), ["department", "leave_approver"], as_dict=True)
+	employee = frappe.get_value("Employee", filters.get("employee"), ["department", "leave_approver", "expense_approver"], as_dict=True)
 
 	employee_department = filters.get("department") or employee.department
 	if employee_department:
@@ -32,6 +32,9 @@ def get_approvers(doctype, txt, searchfield, start, page_len, filters):
 
 	if filters.get("doctype") == "Leave Application" and employee.leave_approver:
 		approvers.append(frappe.db.get_value("User", employee.leave_approver, ['name', 'first_name', 'last_name']))
+
+	if filters.get("doctype") == "Expense Claim" and employee.expense_approver:
+		approvers.append(frappe.db.get_value("User", employee.expense_approver, ['name', 'first_name', 'last_name']))
 
 	if filters.get("doctype") == "Leave Application":
 		parentfield = "leave_approvers"

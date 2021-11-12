@@ -226,6 +226,7 @@ class StockController(AccountsController):
 						doctype='Batch',
 						item=d.item_code,
 						supplier=getattr(self, 'supplier', None),
+						batch_naming_series=d.batch_naming_series,
 						reference_doctype=self.doctype,
 						reference_name=self.name)).insert().name
 

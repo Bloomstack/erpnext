@@ -553,3 +553,42 @@ def update_status(status, name):
 def make_inter_company_sales_order(source_name, target_doc=None):
 	from erpnext.accounts.doctype.sales_invoice.sales_invoice import make_inter_company_transaction
 	return make_inter_company_transaction("Purchase Order", source_name, target_doc)
+
+@frappe.whitelist()
+def create_multiple_purchase_invoices(orders):
+	"""Creating different Purchase Invoices from multiple Purchase Order."""
+	orders = json.loads(orders)
+
+	created_orders = []
+	for order in orders:
+		created = False
+		supplier = frappe.db.get_value("Purchase Order", order, "supplier")
+
+		# check if a Purchase Invoice already exists against the order.
+		purchase_invoices = frappe.get_all("Purchase Invoice", filters=[
+				["Purchase Invoice", "docstatus", "<", 2],
+				["Purchase Invoice Item", "purchase_order", "=", order]
+			],
+			distinct=True)
+		purchase_invoices = list(map(lambda doc : doc['name'], purchase_invoices))
+
+		# if none are found, then create a new Purchase Invoice.
+		if not purchase_invoices:
+			order_doc = make_purchase_invoice(order)
+
+			# if no items can be available, do not create an empty Purchase Invoice.
+			if order_doc.get("items"):
+				order_doc.save()
+				purchase_invoices = [order_doc.name]
+				created = True
+			else:
+				purchase_invoices = []
+
+		created_orders.append({
+			"purchase_order": order,
+			"supplier": supplier,
+			"purchase_invoices": purchase_invoices,
+			"created": created
+		})
+
+	return created_orders

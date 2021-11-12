@@ -33,7 +33,6 @@ class TestPurchaseReceipt(unittest.TestCase):
 		self.assertRaises(frappe.ValidationError, frappe.get_doc(pi).submit)
 
 	def test_purchase_receipt_no_gl_entry(self):
-		company = frappe.db.get_value('Warehouse', '_Test Warehouse - _TC', 'company')
 
 		existing_bin_stock_value = frappe.db.get_value("Bin", {"item_code": "_Test Item",
 			"warehouse": "_Test Warehouse - _TC"}, "stock_value")

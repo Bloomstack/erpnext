@@ -11,7 +11,7 @@
 		<input type="text" class="txtcoupon form-control mr-3 w-25" placeholder="Enter Coupon Code" name="txtcouponcode"  ></input>
 		<button class="btn btn-primary btn-sm  bt-coupon">{{ _("Apply Coupon Code") }}</button>
 		<input type="hidden" class="txtreferral_sales_partner" placeholder="Enter Sales Partner" name="txtreferral_sales_partner" type="text"></input>
-		</div>
+	</div>
 </div>
 {% endif %}
 <div class="mb-3" data-section="shipping-address">
@@ -65,36 +65,7 @@ frappe.ready(() => {
 					reqd: 1
 				},
 				{
-					label: __('Address Line 1'),
-					fieldname: 'address_line1',
-					fieldtype: 'Data',
-					reqd: 1
-				},
-				{
-					label: __('Address Line 2'),
-					fieldname: 'address_line2',
-					fieldtype: 'Data'
-				},
-				{
-					label: __('City/Town'),
-					fieldname: 'city',
-					fieldtype: 'Data',
-					reqd: 1
-				},
-				{
-					label: __('State'),
-					fieldname: 'state',
-					fieldtype: 'Data'
-				},
-				{
-					label: __('Country'),
-					fieldname: 'country',
-					fieldtype: 'Link',
-					options: 'Country',
-					reqd: 1
-				},
-				{
-					fieldname: "column_break0",
+					fieldname: "cb0",
 					fieldtype: "Column Break",
 					width: "50%"
 				},
@@ -109,14 +80,69 @@ frappe.ready(() => {
 					reqd: 1
 				},
 				{
-					label: __('Pin Code'),
-					fieldname: 'pincode',
+					fieldname: "sb0",
+					fieldtype: "Section Break",
+					width: "50%"
+				},
+				{
+					label: __('Address Line 1'),
+					fieldname: 'address_line1',
+					fieldtype: 'Data',
+					reqd: 1
+				},
+				{
+					label: __('Address Line 2'),
+					fieldname: 'address_line2',
 					fieldtype: 'Data'
 				},
 				{
 					fieldname: "phone",
 					fieldtype: "Data",
 					label: "Phone"
+				},
+				{
+					fieldname: "sb1",
+					fieldtype: "Section Break",
+					width: "50%"
+				},
+				{
+					label: __('City/Town'),
+					fieldname: 'city',
+					fieldtype: 'Data',
+					reqd: 1
+				},
+				{
+					fieldname: "cb1",
+					fieldtype: "Column Break",
+					width: "50%"
+				},
+				{
+					label: __('State'),
+					fieldname: 'state',
+					fieldtype: 'Data'
+				},
+				{
+					fieldname: "sb2",
+					fieldtype: "Section Break",
+					width: "50%"
+				},
+				{
+					label: __('Country'),
+					fieldname: 'country',
+					fieldtype: 'Link',
+					only_select: 1,
+					options: 'Country',
+					reqd: 1
+				},
+				{
+					fieldname: "column_break2",
+					fieldtype: "Column Break",
+					width: "50%"
+				},
+				{
+					label: __('Pin Code'),
+					fieldname: 'pincode',
+					fieldtype: 'Data'
 				},
 			],
 			primary_action_label: __('Save'),

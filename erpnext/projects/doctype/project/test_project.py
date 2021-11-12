@@ -19,7 +19,7 @@ class TestProject(unittest.TestCase):
 
 		project = get_project('Test Project with Template')
 
-		tasks = frappe.get_all('Task', '*', dict(project=project.name), order_by='creation asc')
+		tasks = frappe.get_all('Task', '*', dict(default_project=project.name), order_by='creation asc')
 
 		task1 = tasks[0]
 		self.assertEqual(task1.subject, 'Task 1')

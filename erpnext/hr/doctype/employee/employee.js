@@ -62,6 +62,42 @@ frappe.ui.form.on('Employee',{
 			};
 		});
 	},
+
+	refresh: function(frm) {
+		frm.add_custom_button(__("Grant Leaves"), () => {
+
+			if (frm.doc.leave_policy){
+				let d = new frappe.ui.Dialog({
+					'fields': [
+						{'label': 'Leave Period', 'fieldname': 'leave_period', 'fieldtype': 'Link', 'options':'Leave Period'},
+						{'label': 'Add unused leaves from previous allocations', 'fieldname': 'carry_forward', 'fieldtype': 'Check', 'default': 0}
+					],
+					primary_action: function(){
+						frm.events.grant_leaves(frm, d.get_values());
+						d.hide();
+					}
+				});
+				d.show();
+			} else {
+				frappe.throw({
+					message: __("Please set Leave Policy for Employee: ") + frm.doc.employee,
+					indicator: 'blue',
+				});
+			}
+		});
+	},
+	grant_leaves: function(frm, data) {
+		frappe.call({
+			method: "erpnext.hr.doctype.employee.employee.grant_leaves",
+			args: {
+				employee: frm.doc.employee,
+				joining_date: frm.doc.date_of_joining,
+
+				leave_period: data.leave_period,
+				carry_forward: data.carry_forward
+			},
+		});
+	},
 	prefered_contact_email:function(frm){		
 		frm.events.update_contact(frm)		
 	},

@@ -2,27 +2,26 @@ import traceback
 
 import pycountry
 import taxjar
-
+import json
 import frappe
 from erpnext import get_default_company
 from frappe import _
 from frappe.contacts.doctype.address.address import get_company_address
+from frappe.integrations.utils import make_integration_request, update_integration_request
 
-
-TAXJAR_CREATE_TRANSACTIONS = frappe.db.get_single_value("TaxJar Settings", "taxjar_create_transactions")
-TAXJAR_CALCULATE_TAX = frappe.db.get_single_value("TaxJar Settings", "taxjar_calculate_tax")
-TAXJAR_ENABLED = frappe.db.get_single_value("TaxJar Settings", "enabled")
 SUPPORTED_COUNTRY_CODES = ["AT", "AU", "BE", "BG", "CA", "CY", "CZ", "DE", "DK", "EE", "ES", "FI",
 	"FR", "GB", "GR", "HR", "HU", "IE", "IT", "LT", "LU", "LV", "MT", "NL", "PL", "PT", "RO",
 	"SE", "SI", "SK", "US"]
 
 class AddressError(frappe.ValidationError): pass
 
-def get_client():
+def get_client(doc):
+	TAXJAR_ENABLED = frappe.db.get_value("TaxJar Configuration", doc.company, "enabled")
+
 	if not TAXJAR_ENABLED:
 		return
 
-	taxjar_settings = frappe.get_single("TaxJar Settings")
+	taxjar_settings = frappe.get_doc("TaxJar Configuration", doc.company)
 
 	if not taxjar_settings.is_sandbox:
 		api_key = taxjar_settings.get_password("api_key")
@@ -41,16 +40,16 @@ def get_client():
 def create_transaction(doc, method):
 	"""Create an order transaction in TaxJar"""
 
+	TAXJAR_CREATE_TRANSACTIONS = frappe.db.get_value("TaxJar Configuration", doc.company, "taxjar_create_transactions")
+	TAX_ACCOUNT_HEAD = frappe.db.get_value("TaxJar Configuration", doc.company, "tax_account_head")
+
 	if not TAXJAR_CREATE_TRANSACTIONS:
 		return
 
-	client = get_client()
+	client = get_client(doc)
 
 	if not client:
 		return
-
-	account_heads = get_account_heads(doc.company)
-	TAX_ACCOUNT_HEAD = account_heads['TAX_ACCOUNT_HEAD']
 
 	sales_tax = sum([tax.tax_amount for tax in doc.taxes if tax.account_head == TAX_ACCOUNT_HEAD])
 
@@ -67,30 +66,52 @@ def create_transaction(doc, method):
 	tax_dict['sales_tax'] = sales_tax
 	tax_dict['amount'] = doc.net_total + tax_dict['shipping']
 
+	integration_request = make_integration_request(doc.doctype, doc.name, service="TaxJar")
 	try:
-		client.create_order(tax_dict)
+		if doc.is_return:
+			update_integration_request(integration_request, endpoint="client.create_refund")
+			tax_dict['transaction_reference_id'] = doc.return_against
+			response = client.create_refund(tax_dict)
+		else:
+			update_integration_request(integration_request, endpoint="client.create_order")
+			response = client.create_order(tax_dict)
 	except taxjar.exceptions.TaxJarResponseError as err:
+		update_integration_request(integration_request, status="Failed", error=str(err))
 		error_msg = """There seems to be an error in Address<br><br>{0}""".format(sanitize_error_response(err))
 		frappe.throw(_(error_msg), AddressError, _("Address Error"))
 	except Exception as ex:
 		print(traceback.format_exc(ex))
+	else:
+		update_integration_request(integration_request, status="Completed", response=json.dumps(response.to_json()))
 
 
 def delete_transaction(doc, method):
 	"""Delete an existing TaxJar order transaction"""
 
+	TAXJAR_CREATE_TRANSACTIONS = frappe.db.get_value("TaxJar Configuration", doc.company, "taxjar_create_transactions")
 	if not TAXJAR_CREATE_TRANSACTIONS:
 		return
 
-	client = get_client()
+	client = get_client(doc)
 
 	if not client:
 		return
 
-	client.delete_order(doc.name)
-
+	integration_request = make_integration_request(doc.doctype, doc.name, service="TaxJar")
+	try:
+		if doc.is_return:
+			update_integration_request(integration_request, endpoint="client.delete_refund")
+			response = client.delete_refund(doc.name)
+		else:
+			update_integration_request(integration_request, endpoint="client.delete_order")
+			response = client.delete_order(doc.name)
+	except taxjar.exceptions.TaxJarResponseError as err:
+		update_integration_request(integration_request, status="Failed", error=str(err))
+	else:
+		update_integration_request(integration_request, status="Completed", response=json.dumps(response.to_json()))
 
 def get_tax_data(doc):
+	SHIP_ACCOUNT_HEAD = frappe.db.get_value("TaxJar Configuration", doc.company, "shipping_account_head")
 	from_address = get_company_address_details(doc)
 	from_shipping_state = from_address.get("state")
 	from_country_code = frappe.db.get_value("Country", from_address.country, "code")
@@ -104,16 +125,13 @@ def get_tax_data(doc):
 	if to_country_code not in SUPPORTED_COUNTRY_CODES:
 		return
 
-	account_heads = get_account_heads(doc.company)
-	SHIP_ACCOUNT_HEAD = account_heads['SHIP_ACCOUNT_HEAD']
-
 	shipping = sum([tax.tax_amount for tax in doc.taxes if tax.account_head == SHIP_ACCOUNT_HEAD])
 
 	if to_shipping_state is not None:
 		to_shipping_state = get_iso_3166_2_state_code(to_address)
 
 	line_items = get_line_items(doc)
-
+	#warning: we are comenting line_items for now. once discount approach stable will enable line_items.
 	tax_dict = {
 		'from_country': from_country_code,
 		'from_zip': from_address.pincode,
@@ -127,14 +145,16 @@ def get_tax_data(doc):
 		'to_state': to_shipping_state,
 		'shipping': shipping,
 		'amount': doc.net_total,
-		'line_items': line_items,
-		'plugin': '[bloomstack]'
+		#'line_items': line_items,
+		'plugin': 'bloomstack'
 	}
 
 	return tax_dict
 
 
 def set_sales_tax(doc, method):
+	TAX_ACCOUNT_HEAD = frappe.db.get_value("TaxJar Configuration", doc.company, "tax_account_head")
+	TAXJAR_CALCULATE_TAX = frappe.db.get_value("TaxJar Configuration", doc.company, "taxjar_calculate_tax")
 	if not TAXJAR_CALCULATE_TAX:
 		return
 
@@ -149,9 +169,6 @@ def set_sales_tax(doc, method):
 	else:
 		sales_tax_exempted = hasattr(doc, "exempt_from_sales_tax") and doc.exempt_from_sales_tax \
 			or frappe.db.has_column("Customer", "exempt_from_sales_tax") and frappe.db.get_value("Customer", doc.customer, "exempt_from_sales_tax")
-
-	account_heads = get_account_heads(doc.company)
-	TAX_ACCOUNT_HEAD = account_heads['TAX_ACCOUNT_HEAD']
 
 	if not TAX_ACCOUNT_HEAD:
 		frappe.throw(_("Please add accounts in taxjar setting for company " + doc.company))
@@ -172,16 +189,12 @@ def set_sales_tax(doc, method):
 		setattr(doc, "taxes", [tax for tax in doc.taxes if tax.account_head != TAX_ACCOUNT_HEAD])
 		return
 
-	tax_dict['nexus_address'] = [{
-		'id': get_company_address_details(doc).name,
-		'country': tax_dict.get("from_country"),
-		'zip': tax_dict.get("from_zip"),
-		'state': tax_dict.get("from_state"),
-		'city': tax_dict.get("from_city"),
-		'street': tax_dict.get("from_street")
-	}]
+	# check if delivering within a nexus, if not, No need to call calculate sales tax api.
+	has_nexus = check_for_nexus(doc, tax_dict)
+	if not has_nexus:
+		return
 
-	tax_data = validate_tax_request(tax_dict)
+	tax_data = get_sales_tax(doc, tax_dict)
 
 	if tax_data is not None:
 		if not tax_data.amount_to_collect:
@@ -207,21 +220,72 @@ def set_sales_tax(doc, method):
 
 			doc.run_method("calculate_taxes_and_totals")
 
+def check_for_nexus(doc, tax_dict):
+	"""
+		IN the US we validate Nexus with State. for eg. if your shipping address state and Nexus state match then calculate Sales Tax.
+		For Non-US countries like Australia if it is a different state still calculate Sales Tax Ref.https://developers.taxjar.com/demo/
+		So apart from the US no other country has a state-based sales tax.
 
-def validate_tax_request(tax_dict):
+		Parameters:
+			doc (dict): The doctype object from Quotation, Sales Order and Sales Invoice
+			tax_dict(dict): The tax_dict contains tax data.
+
+		Returns:
+			Bool (True/False): based on output it will return flag
+	"""
+
+	#check if seller and buyer within same country otherwise dont calculate taxes
+	if tax_dict["to_country"] == tax_dict["from_country"]:
+		# if seller and buyer within US country then based on nexus region calculate tax
+		if tax_dict["to_country"] == "US":
+			# check if to_state within nexus region if not do not calculate sales tax.
+			if not frappe.db.get_value('TaxJar Nexus', {'region_code': tax_dict["to_state"]}):
+				return remove_existing_sales_tax(doc)
+			return True
+
+		# for Non-US country check if to_country within nexus country if not, do not calculate sales tax
+		elif not frappe.db.get_value('TaxJar Nexus', {'country_code': tax_dict["to_country"]}):
+			return remove_existing_sales_tax(doc)
+		return True
+	else:
+		return remove_existing_sales_tax(doc)
+
+def remove_existing_sales_tax(doc):
+	"""
+		Return False Boolean If buyer is not within nexus and if seller and buyer in different country. 
+		it will delete taxes if any
+
+		Parameters:
+			doc (dict): The doctype object
+
+		Returns:
+			(bool): It always return False Boolean Value
+	"""
+
+	TAX_ACCOUNT_HEAD = frappe.db.get_value("TaxJar Configuration", doc.company, "tax_account_head")
+
+	for tax in doc.taxes:
+		if tax.account_head == TAX_ACCOUNT_HEAD:
+			doc.taxes.remove(tax)
+	return False
+
+def get_sales_tax(doc, tax_dict):
 	"""Return the sales tax that should be collected for a given order."""
 
-	client = get_client()
+	client = get_client(doc)
 
 	if not client:
 		return
 
+	integration_request = make_integration_request(doc.doctype, doc.name, service="TaxJar", endpoint="client.tax_for_order")
 	try:
 		tax_data = client.tax_for_order(tax_dict)
 	except taxjar.exceptions.TaxJarResponseError as err:
+		update_integration_request(integration_request, status="Failed", error=str(err))
 		error_msg = """There seems to be an error in Address<br><br>{0}""".format(sanitize_error_response(err))
 		frappe.throw(_(error_msg), AddressError, _("Address Error"))
 	else:
+		update_integration_request(integration_request, status="Completed", response=json.dumps(tax_data.to_json()))
 		return tax_data
 
 
@@ -319,15 +383,3 @@ def get_line_items(doc):
 
 	return line_items
 
-
-def get_account_heads(current_company):
-	company_account_heads = frappe.get_all("TaxJar Company", filters={"company_name": current_company}, fields=["tax_account_head","shipping_account_head"])
-	account_heads = dict()
-	if not company_account_heads:
-		account_heads['TAX_ACCOUNT_HEAD'] = None
-		account_heads['SHIP_ACCOUNT_HEAD'] = None
-	else:
-		account_heads['TAX_ACCOUNT_HEAD'] = company_account_heads[0]['tax_account_head']
-		account_heads['SHIP_ACCOUNT_HEAD'] = company_account_heads[0]['shipping_account_head']
-
-	return account_heads

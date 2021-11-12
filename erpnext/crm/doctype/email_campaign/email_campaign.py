@@ -16,6 +16,8 @@ class EmailCampaign(Document):
 		if self.email_campaign_for == "Lead":
 			self.validate_lead()
 		self.validate_email_campaign_already_exists()
+
+	def after_save(self):
 		self.update_status()
 
 	def set_date(self):
@@ -52,11 +54,11 @@ class EmailCampaign(Document):
 		end_date = getdate(self.end_date)
 		today_date = getdate(today())
 		if start_date > today_date:
-			self.status = "Scheduled"
+			frappe.db.set_value("Email Campaign", self.name, "status", "Scheduled", update_modified=False)
 		elif end_date >= today_date:
-			self.status = "In Progress"
+			frappe.db.set_value("Email Campaign", self.name, "status", "In Progress", update_modified=False)
 		elif end_date < today_date:
-			self.status = "Completed"
+			frappe.db.set_value("Email Campaign", self.name, "status", "Completed", update_modified=False)
 
 #called through hooks to send campaign mails to leads
 def send_email_to_leads_or_contacts():
@@ -74,25 +76,24 @@ def send_mail(entry, email_campaign):
 		recipients = frappe.get_all("Email Group Member", {"email_group": email_campaign.get("recipient")}, "email")
 		recipient = [d.email for d in recipients]
 	else:
-		recipient = frappe.db.get_value(email_campaign.email_campaign_for, email_campaign.get("recipient"), 'email_id')
+		recipient = [frappe.db.get_value(email_campaign.email_campaign_for, email_campaign.get("recipient"), 'email_id')]
 
 	email_template = frappe.get_doc("Email Template", entry.get("email_template"))
 	sender = frappe.db.get_value("User", email_campaign.get("sender"), 'email')
 	context = {"doc": frappe.get_doc(email_campaign.email_campaign_for, email_campaign.recipient)}
-	# send mail and link communication to document
-	comm = make(
-		doctype = "Email Campaign",
-		name = email_campaign.name,
-		subject = frappe.render_template(email_template.get("subject"), context),
-		content = frappe.render_template(email_template.get("response"), context),
-		sender = sender,
-		recipients = recipient,
-		communication_medium = "Email",
-		sent_or_received = "Sent",
-		send_email = True,
-		email_template = email_template.name
-	)
-	return comm
+	for email in recipient:
+		make(
+			doctype = "Email Campaign",
+			name = email_campaign.name,
+			subject = frappe.render_template(email_template.get("subject"), context),
+			content = frappe.render_template(email_template.get("response"), context),
+			sender = sender,
+			recipients = email,
+			communication_medium = "Email",
+			sent_or_received = "Sent",
+			send_email = True,
+			email_template = email_template.name
+		)
 
 #called from hooks on doc_event Email Unsubscribe
 def unsubscribe_recipient(unsubscribe, method):

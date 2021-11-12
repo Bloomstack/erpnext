@@ -175,9 +175,10 @@ class LeaveApplication(Document):
 		""",(self.employee, self.to_date, self.from_date))
 
 		if last_processed_pay_slip:
-			frappe.throw(_("Salary already processed for period between {0} and {1}, Leave application period cannot be between this date range.").format(formatdate(last_processed_pay_slip[0][0]),
-				formatdate(last_processed_pay_slip[0][1])))
-
+			frappe.throw(_("Salary already processed for period between {0} and {1}, Leave application period cannot be between this date range.").format(
+				formatdate(last_processed_pay_slip[0][0]),
+				formatdate(last_processed_pay_slip[0][1]))
+			)
 
 	def show_block_day_warning(self):
 		block_dates = get_applicable_block_dates(self.from_date, self.to_date,
