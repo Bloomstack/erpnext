@@ -62,7 +62,7 @@ class EmailCampaign(Document):
 
 #called through hooks to send campaign mails to leads
 def send_email_to_leads_or_contacts():
-	email_campaigns = frappe.get_all("Email Campaign", filters = { 'status': ('not in', ['Unsubscribed', 'Completed', 'Scheduled']) })
+	email_campaigns = frappe.get_all("Email Campaign", filters = { 'status': ('not in', ['Completed', 'Scheduled']) })
 	for camp in email_campaigns:
 		email_campaign = frappe.get_doc("Email Campaign", camp.name)
 		campaign = frappe.get_cached_doc("Campaign", email_campaign.campaign_name)
@@ -95,14 +95,10 @@ def send_mail(entry, email_campaign):
 			email_template = email_template.name
 		)
 
-#called from hooks on doc_event Email Unsubscribe
-def unsubscribe_recipient(unsubscribe, method):
-	if unsubscribe.reference_doctype == 'Email Campaign':
-		frappe.db.set_value("Email Campaign", unsubscribe.reference_name, "status", "Unsubscribed")
 
 #called through hooks to update email campaign status daily
 def set_email_campaign_status():
-	email_campaigns = frappe.get_all("Email Campaign", filters = { 'status': ('!=', 'Unsubscribed')})
+	email_campaigns = frappe.get_all("Email Campaign")
 	for entry in email_campaigns:
 		email_campaign = frappe.get_doc("Email Campaign", entry.name)
 		email_campaign.update_status()
