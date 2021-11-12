@@ -7,7 +7,7 @@
  "engine": "InnoDB",
  "field_order": [
   "subject",
-  "project",
+  "default_project",
   "team",
   "assign_to",
   "issue",
@@ -368,7 +368,7 @@
   },
   {
    "bold": 1,
-   "fieldname": "project",
+   "fieldname": "default_project",
    "fieldtype": "Link",
    "in_global_search": 1,
    "in_list_view": 1,
@@ -392,7 +392,7 @@
  "idx": 1,
  "is_tree": 1,
  "max_attachments": 5,
- "modified": "2021-09-15 05:54:08.798956",
+ "modified": "2021-10-15 05:54:08.798956",
  "modified_by": "Administrator",
  "module": "Projects",
  "name": "Task",
