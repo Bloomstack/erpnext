@@ -19,6 +19,7 @@ class ProductionPlan(Document):
 	def validate(self):
 		self.calculate_total_planned_qty()
 		self.set_status()
+		self.set_workstations()
 		item_list = []
 		for d in self.get('po_items'):
 			bom = frappe.db.get_values("Item", d.item_code, ["item_code","item_name", "default_bom"], as_dict=1)
@@ -257,6 +258,13 @@ class ProductionPlan(Document):
 		if self.status != 'Completed':
 			self.update_ordered_status()
 			self.update_requested_status()
+
+	def set_workstations(self):
+		for item in self.get("po_items"):
+			bom_operations = frappe.get_all("BOM Operation", filters={"parent": item.bom_no}, fields=["workstation"])
+			if bom_operations:
+				workstations = [operation.workstation for operation in bom_operations if operation.workstation]
+				item.workstations = '\n'.join(workstations)
 
 	def update_ordered_status(self):
 		update_status = False

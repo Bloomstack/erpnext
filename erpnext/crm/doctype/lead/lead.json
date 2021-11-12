@@ -12,11 +12,16 @@
   "address_html",
   "contact_html",
   "territory",
+  "region",
+  "account_opened_date",
+  "lead_dashboard_cb",
+  "number_of_employees",
   "lead_details",
   "naming_series",
   "lead_name",
   "company_name",
   "type",
+  "type_of_business",
   "email_id",
   "col_break123",
   "lead_owner",
@@ -135,7 +140,7 @@
    "no_copy": 1,
    "oldfieldname": "status",
    "oldfieldtype": "Select",
-   "options": "Lead\nOpen\nReplied\nOpportunity\nQuotation\nLost Quotation\nInterested\nConverted\nNot Qualified\nInvestor\nDo Not Contact\nSpam",
+   "options": "Lead\nOpen\nReplied\nOpportunity\nQuotation\nLost Quotation\nInterested\nConverted\nNot Qualified\nInvestor\nDo Not Contact\nSpam\nChannel Partner\nReferral Partner\nSales Partner Prospect",
    "reqd": 1,
    "search_index": 1
   },
@@ -434,12 +439,37 @@
    "fieldname": "contact_section",
    "fieldtype": "Section Break",
    "label": "Contact"
+  },
+  {
+   "fieldname": "number_of_employees",
+   "fieldtype": "Int",
+   "label": "Number of Employees"
+  },
+  {
+   "fieldname": "lead_dashboard_cb",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "region",
+   "fieldtype": "Link",
+   "label": "Region",
+   "options": "Territory"
+  },
+  {
+   "fieldname": "account_opened_date",
+   "fieldtype": "Date",
+   "label": "Account Opened Date"
+  },
+  {
+   "fieldname": "type_of_business",
+   "fieldtype": "Data",
+   "label": "Type of Business"
   }
  ],
  "icon": "fa fa-user",
  "idx": 5,
  "image_field": "image",
- "modified": "2021-10-06 02:17:21.572668",
+ "modified": "2021-11-12 02:17:21.572668",
  "modified_by": "Administrator",
  "module": "CRM",
  "name": "Lead",

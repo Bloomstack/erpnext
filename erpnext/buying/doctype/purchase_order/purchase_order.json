@@ -1,5 +1,4 @@
 {
- "actions": [],
  "allow_import": 1,
  "autoname": "naming_series:",
  "creation": "2013-05-21 16:16:39",
@@ -20,6 +19,7 @@
   "order_confirmation_no",
   "order_confirmation_date",
   "amended_from",
+  "license",
   "drop_ship",
   "customer",
   "customer_name",
@@ -66,6 +66,7 @@
   "column_break_26",
   "total_net_weight",
   "total",
+  "reverse_calculate",
   "net_total",
   "taxes_section",
   "tax_category",
@@ -1050,13 +1051,24 @@
    "fieldtype": "Link",
    "label": "Set Reserve Warehouse",
    "options": "Warehouse"
+  },
+  {
+   "fieldname": "license",
+   "fieldtype": "Link",
+   "label": "License",
+   "options": "Compliance Info"
+  },
+  {
+   "depends_on": "eval:doc.docstatus==0",
+   "fieldname": "reverse_calculate",
+   "fieldtype": "Button",
+   "label": "Reverse Calculate"
   }
  ],
  "icon": "fa fa-file-text",
  "idx": 105,
  "is_submittable": 1,
- "links": [],
- "modified": "2020-06-12 14:08:11.777120",
+ "modified": "2021-09-05 23:38:06.527468",
  "modified_by": "Administrator",
  "module": "Buying",
  "name": "Purchase Order",

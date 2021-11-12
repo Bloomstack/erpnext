@@ -23,6 +23,7 @@
   "customer",
   "column_break_2",
   "project",
+  "task_name",
   "section_break_6",
   "billable",
   "column_break_8",
@@ -227,11 +228,18 @@
    "label": "Customer",
    "options": "Customer",
    "read_only": 1
+  },
+  {
+   "fetch_from": "task.subject",
+   "fieldname": "task_name",
+   "fieldtype": "Read Only",
+   "label": "Task Name",
+   "options": "Task"
   }
  ],
  "idx": 1,
  "istable": 1,
- "modified": "2021-08-31 22:36:52.508031",
+ "modified": "2021-11-13 22:36:52.508031",
  "modified_by": "Administrator",
  "module": "Projects",
  "name": "Timesheet Detail",

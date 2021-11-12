@@ -22,14 +22,14 @@ erpnext.setup.slides_settings = [
 				label: __('Domains'),
 				fieldtype: 'MultiCheck',
 				options: [
-					{ "label": __("Distribution"), "value": "Distribution" },
-					{ "label": __("Education"), "value": "Education" },
-					{ "label": __("Manufacturing"), "value": "Manufacturing" },
-					{ "label": __("Retail"), "value": "Retail" },
-					{ "label": __("Services"), "value": "Services" },
-					{ "label": __("Agriculture (beta)"), "value": "Agriculture" },
-					{ "label": __("Healthcare (beta)"), "value": "Healthcare" },
-					{ "label": __("Non Profit (beta)"), "value": "Non Profit" }
+					{ "label": __("Distributor"), "value": "Distribution" },
+					// { "label": __("Education"), "value": "Education" },
+					{ "label": __("Manufacturer"), "value": "Manufacturing" },
+					{ "label": __("Retailer"), "value": "Retail" },
+					// { "label": __("Services"), "value": "Services" },
+					{ "label": __("Cultivator (beta)"), "value": "Agriculture" }
+					// { "label": __("Healthcare (beta)"), "value": "Healthcare" },
+					// { "label": __("Non Profit (beta)"), "value": "Non Profit" }
 				], reqd: 1
 			},
 		],

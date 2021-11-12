@@ -21,7 +21,6 @@
   "plant_spacing_uom",
   "section_break_4",
   "type",
-  "category",
   "column_break_14",
   "planting_uom",
   "yield_uom",
@@ -31,7 +30,8 @@
   "section_break_29",
   "produced_items",
   "section_break_26",
-  "byproducts"
+  "byproducts",
+  "company"
  ],
  "fields": [
   {
@@ -63,11 +63,6 @@
    "fieldtype": "Select",
    "label": "Type",
    "options": "Annual\nPerennial\nBiennial"
-  },
-  {
-   "fieldname": "category",
-   "fieldtype": "Data",
-   "label": "Category"
   },
   {
    "fieldname": "target_warehouse",
@@ -177,9 +172,16 @@
   {
    "fieldname": "section_break_26",
    "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company",
+   "reqd": 1
   }
  ],
- "modified": "2020-09-13 23:46:19.496562",
+ "modified": "2021-11-02 01:14:05.255803",
  "modified_by": "Administrator",
  "module": "Agriculture",
  "name": "Strain",

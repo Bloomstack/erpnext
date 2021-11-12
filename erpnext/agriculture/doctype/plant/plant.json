@@ -5,12 +5,15 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "company",
+  "section_break_1",
   "title",
   "plant_tag",
   "strain",
   "plant_batch",
   "column_break_3",
   "growth_phase",
+  "completely_harvested",
   "strain_id",
   "plant_id",
   "section_break_3",
@@ -172,9 +175,26 @@
    "label": "Plant Batch",
    "options": "Plant Batch",
    "reqd": 1
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "ignore_user_permissions": 1,
+   "label": "Company",
+   "options": "Company"
+  },
+  {
+   "fieldname": "section_break_1",
+   "fieldtype": "Section Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "completely_harvested",
+   "fieldtype": "Check",
+   "label": "Completely Harvested"
   }
  ],
- "modified": "2020-10-22 03:17:36.293743",
+ "modified": "2021-11-03 04:26:50.738775",
  "modified_by": "Administrator",
  "module": "Agriculture",
  "name": "Plant",

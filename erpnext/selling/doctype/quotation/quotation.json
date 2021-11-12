@@ -13,6 +13,7 @@
   "quotation_to",
   "party_name",
   "customer_name",
+  "no_charge_order",
   "column_break1",
   "amended_from",
   "company",
@@ -20,6 +21,7 @@
   "requested_delivery_date",
   "valid_till",
   "order_type",
+  "license",
   "contact_section",
   "customer_address",
   "address_display",
@@ -91,6 +93,7 @@
   "terms",
   "signature_section_section",
   "signature",
+  "customer_signature",
   "print_settings",
   "letter_head",
   "group_same_items",
@@ -415,7 +418,6 @@
    "oldfieldname": "quotation_details",
    "oldfieldtype": "Table",
    "options": "Quotation Item",
-   "reqd": 0,
    "width": "40px"
   },
   {
@@ -951,13 +953,32 @@
    "fieldname": "requested_delivery_date",
    "fieldtype": "Date",
    "label": "Requested Delivery Date"
+  },
+  {
+   "default": "0",
+   "fieldname": "no_charge_order",
+   "fieldtype": "Check",
+   "label": "No Charge"
+  },
+  {
+   "fieldname": "license",
+   "fieldtype": "Link",
+   "label": "License",
+   "options": "Compliance Info"
+  },
+  {
+   "fieldname": "customer_signature",
+   "fieldtype": "Signature",
+   "label": "Customer Signature",
+   "print_hide": 1,
+   "read_only": 1
   }
  ],
  "icon": "fa fa-shopping-cart",
  "idx": 82,
  "is_submittable": 1,
  "max_attachments": 1,
- "modified": "2021-01-08 06:58:24.189403",
+ "modified": "2021-09-08 11:15:03.991682",
  "modified_by": "Administrator",
  "module": "Selling",
  "name": "Quotation",

@@ -32,6 +32,8 @@ frappe.ui.form.on("Item", {
 	},
 
 	refresh: function(frm) {
+		frm.trigger("toggle_metrc_fields_display");
+
 		if (frm.doc.is_stock_item) {
 			frm.add_custom_button(__("Balance"), function() {
 				frappe.route_options = {
@@ -130,6 +132,52 @@ frappe.ui.form.on("Item", {
 
 		frm.toggle_reqd('customer', frm.doc.is_customer_provided_item ? 1 : 0);
 		frm.toggle_reqd('item_code', true);
+	},
+
+	metrc_uom: (frm) => {
+		frm.trigger("toggle_metrc_fields_display");
+	},
+
+	toggle_metrc_fields_display: (frm) => {
+		if (frm.doc.metrc_uom) {
+			frappe.db.get_value("Compliance UOM", { "name": frm.doc.metrc_uom }, "quantity_type", (r) => {
+				if (!r.exc) {
+					frm.toggle_display("metrc_unit_value", r.quantity_type === "CountBased");
+					frm.toggle_display("metrc_unit_uom", r.quantity_type === "CountBased");
+				}
+			});
+		}
+	},
+
+	item_name: (frm) => {
+		if (frm.is_new()) {
+			frm.trigger("build_item_code");
+		}
+	},
+
+	item_group: (frm) => {
+		if (frm.is_new()) {
+			frm.trigger("build_item_code");
+		}
+	},
+
+	brand: (frm) => {
+		if (frm.is_new()) {
+			frm.trigger("build_item_code");
+		}
+	},
+
+	build_item_code: (frm) => {
+		// TODO: allow toggling autoname from the website
+		frappe.call({
+			method: "erpnext.stock.doctype.item.item.autoname_item",
+			args: { item: frm.doc },
+			callback: (r) => {
+				if (r.message) {
+					frm.set_value("item_code", r.message);
+				}
+			}
+		});
 	},
 
 	validate: function(frm){
