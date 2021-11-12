@@ -1,0 +1,51 @@
+{
+ "creation": "2021-09-29 01:55:34.926388",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "country_code",
+  "country",
+  "region_code",
+  "region"
+ ],
+ "fields": [
+  {
+   "description": "Two-letter ISO country code for nexus region.",
+   "fieldname": "country_code",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Country Code"
+  },
+  {
+   "fieldname": "country",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "country"
+  },
+  {
+   "description": "Two-letter ISO region code for nexus region.",
+   "fieldname": "region_code",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Region Code"
+  },
+  {
+   "fieldname": "region",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Region"
+  }
+ ],
+ "istable": 1,
+ "modified": "2021-09-29 02:11:30.259751",
+ "modified_by": "Administrator",
+ "module": "ERPNext Integrations",
+ "name": "TaxJar Nexus",
+ "owner": "Administrator",
+ "permissions": [],
+ "quick_entry": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}
