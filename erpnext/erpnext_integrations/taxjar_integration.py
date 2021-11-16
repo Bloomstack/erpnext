@@ -218,6 +218,11 @@ def set_sales_tax(doc, method):
 					"tax_amount": tax_data.amount_to_collect
 				})
 
+			for item in tax_data.breakdown.line_items:
+				doc.get('items')[cint(item.id)-1].tax_collectable = item.tax_collectable
+				doc.get('items')[cint(item.id)-1].taxable_amount = item.taxable_amount
+
+
 			doc.run_method("calculate_taxes_and_totals")
 
 def check_for_nexus(doc, tax_dict):
@@ -277,7 +282,7 @@ def get_sales_tax(doc, tax_dict):
 	if not client:
 		return
 
-	integration_request = make_integration_request(doc.doctype, doc.name, service="TaxJar", endpoint="client.tax_for_order")
+	integration_request = make_integration_request(doc.doctype, doc.get("docname"), service="TaxJar", endpoint="client.tax_for_order")
 	try:
 		tax_data = client.tax_for_order(tax_dict)
 	except taxjar.exceptions.TaxJarResponseError as err:
