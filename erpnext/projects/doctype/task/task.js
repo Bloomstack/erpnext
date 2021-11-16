@@ -39,7 +39,7 @@ frappe.ui.form.on("Task", {
 			};
 		})
 
-		var prev_route = frappe.get_prev_route();
+		let prev_route = frappe.get_prev_route();
 		if (prev_route && prev_route[1] === 'Task') {
 			let doc = frappe.get_doc('Task',prev_route[2]);
 			if(doc && doc.projects){
