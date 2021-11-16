@@ -52,5 +52,14 @@ def get_data():
 					"description": _("Connect your Exotel Account to ERPNext and track call logs"),
 				}
 			]
+		},
+		{
+			"label": _("Taxes"),
+			"items": [
+				{
+					"type": "doctype",
+					"name": "TaxJar Configuration"
+				}
+			]
 		}
 	]
