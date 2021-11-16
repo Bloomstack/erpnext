@@ -244,6 +244,8 @@ class Task(NestedSet):
 			from datetime import datetime
 			if self.exp_end_date < datetime.now().date():
 				self.db_set('status', 'Overdue', update_modified=False)
+				for project in self.projects:
+					frappe.db.set_value("Task Project", project.name, "status", "Overdue")
 				self.update_project()
 
 	def notify(self):

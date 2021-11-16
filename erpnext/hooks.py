@@ -329,7 +329,8 @@ scheduler_events = {
 		"erpnext.crm.doctype.email_campaign.email_campaign.send_email_to_leads_or_contacts",
 		"erpnext.crm.doctype.email_campaign.email_campaign.set_email_campaign_status",
 		"erpnext.selling.doctype.quotation.quotation.set_expired_status",
-		"erpnext.stock.doctype.stock_entry.stock_entry.raw_material_update_on_bom"
+		"erpnext.stock.doctype.stock_entry.stock_entry.raw_material_update_on_bom",
+		"erpnext.projects.doctype.task.task.set_tasks_as_overdue"
 	],
 	"daily_long": [
 		"erpnext.setup.doctype.email_digest.email_digest.send",
