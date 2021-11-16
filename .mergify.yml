@@ -3,8 +3,8 @@ pull_request_rules:
     conditions:
       - status-success=Sider
       - status-success=Semantic Pull Request
-      - status-success=Codacy Static Code Analysis
-      - status-success=Travis CI - Pull Request
+      - status-success=Python Unit Tests
+      - status-success=Patch Test
       - status-success=security/snyk (Bloomstack)
       - label!=Don't Merge
       - label!=squash
@@ -15,8 +15,9 @@ pull_request_rules:
   - name: Automatic squash on CI success and review
     conditions:
       - status-success=Sider
-      - status-success=Codacy Static Code Analysis
-      - status-success=Travis CI - Pull Request
+      - status-success=Semantic Pull Request
+      - status-success=Python Unit Tests
+      - status-success=Patch Test
       - status-success=security/snyk (Bloomstack)
       - label!=Don't Merge
       - label=squash
