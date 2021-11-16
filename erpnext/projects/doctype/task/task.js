@@ -38,6 +38,14 @@ frappe.ui.form.on("Task", {
 				filters: filters
 			};
 		})
+
+		var prev_route = frappe.get_prev_route();
+		if (prev_route[1] === 'Task') {
+			let doc = frappe.get_doc('Task',prev_route[2]);
+			doc.projects.forEach((project)=>{
+				frm.add_child("projects",project);
+			});
+		}
 	},
 
 	refresh: function (frm) {
