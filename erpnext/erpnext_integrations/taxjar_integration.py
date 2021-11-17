@@ -6,6 +6,7 @@ import json
 import frappe
 from erpnext import get_default_company
 from frappe import _
+from frappe.utils import cint
 from frappe.contacts.doctype.address.address import get_company_address
 from frappe.integrations.utils import make_integration_request, update_integration_request
 
