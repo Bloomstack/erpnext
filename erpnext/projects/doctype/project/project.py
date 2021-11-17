@@ -235,7 +235,6 @@ class Project(Document):
 			frappe.publish_realtime('show_notification_alert', message=notification_doc.get("subject"), after_commit=True, user=user)
 
 
-@frappe.whitelist()
 def	update_estimated_time(self):
 	total_expected_time = 0
 	for task in frappe.get_all("Task",{"project":self.name}):
