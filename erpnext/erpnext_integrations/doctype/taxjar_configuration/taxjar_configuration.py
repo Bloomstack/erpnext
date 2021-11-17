@@ -131,7 +131,7 @@ def make_custom_fields(update=True):
 	custom_fields = {
 		'Quotation Item': [
 			dict(fieldname='product_tax_code', fieldtype='Link', insert_after='description', options='Product Tax Categories',
-				label='Product Tax Code', fetch_from='item_code.product_tax_category'),
+				label='Product Tax Code', fetch_from='item_code.product_tax_code'),
 			dict(fieldname='tax_collectable', fieldtype='Currency', insert_after='net_amount',
 				label='Tax Collectable', read_only=1, options='currency'),
 			dict(fieldname='taxable_amount', fieldtype='Currency', insert_after='tax_collectable',
@@ -139,7 +139,7 @@ def make_custom_fields(update=True):
 		],
 		'Sales Order Item': [
 			dict(fieldname='product_tax_code', fieldtype='Link', insert_after='description', options='Product Tax Categories',
-				label='Product Tax Code', fetch_from='item_code.product_tax_category'),
+				label='Product Tax Code', fetch_from='item_code.product_tax_code'),
 			dict(fieldname='tax_collectable', fieldtype='Currency', insert_after='net_amount',
 				label='Tax Collectable', read_only=1, options='currency'),
 			dict(fieldname='taxable_amount', fieldtype='Currency', insert_after='tax_collectable',
@@ -147,7 +147,7 @@ def make_custom_fields(update=True):
 		],
 		'Sales Invoice Item': [
 			dict(fieldname='product_tax_code', fieldtype='Link', insert_after='description', options='Product Tax Categories',
-				label='Product Tax Code', fetch_from='item_code.product_tax_category'),
+				label='Product Tax Code', fetch_from='item_code.product_tax_code'),
 			dict(fieldname='tax_collectable', fieldtype='Currency', insert_after='net_amount',
 				label='Tax Collectable', read_only=1, options='currency'),
 			dict(fieldname='taxable_amount', fieldtype='Currency', insert_after='tax_collectable',
