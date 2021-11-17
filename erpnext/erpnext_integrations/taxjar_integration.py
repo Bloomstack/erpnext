@@ -6,7 +6,7 @@ import json
 import frappe
 from erpnext import get_default_company
 from frappe import _
-from frappe.utils import cint
+from frappe.utils import cint, flt
 from frappe.contacts.doctype.address.address import get_company_address
 from frappe.integrations.utils import make_integration_request, update_integration_request
 
@@ -131,8 +131,9 @@ def get_tax_data(doc):
 	if to_shipping_state is not None:
 		to_shipping_state = get_iso_3166_2_state_code(to_address)
 
-	line_items = get_line_items(doc)
-	#warning: we are comenting line_items for now. once discount approach stable will enable line_items.
+	distributed_discount = get_doc_discount(doc)
+	line_items = [get_line_item_dict(item, distributed_discount) for item in doc.items]
+
 	tax_dict = {
 		'from_country': from_country_code,
 		'from_zip': from_address.pincode,
@@ -146,7 +147,7 @@ def get_tax_data(doc):
 		'to_state': to_shipping_state,
 		'shipping': shipping,
 		'amount': doc.net_total,
-		#'line_items': line_items,
+		'line_items': line_items,
 		'plugin': 'bloomstack'
 	}
 
@@ -270,6 +271,11 @@ def remove_existing_sales_tax(doc):
 
 	TAX_ACCOUNT_HEAD = frappe.db.get_value("TaxJar Configuration", doc.company, "tax_account_head")
 
+	# Remove sales Tax amount from child level table
+	for item in doc.get("items"):
+		item.tax_collectable = flt(0)
+		item.taxable_amount = flt(0)
+
 	for tax in doc.taxes:
 		if tax.account_head == TAX_ACCOUNT_HEAD:
 			doc.taxes.remove(tax)
@@ -364,28 +370,32 @@ def sanitize_error_response(response):
 
 	return response
 
-
-def get_line_items(doc):
-	if not doc.items:
-		return
-
-	discout_percent = 0.0
+def get_doc_discount(doc):
+	""""
+		It will take doc discount which is applied on Net Total/ Grand Total. It will distribute discount to line item based on qty
+	"""
+	discount = 0
+	qty = 0
+	for item in doc.items:
+		qty = qty + item.get('qty')
 
 	if doc.discount_amount:
-		discout_percent = ((doc.discount_amount / doc.total) * 100)
+		discount = doc.discount_amount/qty
+	return discount
 
-	line_items = []
-	for item in doc.items:
-		if discout_percent:
-			item.discount_amount = ((item.price_list_rate * discout_percent) / 100)
-		line_item = {
-			'id': item.name,
-			'description': item.item_name,
-			'quantity': item.qty,
-			'unit_price': item.price_list_rate,
-			'discount': round(item.discount_amount * item.qty)
-		}
-		line_items.append(line_item)
+def get_line_item_dict(item, distributed_discount):
+	line_item_discount = 0
+	if item.get("discount_percentage"):
+		line_item_discount = (item.get("qty") * (item.get("price_list_rate") * item.get("discount_percentage"))/100)
+	else:
+		line_item_discount = item.get("discount_amount")
 
-	return line_items
-
+	return dict(
+		id = item.get('idx'),
+		description = item.get("item_name"),
+		quantity = item.get('qty'),
+		unit_price = item.get("price_list_rate"),
+		product_tax_code = item.get("product_tax_code"),
+		sales_tax = item.get("tax_collectable"),
+		discount = line_item_discount + distributed_discount
+	)
