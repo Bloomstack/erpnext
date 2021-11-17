@@ -92,7 +92,12 @@ class TaxJarConfiguration(Document):
 def toggle_tax_category_fields(hidden):
 	doc_list = ['Item', 'Quotation Item', 'Sales Order Item', 'Sales Invoice Item']
 	for doctype in doc_list:
-		frappe.set_value('Custom Field', {'dt':doctype, 'fieldname':'product_tax_code'}, 'hidden', hidden)
+		if doctype == 'Item':
+			frappe.set_value('Custom Field', {'dt':doctype, 'fieldname':'product_tax_code'}, 'hidden', hidden)
+		else:
+			frappe.set_value('Custom Field', {'dt':doctype, 'fieldname':'product_tax_code'}, 'hidden', hidden)
+			frappe.set_value('Custom Field', {'dt':doctype, 'fieldname':'tax_collectable'}, 'hidden', hidden)
+			frappe.set_value('Custom Field', {'dt':doctype, 'fieldname':'taxable_amount'}, 'hidden', hidden)
 
 def create_product_tax_code(categories_list):
 	"""
@@ -126,15 +131,27 @@ def make_custom_fields(update=True):
 	custom_fields = {
 		'Quotation Item': [
 			dict(fieldname='product_tax_code', fieldtype='Link', insert_after='description', options='Product Tax Categories',
-				label='Product Tax Code', fetch_from='item_code.product_tax_category'),
+				label='Product Tax Code', fetch_from='item_code.product_tax_code'),
+			dict(fieldname='tax_collectable', fieldtype='Currency', insert_after='net_amount',
+				label='Tax Collectable', read_only=1, options='currency'),
+			dict(fieldname='taxable_amount', fieldtype='Currency', insert_after='tax_collectable',
+				label='Taxable Amount', read_only=1, options='currency')
 		],
 		'Sales Order Item': [
 			dict(fieldname='product_tax_code', fieldtype='Link', insert_after='description', options='Product Tax Categories',
-				label='Product Tax Code', fetch_from='item_code.product_tax_category'),
+				label='Product Tax Code', fetch_from='item_code.product_tax_code'),
+			dict(fieldname='tax_collectable', fieldtype='Currency', insert_after='net_amount',
+				label='Tax Collectable', read_only=1, options='currency'),
+			dict(fieldname='taxable_amount', fieldtype='Currency', insert_after='tax_collectable',
+				label='Taxable Amount', read_only=1, options='currency')
 		],
 		'Sales Invoice Item': [
 			dict(fieldname='product_tax_code', fieldtype='Link', insert_after='description', options='Product Tax Categories',
-				label='Product Tax Code', fetch_from='item_code.product_tax_category'),
+				label='Product Tax Code', fetch_from='item_code.product_tax_code'),
+			dict(fieldname='tax_collectable', fieldtype='Currency', insert_after='net_amount',
+				label='Tax Collectable', read_only=1, options='currency'),
+			dict(fieldname='taxable_amount', fieldtype='Currency', insert_after='tax_collectable',
+				label='Taxable Amount', read_only=1, options='currency')
 		],
 		'Item': [
 			dict(fieldname='product_tax_code', fieldtype='Link', insert_after='item_group', options='Product Tax Categories',
