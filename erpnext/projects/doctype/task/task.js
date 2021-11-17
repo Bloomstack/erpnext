@@ -40,11 +40,11 @@ frappe.ui.form.on("Task", {
 		})
 
 		let prev_route = frappe.get_prev_route();
-		if (prev_route && prev_route[1] === 'Task') {
-			let doc = frappe.get_doc('Task',prev_route[2]);
-			if(doc && doc.projects){
-				doc.projects.forEach((project)=>{
-					frm.add_child("projects",project);
+		if ((prev_route && prev_route[1] === 'Task') && (!frm.doc.projects)) {
+			let doc = frappe.get_doc('Task', prev_route[2]);
+			if(doc && doc.projects) {
+				doc.projects.forEach((project) => {
+					frm.add_child("projects", project);
 				});
 			}
 		}
