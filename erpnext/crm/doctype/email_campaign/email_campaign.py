@@ -62,7 +62,7 @@ class EmailCampaign(Document):
 
 #called through hooks to send campaign mails to leads
 def send_email_to_leads_or_contacts():
-	email_campaigns = frappe.get_all("Email Campaign", filters = { 'status': ('not in', ['Completed', 'Scheduled']) })
+	email_campaigns = frappe.get_all("Email Campaign", filters = {'status': ('not in', ['Completed', 'Scheduled'])})
 	for camp in email_campaigns:
 		email_campaign = frappe.get_doc("Email Campaign", camp.name)
 		campaign = frappe.get_cached_doc("Campaign", email_campaign.campaign_name)
