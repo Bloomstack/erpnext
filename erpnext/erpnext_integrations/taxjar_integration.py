@@ -131,9 +131,9 @@ def get_tax_data(doc):
 	if to_shipping_state is not None:
 		to_shipping_state = get_iso_3166_2_state_code(to_address)
 
-	distributed_discount = get_doc_discount(doc)
+	# get shipping discount and distributed discount. deducting shipping discount from shipping parameter.
+	shipping_discount, distributed_discount = get_doc_discount(doc)
 	line_items = [get_line_item_dict(item, distributed_discount) for item in doc.items]
-
 	tax_dict = {
 		'from_country': from_country_code,
 		'from_zip': from_address.pincode,
@@ -145,7 +145,7 @@ def get_tax_data(doc):
 		'to_city': to_address.city,
 		'to_street': to_address.address_line1,
 		'to_state': to_shipping_state,
-		'shipping': shipping,
+		'shipping': shipping - shipping_discount,
 		'amount': doc.net_total,
 		'line_items': line_items,
 		'plugin': 'bloomstack'
@@ -374,14 +374,31 @@ def get_doc_discount(doc):
 	""""
 		It will take doc discount which is applied on Net Total/ Grand Total. It will distribute discount to line item based on qty
 	"""
-	discount = 0
+	SHIP_ACCOUNT_HEAD = frappe.db.get_value("TaxJar Configuration", doc.company, "shipping_account_head")
+	distributed_discount = 0
+	shipping_discount = 0
 	qty = 0
 	for item in doc.items:
 		qty = qty + item.get('qty')
 
 	if doc.discount_amount:
-		discount = doc.discount_amount/qty
-	return discount
+		distributed_discount = doc.discount_amount/qty
+
+	# if discount is on grand total then calculate shipping discount for shipping.
+	if doc.apply_discount_on == "Grand Total":
+		shipping = sum([tax.tax_amount for tax in doc.taxes if tax.account_head == SHIP_ACCOUNT_HEAD])
+		if shipping:
+			if doc.additional_discount_percentage:
+				# get discount amount from discount percentage.
+				shipping_discount = (shipping * doc.additional_discount_percentage) / 100
+			elif not doc.additional_discount_percentage and doc.discount_amount:
+				# create discount percentage from discount amount and calculate shipping discount amount from shipping.
+				discount_percentage = (doc.discount_amount / (doc.discount_amount + doc.grand_total)) * 100
+				shipping_discount = (shipping * discount_percentage) / 100
+
+			distributed_discount = distributed_discount - shipping_discount
+
+	return shipping_discount, distributed_discount
 
 def get_line_item_dict(item, distributed_discount):
 	line_item_discount = 0
