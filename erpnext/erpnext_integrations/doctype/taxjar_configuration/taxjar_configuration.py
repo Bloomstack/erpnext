@@ -97,7 +97,7 @@ def toggle_tax_category_fields(hidden):
 		else:
 			frappe.set_value('Custom Field', {'dt':doctype, 'fieldname':'product_tax_code'}, 'hidden', hidden)
 			frappe.set_value('Custom Field', {'dt':doctype, 'fieldname':'tax_collectable'}, 'hidden', hidden)
-			frappe.set_value('Custom Field', {'dt':doctype, 'fieldname':'product_tax_code'}, 'hidden', hidden)
+			frappe.set_value('Custom Field', {'dt':doctype, 'fieldname':'taxable_amount'}, 'hidden', hidden)
 
 def create_product_tax_code(categories_list):
 	"""
