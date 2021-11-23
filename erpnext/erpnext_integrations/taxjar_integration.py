@@ -131,8 +131,13 @@ def get_tax_data(doc):
 	if to_shipping_state is not None:
 		to_shipping_state = get_iso_3166_2_state_code(to_address)
 
+	# for refund transaction send args as True so that we can maintain negative rate for refund transaction.
+	refund_transaction = False
+	if doc.is_return:
+		refund_transaction = True
+
 	distributed_discount = get_doc_discount(doc)
-	line_items = [get_line_item_dict(item, distributed_discount) for item in doc.items]
+	line_items = [get_line_item_dict(item, distributed_discount, refund_transaction=refund_transaction) for item in doc.items]
 
 	tax_dict = {
 		'from_country': from_country_code,
@@ -220,12 +225,11 @@ def set_sales_tax(doc, method):
 					"tax_amount": tax_data.amount_to_collect
 				})
 
-			for item in tax_data.breakdown.line_items:
-				doc.get('items')[cint(item.id)-1].tax_collectable = item.tax_collectable
-				doc.get('items')[cint(item.id)-1].taxable_amount = item.taxable_amount
+		for item in tax_data.breakdown.line_items:
+			doc.get('items')[cint(item.id)-1].tax_collectable = item.tax_collectable
+			doc.get('items')[cint(item.id)-1].taxable_amount = item.taxable_amount
 
-
-			doc.run_method("calculate_taxes_and_totals")
+		doc.run_method("calculate_taxes_and_totals")
 
 def check_for_nexus(doc, tax_dict):
 	"""
@@ -288,8 +292,10 @@ def get_sales_tax(doc, tax_dict):
 
 	if not client:
 		return
-
-	integration_request = make_integration_request(doc.doctype, doc.get("docname"), service="TaxJar", endpoint="client.tax_for_order")
+	if doc.is_new():
+		integration_request = make_integration_request(doc.doctype, None, service="TaxJar", endpoint="client.tax_for_order")
+	else:
+		integration_request = make_integration_request(doc.doctype, doc.name, service="TaxJar", endpoint="client.tax_for_order")
 	try:
 		tax_data = client.tax_for_order(tax_dict)
 	except taxjar.exceptions.TaxJarResponseError as err:
@@ -383,7 +389,7 @@ def get_doc_discount(doc):
 		discount = doc.discount_amount/qty
 	return discount
 
-def get_line_item_dict(item, distributed_discount):
+def get_line_item_dict(item, distributed_discount, refund_transaction=False):
 	line_item_discount = 0
 	if item.get("discount_percentage"):
 		line_item_discount = (item.get("qty") * (item.get("price_list_rate") * item.get("discount_percentage"))/100)
@@ -393,8 +399,8 @@ def get_line_item_dict(item, distributed_discount):
 	return dict(
 		id = item.get('idx'),
 		description = item.get("item_name"),
-		quantity = item.get('qty'),
-		unit_price = item.get("price_list_rate"),
+		quantity = abs(item.get("qty")) if refund_transaction else item.get("qty"),
+		unit_price = -abs(item.get("price_list_rate")) if refund_transaction else item.get("price_list_rate"),
 		product_tax_code = item.get("product_tax_code"),
 		sales_tax = item.get("tax_collectable"),
 		discount = line_item_discount + distributed_discount
