@@ -1,9 +1,9 @@
 [   
     {
-        "status": "Setteled",
+        "status": "Settled"
     },
     {
-        "status": "Pending",
+        "status": "Pending"
     },
     {
         "status": "Reconciled"

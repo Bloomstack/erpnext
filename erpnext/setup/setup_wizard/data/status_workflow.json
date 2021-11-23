@@ -254,7 +254,7 @@
     {
         "name": "Purchase Order-Cancelled",
         "document_type": "Purchase Order",
-        "status": "Delivered",
+        "status": "Cancelled",
         "condition": "eval:self.docstatus==2",
         "enabled": 1
     },
