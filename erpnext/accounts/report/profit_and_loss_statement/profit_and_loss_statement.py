@@ -113,7 +113,7 @@ def get_profit_loss(income, expense_item, period_list, company, account_name, in
 		return profit_loss
 
 
-def get_net_profit_loss(income, expense, period_list, company, currency=None, consolidated=False):
+def get_net_profit_loss(income, expense, period_list, company, companies=None, currency=None, consolidated=False):
 	total = 0
 	net_profit_loss = {
 		"account_name": "'" + _("Profit for the year") + "'",
@@ -123,18 +123,34 @@ def get_net_profit_loss(income, expense, period_list, company, currency=None, co
 	}
 
 	has_value = False
-	for period in period_list:
-		key = period if consolidated else period.key
-		total_income = flt(income[-2][key], 3) if income else 0
-		total_expense = flt(expense[-2][key], 3) if expense else 0
+	if consolidated:
+		for company in companies:
+			for period in period_list:
+				key = f'{company}({period.key})'
+				total_income = flt(income[-2][key], 3) if income else 0
+				total_expense = flt(expense[-2][key], 3) if expense else 0
 
-		net_profit_loss[key] = total_income - total_expense
+				net_profit_loss[key] = total_income - total_expense
 
-		if net_profit_loss[key]:
-			has_value=True
+				if net_profit_loss[key]:
+					has_value=True
 
-		total += flt(net_profit_loss[key])
-		net_profit_loss["total"] = total
+				total += flt(net_profit_loss[key])
+				net_profit_loss["total"] = total
+	else:
+
+		for period in period_list:
+			key = period if consolidated else period.key
+			total_income = flt(income[-2][key], 3) if income else 0
+			total_expense = flt(expense[-2][key], 3) if expense else 0
+
+			net_profit_loss[key] = total_income - total_expense
+
+			if net_profit_loss[key]:
+				has_value=True
+
+			total += flt(net_profit_loss[key])
+			net_profit_loss["total"] = total
 
 	if has_value:
 		return net_profit_loss

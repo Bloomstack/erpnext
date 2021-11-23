@@ -13,19 +13,31 @@ frappe.query_reports["Consolidated Financial Statement"] = {
 			"reqd": 1
 		},
 		{
-			"fieldname":"from_fiscal_year",
-			"label": __("Start Year"),
-			"fieldtype": "Link",
-			"options": "Fiscal Year",
-			"default": frappe.defaults.get_user_default("fiscal_year"),
+			"fieldname": "from_date",
+			"label": __("From Date"),
+			"fieldtype": "Date",
+			"default": frappe.defaults.get_user_default("year_start_date"),
 			"reqd": 1
 		},
 		{
-			"fieldname":"to_fiscal_year",
-			"label": __("End Year"),
-			"fieldtype": "Link",
-			"options": "Fiscal Year",
-			"default": frappe.defaults.get_user_default("fiscal_year"),
+			"fieldname": "to_date",
+			"label": __("To Date"),
+			"fieldtype": "Date",
+			"default": frappe.defaults.get_user_default("year_end_date"),
+			"reqd": 1
+		},
+		{
+			"fieldname": "periodicity",
+			"label": __("Periodicity"),
+			"fieldtype": "Select",
+			"options": [
+				{ "value": "Custom", "label": __("Custom Date Range") },
+				{ "value": "Monthly", "label": __("Monthly") },
+				{ "value": "Quarterly", "label": __("Quarterly") },
+				{ "value": "Half-Yearly", "label": __("Half-Yearly") },
+				{ "value": "Yearly", "label": __("Yearly") }
+			],
+			"default": "Yearly",
 			"reqd": 1
 		},
 		{
@@ -50,6 +62,16 @@ frappe.query_reports["Consolidated Financial Statement"] = {
 			"default": frappe.defaults.get_user_default("Currency")
 		},
 		{
+			"fieldname": "cost_center",
+			"label": __("Cost Center"),
+			"fieldtype": "MultiSelectList",
+			get_data: function(txt) {
+				return frappe.db.get_link_options('Cost Center', txt, {
+					company: frappe.query_report.get_filter_value("company")
+				});
+			}
+		},
+		{
 			"fieldname":"accumulated_in_group_company",
 			"label": __("Accumulated Values in Group Company"),
 			"fieldtype": "Check",
@@ -60,6 +82,58 @@ frappe.query_reports["Consolidated Financial Statement"] = {
 			"label": __("Include Default Book Entries"),
 			"fieldtype": "Check",
 			"default": 1
+		},
+		{
+			"fieldname":"from_company",
+			"label": __("From Company"),
+			"fieldtype": "Link",
+			"options": "Company",
+			"hidden": 1,
+			"reqd": 0,
+			get_query: function () {
+				var company = frappe.query_report.get_filter_value("company");
+				company_list =  {
+					doctype: "Company",
+					filters: {
+						"is_group": 0,
+						"parent_company": company,
+					},
+				};
+				return company_list
+			},
+		},
+		{
+			"fieldname":"to_company",
+			"label": __("To Company"),
+			"fieldtype": "Link",
+			"options": "Company",
+			"hidden": 1,
+			"reqd": 0,
+			get_query: function () {
+				var company = frappe.query_report.get_filter_value("company");
+				company_list =  {
+					doctype: "Company",
+					filters: {
+						"is_group": 0,
+						"parent_company": company,
+					},
+				};
+				return company_list
+			},
+		},
+		{
+			"fieldname":"compare_with_company",
+			"label": __("Compare Statements"),
+			"fieldtype": "Check",
+			"default": 0,
+			on_change: () => {
+				let filter_based_on = frappe.query_report.get_filter_value('compare_with_company');
+				frappe.query_report.toggle_filter_display('from_company', filter_based_on === 0);
+				frappe.query_report.toggle_filter_display('to_company', filter_based_on === 0);
+				frappe.query_report.refresh();
+			},
+
 		}
+		
 	]
 }
