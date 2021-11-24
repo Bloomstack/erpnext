@@ -216,7 +216,7 @@ def add_item_discount_percent(args, ctx):
 					total_discount = total_discount + discount_value
 					qty = qty + item.qty
 
-	if total_discount > 0 and qty > min_qty:
+	if total_discount > 0 and qty >= min_qty:
 		doc.discount_amount = flt(doc.discount_amount) + total_discount
 		doc.additional_discount_percentage = 0
 		discount_amount_total_guard(doc)
