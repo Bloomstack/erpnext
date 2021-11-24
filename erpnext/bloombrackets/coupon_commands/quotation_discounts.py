@@ -151,7 +151,7 @@ def add_item_group_discount(args, ctx):
 	valid_item_groups = flat_item_group_tree_list(group)
 
 	for item in doc.items:
-		item_group = frappe.get_value("Item", item.item_name, "item_group")
+		item_group = frappe.get_value("Item", item.item_code, "item_group")
 
 		if item_group in valid_item_groups:
 			if qty <= max_qty - min_qty:
@@ -269,7 +269,7 @@ def add_item_group_discount_percent(args, ctx):
 					total_discount = total_discount + discount_value
 					qty = qty + item.qty
 
-	if total_discount > 0 and qty > min_qty:
+	if total_discount > 0 and qty >= min_qty:
 		doc.discount_amount = flt(doc.discount_amount) + total_discount
 		doc.additional_discount_percentage = 0
 		discount_amount_total_guard(doc)
