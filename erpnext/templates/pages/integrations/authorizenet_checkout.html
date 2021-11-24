@@ -13,6 +13,9 @@
 
 {%- block page_content -%}
 
+{% if status == "Cancelled" %}
+<script>frappe.local.flags.redirect_location = '/404'</script>
+{% else %}
 <div class="authorizenet">
 	<div class="col-md-12">
 		<h2 class="text-center">{{ description }}</h2>
@@ -22,7 +25,6 @@
 
 		<form id="payment-form">
 			<div class="form-row row">
-
 				<div class="col-md-8 col-sm-12">
 					<div class="group row">
 						<div class="col-md-4 col-sm-6">
@@ -82,6 +84,6 @@
 		</form>
 	</div>
 </div>
-
+{% endif %}
 
 {% endblock %}
