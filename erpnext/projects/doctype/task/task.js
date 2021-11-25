@@ -37,7 +37,18 @@ frappe.ui.form.on("Task", {
 			return {
 				filters: filters
 			};
-		})
+		});
+		
+		let prev_route = frappe.get_prev_route();
+		let doc = frappe.get_doc('Task', prev_route[2]);
+		if((prev_route[1] === "Task") && (doc && doc.projects ))  {
+			frm.doc.projects.forEach(row => {
+				if(row.project === undefined){
+					frm.doc.projects.splice(row,1);
+					doc.projects.forEach(project => frm.add_child("projects", project));
+				}
+			});
+		}
 	},
 
 	refresh: function (frm) {
