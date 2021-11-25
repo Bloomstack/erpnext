@@ -13,9 +13,6 @@
 
 {%- block page_content -%}
 
-{% if status == "Cancelled" %}
-<script>window.location.href = '/404'</script>
-{% else %}
 <div class="authorizenet">
 	<div class="col-md-12">
 		<h2 class="text-center">{{ description }}</h2>
@@ -84,6 +81,5 @@
 		</form>
 	</div>
 </div>
-{% endif %}
 
 {% endblock %}
