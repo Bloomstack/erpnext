@@ -14,7 +14,7 @@
 {%- block page_content -%}
 
 {% if status == "Cancelled" %}
-<script>frappe.local.flags.redirect_location = '/404'</script>
+<script>window.location.href = '/404'</script>
 {% else %}
 <div class="authorizenet">
 	<div class="col-md-12">
