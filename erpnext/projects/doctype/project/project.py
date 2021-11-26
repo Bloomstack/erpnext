@@ -212,7 +212,7 @@ class Project(Document):
 
 	def on_update(self):
 		self.notify()
-		update_estimated_time(self)
+		update_estimated_time(self.name)
 
 	def notify(self):
 		if not frappe.db.get_single_value("Projects Settings", "send_notifications_for_project"):
@@ -235,11 +235,12 @@ class Project(Document):
 			frappe.publish_realtime('show_notification_alert', message=notification_doc.get("subject"), after_commit=True, user=user)
 
 
-def	update_estimated_time(self):
+def	update_estimated_time(project_name):
 	total_expected_time = 0
-	for task in frappe.get_all("Task",{"project":self.name}):
-		total_expected_time += frappe.db.get_value("Task",task.name,"expected_time")
-	frappe.db.set_value('Project', self.name, 'estimated_time', total_expected_time, update_modified=True)
+	tasks = frappe.get_all("Task Project", filters={"project": project_name}, fields=["parent"])
+	for task in tasks:
+		total_expected_time += frappe.db.get_value("Task", task.parent, "expected_time")
+	frappe.db.set_value('Project', project_name, 'estimated_time', total_expected_time, update_modified=True)
 
 def get_timeline_data(doctype, name):
 	'''Return timeline for attendance'''

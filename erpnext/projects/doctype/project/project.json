@@ -42,6 +42,7 @@
   "column_break_20",
   "estimated_time",
   "actual_end_date",
+  "estimated_time",
   "project_details",
   "estimated_costing",
   "total_costing_amount",
@@ -525,7 +526,6 @@
    "write": 1
   }
  ],
- "quick_entry": 1,
  "search_fields": "customer, status, priority",
  "show_name_in_global_search": 1,
  "sort_field": "modified",
