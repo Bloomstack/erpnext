@@ -156,4 +156,7 @@ class TestPlaidSettings(unittest.TestCase):
 		company = frappe.db.get_single_value('Global Defaults', 'default_company')
 		frappe.db.set_value("Company", company, "default_bank_account", None)
 
-		self.assertRaises(frappe.ValidationError, add_bank_accounts, response=bank_accounts, bank=bank, company=company)
+		if not frappe.db.exists("Account","Citi-Plaid Checking - WP"):
+			add_bank_accounts(response=bank_accounts, bank=bank, company=company)
+
+		self.assertRaises(frappe.exceptions.ValidationError, add_bank_accounts, response=bank_accounts, bank=bank, company=company)
