@@ -13,8 +13,6 @@ from frappe.utils import add_days, cstr, date_diff, get_link_to_form, getdate, t
 from frappe.utils.nestedset import NestedSet
 from frappe.desk.doctype.notification_log.notification_log import enqueue_create_notification
 from collections import Counter
-from erpnext.projects.doctype.project.project import update_estimated_time
-
 
 class CircularReferenceError(frappe.ValidationError): pass
 class EndDateCannotBeGreaterThanProjectEndDateError(frappe.ValidationError): pass
@@ -144,7 +142,6 @@ class Task(NestedSet):
 		self.populate_depends_on()
 		self.notify()
 		self.assign_todo()
-		update_project_estimated_time(self)
 
 	def unassign_todo(self):
 		if self.status == "Completed" and frappe.db.get_single_value("Projects Settings", "remove_assignment_on_task_completion"):
@@ -269,10 +266,6 @@ class Task(NestedSet):
 
 			frappe.publish_realtime('show_notification_alert', message=notification_doc.get("subject"), after_commit=True, user=user)
 
-
-def update_project_estimated_time(self):
-	for project in self.projects:
-		update_estimated_time(project.project)
 
 @frappe.whitelist()
 def check_if_child_exists(name):

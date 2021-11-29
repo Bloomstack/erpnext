@@ -32,7 +32,7 @@ class Project(Document):
 		self.send_welcome_email()
 		self.update_costing()
 		self.update_percent_complete()
-		
+
 	def copy_from_template(self):
 		'''
 		Copy tasks from template
@@ -212,7 +212,6 @@ class Project(Document):
 
 	def on_update(self):
 		self.notify()
-		update_estimated_time(self.name)
 
 	def notify(self):
 		if not frappe.db.get_single_value("Projects Settings", "send_notifications_for_project"):
@@ -234,7 +233,7 @@ class Project(Document):
 
 			frappe.publish_realtime('show_notification_alert', message=notification_doc.get("subject"), after_commit=True, user=user)
 
-
+@frappe.whitelist()
 def	update_estimated_time(project_name):
 	total_expected_time = 0
 	tasks = frappe.get_all("Task Project", filters={"project": project_name}, fields=["parent"])
