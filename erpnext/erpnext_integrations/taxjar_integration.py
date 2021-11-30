@@ -403,7 +403,6 @@ def get_doc_discount(doc):
 	elif doc.discount_amount:
 		distributed_discount = doc.discount_amount/qty
 	
-	print('-----shipping_discount-----------', shipping_discount, distributed_discount)
 	return shipping_discount, distributed_discount
 
 def get_line_item_dict(item, distributed_discount, refund_transaction=False):
@@ -412,8 +411,6 @@ def get_line_item_dict(item, distributed_discount, refund_transaction=False):
 		line_item_discount = (item.get("qty") * (item.get("price_list_rate") * item.get("discount_percentage"))/100)
 	else:
 		line_item_discount = item.get("discount_amount")
-	
-	print("-----------------", line_item_discount, distributed_discount)
 
 	return dict(
 		id = item.get('idx'),
