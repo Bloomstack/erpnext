@@ -132,12 +132,9 @@ def get_tax_data(doc):
 		to_shipping_state = get_iso_3166_2_state_code(to_address)
 
 	# for refund transaction send args as True so that we can maintain negative rate for refund transaction.
-	refund_transaction = False
-	if doc.is_return:
-		refund_transaction = True
 
 	distributed_discount = get_doc_discount(doc)
-	line_items = [get_line_item_dict(item, distributed_discount, refund_transaction=refund_transaction) for item in doc.items]
+	line_items = [get_line_item_dict(item, distributed_discount, refund_transaction=doc.is_return) for item in doc.items]
 
 	tax_dict = {
 		'from_country': from_country_code,
