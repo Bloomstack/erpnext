@@ -1,5 +1,4 @@
 {
- "autoname": "field:title",
  "creation": "2020-07-18 06:47:59.662640",
  "doctype": "DocType",
  "editable_grid": 1,
@@ -7,7 +6,6 @@
  "field_order": [
   "company",
   "section_break_1",
-  "title",
   "plant_tag",
   "strain",
   "plant_batch",
@@ -25,22 +23,14 @@
   "soil_texture",
   "soil_analysis",
   "plant_analysis",
-  "statistics_section",
-  "untracked_count",
-  "tracked_count",
-  "packaged_count",
-  "column_break_37",
-  "harvested_count",
-  "destroyed_count"
+  "section_break_20",
+  "vegetative_date",
+  "flowering_date",
+  "column_break_23",
+  "harvested_date",
+  "destroyed_date"
  ],
  "fields": [
-  {
-   "fieldname": "title",
-   "fieldtype": "Data",
-   "label": "UID",
-   "read_only": 1,
-   "unique": 1
-  },
   {
    "fieldname": "strain",
    "fieldtype": "Link",
@@ -121,41 +111,6 @@
    "options": "Linked Plant Analysis"
   },
   {
-   "collapsible": 1,
-   "fieldname": "statistics_section",
-   "fieldtype": "Section Break",
-   "label": "Statistics"
-  },
-  {
-   "fieldname": "untracked_count",
-   "fieldtype": "Int",
-   "label": "Untracked Count"
-  },
-  {
-   "fieldname": "tracked_count",
-   "fieldtype": "Int",
-   "label": "Tracked Count"
-  },
-  {
-   "fieldname": "packaged_count",
-   "fieldtype": "Int",
-   "label": "Packaged Count"
-  },
-  {
-   "fieldname": "column_break_37",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "harvested_count",
-   "fieldtype": "Int",
-   "label": "Harvested Count"
-  },
-  {
-   "fieldname": "destroyed_count",
-   "fieldtype": "Int",
-   "label": "Destroyed Count"
-  },
-  {
    "fieldname": "plant_id",
    "fieldtype": "Data",
    "label": "Plant ID",
@@ -192,9 +147,37 @@
    "fieldname": "completely_harvested",
    "fieldtype": "Check",
    "label": "Completely Harvested"
+  },
+  {
+   "fieldname": "section_break_20",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "vegetative_date",
+   "fieldtype": "Date",
+   "label": "Vegetative Date"
+  },
+  {
+   "fieldname": "flowering_date",
+   "fieldtype": "Date",
+   "label": "Flowering Date"
+  },
+  {
+   "fieldname": "harvested_date",
+   "fieldtype": "Date",
+   "label": "Harvested Date"
+  },
+  {
+   "fieldname": "destroyed_date",
+   "fieldtype": "Date",
+   "label": "Destroyed Date"
+  },
+  {
+   "fieldname": "column_break_23",
+   "fieldtype": "Column Break"
   }
  ],
- "modified": "2021-11-03 04:26:50.738775",
+ "modified": "2021-11-11 03:44:27.503372",
  "modified_by": "Administrator",
  "module": "Agriculture",
  "name": "Plant",

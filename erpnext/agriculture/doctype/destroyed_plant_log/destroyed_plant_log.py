@@ -14,11 +14,9 @@ class DestroyedPlantLog(Document):
 		if self.category_type == "Plant Batch":
 			doc = frappe.get_doc('Plant Batch', self.category)
 			validate_quantities(doc, self.destroy_count)
-		elif self.category_type == "Plant":
-			doc = frappe.get_doc('Plant', self.category)
-			validate_quantities(doc, self.destroy_count)
+			doc.untracked_count -= int(self.destroy_count)
+			doc.destroyed_count += int(self.destroy_count)
+			doc.save()
 		if not self.actual_date:
 			self.actual_date = getdate(nowdate())
-		doc.untracked_count -= int(self.destroy_count)
-		doc.destroyed_count += int(self.destroy_count)
-		doc.save()
+		

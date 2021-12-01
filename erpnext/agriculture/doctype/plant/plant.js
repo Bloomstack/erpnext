@@ -12,21 +12,16 @@ frappe.ui.form.on('Plant', {
 		}
 	},
 	destroy_plant: (frm) => {
-		frappe.prompt([{
-			fieldname: 'destroy_count',
-			label: __('Destroy Count'),
-			fieldtype: 'Int',
-			reqd: 1,
-		},
+		frappe.prompt([
 		{
 			fieldname: 'reason',
 			label: __('Reason'),
-			fieldtype: 'Data',
+			fieldtype: 'Text',
 			reqd: 1,
 		}],
 		(data) => {
 			frm.call('destroy_plant', {
-				destroy_count: data.destroy_count,
+				destroy_count: 1,
 				reason: data.reason
 			}).then(r => {
 				frappe.run_serially([

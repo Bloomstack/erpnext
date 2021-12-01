@@ -11,9 +11,9 @@ from erpnext.compliance.utils import make_integration_request, get_bloomtrace_cl
 
 
 class Plant(Document):
-	def before_insert(self):
-		if not self.title:
-			self.title = self.strain + " - " + self.plant_tag
+	def autoname(self):
+		if not self.name:
+			self.name = self.strain + " - " + self.plant_tag
 
 	def on_update(self):
 		self.create_integration_request()
@@ -22,7 +22,6 @@ class Plant(Document):
 		make_integration_request(self.doctype, self.name, "Plant")
 
 	def destroy_plant(self, destroy_count, reason):
-		validate_quantities(self, destroy_count)
 		destroyed_plant_log = frappe.get_doc(
 			dict(
 				doctype = 'Destroyed Plant Log',
@@ -36,6 +35,11 @@ class Plant(Document):
 		destroyed_plant_log.submit()
 		return destroyed_plant_log.name
 
+	def after_insert(self):
+		plant_batch = frappe.get_doc("Plant Batch",self.plant_batch)
+		plant_batch.untracked_count = plant_batch.untracked_count - 1
+		plant_batch.tracked_count = plant_batch.tracked_count + 1
+		plant_batch.save()
 
 @frappe.whitelist()
 def make_harvest(source_name, target_doc=None):
