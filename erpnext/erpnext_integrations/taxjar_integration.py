@@ -77,11 +77,9 @@ def create_transaction(doc, method):
 			update_integration_request(integration_request, endpoint="client.create_order")
 			response = client.create_order(tax_dict)
 	except taxjar.exceptions.TaxJarResponseError as err:
-		update_integration_request(integration_request, status="Failed", error=str(err))
-		error_msg = """There seems to be an error in Address<br><br>{0}""".format(sanitize_error_response(err))
-		frappe.throw(_(error_msg), AddressError, _("Address Error"))
-	except Exception as ex:
-		print(traceback.format_exc(ex))
+		update_integration_request(integration_request, status="Failed", error=sanitize_error_response(err))
+		error_msg = """There seems to be an error <br><br>{0}""".format(sanitize_error_response(err))
+		frappe.throw(_(error_msg))
 	else:
 		update_integration_request(integration_request, status="Completed", response=json.dumps(response.to_json()))
 
@@ -131,10 +129,17 @@ def get_tax_data(doc):
 	if to_shipping_state is not None:
 		to_shipping_state = get_iso_3166_2_state_code(to_address)
 
-	# for refund transaction send args as True so that we can maintain negative rate for refund transaction.
+	# check how parent level discount distributed evenly or proportionlly
+	order_level_discount_distribution = frappe.db.get_value("TaxJar Configuration", doc.company, "order_level_discount_distribution")
+	if not order_level_discount_distribution:
+		frappe.throw(_("Please Add Order level distribution in taxjar configuration!"))
 
-	distributed_discount = get_doc_discount(doc)
-	line_items = [get_line_item_dict(item, distributed_discount, refund_transaction=doc.is_return) for item in doc.items]
+	# for refund transaction send args as True so that we can maintain negative rate for refund transaction.
+	if order_level_discount_distribution == "Evenly":
+		distributed_discount = get_doc_discount(doc)
+		line_items = [get_line_item_dict(item, distributed_discount, refund_transaction=doc.is_return) for item in doc.items]
+	else:
+		line_items = [get_line_item_dict_proportionally(item, doc, refund_transaction=doc.is_return) for item in doc.items]
 
 	tax_dict = {
 		'from_country': from_country_code,
@@ -388,10 +393,47 @@ def get_doc_discount(doc):
 
 def get_line_item_dict(item, distributed_discount, refund_transaction=False):
 	line_item_discount = 0
+
+	# this condition added to prevent item going to negative if distributed discount applied.
+	if item.get("rate") > item.get("price_list_rate"):
+		frappe.throw(_("Row.{0}: Item {1} Rate {2} should not be more than Price List Rate {3}".format(item.get('idx'), item.get('item_name'), item.get('rate'), item.get('price_list_rate'))))
+
 	if item.get("discount_percentage"):
 		line_item_discount = (item.get("qty") * (item.get("price_list_rate") * item.get("discount_percentage"))/100)
 	else:
 		line_item_discount = item.get("discount_amount")
+
+	return dict(
+		id = item.get('idx'),
+		description = item.get("item_name"),
+		quantity = abs(item.get("qty")) if refund_transaction else item.get("qty"),
+		unit_price = -abs(item.get("price_list_rate")) if refund_transaction else item.get("price_list_rate"),
+		product_tax_code = item.get("product_tax_code"),
+		sales_tax = item.get("tax_collectable"),
+		discount = line_item_discount + distributed_discount
+	)
+
+def get_line_item_dict_proportionally(item, doc, refund_transaction=False):
+	line_item_discount = 0
+	distributed_discount_percentage = 0
+	distributed_discount = 0
+
+	# this condition added to prevent item going to negative if distributed discount applied.
+	if item.get("rate") > item.get("price_list_rate"):
+		frappe.throw(_("Row.{0}: Item {1} Rate {2} should not be more than Price List Rate {3}".format(item.get('idx'), item.get('item_name'), item.get('rate'), item.get('price_list_rate'))))
+
+	# line item discounting calculate
+	if item.get("discount_percentage"):
+		line_item_discount = (item.get("qty") * (item.get("price_list_rate") * item.get("discount_percentage"))/100)
+	else:
+		line_item_discount = item.get("discount_amount")
+
+	# if paraent level discount aviliable then distribute to line item proportionally
+	if doc.discount_amount:
+		distributed_discount_percentage = (doc.discount_amount / (doc.discount_amount + doc.net_total)) * 100
+
+		# below calculation, item.get("rate") is used instead of price_list_rate otherwise amount will go negative.
+		distributed_discount = ((item.get("qty") * item.get("rate")) * distributed_discount_percentage) / 100
 
 	return dict(
 		id = item.get('idx'),
