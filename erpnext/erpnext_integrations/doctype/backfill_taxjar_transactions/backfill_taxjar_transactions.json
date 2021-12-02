@@ -1,0 +1,94 @@
+{
+ "autoname": "format: Transaction Import on {creation}",
+ "creation": "2021-11-10 03:20:52.588269",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "company",
+  "column_break_2",
+  "status",
+  "section_break_2",
+  "from_date",
+  "column_break_4",
+  "to_date",
+  "section_break_6",
+  "push_transaction",
+  "force"
+ ],
+ "fields": [
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company"
+  },
+  {
+   "fieldname": "column_break_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Not Started",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Not Started\nPartially Successful\nSuccessful\nFailed"
+  },
+  {
+   "fieldname": "section_break_2",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "from_date",
+   "fieldtype": "Date",
+   "label": "From Date"
+  },
+  {
+   "fieldname": "column_break_4",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "to_date",
+   "fieldtype": "Date",
+   "label": "To Date"
+  },
+  {
+   "fieldname": "section_break_6",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "push_transaction",
+   "fieldtype": "Button",
+   "label": "Push Transaction"
+  },
+  {
+   "default": "0",
+   "description": "if force is checked then it will create a new transaction and update the existing transaction in TaxJar\nif force is un-checked then it will create a new transaction only",
+   "fieldname": "force",
+   "fieldtype": "Check",
+   "label": "Force"
+  }
+ ],
+ "modified": "2021-12-02 00:18:33.347608",
+ "modified_by": "Administrator",
+ "module": "ERPNext Integrations",
+ "name": "Backfill TaxJar Transactions",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

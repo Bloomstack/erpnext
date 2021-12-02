@@ -259,7 +259,9 @@ doc_events = {
 			"erpnext.regional.italy.utils.sales_invoice_on_cancel",
 			"erpnext.erpnext_integrations.taxjar_integration.delete_transaction"
 		],
-		"on_trash": "erpnext.regional.check_deletion_permission"
+		"on_trash": "erpnext.regional.check_deletion_permission",
+		"on_update": "erpnext.erpnext_integrations.taxjar_integration.update_transaction"
+
 	},
 	"Payment Entry": {
 		"on_submit": ["erpnext.regional.create_transaction_log", "erpnext.accounts.doctype.payment_request.payment_request.update_payment_req_status"],

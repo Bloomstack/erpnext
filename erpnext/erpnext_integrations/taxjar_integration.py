@@ -38,7 +38,7 @@ def get_client(doc):
 		})
 		return client
 
-def create_transaction(doc, method):
+def create_transaction(doc, method=None, backfill=False):
 	"""Create an order transaction in TaxJar"""
 
 	TAXJAR_CREATE_TRANSACTIONS = frappe.db.get_value("TaxJar Configuration", doc.company, "taxjar_create_transactions")
@@ -63,7 +63,10 @@ def create_transaction(doc, method):
 		return
 
 	tax_dict['transaction_id'] = doc.name
-	tax_dict['transaction_date'] = frappe.utils.today()
+	if not backfill:
+		tax_dict['transaction_date'] = frappe.utils.today()
+	else:
+		tax_dict['transaction_date'] = frappe.utils.formatdate(doc.posting_date, 'yyyy/mm/dd')
 	tax_dict['sales_tax'] = sales_tax
 	tax_dict['amount'] = doc.net_total + tax_dict['shipping']
 
@@ -78,8 +81,6 @@ def create_transaction(doc, method):
 			response = client.create_order(tax_dict)
 	except taxjar.exceptions.TaxJarResponseError as err:
 		update_integration_request(integration_request, status="Failed", error=sanitize_error_response(err))
-		error_msg = """There seems to be an error <br><br>{0}""".format(sanitize_error_response(err))
-		frappe.throw(_(error_msg))
 	else:
 		update_integration_request(integration_request, status="Completed", response=json.dumps(response.to_json()))
 
@@ -108,6 +109,59 @@ def delete_transaction(doc, method):
 		update_integration_request(integration_request, status="Failed", error=str(err))
 	else:
 		update_integration_request(integration_request, status="Completed", response=json.dumps(response.to_json()))
+
+def update_transaction(doc, method=None, backfill=False):
+	"""Create an order transaction in TaxJar"""
+
+	TAXJAR_CREATE_TRANSACTIONS = frappe.db.get_value("TaxJar Configuration", doc.company, "taxjar_create_transactions")
+	TAX_ACCOUNT_HEAD = frappe.db.get_value("TaxJar Configuration", doc.company, "tax_account_head")
+
+	if not TAXJAR_CREATE_TRANSACTIONS:
+		return
+
+	client = get_client(doc)
+
+	if not client:
+		return
+
+	taxjar_order = client.show_order(doc.name)
+	if not taxjar_order:
+		return
+
+	sales_tax = sum([tax.tax_amount for tax in doc.taxes if tax.account_head == TAX_ACCOUNT_HEAD])
+
+	if not sales_tax:
+		return
+
+	tax_dict = get_tax_data(doc)
+
+	if not tax_dict:
+		return
+
+	tax_dict['transaction_id'] = doc.name
+	if not backfill:
+		tax_dict['transaction_date'] = frappe.utils.today()
+	tax_dict['sales_tax'] = sales_tax
+	tax_dict['amount'] = doc.net_total + tax_dict['shipping']
+
+	integration_request = make_integration_request(doc.doctype, doc.name, service="TaxJar")
+	try:
+		if doc.is_return:
+			update_integration_request(integration_request, endpoint="client.update_refund")
+			tax_dict['transaction_reference_id'] = doc.return_against
+			response = client.update_refund(doc.name, tax_dict)
+		else:
+			update_integration_request(integration_request, endpoint="client.update_order")
+			response = client.update_order(doc.name, tax_dict)
+	except taxjar.exceptions.TaxJarResponseError as err:
+		update_integration_request(integration_request, status="Failed", error=sanitize_error_response(err))
+		error_msg = """There seems to be an error in Address<br><br>{0}""".format(sanitize_error_response(err))
+		frappe.throw(_(error_msg), AddressError, _("Address Error"))
+	# except Exception as ex:
+	# 	print(traceback.format_exc(ex))
+	else:
+		update_integration_request(integration_request, status="Completed", response=json.dumps(response.to_json()))
+	
 
 def get_tax_data(doc):
 	SHIP_ACCOUNT_HEAD = frappe.db.get_value("TaxJar Configuration", doc.company, "shipping_account_head")
@@ -285,6 +339,7 @@ def get_sales_tax(doc, tax_dict):
 
 	if not client:
 		return
+
 	if doc.is_new():
 		integration_request = make_integration_request(doc.doctype, None, service="TaxJar", endpoint="client.tax_for_order")
 	else:
@@ -369,6 +424,10 @@ def sanitize_error_response(response):
 
 	return response
 
+def get_line_item_dict(item, doc, refund_transaction=False):
+	line_item_discount = 0
+	distributed_discount_percentage = 0
+	distributed_discount = 0
 
 def get_line_item_dict(item, doc, refund_transaction=False):
 	line_item_discount = 0
@@ -415,4 +474,4 @@ def get_line_item_dict(item, doc, refund_transaction=False):
 		product_tax_code = item.get("product_tax_code"),
 		sales_tax = item.get("tax_collectable"),
 		discount = line_item_discount + distributed_discount
-	)
+	) 
