@@ -125,7 +125,6 @@ def get_tax_data(doc):
 
 	if to_country_code not in SUPPORTED_COUNTRY_CODES:
 		return
-
 	shipping = sum([tax.tax_amount for tax in doc.taxes if tax.account_head == SHIP_ACCOUNT_HEAD])
 
 	if to_shipping_state is not None:
