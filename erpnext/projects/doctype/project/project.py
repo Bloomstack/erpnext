@@ -236,7 +236,7 @@ class Project(Document):
 
 
 @frappe.whitelist()
-def	update_estimated_time(project_name):
+def update_estimated_time(project_name):
 	total_expected_time = 0
 	tasks = frappe.get_all("Task Project", filters={"project": project_name}, fields=["parent"])
 	for task in tasks:
