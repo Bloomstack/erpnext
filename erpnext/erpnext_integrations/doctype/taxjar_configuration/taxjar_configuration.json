@@ -19,7 +19,6 @@
   "sandbox_api_key",
   "configuration",
   "tax_account_head",
-  "order_level_discount_distribution",
   "configuration_cb",
   "shipping_account_head",
   "nexus_list_section",
@@ -132,16 +131,9 @@
    "fieldtype": "Table",
    "label": "Nexus ",
    "options": "TaxJar Nexus"
-  },
-  {
-   "default": "Proportionally",
-   "fieldname": "order_level_discount_distribution",
-   "fieldtype": "Select",
-   "label": "Order Level Discount Distribution",
-   "options": "Proportionally\nEvenly"
   }
  ],
- "modified": "2021-11-29 21:11:22.152214",
+ "modified": "2021-12-01 23:57:52.373977",
  "modified_by": "Administrator",
  "module": "ERPNext Integrations",
  "name": "TaxJar Configuration",
