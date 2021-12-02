@@ -234,6 +234,15 @@ class Project(Document):
 
 			frappe.publish_realtime('show_notification_alert', message=notification_doc.get("subject"), after_commit=True, user=user)
 
+
+@frappe.whitelist()
+def	update_estimated_time(project_name):
+	total_expected_time = 0
+	tasks = frappe.get_all("Task Project", filters={"project": project_name}, fields=["parent"])
+	for task in tasks:
+		total_expected_time += frappe.db.get_value("Task", task.parent, "expected_time")
+	frappe.db.set_value('Project', project_name, 'estimated_time', total_expected_time, update_modified=True)
+
 def get_timeline_data(doctype, name):
 	'''Return timeline for attendance'''
 	return dict(frappe.db.sql('''select unix_timestamp(from_time), count(*)

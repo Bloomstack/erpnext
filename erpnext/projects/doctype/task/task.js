@@ -40,6 +40,17 @@ frappe.ui.form.on("Task", {
 		})
 	},
 
+	after_save: function (frm) {
+		frm.doc.projects.forEach( project => {
+			frappe.call({
+				method: "erpnext.projects.doctype.project.project.update_estimated_time",
+				args: {
+					project_name: project.project
+				}
+			});
+		});
+	},
+
 	refresh: function (frm) {
 		frm.set_query("parent_task", { "is_group": 1 });
 		frappe.model.with_doctype('Task', () => {
