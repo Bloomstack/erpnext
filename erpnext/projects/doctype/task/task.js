@@ -41,7 +41,6 @@ frappe.ui.form.on("Task", {
 	},
 
 	after_save: function (frm) {
-		console.log(frm.doc);
 		frm.doc.projects.forEach( project => {
 			frappe.call({
 				method: "erpnext.projects.doctype.project.project.update_estimated_time",
