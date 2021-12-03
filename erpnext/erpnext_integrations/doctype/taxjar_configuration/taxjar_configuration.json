@@ -121,6 +121,7 @@
    "read_only": 1
   },
   {
+   "depends_on": "enabled",
    "fieldname": "nexus_list_section",
    "fieldtype": "Section Break",
    "label": "Nexus List"
@@ -132,7 +133,7 @@
    "options": "TaxJar Nexus"
   }
  ],
- "modified": "2021-09-29 02:04:13.118934",
+ "modified": "2021-12-01 23:57:52.373977",
  "modified_by": "Administrator",
  "module": "ERPNext Integrations",
  "name": "TaxJar Configuration",

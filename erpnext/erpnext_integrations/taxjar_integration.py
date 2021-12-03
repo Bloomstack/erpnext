@@ -6,7 +6,7 @@ import json
 import frappe
 from erpnext import get_default_company
 from frappe import _
-from frappe.utils import cint
+from frappe.utils import cint, flt
 from frappe.contacts.doctype.address.address import get_company_address
 from frappe.integrations.utils import make_integration_request, update_integration_request
 
@@ -77,11 +77,9 @@ def create_transaction(doc, method):
 			update_integration_request(integration_request, endpoint="client.create_order")
 			response = client.create_order(tax_dict)
 	except taxjar.exceptions.TaxJarResponseError as err:
-		update_integration_request(integration_request, status="Failed", error=str(err))
-		error_msg = """There seems to be an error in Address<br><br>{0}""".format(sanitize_error_response(err))
-		frappe.throw(_(error_msg), AddressError, _("Address Error"))
-	except Exception as ex:
-		print(traceback.format_exc(ex))
+		update_integration_request(integration_request, status="Failed", error=sanitize_error_response(err))
+		error_msg = """There seems to be an error <br><br>{0}""".format(sanitize_error_response(err))
+		frappe.throw(_(error_msg))
 	else:
 		update_integration_request(integration_request, status="Completed", response=json.dumps(response.to_json()))
 
@@ -131,8 +129,9 @@ def get_tax_data(doc):
 	if to_shipping_state is not None:
 		to_shipping_state = get_iso_3166_2_state_code(to_address)
 
-	line_items = get_line_items(doc)
-	#warning: we are comenting line_items for now. once discount approach stable will enable line_items.
+	# for refund transaction send args as True so that we can maintain negative rate for refund transaction.
+	line_items = [get_line_item_dict(item, doc, refund_transaction=doc.is_return) for item in doc.items]
+
 	tax_dict = {
 		'from_country': from_country_code,
 		'from_zip': from_address.pincode,
@@ -146,7 +145,7 @@ def get_tax_data(doc):
 		'to_state': to_shipping_state,
 		'shipping': shipping,
 		'amount': doc.net_total,
-		#'line_items': line_items,
+		'line_items': line_items,
 		'plugin': 'bloomstack'
 	}
 
@@ -219,12 +218,11 @@ def set_sales_tax(doc, method):
 					"tax_amount": tax_data.amount_to_collect
 				})
 
-			for item in tax_data.breakdown.line_items:
-				doc.get('items')[cint(item.id)-1].tax_collectable = item.tax_collectable
-				doc.get('items')[cint(item.id)-1].taxable_amount = item.taxable_amount
+		for item in tax_data.breakdown.line_items:
+			doc.get('items')[cint(item.id)-1].tax_collectable = item.tax_collectable
+			doc.get('items')[cint(item.id)-1].taxable_amount = item.taxable_amount
 
-
-			doc.run_method("calculate_taxes_and_totals")
+		doc.run_method("calculate_taxes_and_totals")
 
 def check_for_nexus(doc, tax_dict):
 	"""
@@ -270,6 +268,11 @@ def remove_existing_sales_tax(doc):
 
 	TAX_ACCOUNT_HEAD = frappe.db.get_value("TaxJar Configuration", doc.company, "tax_account_head")
 
+	# Remove sales Tax amount from child level table
+	for item in doc.get("items"):
+		item.tax_collectable = flt(0)
+		item.taxable_amount = flt(0)
+
 	for tax in doc.taxes:
 		if tax.account_head == TAX_ACCOUNT_HEAD:
 			doc.taxes.remove(tax)
@@ -282,8 +285,10 @@ def get_sales_tax(doc, tax_dict):
 
 	if not client:
 		return
-
-	integration_request = make_integration_request(doc.doctype, doc.get("docname"), service="TaxJar", endpoint="client.tax_for_order")
+	if doc.is_new():
+		integration_request = make_integration_request(doc.doctype, None, service="TaxJar", endpoint="client.tax_for_order")
+	else:
+		integration_request = make_integration_request(doc.doctype, doc.name, service="TaxJar", endpoint="client.tax_for_order")
 	try:
 		tax_data = client.tax_for_order(tax_dict)
 	except taxjar.exceptions.TaxJarResponseError as err:
@@ -365,27 +370,49 @@ def sanitize_error_response(response):
 	return response
 
 
-def get_line_items(doc):
-	if not doc.items:
-		return
+def get_line_item_dict(item, doc, refund_transaction=False):
+	line_item_discount = 0
+	distributed_discount_percentage = 0
+	distributed_discount = 0
 
-	discout_percent = 0.0
+	# this condition added to prevent item going to negative if distributed discount applied.
+	if item.get("rate") > item.get("price_list_rate"):
+		frappe.throw(_("Row.{0}: Item {1} Rate {2} should not be more than Price List Rate {3}".format(item.get('idx'), item.get('item_name'), item.get('rate'), item.get('price_list_rate'))))
 
+	# line item discounting calculate
+	if item.get("discount_percentage"):
+		line_item_discount = (item.get("qty") * (item.get("price_list_rate") * item.get("discount_percentage"))/100)
+	else:
+		line_item_discount = item.get("discount_amount")
+
+	# if paraent level discount aviliable then distribute to line item proportionally
 	if doc.discount_amount:
-		discout_percent = ((doc.discount_amount / doc.total) * 100)
+		# Bloomstack has additional discount percentage and discount amount field. If we use parent discount percentage 
+		# on line item it not inculde discount applied on taxes and charges table. so we need to distribute it to 
+		# line item.
+		# our sytem removed discount amount from total and come with net_total. so we did reverse calcualtion to 
+		# come with discount percentage with respect to net_total. basically it tried to convert discount_amount to 
+		# percentage including taxes and charges discount too.
+		# lets take e.g Total = 100, shipping=100 and some taxes = 10 so grand total = 210
+		#
+		# if we give 20% discount on grand total = 42 will be discount amount.
+		# if we try to convert to discount amount to percentage we got this formula
+		# (doc.discount_amount / (doc.discount_amount + doc.grand_total)) * 100 and grand total will be 210-42 = 168
+		# discount = (42 / (42 + 168)) * 100 = 20% but this is not disributed discount that why we come with following forumula
+		#
+		# distributed_discount = (doc.discount_amount / (doc.discount_amount + doc.net_total)) * 100
+		# distributed_discount = (42/(42+58))*100 = 42% that is included taxes and charges table discount
+		distributed_discount_percentage = (doc.discount_amount / (doc.discount_amount + doc.net_total)) * 100
 
-	line_items = []
-	for item in doc.items:
-		if discout_percent:
-			item.discount_amount = ((item.price_list_rate * discout_percent) / 100)
-		line_item = {
-			'id': item.name,
-			'description': item.item_name,
-			'quantity': item.qty,
-			'unit_price': item.price_list_rate,
-			'discount': round(item.discount_amount * item.qty)
-		}
-		line_items.append(line_item)
+		# below calculation, item.get("rate") is used instead of price_list_rate otherwise amount will go negative.
+		distributed_discount = ((item.get("qty") * item.get("rate")) * distributed_discount_percentage) / 100
 
-	return line_items
-
+	return dict(
+		id = item.get('idx'),
+		description = item.get("item_name"),
+		quantity = abs(item.get("qty")) if refund_transaction else item.get("qty"),
+		unit_price = -abs(item.get("price_list_rate")) if refund_transaction else item.get("price_list_rate"),
+		product_tax_code = item.get("product_tax_code"),
+		sales_tax = item.get("tax_collectable"),
+		discount = line_item_discount + distributed_discount
+	)
