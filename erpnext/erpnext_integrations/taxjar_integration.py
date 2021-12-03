@@ -387,6 +387,21 @@ def get_line_item_dict(item, doc, refund_transaction=False):
 
 	# if paraent level discount aviliable then distribute to line item proportionally
 	if doc.discount_amount:
+		# Bloomstack has additional discount percentage and discount amount field. If we use parent discount percentage 
+		# on line item it not inculde discount applied on taxes and charges table. so we need to distribute it to 
+		# line item.
+		# our sytem removed discount amount from total and come with net_total. so we did reverse calcualtion to 
+		# come with discount percentage with respect to net_total. basically it tried to convert discount_amount to 
+		# percentage including taxes and charges discount too.
+		# lets take e.g Total = 100, shipping=100 and some taxes = 10 so grand total = 210
+		#
+		# if we give 20% discount on grand total = 42 will be discount amount.
+		# if we try to convert to discount amount to percentage we got this formula
+		# (doc.discount_amount / (doc.discount_amount + doc.grand_total)) * 100 and grand total will be 210-42 = 168
+		# discount = (42 / (42 + 168)) * 100 = 20% but this is not disributed discount that why we come with following forumula
+		#
+		# distributed_discount = (doc.discount_amount / (doc.discount_amount + doc.net_total)) * 100
+		# distributed_discount = (42/(42+58))*100 = 42% that is included taxes and charges table discount
 		distributed_discount_percentage = (doc.discount_amount / (doc.discount_amount + doc.net_total)) * 100
 
 		# below calculation, item.get("rate") is used instead of price_list_rate otherwise amount will go negative.
