@@ -83,7 +83,8 @@ def create_transaction(doc, method=None, backfill=False):
 		update_integration_request(integration_request, status="Failed", error=sanitize_error_response(err))
 	else:
 		update_integration_request(integration_request, status="Completed", response=json.dumps(response.to_json()))
-
+		if backfill:
+			return True
 
 def delete_transaction(doc, method):
 	"""Delete an existing TaxJar order transaction"""
@@ -161,7 +162,8 @@ def update_transaction(doc, method=None, backfill=False):
 	# 	print(traceback.format_exc(ex))
 	else:
 		update_integration_request(integration_request, status="Completed", response=json.dumps(response.to_json()))
-	
+		if backfill:
+			return True
 
 def get_tax_data(doc):
 	SHIP_ACCOUNT_HEAD = frappe.db.get_value("TaxJar Configuration", doc.company, "shipping_account_head")
@@ -460,7 +462,7 @@ def get_line_item_dict(item, doc, refund_transaction=False):
 		# discount = (42 / (42 + 168)) * 100 = 20% but this is not disributed discount that why we come with following forumula
 		#
 		# distributed_discount = (doc.discount_amount / (doc.discount_amount + doc.net_total)) * 100
-		# distributed_discount = (42/(42+58))*100 = 42% that is included taxes and charges table discount
+		# distributed_discount = (42/(42+58))*100 = 42% that is included taxes and charges table discount ditributed.
 		distributed_discount_percentage = (doc.discount_amount / (doc.discount_amount + doc.net_total)) * 100
 
 		# below calculation, item.get("rate") is used instead of price_list_rate otherwise amount will go negative.

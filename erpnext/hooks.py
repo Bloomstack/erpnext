@@ -260,7 +260,6 @@ doc_events = {
 			"erpnext.erpnext_integrations.taxjar_integration.delete_transaction"
 		],
 		"on_trash": "erpnext.regional.check_deletion_permission",
-		"on_update": "erpnext.erpnext_integrations.taxjar_integration.update_transaction"
 
 	},
 	"Payment Entry": {
