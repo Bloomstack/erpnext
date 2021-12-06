@@ -13,7 +13,6 @@
   "column_break_4",
   "to_date",
   "section_break_6",
-  "push_transaction",
   "force"
  ],
  "fields": [
@@ -32,7 +31,8 @@
    "fieldname": "status",
    "fieldtype": "Select",
    "label": "Status",
-   "options": "Not Started\nPartially Successful\nSuccessful\nFailed"
+   "options": "Not Started\nPartially Completed\nCompleted\nFailed",
+   "read_only": 1
   },
   {
    "fieldname": "section_break_2",
@@ -57,11 +57,6 @@
    "fieldtype": "Section Break"
   },
   {
-   "fieldname": "push_transaction",
-   "fieldtype": "Button",
-   "label": "Push Transaction"
-  },
-  {
    "default": "0",
    "description": "if force is checked then it will create a new transaction and update the existing transaction in TaxJar\nif force is un-checked then it will create a new transaction only",
    "fieldname": "force",
@@ -69,7 +64,7 @@
    "label": "Force"
   }
  ],
- "modified": "2021-12-02 00:18:33.347608",
+ "modified": "2021-12-06 03:45:36.473147",
  "modified_by": "Administrator",
  "module": "ERPNext Integrations",
  "name": "Backfill TaxJar Transactions",

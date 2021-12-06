@@ -3,28 +3,29 @@
 
 frappe.ui.form.on('TaxJar Configuration', {
 	refresh: (frm) => {
-		frm.add_custom_button(__('Update Nexus List'), function() {
-			frm.call({
-				doc: frm.doc,
-				method: 'update_nexus_list',
-				callback: (r) => {
-					if (r.message) {
-						frappe.show_alert({
-							indicator: 'green',
-							message: __('Nexus List Updated')
-						});
+		if (frm.doc.enabled) {
+			frm.add_custom_button(__('Update Nexus List'), function() {
+				frm.call({
+					doc: frm.doc,
+					method: 'update_nexus_list',
+					callback: (r) => {
+						if (r.message) {
+							frappe.show_alert({
+								indicator: 'green',
+								message: __('Nexus List Updated')
+							});
+						}
 					}
-				}
+				});
 			});
-		});
 
-		frm.add_custom_button(__('Sync Product Tax Code'), function() {
-			frm.call({
-				doc: frm.doc,
-				method: 'sync_product_tax_code',
+			frm.add_custom_button(__('Sync Product Tax Code'), function() {
+				frm.call({
+					doc: frm.doc,
+					method: 'sync_product_tax_code',
+				});
 			});
-		});
-
+		}
 		frm.add_custom_button("Sign Up For Taxjar", function() {
 			window.open('https://app.taxjar.com/api_sign_up');
 		});

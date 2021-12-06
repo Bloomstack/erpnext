@@ -6,7 +6,7 @@ import json
 import frappe
 from erpnext import get_default_company
 from frappe import _
-from frappe.utils import cint, flt
+from frappe.utils import cint, flt, get_link_to_form
 from frappe.contacts.doctype.address.address import get_company_address
 from frappe.integrations.utils import make_integration_request, update_integration_request
 
@@ -80,8 +80,10 @@ def create_transaction(doc, method=None, backfill=False):
 			update_integration_request(integration_request, endpoint="client.create_order")
 			response = client.create_order(tax_dict)
 	except taxjar.exceptions.TaxJarResponseError as err:
+		doc.add_comment('Comment', _('TaxJar Create Transaction Failed. View Log > {0}').format(get_link_to_form("Integration Request", integration_request.name)))
 		update_integration_request(integration_request, status="Failed", error=sanitize_error_response(err))
 	else:
+		doc.add_comment('Comment', _('TaxJar Create Transaction Completed. View Log > {0}').format(get_link_to_form("Integration Request", integration_request.name)))
 		update_integration_request(integration_request, status="Completed", response=json.dumps(response.to_json()))
 		if backfill:
 			return True
@@ -155,12 +157,10 @@ def update_transaction(doc, method=None, backfill=False):
 			update_integration_request(integration_request, endpoint="client.update_order")
 			response = client.update_order(doc.name, tax_dict)
 	except taxjar.exceptions.TaxJarResponseError as err:
+		doc.add_comment('Comment', _('TaxJar Update Transaction Failed. View Log > {0}').format(get_link_to_form("Integration Request", integration_request.name)))
 		update_integration_request(integration_request, status="Failed", error=sanitize_error_response(err))
-		error_msg = """There seems to be an error in Address<br><br>{0}""".format(sanitize_error_response(err))
-		frappe.throw(_(error_msg), AddressError, _("Address Error"))
-	# except Exception as ex:
-	# 	print(traceback.format_exc(ex))
 	else:
+		doc.add_comment('Comment', _('TaxJar Update Transaction Completed. View Log > {0}').format(get_link_to_form("Integration Request", integration_request.name)))
 		update_integration_request(integration_request, status="Completed", response=json.dumps(response.to_json()))
 		if backfill:
 			return True
