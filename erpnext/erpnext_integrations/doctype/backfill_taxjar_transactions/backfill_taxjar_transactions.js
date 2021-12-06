@@ -26,5 +26,17 @@ frappe.ui.form.on('Backfill TaxJar Transactions', {
 				});
 			}).addClass("btn-primary");
 		}
-	}
+		frm.events.setup_progress(frm);
+	},
+	setup_progress: function (frm) {
+		frappe.realtime.on('backfill_taxjar_transactions', (data) => {
+			if (data.progress) {
+				frm.dashboard.show_progress('Backfill TaxJar Transaction', data.progress / data.total * 100, data.label);
+				if (data.progress === data.total) {
+					frm.dashboard.hide_progress('Backfill TaxJar Transaction');
+					frm.refresh();
+				}
+			}
+		});
+	},
 });

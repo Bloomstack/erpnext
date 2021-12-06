@@ -26,36 +26,24 @@ class BackfillTaxJarTransactions(Document):
 		})
 		count = 0
 		sucessfull_count = 0
-		# fetch all invoice from bloomstack between that date range.
-		for doc in frappe.get_all('Sales Invoice',
+		invoice_orders = frappe.get_all('Sales Invoice',
 			filters={"posting_date": ('between', [self.from_date, self.to_date]), "docstatus": "1", "exempt_from_sales_tax": 0, "company": self.company}, 
 			fields=[
-				'name',
-				'creation',
-				'docstatus',
-				'is_return',
-				'company',
-				'customer',
-				'tax_id',
-				'customer_address',
-				'address_display',
-				'shipping_address',
-				'company_address',
-				'exempt_from_sales_tax',
-				'total_qty',
-				'total',
-				'shipping_address_name',
-				'net_total',
-				'shipping_rule'
-			]):
+				'name'
+			])
+		# fetch all invoice from bloomstack between that date range.
+		for doc in invoice_orders:
 			# fetch sales tax from invoice which belongs to taxjar configured tax account head
 			sales_taxes = frappe.get_all('Sales Taxes and Charges',
 				filters={'parenttype': 'Sales Invoice', 'parent': doc.name, 'account_head': TAX_ACCOUNT_HEAD},
 				fields=['tax_amount'])
 			
 			if sales_taxes and sales_taxes[0].tax_amount:
+				frappe.publish_realtime('backfill_taxjar_transactions', dict(
+					progress = count, heading="Getting tasks", label = 'Pushing backfilled transactions...', total=len(erp_orders)))
+
 				count = count + 1
-				transaction = create_backfill_transaction(doc, orders, client, force=self.force)
+				transaction = frappe.enqueue(create_backfill_transaction, doc=doc, orders=orders, client=client, force=self.force, now=True if len(erp_orders) < 200 else False)
 				if transaction:
 					sucessfull_count = sucessfull_count + 1
 		return {"total_transactions":count, "backfilled_transactions":sucessfull_count}
