@@ -3,18 +3,18 @@
 
 frappe.ui.form.on('Backfill TaxJar Transactions', {
 	refresh: (frm) => {
-		if (frm.doc.status === "Not Started") {
+		if (!frm.is_new() && frm.doc.status === "Not Started") {
 			frm.add_custom_button(__('Push Transactions'), function() {
 				frm.call('push_transaction').then(r => {
 					if (r.message.total_transactions > 0 && r.message.total_transactions === r.message.backfilled_transactions){
 						frappe.msgprint(__("Backfilled Transaction Completed. <br>Total Transactions: {0}. <br> Backfilled Transactions: {1}",
-						[r.message.total_transactions, r.message.backfilled_transactions]));
+							[r.message.total_transactions, r.message.backfilled_transactions]));
 						frm.set_value("status", 'Completed');
 						frm.save();
 					}
 					else if(r.message.total_transactions > 0 && r.message.backfilled_transactions < r.message.total_transactions){
 						frappe.msgprint(__("Backfilled Transaction Paratially Completed. <br>Total Transactions: {0}. <br> Backfilled Transactions: {1}",
-						[r.message.total_transactions, r.message.backfilled_transactions]));
+							[r.message.total_transactions, r.message.backfilled_transactions]));
 						frm.set_value("status", 'Partially Completed');
 						frm.save();
 					}

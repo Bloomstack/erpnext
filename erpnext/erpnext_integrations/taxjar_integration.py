@@ -444,7 +444,7 @@ def get_line_item_dict(item, doc, refund_transaction=False):
 
 	# if paraent level discount aviliable then distribute to line item proportionally
 	if doc.discount_amount:
-		# Becuase of Taxjar need proportional discount distribution we added this formula.
+		# Because of Taxjar need proportional discount distribution we added this formula.
 		distributed_discount_percentage = (doc.discount_amount / (doc.discount_amount + doc.net_total)) * 100
 
 		# below calculation, item.get("rate") is used instead of price_list_rate otherwise amount will go negative.
