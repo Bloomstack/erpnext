@@ -15,7 +15,7 @@ class BackfillTaxJarTransactions(Document):
 
 		if not client:
 			return
-		
+
 		TAX_ACCOUNT_HEAD = frappe.db.get_value("TaxJar Configuration", self.company,  "tax_account_head")
 		SHIP_ACCOUNT_HEAD = frappe.db.get_value("TaxJar Configuration", self.company, "shipping_account_head")
 
@@ -40,10 +40,10 @@ class BackfillTaxJarTransactions(Document):
 			
 			if sales_taxes and sales_taxes[0].tax_amount:
 				frappe.publish_realtime('backfill_taxjar_transactions', dict(
-					progress = count, heading="Getting tasks", label = 'Pushing backfilled transactions...', total=len(erp_orders)))
+					progress = count, heading="Getting tasks", label = 'Pushing backfilled transactions...', total=len(invoice_orders)))
 
 				count = count + 1
-				transaction = frappe.enqueue(create_backfill_transaction, doc=doc, orders=orders, client=client, force=self.force, now=True if len(erp_orders) < 200 else False)
+				transaction = frappe.enqueue(create_backfill_transaction, doc=doc, orders=orders, client=client, force=self.force, now=True if len(invoice_orders) < 200 else False)
 				if transaction:
 					sucessfull_count = sucessfull_count + 1
 		return {"total_transactions":count, "backfilled_transactions":sucessfull_count}
