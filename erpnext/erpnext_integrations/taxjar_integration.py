@@ -6,7 +6,7 @@ import json
 import frappe
 from erpnext import get_default_company
 from frappe import _
-from frappe.utils import cint, flt
+from frappe.utils import cint, flt, get_link_to_form
 from frappe.contacts.doctype.address.address import get_company_address
 from frappe.integrations.utils import make_integration_request, update_integration_request
 
@@ -38,7 +38,7 @@ def get_client(doc):
 		})
 		return client
 
-def create_transaction(doc, method):
+def create_transaction(doc, method=None, backfill=False):
 	"""Create an order transaction in TaxJar"""
 
 	TAXJAR_CREATE_TRANSACTIONS = frappe.db.get_value("TaxJar Configuration", doc.company, "taxjar_create_transactions")
@@ -63,7 +63,10 @@ def create_transaction(doc, method):
 		return
 
 	tax_dict['transaction_id'] = doc.name
-	tax_dict['transaction_date'] = frappe.utils.today()
+	if not backfill:
+		tax_dict['transaction_date'] = frappe.utils.today()
+	else:
+		tax_dict['transaction_date'] = frappe.utils.formatdate(doc.posting_date, 'yyyy/mm/dd')
 	tax_dict['sales_tax'] = sales_tax
 	tax_dict['amount'] = doc.net_total + tax_dict['shipping']
 
@@ -77,12 +80,13 @@ def create_transaction(doc, method):
 			update_integration_request(integration_request, endpoint="client.create_order")
 			response = client.create_order(tax_dict)
 	except taxjar.exceptions.TaxJarResponseError as err:
+		doc.add_comment('Comment', _('TaxJar Create Transaction Failed. View Log > {0}').format(get_link_to_form("Integration Request", integration_request.name)))
 		update_integration_request(integration_request, status="Failed", error=sanitize_error_response(err))
-		error_msg = """There seems to be an error <br><br>{0}""".format(sanitize_error_response(err))
-		frappe.throw(_(error_msg))
 	else:
+		doc.add_comment('Comment', _('TaxJar Create Transaction Completed. View Log > {0}').format(get_link_to_form("Integration Request", integration_request.name)))
 		update_integration_request(integration_request, status="Completed", response=json.dumps(response.to_json()))
-
+		if backfill:
+			return True
 
 def delete_transaction(doc, method):
 	"""Delete an existing TaxJar order transaction"""
@@ -108,6 +112,58 @@ def delete_transaction(doc, method):
 		update_integration_request(integration_request, status="Failed", error=str(err))
 	else:
 		update_integration_request(integration_request, status="Completed", response=json.dumps(response.to_json()))
+
+def update_transaction(doc, method=None, backfill=False):
+	"""Create an order transaction in TaxJar"""
+
+	TAXJAR_CREATE_TRANSACTIONS = frappe.db.get_value("TaxJar Configuration", doc.company, "taxjar_create_transactions")
+	TAX_ACCOUNT_HEAD = frappe.db.get_value("TaxJar Configuration", doc.company, "tax_account_head")
+
+	if not TAXJAR_CREATE_TRANSACTIONS:
+		return
+
+	client = get_client(doc)
+
+	if not client:
+		return
+
+	taxjar_order = client.show_order(doc.name)
+	if not taxjar_order:
+		return
+
+	sales_tax = sum([tax.tax_amount for tax in doc.taxes if tax.account_head == TAX_ACCOUNT_HEAD])
+
+	if not sales_tax:
+		return
+
+	tax_dict = get_tax_data(doc)
+
+	if not tax_dict:
+		return
+
+	tax_dict['transaction_id'] = doc.name
+	if not backfill:
+		tax_dict['transaction_date'] = frappe.utils.today()
+	tax_dict['sales_tax'] = sales_tax
+	tax_dict['amount'] = doc.net_total + tax_dict['shipping']
+
+	integration_request = make_integration_request(doc.doctype, doc.name, service="TaxJar")
+	try:
+		if doc.is_return:
+			update_integration_request(integration_request, endpoint="client.update_refund")
+			tax_dict['transaction_reference_id'] = doc.return_against
+			response = client.update_refund(doc.name, tax_dict)
+		else:
+			update_integration_request(integration_request, endpoint="client.update_order")
+			response = client.update_order(doc.name, tax_dict)
+	except taxjar.exceptions.TaxJarResponseError as err:
+		doc.add_comment('Comment', _('TaxJar Update Transaction Failed. View Log > {0}').format(get_link_to_form("Integration Request", integration_request.name)))
+		update_integration_request(integration_request, status="Failed", error=sanitize_error_response(err))
+	else:
+		doc.add_comment('Comment', _('TaxJar Update Transaction Completed. View Log > {0}').format(get_link_to_form("Integration Request", integration_request.name)))
+		update_integration_request(integration_request, status="Completed", response=json.dumps(response.to_json()))
+		if backfill:
+			return True
 
 def get_tax_data(doc):
 	SHIP_ACCOUNT_HEAD = frappe.db.get_value("TaxJar Configuration", doc.company, "shipping_account_head")
@@ -285,6 +341,7 @@ def get_sales_tax(doc, tax_dict):
 
 	if not client:
 		return
+
 	if doc.is_new():
 		integration_request = make_integration_request(doc.doctype, None, service="TaxJar", endpoint="client.tax_for_order")
 	else:
@@ -387,21 +444,7 @@ def get_line_item_dict(item, doc, refund_transaction=False):
 
 	# if paraent level discount aviliable then distribute to line item proportionally
 	if doc.discount_amount:
-		# Bloomstack has additional discount percentage and discount amount field. If we use parent discount percentage 
-		# on line item it not inculde discount applied on taxes and charges table. so we need to distribute it to 
-		# line item.
-		# our sytem removed discount amount from total and come with net_total. so we did reverse calcualtion to 
-		# come with discount percentage with respect to net_total. basically it tried to convert discount_amount to 
-		# percentage including taxes and charges discount too.
-		# lets take e.g Total = 100, shipping=100 and some taxes = 10 so grand total = 210
-		#
-		# if we give 20% discount on grand total = 42 will be discount amount.
-		# if we try to convert to discount amount to percentage we got this formula
-		# (doc.discount_amount / (doc.discount_amount + doc.grand_total)) * 100 and grand total will be 210-42 = 168
-		# discount = (42 / (42 + 168)) * 100 = 20% but this is not disributed discount that why we come with following forumula
-		#
-		# distributed_discount = (doc.discount_amount / (doc.discount_amount + doc.net_total)) * 100
-		# distributed_discount = (42/(42+58))*100 = 42% that is included taxes and charges table discount
+		# Because of Taxjar need proportional discount distribution we added this formula.
 		distributed_discount_percentage = (doc.discount_amount / (doc.discount_amount + doc.net_total)) * 100
 
 		# below calculation, item.get("rate") is used instead of price_list_rate otherwise amount will go negative.
