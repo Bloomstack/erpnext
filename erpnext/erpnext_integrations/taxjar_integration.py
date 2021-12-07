@@ -458,4 +458,4 @@ def get_line_item_dict(item, doc, refund_transaction=False):
 		product_tax_code = item.get("product_tax_code"),
 		sales_tax = item.get("tax_collectable"),
 		discount = line_item_discount + distributed_discount
-	) 
+	)
