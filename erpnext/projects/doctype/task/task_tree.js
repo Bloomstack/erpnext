@@ -5,10 +5,10 @@ frappe.treeview_settings['Task'] = {
 	add_tree_node: "erpnext.projects.doctype.task.task.add_node",
 	filters: [
 		{
-			fieldname: "project",
+			fieldname: "default_project",
 			fieldtype:"Link",
 			options: "Project",
-			label: __("Project"),
+			label: __("Default Project"),
 		},
 		{
 			fieldname: "task",
@@ -17,10 +17,10 @@ frappe.treeview_settings['Task'] = {
 			label: __("Task"),
 			get_query: function() {
 				var me = frappe.treeview_settings['Task'];
-				var project = me.page.fields_dict.project.get_value();
+				var project = me.page.fields_dict.default_project.get_value();
 				var args = [["Task", 'is_group', '=', 1]];
 				if(project){
-					args.push(["Task", 'project', "=", project]);
+					args.push(["Task", 'default_project', "=", project]);
 				}
 				return {
 					filters: args

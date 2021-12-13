@@ -63,7 +63,7 @@ def update_linked_projects(ref_field, ref_value, billable):
 
 
 def update_linked_tasks(project, billable):
-	tasks = frappe.get_all("Task", filters={"project": project})
+	tasks = frappe.get_all("Task", filters={"default_project": project})
 
 	for task in tasks:
 		task_doc = frappe.get_doc("Task", task.name)
