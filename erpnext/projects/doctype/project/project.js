@@ -54,6 +54,15 @@ frappe.ui.form.on("Project", {
 		});
 	},
 
+	after_save: function (frm) {
+		frappe.call({
+			method: "erpnext.projects.doctype.project.project.update_estimated_time",
+			args: {
+				project_name: frm.doc.name
+			}
+		});
+	},
+
 	refresh: function (frm) {
 		if (frm.doc.__islocal) {
 			frm.web_link && frm.web_link.remove();

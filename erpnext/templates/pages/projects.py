@@ -4,7 +4,7 @@
 from __future__ import unicode_literals
 import frappe
 import json
-
+# changes
 def get_context(context):
 	project_user = frappe.db.get_value("Project User", {"parent": frappe.form_dict.project, "user": frappe.session.user} , ["user", "view_attachments"], as_dict= True)
 	if frappe.session.user != 'Administrator' and (not project_user or frappe.session.user == 'Guest'):
@@ -29,7 +29,7 @@ def get_context(context):
 
 
 def get_tasks(project, start=0, search=None, item_status=None):
-	filters = {"project": project}
+	filters = {"default_project": project}
 	if search:
 		filters["subject"] = ("like", "%{0}%".format(search))
 	# if item_status:

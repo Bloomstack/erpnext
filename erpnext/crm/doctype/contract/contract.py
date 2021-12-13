@@ -132,7 +132,12 @@ class Contract(Document):
 				"end_date": end_date,
 				"task_weight": task.weight,
 				"description": task.description,
-				"project": project_name
+				"projects": [
+				{
+					"project": project_name,
+					"is_default": 1
+				}
+			]
 			})
 			project_task.insert(ignore_permissions=True)
 			project_dates.extend([start_date, end_date])

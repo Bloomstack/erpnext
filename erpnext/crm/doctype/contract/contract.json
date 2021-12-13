@@ -58,9 +58,10 @@
   {
    "default": "Customer",
    "fieldname": "party_type",
-   "fieldtype": "Select",
+   "fieldtype": "Link",
+   "in_standard_filter": 1,
    "label": "Party Type",
-   "options": "Customer\nSupplier\nEmployee",
+   "options": "DocType",
    "print_hide": 1,
    "reqd": 1
   },
@@ -379,7 +380,7 @@
   }
  ],
  "is_submittable": 1,
- "modified": "2021-07-19 02:04:04.822710",
+ "modified": "2021-10-11 21:53:05.358085",
  "modified_by": "Administrator",
  "module": "CRM",
  "name": "Contract",
