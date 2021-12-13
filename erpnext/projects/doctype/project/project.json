@@ -40,6 +40,7 @@
   "actual_start_date",
   "actual_time",
   "column_break_20",
+  "estimated_time",
   "actual_end_date",
   "project_details",
   "estimated_costing",
@@ -477,12 +478,18 @@
   {
    "fieldname": "column_break_40",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "estimated_time",
+   "fieldtype": "Data",
+   "label": "Estimated Time (in Hours)",
+   "read_only": 1
   }
  ],
  "icon": "fa fa-puzzle-piece",
  "idx": 29,
  "max_attachments": 4,
- "modified": "2021-08-14 07:47:56.018318",
+ "modified": "2021-12-02 00:29:20.587173",
  "modified_by": "Administrator",
  "module": "Projects",
  "name": "Project",

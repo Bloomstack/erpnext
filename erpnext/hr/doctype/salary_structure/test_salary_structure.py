@@ -116,8 +116,8 @@ def make_salary_structure(salary_structure, payroll_frequency, employee=None, do
 			"doctype": "Salary Structure",
 			"name": salary_structure,
 			"company": erpnext.get_default_company(),
-			"earnings": make_earning_salary_component(test_tax=test_tax),
-			"deductions": make_deduction_salary_component(test_tax=test_tax),
+			"earnings": make_earning_salary_component(setup=True, test_tax=test_tax),
+			"deductions": make_deduction_salary_component(setup=True, test_tax=test_tax),
 			"payroll_frequency": payroll_frequency,
 			"payment_account": get_random("Account")
 		}

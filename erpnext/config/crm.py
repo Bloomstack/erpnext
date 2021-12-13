@@ -180,6 +180,11 @@ def get_data():
 					"type": "doctype",
 					"label": _("Email Group"),
 					"name": "Email Group",
+				},
+				{
+					"type": "doctype",
+					"label": _("Sales Stage"),
+					"name": "Sales Stage",
 				}
 			]
 		},

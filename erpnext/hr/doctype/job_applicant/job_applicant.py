@@ -26,20 +26,11 @@ class JobApplicant(Document):
 		self.name = " - ".join(keys)
 
 	def validate(self):
-		self.applicant_name = self.first_name + " " + self.last_name
-		self.check_email_id_is_unique()
+		if not self.applicant_name:
+			self.applicant_name = self.first_name + " " + self.last_name
 		if self.email_id:
 			validate_email_address(self.email_id, True)
 
 		if not self.applicant_name and self.email_id:
 			guess = self.email_id.split('@')[0]
 			self.applicant_name = ' '.join([p.capitalize() for p in guess.split('.')])
-
-	def check_email_id_is_unique(self):
-		if self.email_id:
-			names = frappe.db.sql_list("""select name from `tabJob Applicant`
-				where email_id=%s and name!=%s and job_title=%s""", (self.email_id, self.name, self.job_title))
-
-			if names:
-				frappe.throw(_("Email Address must be unique, already exists for {0}").format(comma_and(names)), frappe.DuplicateEntryError)
-

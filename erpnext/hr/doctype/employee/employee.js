@@ -62,6 +62,42 @@ frappe.ui.form.on('Employee',{
 			};
 		});
 	},
+
+	refresh: function(frm) {
+		frm.add_custom_button(__("Grant Leaves"), () => {
+
+			if (frm.doc.leave_policy){
+				let d = new frappe.ui.Dialog({
+					'fields': [
+						{'label': 'Leave Period', 'fieldname': 'leave_period', 'fieldtype': 'Link', 'options':'Leave Period'},
+						{'label': 'Add unused leaves from previous allocations', 'fieldname': 'carry_forward', 'fieldtype': 'Check', 'default': 0}
+					],
+					primary_action: function(){
+						frm.events.grant_leaves(frm, d.get_values());
+						d.hide();
+					}
+				});
+				d.show();
+			} else {
+				frappe.throw({
+					message: __("Please set Leave Policy for Employee: ") + frm.doc.employee,
+					indicator: 'blue',
+				});
+			}
+		});
+	},
+	grant_leaves: function(frm, data) {
+		frappe.call({
+			method: "erpnext.hr.doctype.employee.employee.grant_leaves",
+			args: {
+				employee: frm.doc.employee,
+				joining_date: frm.doc.date_of_joining,
+
+				leave_period: data.leave_period,
+				carry_forward: data.carry_forward
+			},
+		});
+	},
 	prefered_contact_email:function(frm){		
 		frm.events.update_contact(frm)		
 	},
@@ -89,16 +125,20 @@ frappe.ui.form.on('Employee',{
 		});
 	},
 	reports_to: function(frm){
-		frappe.call({
-			method: "erpnext.hr.doctype.employee.employee.get_reports_to_email",
-			args: { emp_id: frm.doc.reports_to },
-			callback: function(r) {
-				if (r && r.message) {
-					frm.set_value("reports_to_email", r.message);
-					refresh_field("reports_to_email");
+		if (frm.doc.reports_to) {
+			frappe.call({
+				method: "erpnext.hr.doctype.employee.employee.get_reports_to_email",
+				args: { emp_id: frm.doc.reports_to },
+				callback: function(r) {
+					if (r && r.message) {
+						frm.set_value("reports_to_email", r.message);
+					}
 				}
-			}
-		});
+			});
+		} else {
+			frm.set_value("reports_to_email", "");
+		}
+		refresh_field("reports_to_email");
 	},
 	create_user: function(frm) {
 		if (!frm.doc.prefered_email)

@@ -27,7 +27,7 @@
    "fieldname": "status",
    "fieldtype": "Select",
    "label": "Status",
-   "options": "\nScheduled\nIn Progress\nCompleted\nUnsubscribed",
+   "options": "\nScheduled\nIn Progress\nCompleted",
    "read_only": 1
   },
   {
@@ -70,7 +70,7 @@
    "options": "User"
   }
  ],
- "modified": "2021-08-11 23:35:37.827221",
+ "modified": "2021-11-12 04:25:07.431401",
  "modified_by": "Administrator",
  "module": "CRM",
  "name": "Email Campaign",
