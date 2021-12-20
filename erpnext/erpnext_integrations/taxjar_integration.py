@@ -182,6 +182,9 @@ def get_tax_data(doc):
 
 	shipping = sum([tax.tax_amount for tax in doc.taxes if tax.account_head == SHIP_ACCOUNT_HEAD])
 
+	if from_shipping_state is not None:
+		from_shipping_state = get_iso_3166_2_state_code(from_address)
+
 	if to_shipping_state is not None:
 		to_shipping_state = get_iso_3166_2_state_code(to_address)
 
