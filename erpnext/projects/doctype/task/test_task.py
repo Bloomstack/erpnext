@@ -17,7 +17,6 @@ class TestTask(unittest.TestCase):
 		task1.append("depends_on", {
 			"task": task3.name
 		})
-
 		self.assertRaises(CircularReferenceError, task1.save)
 
 		task1.set("depends_on", [])
@@ -33,11 +32,11 @@ class TestTask(unittest.TestCase):
 		task1 = create_task("_Test Task 1", nowdate(), add_days(nowdate(), 10))
 
 		task2 = create_task("_Test Task 2", add_days(nowdate(), 11), add_days(nowdate(), 15), task1.name)
-		task2.get("depends_on")[0].project = "_Test Project"
+		task2.get("depends_on")[0].default_project = "_Test Project"
 		task2.save()
 
 		task3 = create_task("_Test Task 3", add_days(nowdate(), 11), add_days(nowdate(), 15), task2.name)
-		task3.get("depends_on")[0].project = "_Test Project"
+		task3.get("depends_on")[0].default_project = "_Test Project"
 		task3.save()
 
 		task1.reload()

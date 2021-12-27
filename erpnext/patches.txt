@@ -252,7 +252,7 @@ erpnext.patches.v6_10.email_digest_default_quote
 erpnext.patches.v6_10.fix_billed_amount_in_drop_ship_po
 erpnext.patches.v6_10.fix_delivery_status_of_drop_ship_item #2015-12-08
 erpnext.patches.v5_8.tax_rule #2015-12-08
-erpnext.patches.v6_12.set_overdue_tasks
+erpnext.patches.v6_12.set_overdue_tasks #2021-11-16
 erpnext.patches.v6_16.update_billing_status_in_dn_and_pr
 erpnext.patches.v6_16.create_manufacturer_records
 execute:frappe.db.sql("update `tabPricing Rule` set title=name where title='' or title is null") #2016-01-27
@@ -730,8 +730,10 @@ execute:frappe.delete_doc_if_exists("Report", "Item-Wise Sales Register")
 execute:frappe.delete_doc_if_exists("Report", "Sales Analytics")
 erpnext.patches.v13_0.update_accounts_taxjar_setting #
 erpnext.patches.v13_0.rename_task_cancelled_status_to_closed
-erpnext.patches.v13_0.add_default_project_into_project_details_child_table
 erpnext.patches.v13_0.taxjar_settings_convert_from_single_to_table
 execute:frappe.reload_doc("erpnext_integrations", "doctype", "Product Tax Category")
 erpnext.patches.v13_0.custom_fields_for_taxjar_integration
 erpnext.patches.v13_0.custom_field_tax_collectable_and_taxable_amount_in_sales_invoice
+erpnext.patches.v13_0.rename_project_field_to_default_project
+erpnext.patches.v13_0.add_default_project_into_project_details_child_table
+erpnext.patches.v13_0.set_email_campaign_status_to_completed

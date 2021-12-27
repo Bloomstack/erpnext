@@ -281,9 +281,6 @@ doc_events = {
 	"Lead": {
 		"after_insert": "erpnext.communication.doctype.call_log.call_log.set_caller_information"
 	},
-	"Email Unsubscribe": {
-		"after_insert": "erpnext.crm.doctype.email_campaign.email_campaign.unsubscribe_recipient"
-	},
 	('Quotation', 'Sales Order', 'Sales Invoice'): {
 		'validate': ["erpnext.erpnext_integrations.taxjar_integration.set_sales_tax"]
 	}
@@ -331,7 +328,8 @@ scheduler_events = {
 		"erpnext.crm.doctype.email_campaign.email_campaign.send_email_to_leads_or_contacts",
 		"erpnext.crm.doctype.email_campaign.email_campaign.set_email_campaign_status",
 		"erpnext.selling.doctype.quotation.quotation.set_expired_status",
-		"erpnext.stock.doctype.stock_entry.stock_entry.raw_material_update_on_bom"
+		"erpnext.stock.doctype.stock_entry.stock_entry.raw_material_update_on_bom",
+		"erpnext.projects.doctype.task.task.set_tasks_as_overdue"
 	],
 	"daily_long": [
 		"erpnext.setup.doctype.email_digest.email_digest.send",

@@ -7,14 +7,14 @@ def execute():
 	frappe.reload_doc('projects', 'doctype', 'project', force=True)
 	frappe.reload_doc('projects', 'doctype', 'task_users')
 
-	tasks = frappe.db.get_all("Task", fields=["name", "project", "status"])
+	tasks = frappe.db.get_all("Task", fields=["name", "default_project", "status"])
 	for task in tasks:
-		if task.project:
+		if task.default_project:
 			doc = frappe.get_doc("Task", task.name)
 			if not doc.status:
 				doc.status = "Closed"
 			doc.append("projects", {
-				"project": task.project,
+				"project": task.default_project,
 				"status": task.status,
 				"is_default": 1
 			})
