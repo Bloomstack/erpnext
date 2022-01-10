@@ -16,9 +16,13 @@ def set_website_customer(customer_name, primary_contact=None):
 	if not frappe.db.exists("Contact", primary_contact):
 		primary_contact = None
 
+	# Avoid storing a missing contact reference
+	if frappe.db.exists("Contact", primary_contact) and not exists_customer_link(customer_name, primary_contact):
+		primary_contact = None
+
 	# make sure customer has at least a contact
 	if not primary_contact:
-		return "Customer does not have a primary contact. Please set one before starting an order."
+		return "Customer does not have a primary contact or customer is missing in links reference for primary contact. Please set one before starting an order."
 
 	if not frappe.db.get_value("Contact", primary_contact, "email_id"):
 		return "Customer's primary contact is missing an email. Please set one before starting an order."
@@ -29,6 +33,16 @@ def set_website_customer(customer_name, primary_contact=None):
 	frappe.session.data.order_for["customer_primary_contact_name"] = primary_contact
 
 	return "Success"
+
+def exists_customer_link(customer_name, primary_contact):
+	return frappe.db.exists(
+		"Dynamic Link",
+		{
+			"link_doctype": "Customer",
+			"link_name": customer_name,
+			"parent": primary_contact
+		}
+	)
 
 @frappe.whitelist(allow_guest=True)
 def reset_website_customer():
