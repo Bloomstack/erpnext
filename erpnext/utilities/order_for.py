@@ -1,8 +1,12 @@
 import frappe
 from erpnext.shopping_cart.doctype.shopping_cart_settings.shopping_cart_settings import get_shopping_cart_settings
+from frappe.contacts.doctype.contact.contact import get_contacts_linking_to
 
 @frappe.whitelist(allow_guest=False)
 def set_website_customer(customer_name, primary_contact=None):
+
+	if not get_contacts_linking_to("Customer", customer_name, fields=["email_id"]):
+		return "Customer is not linked with any contact. Please set one before starting an order."
 
 	# Find primary contact of this customer if one is not passed
 	if not primary_contact:
