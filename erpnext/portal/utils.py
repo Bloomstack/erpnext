@@ -127,3 +127,5 @@ def party_exists(doctype, user):
 		else:
 			fullname = frappe.utils.get_fullname(user)
 			return frappe.db.exists(doctype, fullname)
+
+	return False
