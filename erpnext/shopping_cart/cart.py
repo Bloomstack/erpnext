@@ -436,12 +436,11 @@ def set_taxes(quotation, cart_settings):
 # 	# append taxes
 	quotation.append_taxes_from_master()
 
-def get_party(user=None):
+def get_party(user=None, party_doctype=None, party=None):
 	if not user:
 		user = frappe.session.user
 
 	contact_name = get_contact_name(user)
-	party = None
 
 	# Order For feature. Sets current customer's primary contact for this session.
 	if "order_for" in frappe.session.data:
