@@ -39,7 +39,7 @@ def initialise_order_for():
 			order_for["customer_primary_contact_name"] = contact.name
 
 	# Keep customer info up to date on every session start
-	customer = get_party()
+	customer = get_party(party_doctype="Customer", party=order_for.get("customer_name"))
 	if customer and customer.doctype == "Customer":
 		# no reason to set customer_name again as get_party expects
 		# customer_name to exists to set user from the "order for" feature

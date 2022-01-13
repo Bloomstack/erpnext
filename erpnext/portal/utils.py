@@ -112,11 +112,20 @@ def create_customer_or_supplier():
 
 
 def party_exists(doctype, user):
+	""" To check if particular doctype eixsts or not. it will try to find links reference.
+	if link reference available then it will return true else
+	if link reference not found then it again try to find doctype exists or not.
+	return true or false based on condition
+	"""
 	contact_name = frappe.db.get_value("Contact Email", {"email_id": user}, "parent")
 
 	if contact_name:
 		contact = frappe.get_doc('Contact', contact_name)
 		doctypes = [d.link_doctype for d in contact.links]
-		return doctype in doctypes
+		if doctypes:
+			return doctype in doctypes
+		else:
+			fullname = frappe.utils.get_fullname(user)
+			return frappe.db.exists(doctype, fullname)
 
 	return False
