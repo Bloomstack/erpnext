@@ -113,7 +113,7 @@ def create_customer_or_supplier():
 
 def party_exists(doctype, user):
 	""" To check if particular doctype eixsts or not. it will try to find links reference.
-	if link referene available then it will return true else
+	if link reference available then it will return true else
 	if link reference not found then it again try to find doctype exists or not.
 	return true or false based on condition
 	"""
