@@ -301,7 +301,7 @@ def get_line_items(doc):
 
 	discout_percent = 0.0
 
-	if doc.discount_amount:
+	if doc.discount_amount and doc.total:
 		discout_percent = ((doc.discount_amount / doc.total) * 100)
 
 	line_items = []

@@ -119,6 +119,7 @@ class calculate_taxes_and_totals(object):
 					item.amount = flt(-1 * item.rate, item.precision("amount"))
 				else:
 					item.amount = flt(item.rate * item.qty,	item.precision("amount"))
+				print("=============================================item net amount", item.rate)
 				item.net_amount = item.amount
 
 				self._set_in_company_currency(item, ["price_list_rate", "rate", "net_rate", "amount", "net_amount"])
@@ -443,17 +444,28 @@ class calculate_taxes_and_totals(object):
 				else:
 					distributed_amount = flt(self.doc.discount_amount) * item.net_amount
 
-				item.net_amount = flt(item.net_amount - distributed_amount, item.precision("net_amount"))
-				net_total += item.net_amount
+				if distributed_amount > item.net_amount:
+					item.discount_amount = item.net_amount
+					item.discount_percentage = 100
+					net_total += item.net_amount
+				else:
+					item.net_amount = flt(item.net_amount - distributed_amount, item.precision("net_amount"))
+					net_total += item.net_amount
+
 
 				# discount amount rounding loss adjustment if no taxes
 				if (self.doc.apply_discount_on == "Net Total" or not taxes or total_for_discount_amount==self.doc.net_total) \
 					and i == len(self.doc.get("items")) - 1:
-						discount_amount_loss = flt(self.doc.net_total - net_total - self.doc.discount_amount,
-							self.doc.precision("net_total"))
 
-						item.net_amount = flt(item.net_amount + discount_amount_loss,
-							item.precision("net_amount"))
+						if self.doc.discount_amount > self.doc.net_total:
+							item.discount_amount = item.net_amount
+							item.discount_percentage = 100
+							net_total += item.net_amount
+						else:
+							discount_amount_loss = flt(self.doc.net_total - net_total - self.doc.discount_amount,
+								self.doc.precision("net_total"))
+							item.net_amount = flt(item.net_amount + discount_amount_loss,
+								item.precision("net_amount"))
 
 				item.net_rate = flt(item.net_amount / item.qty, item.precision("net_rate")) if item.qty else 0
 

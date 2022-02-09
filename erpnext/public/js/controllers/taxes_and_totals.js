@@ -538,17 +538,37 @@ erpnext.taxes_and_totals = erpnext.payments.extend({
 				} else {
 					distributed_amount = flt(me.frm.doc.discount_amount) * item.net_amount;
 				}
-				item.net_amount = flt(item.net_amount - distributed_amount,
-					precision("base_amount", item));
-				net_total += item.net_amount;
+				if (distributed_amount > item.net_amount) {
+					item.discount_amount = item.net_amount;
+					item.discount_percentage = 100;
+					item.rate = 0;
+					item.net_rate = 0;
+					item.amount = 0;
+					item.net_amount = 0;
+					net_total += item.net_amount;
+				} else {
+					item.net_amount = flt(item.net_amount - distributed_amount,
+						precision("base_amount", item));
+					net_total += item.net_amount;
+				}
 
 				// discount amount rounding loss adjustment if no taxes
 				if ((!(me.frm.doc.taxes || []).length || total_for_discount_amount==me.frm.doc.net_total || (me.frm.doc.apply_discount_on == "Net Total"))
 						&& i == (me.frm.doc.items || []).length - 1) {
-					var discount_amount_loss = flt(me.frm.doc.net_total - net_total
-						- me.frm.doc.discount_amount, precision("net_total"));
-					item.net_amount = flt(item.net_amount + discount_amount_loss,
-						precision("net_amount", item));
+					if (me.frm.doc.discount_amount > me.frm.doc.net_total) {
+						item.discount_amount = item.net_amount;
+						item.discount_percentage = 100;
+						item.rate = 0;
+						item.net_rate = 0;
+						item.amount = 0;
+						item.net_amount = 0;
+						net_total += item.net_amount
+					} else {
+						var discount_amount_loss = flt(me.frm.doc.net_total - net_total
+							- me.frm.doc.discount_amount, precision("net_total"));
+						item.net_amount = flt(item.net_amount + discount_amount_loss,
+							precision("net_amount", item));
+					}
 				}
 				item.net_rate = item.qty ? flt(item.net_amount / item.qty, precision("net_rate", item)) : 0;
 				me.set_in_company_currency(item, ["net_rate", "net_amount"]);
