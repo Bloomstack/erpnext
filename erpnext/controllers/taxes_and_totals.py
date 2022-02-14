@@ -456,6 +456,7 @@ class calculate_taxes_and_totals(object):
 
 						discount_amount_loss = flt(self.doc.net_total - net_total - self.doc.discount_amount,
 							self.doc.precision("net_total"))
+
 						item.net_amount = flt(item.net_amount + discount_amount_loss,
 							item.precision("net_amount"))
 
