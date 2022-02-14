@@ -453,7 +453,6 @@ class calculate_taxes_and_totals(object):
 				# discount amount rounding loss adjustment if no taxes
 				if (self.doc.apply_discount_on == "Net Total" or not taxes) \
 					and i == len(self.doc.get("items")) - 1:
-
 						discount_amount_loss = flt(self.doc.net_total - net_total - self.doc.discount_amount,
 							self.doc.precision("net_total"))
 
