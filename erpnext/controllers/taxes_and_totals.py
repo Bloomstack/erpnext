@@ -454,6 +454,8 @@ class calculate_taxes_and_totals(object):
 				if (self.doc.apply_discount_on == "Net Total" or not taxes) \
 					and i == len(self.doc.get("items")) - 1:
 
+						discount_amount_loss = flt(self.doc.net_total - net_total - self.doc.discount_amount,
+							self.doc.precision("net_total"))
 						item.net_amount = flt(item.net_amount + discount_amount_loss,
 							item.precision("net_amount"))
 
