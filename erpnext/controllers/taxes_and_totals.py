@@ -444,9 +444,8 @@ class calculate_taxes_and_totals(object):
 					distributed_amount = flt(self.doc.discount_amount) * item.net_amount
 
 				net_amount = flt(item.net_amount - distributed_amount, item.precision("net_amount"))
-				if net_amount < 0 and not self.doc.is_return:
+				if net_amount < 0 and not self.doc.get("is_return"):
 					item.net_amount = 0
-					item.discount_amount = item.net_amount
 					item.discount_percentage = 100
 				net_total += item.net_amount
 
