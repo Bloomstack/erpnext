@@ -538,12 +538,15 @@ erpnext.taxes_and_totals = erpnext.payments.extend({
 				} else {
 					distributed_amount = flt(me.frm.doc.discount_amount) * item.net_amount;
 				}
-				item.net_amount = flt(item.net_amount - distributed_amount,
+				let net_amount = flt(item.net_amount - distributed_amount,
 					precision("base_amount", item));
+				if (net_amount < 0 && !me.frm.doc.is_return) {
+					item.net_amount = 0;
+				}
 				net_total += item.net_amount;
 
 				// discount amount rounding loss adjustment if no taxes
-				if ((!(me.frm.doc.taxes || []).length || total_for_discount_amount==me.frm.doc.net_total || (me.frm.doc.apply_discount_on == "Net Total"))
+				if ((!(me.frm.doc.taxes || []).length || (me.frm.doc.apply_discount_on == "Net Total"))
 						&& i == (me.frm.doc.items || []).length - 1) {
 					var discount_amount_loss = flt(me.frm.doc.net_total - net_total
 						- me.frm.doc.discount_amount, precision("net_total"));
