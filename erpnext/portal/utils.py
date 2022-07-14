@@ -117,6 +117,10 @@ def party_exists(doctype, user):
 	if contact_name:
 		contact = frappe.get_doc('Contact', contact_name)
 		doctypes = [d.link_doctype for d in contact.links]
-		return doctype in doctypes
+		if doctypes:
+			return doctype in doctypes
+		else:
+			fullname = frappe.utils.get_fullname(user)
+			return frappe.db.exists(doctype, fullname)
 
 	return False
