@@ -2,9 +2,10 @@ from __future__ import unicode_literals
 import frappe
 
 def execute():
-	frappe.reload_doc('projects', 'doctype', 'task_project')
-	frappe.reload_doc('projects', 'doctype', 'task')
-	frappe.reload_doc('projects', 'doctype', 'project')
+	frappe.reload_doc('projects', 'doctype', 'task_project', force=True)
+	frappe.reload_doc('projects', 'doctype', 'task', force=True)
+	frappe.reload_doc('projects', 'doctype', 'project', force=True)
+	frappe.reload_doc('projects', 'doctype', 'task_users')
 
 	tasks = frappe.db.get_all("Task", fields=["name", "default_project", "status"])
 	for task in tasks:

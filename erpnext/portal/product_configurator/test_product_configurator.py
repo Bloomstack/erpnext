@@ -50,7 +50,7 @@ class TestProductConfigurator(unittest.TestCase):
 
 	def test_get_products_for_website(self):
 		items = get_products_for_website(attribute_filters={
-			'Test Size': ['Medium']
+			'Size': ['Medium']
 		})
 		self.assertEqual(len(items), 1)
 
@@ -76,7 +76,7 @@ class TestProductConfigurator(unittest.TestCase):
 				}],
 				"attributes": [
 					{
-						"attribute": "Test Size",
+						"attribute": "Size",
 						"attribute_value": "Medium"
 					}
 				],
