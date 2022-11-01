@@ -544,6 +544,8 @@ erpnext.TransactionController = erpnext.taxes_and_totals.extend({
 							tax_category: me.frm.doc.tax_category,
 							item_tax_template: item.item_tax_template,
 							child_docname: item.name,
+							discount_percentage: item.discount_percentage,
+							discount_amount: item.discount_amount
 						}
 					},
 

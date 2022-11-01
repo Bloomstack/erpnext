@@ -85,6 +85,11 @@ def get_item_details(args, doc=None, for_validate=False, overwrite_warehouse=Tru
 		if args.get(key) is None:
 			args[key] = value
 
+	# don't loose discount percentage data
+	for key in ("discount_percentage", "discount_amount"):
+		if args.get(key) is not None:
+			out[key] = args[key]
+
 	data = get_pricing_rule_for_item(args, out.price_list_rate,
 		doc, for_validate=for_validate)
 
