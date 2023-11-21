@@ -155,7 +155,7 @@ def query_successful_authnet_transaction(request):
 		response.messages.resultCode == apicontractsv1.messageTypeEnum.Ok and \
 		hasattr(response, 'transactions'):
 				for transaction in response.transactions.transaction:
-					if (transaction.transactionStatus == "capturedPendingSettlement" or \
+					if hasattr(transaction, "invoiceNumber") and (transaction.transactionStatus == "capturedPendingSettlement" or \
 						transaction.transactionStatus == "authorizedPendingCapture") and \
 						transaction.invoiceNumber == order_ref and transaction.amount == amount:
 						return transaction
