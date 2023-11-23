@@ -138,6 +138,13 @@ def get_tax_data(doc):
 
 
 def set_sales_tax(doc, method):
+	global TAXJAR_CREATE_TRANSACTIONS, TAXJAR_CALCULATE_TAX, TAXJAR_ENABLED, TAX_ACCOUNT_HEAD
+
+	# update global variables
+	TAXJAR_CREATE_TRANSACTIONS = frappe.db.get_single_value("TaxJar Settings", "taxjar_create_transactions")
+	TAXJAR_CALCULATE_TAX = frappe.db.get_single_value("TaxJar Settings", "taxjar_calculate_tax")
+	TAXJAR_ENABLED = frappe.db.get_single_value("TaxJar Settings", "enabled")
+
 	if not TAXJAR_CALCULATE_TAX:
 		return
 
@@ -195,8 +202,6 @@ def set_sales_tax(doc, method):
 			for tax in doc.taxes:
 				if tax.account_head == TAX_ACCOUNT_HEAD:
 					tax.tax_amount = tax_data.amount_to_collect
-
-					doc.run_method("calculate_taxes_and_totals")
 					break
 			else:
 				doc.append("taxes", {
@@ -208,7 +213,9 @@ def set_sales_tax(doc, method):
 					"tax_amount": tax_data.amount_to_collect
 				})
 
-			doc.run_method("calculate_taxes_and_totals")
+		# NOTE: Make sure to run this method after updating the tax rows
+		#       Otherwise, the tax calculations will be incorrect
+		doc.run_method("calculate_taxes_and_totals")
 
 
 def validate_tax_request(tax_dict):
